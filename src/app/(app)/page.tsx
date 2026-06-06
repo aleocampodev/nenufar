@@ -1,9 +1,9 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { handleSearch } from './actions/search'
-import { createHandoffSession } from './actions/handoff'
-import { sendMessageToChat, simulateCheckout, ChatMessage } from './actions/chat'
+import { handleSearch } from '../actions/search'
+import { createHandoffSession } from '../actions/handoff'
+import { sendMessageToChat, simulateCheckout, ChatMessage } from '../actions/chat'
 
 export default function HomePage() {
   // Left panel states
