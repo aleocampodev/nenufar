@@ -1,0 +1,406 @@
+/* ============================================
+   AGENTO CRM — Tech-Brutalist Admin Styles
+   ============================================ */
+
+/* ---------- VARIABLES ---------- */
+:root {
+  --brut-bg: #f5f0e8;
+  --brut-dark: #0f172a;
+  --brut-yellow: #F2C94C;
+  --brut-border: #000000;
+  --brut-shadow: 4px 4px 0px 0px #000000;
+  --brut-shadow-lg: 6px 6px 0px 0px #000000;
+  --brut-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+/* ---------- BODY / ROOT ---------- */
+#app {
+  background-color: var(--brut-bg) !important;
+}
+
+/* ---------- SIDEBAR / NAV ---------- */
+.nav {
+  background-color: var(--brut-dark) !important;
+  border-right: 3px solid var(--brut-border) !important;
+  font-family: var(--brut-font) !important;
+}
+
+.nav__groups {
+  padding: 1rem 0.5rem !important;
+}
+
+.nav__label {
+  color: var(--brut-yellow) !important;
+  font-size: 0.6rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+  padding: 0.75rem 1rem 0.25rem !important;
+  border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.nav__link {
+  color: #ffffff !important;
+  font-family: var(--brut-font) !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 0.6rem 1rem !important;
+  border-radius: 0 !important;
+  border-left: 3px solid transparent !important;
+  transition: all 0.1s ease !important;
+}
+
+.nav__link:hover {
+  background-color: rgba(242, 201, 76, 0.15) !important;
+  border-left: 3px solid var(--brut-yellow) !important;
+  color: var(--brut-yellow) !important;
+}
+
+.nav__link.active,
+.nav__link[aria-current] {
+  background-color: var(--brut-yellow) !important;
+  border-left: 3px solid var(--brut-border) !important;
+  color: var(--brut-dark) !important;
+}
+
+/* Brand logo area */
+.nav__brand {
+  border-bottom: 3px solid var(--brut-yellow) !important;
+  padding: 1rem !important;
+}
+
+.nav__brand::after {
+  content: "AGENTO CRM";
+  display: block;
+  color: var(--brut-yellow);
+  font-family: var(--brut-font);
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---------- TOP HEADER BAR ---------- */
+.render-header,
+.app-header {
+  background-color: var(--brut-dark) !important;
+  border-bottom: 3px solid var(--brut-border) !important;
+  font-family: var(--brut-font) !important;
+}
+
+/* ---------- MAIN CONTENT AREA ---------- */
+.template-default,
+.template-default__wrap {
+  background-color: var(--brut-bg) !important;
+  font-family: var(--brut-font) !important;
+}
+
+/* ---------- PAGE HEADERS ---------- */
+.collection-list .render-title,
+.render-title h1,
+h1.render-title {
+  font-family: var(--brut-font) !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: -0.02em !important;
+  color: var(--brut-dark) !important;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn,
+button.btn {
+  font-family: var(--brut-font) !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-radius: 0 !important;
+  transition: all 0.1s ease !important;
+}
+
+.btn--style-primary {
+  background-color: var(--brut-yellow) !important;
+  color: var(--brut-dark) !important;
+  border: 2px solid var(--brut-border) !important;
+  box-shadow: var(--brut-shadow) !important;
+}
+
+.btn--style-primary:hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: var(--brut-shadow-lg) !important;
+}
+
+.btn--style-primary:active {
+  transform: translate(2px, 2px) !important;
+  box-shadow: none !important;
+}
+
+.btn--style-secondary {
+  background-color: transparent !important;
+  color: var(--brut-dark) !important;
+  border: 2px solid var(--brut-border) !important;
+}
+
+.btn--style-secondary:hover {
+  background-color: var(--brut-dark) !important;
+  color: #ffffff !important;
+}
+
+/* ---------- TABLES / LIST VIEW ---------- */
+.collection-list table,
+.list-wrap table {
+  border-collapse: collapse !important;
+  font-family: var(--brut-font) !important;
+  border: 2px solid var(--brut-border) !important;
+  box-shadow: var(--brut-shadow) !important;
+  background: #ffffff !important;
+}
+
+.collection-list thead th,
+th.cell {
+  background-color: var(--brut-dark) !important;
+  color: var(--brut-yellow) !important;
+  font-family: var(--brut-font) !important;
+  font-size: 0.7rem !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  border-right: 1px solid rgba(255,255,255,0.2) !important;
+  padding: 0.75rem 1rem !important;
+}
+
+.collection-list tbody tr,
+.row {
+  border-bottom: 1px solid #000000 !important;
+  transition: background-color 0.1s ease !important;
+}
+
+.collection-list tbody tr:hover,
+.row:hover {
+  background-color: #fef3c7 !important;
+}
+
+.collection-list tbody td,
+td.cell {
+  font-family: var(--brut-font) !important;
+  font-size: 0.8rem !important;
+  padding: 0.75rem 1rem !important;
+  border-right: 1px solid #e2e8f0 !important;
+  color: var(--brut-dark) !important;
+}
+
+/* ---------- FORM FIELDS ---------- */
+.field-type,
+.render-fields .field-type {
+  margin-bottom: 1.5rem !important;
+}
+
+.field-label,
+label.field-label {
+  font-family: var(--brut-font) !important;
+  font-size: 0.7rem !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: var(--brut-dark) !important;
+  margin-bottom: 0.4rem !important;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select,
+.rs__control {
+  font-family: var(--brut-font) !important;
+  border: 2px solid var(--brut-border) !important;
+  border-radius: 0 !important;
+  background-color: #ffffff !important;
+  color: var(--brut-dark) !important;
+  font-size: 0.875rem !important;
+  transition: all 0.1s ease !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  outline: none !important;
+  box-shadow: var(--brut-shadow) !important;
+  transform: translate(-2px, -2px) !important;
+}
+
+/* ---------- PANEL / CARD CONTAINERS ---------- */
+.form-submit,
+.document-controls {
+  font-family: var(--brut-font) !important;
+}
+
+.render-fields {
+  background-color: #ffffff !important;
+  border: 2px solid var(--brut-border) !important;
+  box-shadow: var(--brut-shadow) !important;
+  padding: 2rem !important;
+}
+
+/* ---------- STEP NAV / BREADCRUMBS ---------- */
+.step-nav {
+  font-family: var(--brut-font) !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* ---------- NOTIFICATIONS / TOASTS ---------- */
+.payload-toast-container .toast {
+  font-family: var(--brut-font) !important;
+  border: 2px solid var(--brut-border) !important;
+  border-radius: 0 !important;
+  box-shadow: var(--brut-shadow) !important;
+}
+
+/* ---------- LOGIN PAGE ---------- */
+.login {
+  background-color: var(--brut-dark) !important;
+  font-family: var(--brut-font) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 100vh !important;
+  padding: 2rem !important;
+}
+
+.template-minimal__wrap {
+  background-color: #ffffff !important;
+  border: 4px solid var(--brut-border) !important;
+  box-shadow: 8px 8px 0px 0px var(--brut-border) !important;
+  border-radius: 0 !important;
+  padding: 2.5rem !important;
+  max-width: 450px !important;
+  width: 100% !important;
+}
+
+.login__brand::after {
+  content: "AGENTO CRM" !important;
+  display: block !important;
+  font-family: var(--brut-font) !important;
+  font-size: 1.5rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.03em !important;
+  text-transform: uppercase !important;
+  color: var(--brut-dark) !important;
+  border: 3px solid var(--brut-border) !important;
+  background-color: var(--brut-yellow) !important;
+  padding: 0.5rem 1rem !important;
+  box-shadow: 4px 4px 0px 0px var(--brut-border) !important;
+}
+
+.login__brand svg { display: none !important; }
+
+/* Login inputs */
+.login input[type="email"],
+.login input[type="password"] {
+  width: 100% !important;
+  border: 3px solid var(--brut-border) !important;
+  border-radius: 0 !important;
+}
+
+.login input[type="email"]:focus,
+.login input[type="password"]:focus {
+  background-color: #fef08a !important;
+  box-shadow: 4px 4px 0px 0px var(--brut-border) !important;
+  transform: translate(-2px, -2px) !important;
+}
+
+.login button[type="submit"],
+.login .btn--style-primary {
+  width: 100% !important;
+  background-color: var(--brut-yellow) !important;
+  color: var(--brut-dark) !important;
+  border: 3px solid var(--brut-border) !important;
+  border-radius: 0 !important;
+  font-weight: 900 !important;
+  box-shadow: 4px 4px 0px 0px var(--brut-border) !important;
+}
+
+.login button[type="submit"]:hover,
+.login .btn--style-primary:hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 6px 6px 0px 0px var(--brut-border) !important;
+}
+
+/* ---------- [UNTITLED] PLACEHOLDER ---------- */
+/* Hace que el placeholder se vea tenue, no como un título real */
+h1:has-text,
+.doc-header__title--placeholder,
+[class*="doc-header"] h1 {
+  color: var(--brut-dark) !important;
+}
+
+/* Selector directo para el texto [UNTITLED] */
+h1[title="[Untitled]"],
+h1:empty::before {
+  color: #94a3b8 !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+}
+
+/* Atenúa el h1 cuando contiene [UNTITLED] via CSS content check trick */
+.doc-controls__content h1,
+.doc-header h1 {
+  opacity: 1;
+}
+
+/* ---------- ACCOUNT DROPDOWN / LOGOUT ---------- */
+/* Asegura que el popup de cuenta sea visible */
+.popup__content,
+.popup-button-list,
+[class*="popup"] > div,
+[class*="account"] [class*="popup"] {
+  background-color: #ffffff !important;
+  border: 2px solid var(--brut-border) !important;
+  box-shadow: var(--brut-shadow-lg) !important;
+  border-radius: 0 !important;
+  z-index: 9999 !important;
+  font-family: var(--brut-font) !important;
+  min-width: 180px !important;
+}
+
+.popup-button-list__button,
+[class*="popup"] button,
+[class*="popup"] a {
+  font-family: var(--brut-font) !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 0.75rem 1rem !important;
+  width: 100% !important;
+  text-align: left !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  color: var(--brut-dark) !important;
+  display: block !important;
+}
+
+.popup-button-list__button:hover,
+[class*="popup"] button:hover,
+[class*="popup"] a:hover {
+  background-color: var(--brut-yellow) !important;
+  color: var(--brut-dark) !important;
+}
+
+/* Account avatar button */
+[class*="account"] button,
+.account__button {
+  background-color: var(--brut-yellow) !important;
+  border: 2px solid var(--brut-border) !important;
+  border-radius: 0 !important;
+  color: var(--brut-dark) !important;
+  font-family: var(--brut-font) !important;
+  font-weight: 900 !important;
+}
