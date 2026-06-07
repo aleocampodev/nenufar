@@ -39,6 +39,23 @@ async function run() {
     `)
     console.log('Table handoff_sessions verified/created.')
 
+    // FEAT-12: Add omnichannel bidirectional fields
+    const addColumn = async (col: string) => {
+      const { rows } = await client.query(
+        `SELECT column_name FROM information_schema.columns WHERE table_name = 'handoff_sessions' AND column_name = $1`,
+        [col]
+      )
+      if (rows.length === 0) {
+        await client.query(`ALTER TABLE handoff_sessions ADD COLUMN ${col} text;`)
+        console.log(`Column ${col} added to handoff_sessions.`)
+      } else {
+        console.log(`Column ${col} already exists in handoff_sessions.`)
+      }
+    }
+
+    await addColumn('initiated_from')
+    await addColumn('active_channel')
+
     const tables = await client.query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
     console.log('Tables in public schema after migration:', tables.rows.map(r => r.table_name))
   } catch (error) {

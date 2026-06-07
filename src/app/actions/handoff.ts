@@ -18,6 +18,7 @@ export interface CreateHandoffParams {
   productId: number
   engraving?: string
   phone?: string
+  initiatedFrom?: 'WEB' | 'WHATSAPP'
 }
 
 export async function createHandoffSession(params: CreateHandoffParams) {
@@ -69,6 +70,8 @@ export async function createHandoffSession(params: CreateHandoffParams) {
         cartContext: cartContext,
         status: 'ACTIVE',
         phone: params.phone || null,
+        initiatedFrom: params.initiatedFrom || 'WEB',
+        activeChannel: params.initiatedFrom || 'WEB',
         expiresAt: expiresAt,
         lastInteractionAt: new Date(),
       })

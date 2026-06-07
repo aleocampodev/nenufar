@@ -75,7 +75,7 @@
 
 ---
 
-## FEAT-11 · Ephemeral UI en el Simulador ❌ Pendiente
+## FEAT-11 · Ephemeral UI en el Simulador ✅
 **Como** comprador, **quiero** ver tarjetas interactivas en el chat **para** una experiencia más rica que texto plano.
 - `<ProductCard>` al confirmar producto
 - `<UpsellCard>` con botones Sí/No
@@ -85,7 +85,7 @@
 
 ---
 
-## FEAT-12 · Sesión Omnicanal Bidireccional ❌ Pendiente
+## FEAT-12 · Sesión Omnicanal Bidireccional ✅
 **Como** comprador, **quiero** poder iniciar la conversación desde WhatsApp o desde la web y que el contexto me siga en ambos canales **para** no perder mi progreso sin importar por dónde empiece.
 
 ### Criterios de Aceptación
@@ -143,5 +143,5 @@ Usuario WA → "busco una mochila" → Shirley RAG → recomienda
 | FEAT-08 Checkout simulado | ✅ |
 | FEAT-09 Orden automática en CRM | ✅ |
 | FEAT-10 Admin CRM brutalista | ✅ |
-| FEAT-11 Ephemeral UI | ❌ Pendiente |
-| FEAT-12 Sesión omnicanal bidireccional | ❌ Pendiente |
+| FEAT-11 Ephemeral UI | ✅ |
+| FEAT-12 Sesión omnicanal bidireccional | ✅ |
