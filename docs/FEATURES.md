@@ -89,13 +89,13 @@
 **Como** comprador, **quiero** poder iniciar la conversación desde WhatsApp o desde la web y que el contexto me siga en ambos canales **para** no perder mi progreso sin importar por dónde empiece.
 
 ### Criterios de Aceptación
-- [ ] **WA → Web:** Shirley puede recomendar productos desde WhatsApp y generar un código `AX-XXXX` sin que el usuario haya pasado por la web
-- [ ] **WA → Web (link):** Shirley envía `/?session=AX-XXXX` — la web carga con el producto pre-seleccionado y el carrito rehidratado
-- [ ] **Web → WA (actual):** El usuario configura en la web, genera código y continúa en WhatsApp
-- [ ] **Contexto compartido:** `handoff_sessions` en DB es la única fuente de verdad para ambos canales
-- [ ] **Canal activo:** La DB registra desde qué canal interactuó el usuario por última vez
-- [ ] **Pick-up URL:** `/?session=AX-XXXX` en la web auto-rellena el panel izquierdo con el producto de la sesión
-- [ ] **Sin duplicación:** Si el usuario retoma en web una sesión iniciada en WA, no se crea una nueva sesión
+- [x] **WA → Web:** Shirley puede recomendar productos desde WhatsApp y generar un código `AX-XXXX` sin que el usuario haya pasado por la web
+- [x] **WA → Web (link):** Shirley envía `/?session=AX-XXXX` — la web carga con el producto pre-seleccionado y el carrito rehidratado
+- [x] **Web → WA (actual):** El usuario configura en la web, genera código y continúa en WhatsApp
+- [x] **Contexto compartido:** `handoff_sessions` en DB es la única fuente de verdad para ambos canales
+- [x] **Canal activo:** La DB registra desde qué canal interactuó el usuario por última vez
+- [x] **Pick-up URL:** `/?session=AX-XXXX` en la web auto-rellena el panel izquierdo con el producto de la sesión
+- [x] **Sin duplicación:** Si el usuario retoma en web una sesión iniciada en WA, no se crea una nueva sesión
 
 ### Flujos
 
