@@ -38,7 +38,9 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    const cart = activeSession?.cartContext as any
+    const cart = activeSession?.cartContext as {
+      product?: { id: number; name: string; price_cop: number; engraving?: string | null }
+    } | null
     const product = cart?.product
 
     const systemPrompt = activeSession && product
@@ -103,7 +105,7 @@ INSTRUCCIONES:
     }
 
     const result = streamText({
-      model: google('gemini-2.5-flash-preview-05-20'),
+      model: google('gemini-2.5-flash'),
       system: systemPrompt,
       messages: [{ role: 'user', content: userMessage }],
       tools,
@@ -125,10 +127,11 @@ INSTRUCCIONES:
       contacts: [{ input: from || '573000000000', wa_id: from || '573000000000' }],
       messages: [{ from: 'shirley_agent', text: { body: reply } }],
     })
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Internal server error'
     console.error('[WhatsApp Webhook ERROR] Failed to process:', error)
     return NextResponse.json(
-      { error: error?.message || 'Internal server error' },
+      { error: message },
       { status: 500 }
     )
   }

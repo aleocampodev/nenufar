@@ -231,7 +231,7 @@ export async function sendMessageToChat(
       isRehydrated: true,
       status: session.status,
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Chat ERROR] Failed to send message:', error)
     return {
       success: false,
@@ -256,7 +256,11 @@ export async function simulateCheckout(sessionCode: string) {
       throw new Error(`Handoff session with code ${sessionCode} not found`)
     }
 
-    const cart = session.cartContext as any
+    const cart = session.cartContext as {
+      product?: { id: number; name: string; price_cop: number; engraving?: string | null }
+      upsell?: { added: boolean; name: string }
+      totalPrice?: number
+    } | null
     const product = cart?.product
     const upsell = cart?.upsell
     const totalPrice = cart?.totalPrice || product?.price_cop || 0
@@ -299,11 +303,12 @@ export async function simulateCheckout(sessionCode: string) {
       success: true,
       order: orderDoc,
     }
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Checkout failed'
     console.error('[Checkout Simulation ERROR] Failed:', error)
     return {
       success: false,
-      error: error?.message || 'Checkout failed',
+      error: message,
     }
   }
 }

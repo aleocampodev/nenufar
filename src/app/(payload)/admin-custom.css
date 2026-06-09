@@ -336,7 +336,6 @@ textarea:focus {
 
 /* ---------- [UNTITLED] PLACEHOLDER ---------- */
 /* Hace que el placeholder se vea tenue, no como un título real */
-h1:has-text,
 .doc-header__title--placeholder,
 [class*="doc-header"] h1 {
   color: var(--brut-dark) !important;

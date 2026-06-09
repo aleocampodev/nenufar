@@ -5,9 +5,10 @@ interface ProductCardProps {
   priceCop: number
   engraving: string | null
   sessionCode: string
+  productImageUrl?: string
 }
 
-export function ProductCard({ productName, priceCop, engraving, sessionCode }: ProductCardProps) {
+export function ProductCard({ productName, priceCop, engraving, sessionCode, productImageUrl }: ProductCardProps) {
   return (
     <div className="my-2 border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] overflow-hidden w-full max-w-xs">
       {/* Header */}
@@ -17,6 +18,17 @@ export function ProductCard({ productName, priceCop, engraving, sessionCode }: P
           Pedido Confirmado
         </span>
       </div>
+
+      {/* Image */}
+      {productImageUrl && (
+        <div className="border-b-2 border-black bg-slate-100 h-40 overflow-hidden">
+          <img
+            src={productImageUrl}
+            alt={productName}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
 
       {/* Body */}
       <div className="px-4 py-3 space-y-2">

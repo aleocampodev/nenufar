@@ -2,6 +2,7 @@
 
 import { db } from '@/db'
 import { handoffSessions } from '@/db/schema'
+import { eq } from 'drizzle-orm'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 
@@ -84,11 +85,46 @@ export async function createHandoffSession(params: CreateHandoffParams) {
       code,
       session,
     }
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to create session'
     console.error('[Handoff ERROR] Failed to create handoff session:', error)
     return {
       success: false,
-      error: error?.message || 'Failed to create session',
+      error: message,
+    }
+  }
+}
+
+export async function getHandoffSession(code: string) {
+  try {
+    const session = await db.query.handoffSessions.findFirst({
+      where: (s, { eq }) => eq(s.sessionCode, code),
+    })
+
+    if (!session) {
+      return { success: false, error: 'Session not found' }
+    }
+
+    // Update activeChannel to WEB since the user is retrieving it from the web client
+    await db
+      .update(handoffSessions)
+      .set({
+        activeChannel: 'WEB',
+        lastInteractionAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(handoffSessions.sessionCode, code))
+
+    return {
+      success: true,
+      session,
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to fetch session'
+    console.error('[Handoff ERROR] Failed to fetch session:', error)
+    return {
+      success: false,
+      error: message,
     }
   }
 }

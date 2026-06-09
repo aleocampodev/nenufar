@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, UIMessage } from 'ai'
 import { handleSearch } from '../actions/search'
-import { createHandoffSession } from '../actions/handoff'
+import { createHandoffSession, getHandoffSession } from '../actions/handoff'
 import { simulateCheckout } from '../actions/chat'
 import { ProductCard } from '@/components/chat/ProductCard'
 import { UpsellCard } from '@/components/chat/UpsellCard'
@@ -101,14 +101,9 @@ function HomePageContent() {
 
     // Load the session and pre-select the product on the left panel
     try {
-      const { db } = await import('@/db')
-      const { handoffSessions } = await import('@/db/schema')
-      const { eq } = await import('drizzle-orm')
-      const session = await db.query.handoffSessions.findFirst({
-        where: (s: any, { eq }) => eq(s.sessionCode, code),
-      })
-      if (session) {
-        const cart = session.cartContext as any
+      const res = await getHandoffSession(code)
+      if (res.success && res.session) {
+        const cart = res.session.cartContext as any
         if (cart?.product) {
           setSelectedProduct(cart.product)
           if (cart.product.engraving) {
@@ -116,11 +111,6 @@ function HomePageContent() {
             setEngravingText(cart.product.engraving)
           }
         }
-        // Update activeChannel to WEB
-        await db
-          .update(handoffSessions)
-          .set({ activeChannel: 'WEB', lastInteractionAt: new Date(), updatedAt: new Date() })
-          .where(eq(handoffSessions.sessionCode, code))
       }
     } catch (e) {
       console.error('[Pickup URL] Error loading session:', e)
@@ -290,33 +280,42 @@ function HomePageContent() {
                             : 'border-slate-700 bg-slate-800/50 hover:bg-slate-800 hover:border-slate-500'
                         }`}
                       >
-                        <div className="flex justify-between items-start gap-4">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h4 className="font-black text-lg text-white">{prod.name}</h4>
-                              <span className="bg-slate-700 text-[10px] font-mono px-2 py-0.5 text-slate-300 font-bold uppercase rounded">
-                                ID: {prod.id}
+                        <div className="flex gap-4 items-start">
+                          {prod.images?.[0]?.url && (
+                            <img
+                              src={prod.images[0].url}
+                              alt={prod.name}
+                              className="w-16 h-16 sm:w-20 sm:h-20 object-cover border-2 border-black bg-slate-700 flex-shrink-0"
+                            />
+                          )}
+                          <div className="flex-1 flex flex-col sm:flex-row justify-between items-start gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-black text-lg text-white">{prod.name}</h4>
+                                <span className="bg-slate-700 text-[10px] font-mono px-2 py-0.5 text-slate-300 font-bold uppercase rounded">
+                                  ID: {prod.id}
+                                </span>
+                              </div>
+                              <p className="text-sm text-slate-300 mt-1 line-clamp-2">{prod.description}</p>
+                              {prod.materials?.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-3">
+                                  {prod.materials.map((m: string, idx: number) => (
+                                    <span key={idx} className="bg-slate-900 border border-slate-700 text-slate-400 text-[10px] font-mono px-2 py-0.5">
+                                      {m}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            <div className="text-right flex flex-col items-end flex-shrink-0">
+                              <span className="font-black text-xl text-[#F2C94C]">
+                                ${Number(prod.price_cop).toLocaleString('es-CO')}
+                              </span>
+                              <span className="text-[10px] font-mono text-slate-400 uppercase mt-0.5">COP</span>
+                              <span className="text-xs font-mono text-[#F2C94C] mt-2 font-bold">
+                                {(result.similarity * 100).toFixed(1)}% Similitud
                               </span>
                             </div>
-                            <p className="text-sm text-slate-300 mt-1 line-clamp-2">{prod.description}</p>
-                            {prod.materials?.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mt-3">
-                                {prod.materials.map((m: string, idx: number) => (
-                                  <span key={idx} className="bg-slate-900 border border-slate-700 text-slate-400 text-[10px] font-mono px-2 py-0.5">
-                                    {m}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                          <div className="text-right flex flex-col items-end">
-                            <span className="font-black text-xl text-[#F2C94C]">
-                              ${Number(prod.price_cop).toLocaleString('es-CO')}
-                            </span>
-                            <span className="text-[10px] font-mono text-slate-400 uppercase mt-0.5">COP</span>
-                            <span className="text-xs font-mono text-[#F2C94C] mt-2 font-bold">
-                              {(result.similarity * 100).toFixed(1)}% Similitud
-                            </span>
                           </div>
                         </div>
                       </div>
@@ -329,30 +328,41 @@ function HomePageContent() {
 
           {selectedProduct && (
             <div className="mt-8 border-4 border-[#F2C94C] bg-slate-950 p-6 shadow-[6px_6px_0px_0px_rgba(242,201,76,0.2)]">
-              <h3 className="font-black uppercase text-[#F2C94C] text-lg mb-3">
-                ⚙️ Configurar Pedido: {selectedProduct.name}
-              </h3>
-              <div className="space-y-4 mb-6">
-                <label className="flex items-center gap-3 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={addEngraving}
-                    onChange={(e) => setAddEngraving(e.target.checked)}
-                    className="w-5 h-5 border-2 border-black accent-[#F2C94C]"
-                  />
-                  <span className="font-mono text-sm uppercase tracking-wider font-bold">
-                    ¿Deseas grabado personalizado gratis?
-                  </span>
-                </label>
-                {addEngraving && (
-                  <input
-                    type="text"
-                    placeholder="Escribe el texto para el grabado..."
-                    value={engravingText}
-                    onChange={(e) => setEngravingText(e.target.value)}
-                    className="w-full p-3 bg-white text-black font-semibold border-2 border-black placeholder-slate-400 focus:outline-none"
+              <div className="flex flex-col md:flex-row gap-6 mb-6">
+                {selectedProduct.images?.[0]?.url && (
+                  <img
+                    src={selectedProduct.images[0].url}
+                    alt={selectedProduct.name}
+                    className="w-full md:w-32 h-32 object-cover border-4 border-[#F2C94C] bg-slate-800 flex-shrink-0"
                   />
                 )}
+                <div className="flex-1">
+                  <h3 className="font-black uppercase text-[#F2C94C] text-lg mb-3">
+                    ⚙️ Configurar Pedido: {selectedProduct.name}
+                  </h3>
+                  <div className="space-y-4">
+                    <label className="flex items-center gap-3 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={addEngraving}
+                        onChange={(e) => setAddEngraving(e.target.checked)}
+                        className="w-5 h-5 border-2 border-black accent-[#F2C94C]"
+                      />
+                      <span className="font-mono text-sm uppercase tracking-wider font-bold">
+                        ¿Deseas grabado personalizado gratis?
+                      </span>
+                    </label>
+                    {addEngraving && (
+                      <input
+                        type="text"
+                        placeholder="Escribe el texto para el grabado..."
+                        value={engravingText}
+                        onChange={(e) => setEngravingText(e.target.value)}
+                        className="w-full p-3 bg-white text-black font-semibold border-2 border-black placeholder-slate-400 focus:outline-none"
+                      />
+                    )}
+                  </div>
+                </div>
               </div>
 
               {!generatedCode ? (
@@ -443,12 +453,12 @@ function HomePageContent() {
                         )
                       }
 
-                      // Ephemeral UI — tool cards (AI SDK v6: state must be 'input-available')
-                      if (part.type === 'tool-showProductCard' && part.state === 'input-available') {
+                      // Ephemeral UI — tool cards (AI SDK v6: state can be 'input-available' or 'output-available')
+                      if (part.type === 'tool-showProductCard' && (part.state === 'input-available' || part.state === 'output-available')) {
                         return <ProductCard key={i} {...part.input} />
                       }
 
-                      if (part.type === 'tool-showUpsellCard' && part.state === 'input-available') {
+                      if (part.type === 'tool-showUpsellCard' && (part.state === 'input-available' || part.state === 'output-available')) {
                         return (
                           <UpsellCard
                             key={i}
@@ -459,7 +469,7 @@ function HomePageContent() {
                         )
                       }
 
-                      if (part.type === 'tool-showCheckoutCard' && part.state === 'input-available' && !orderCompleted) {
+                      if (part.type === 'tool-showCheckoutCard' && (part.state === 'input-available' || part.state === 'output-available') && !orderCompleted) {
                         return (
                           <CheckoutCard
                             key={i}

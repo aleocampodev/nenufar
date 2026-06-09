@@ -1,6 +1,6 @@
 'use server'
 
-import { streamText, tool, stepCountIs } from 'ai'
+import { streamText, tool, stepCountIs, convertToModelMessages } from 'ai'
 import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { db } from '@/db'
@@ -43,7 +43,23 @@ export async function POST(req: Request) {
 
   // Check if latest user message contains a handoff code (Pre-LLM Guardian)
   const lastUserMessage = [...messages].reverse().find((m: any) => m.role === 'user')
-  const codeMatch = lastUserMessage?.content?.toUpperCase().match(/AX-[A-Z2-9]{4}/)
+  let userText = ''
+  if (lastUserMessage?.parts) {
+    userText = lastUserMessage.parts
+      .filter((p: any) => p.type === 'text')
+      .map((p: any) => p.text)
+      .join('\n')
+  } else if (lastUserMessage?.content) {
+    userText = typeof lastUserMessage.content === 'string'
+      ? lastUserMessage.content
+      : Array.isArray(lastUserMessage.content)
+        ? lastUserMessage.content
+            .filter((p: any) => p.type === 'text')
+            .map((p: any) => p.text)
+            .join('\n')
+        : ''
+  }
+  const codeMatch = userText.toUpperCase().match(/AX-[A-Z2-9]{4}/)
   const detectedCode = codeMatch ? codeMatch[0] : null
 
   let activeSession = session
@@ -81,6 +97,7 @@ CONTEXTO DEL PEDIDO:
 - Grabado: ${product.engraving ? `"${product.engraving}"` : 'Sin grabado'}
 - Código de sesión: ${activeSession.sessionCode}
 - Estado: ${activeSession.status}
+- Imagen del producto: ${product.images?.[0]?.url || ''}
 
 ${upsellInfo && !upsellAlreadyDecided ? `UPSELL DISPONIBLE:
 - Nombre: ${upsellInfo.name}
@@ -92,7 +109,7 @@ ${cart?.upsell ? `UPSELL: ${cart.upsell.added ? `ACEPTADO (${cart.upsell.name} +
 TOTAL A PAGAR: $${Number(cart?.totalPrice || product.price_cop).toLocaleString('es-CO')} COP
 
 INSTRUCCIONES:
-1. Cuando el cliente envía el código de sesión, usa la herramienta showProductCard para confirmar el pedido visualmente.
+1. Cuando el cliente envía el código de sesión, usa la herramienta showProductCard para confirmar el pedido visualmente, pasando también el parámetro \`productImageUrl\` si está disponible.
 2. Si hay upsell disponible y no se ha decidido, usa showUpsellCard justo después de showProductCard.
 3. Cuando el cliente acepta o rechaza el upsell, actualiza el total y usa showCheckoutCard.
 4. Si el cliente ya decidió el upsell, ve directo a showCheckoutCard.
@@ -102,11 +119,13 @@ INSTRUCCIONES:
 Tu única función ahora es pedir el código de sesión en formato AX-XXXX.
 Sé amigable y breve. No hagas nada más hasta recibir el código.`
 
+  const modelMessages = await convertToModelMessages(messages)
+
   // ─── Stream ────────────────────────────────────────────────
   const result = streamText({
-    model: google('gemini-2.5-flash-preview-05-20'),
+    model: google('gemini-2.5-flash'),
     system: systemPrompt,
-    messages,
+    messages: modelMessages,
     tools: {
       // Shows product confirmation card
       showProductCard: tool({
@@ -116,6 +135,7 @@ Sé amigable y breve. No hagas nada más hasta recibir el código.`
           priceCop: z.number(),
           engraving: z.string().nullable(),
           sessionCode: z.string(),
+          productImageUrl: z.string().optional(),
         }),
         execute: async () => ({ shown: true }),
       }),
