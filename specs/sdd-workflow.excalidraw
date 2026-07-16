@@ -1,0 +1,389 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "mcp-excalidraw-server",
+  "elements": [
+    {
+      "id": "title",
+      "type": "text",
+      "x": 340,
+      "y": 40,
+      "width": 600,
+      "height": 40,
+      "strokeColor": "#1e1e1e",
+      "text": "SDD Spec Kit Workflow — 9 Phases",
+      "fontSize": 28,
+      "createdAt": "2026-07-13T00:39:06.034Z",
+      "updatedAt": "2026-07-13T00:39:06.034Z",
+      "version": 1
+    },
+    {
+      "id": "p1",
+      "type": "rectangle",
+      "x": 100,
+      "y": 130,
+      "width": 280,
+      "height": 80,
+      "backgroundColor": "#eebefa",
+      "strokeColor": "#9c36b5",
+      "label": {
+        "text": "1. Constitution\nproject guardrails"
+      },
+      "fontSize": 18,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-13T00:39:06.035Z",
+      "updatedAt": "2026-07-13T00:39:06.035Z",
+      "version": 1
+    },
+    {
+      "id": "p2",
+      "type": "rectangle",
+      "x": 440,
+      "y": 130,
+      "width": 280,
+      "height": 80,
+      "backgroundColor": "#a5d8ff",
+      "strokeColor": "#1971c2",
+      "label": {
+        "text": "2. Intent\nvision & scope (seed)"
+      },
+      "fontSize": 18,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-13T00:39:06.035Z",
+      "updatedAt": "2026-07-13T00:39:06.035Z",
+      "version": 1
+    },
+    {
+      "id": "p3",
+      "type": "rectangle",
+      "x": 780,
+      "y": 130,
+      "width": 280,
+      "height": 80,
+      "backgroundColor": "#a5d8ff",
+      "strokeColor": "#1971c2",
+      "label": {
+        "text": "3. Specification\nbehavioral description"
+      },
+      "fontSize": 18,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-13T00:39:06.036Z",
+      "updatedAt": "2026-07-13T00:39:06.036Z",
+      "version": 1
+    },
+    {
+      "id": "p4",
+      "type": "rectangle",
+      "x": 780,
+      "y": 320,
+      "width": 280,
+      "height": 80,
+      "backgroundColor": "#a5d8ff",
+      "strokeColor": "#1971c2",
+      "strokeStyle": "dashed",
+      "label": {
+        "text": "4. Clarify (recommended)\nclose gaps"
+      },
+      "fontSize": 18,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-13T00:39:06.036Z",
+      "updatedAt": "2026-07-13T00:39:06.036Z",
+      "version": 1
+    },
+    {
+      "id": "p5",
+      "type": "rectangle",
+      "x": 440,
+      "y": 320,
+      "width": 280,
+      "height": 80,
+      "backgroundColor": "#b2f2bb",
+      "strokeColor": "#2f9e44",
+      "label": {
+        "text": "5. Plan\ntechnical strategy"
+      },
+      "fontSize": 18,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-13T00:39:06.036Z",
+      "updatedAt": "2026-07-13T00:39:06.036Z",
+      "version": 1
+    },
+    {
+      "id": "p6",
+      "type": "rectangle",
+      "x": 100,
+      "y": 320,
+      "width": 280,
+      "height": 80,
+      "backgroundColor": "#b2f2bb",
+      "strokeColor": "#2f9e44",
+      "label": {
+        "text": "6. Tasks\natomic breakdown"
+      },
+      "fontSize": 18,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-13T00:39:06.036Z",
+      "updatedAt": "2026-07-13T00:39:06.036Z",
+      "version": 1
+    },
+    {
+      "id": "p7",
+      "type": "rectangle",
+      "x": 60,
+      "y": 510,
+      "width": 360,
+      "height": 90,
+      "backgroundColor": "#b2f2bb",
+      "strokeColor": "#2f9e44",
+      "strokeStyle": "dashed",
+      "label": {
+        "text": "7. Analyze (recommended)\ncross-artifact consistency"
+      },
+      "fontSize": 18,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-13T00:39:06.036Z",
+      "updatedAt": "2026-07-13T00:39:49.731Z",
+      "version": 2
+    },
+    {
+      "id": "p8",
+      "type": "rectangle",
+      "x": 440,
+      "y": 510,
+      "width": 280,
+      "height": 80,
+      "backgroundColor": "#ffd8a8",
+      "strokeColor": "#e8590c",
+      "label": {
+        "text": "8. Implement\nexecute the plan"
+      },
+      "fontSize": 18,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-13T00:39:06.036Z",
+      "updatedAt": "2026-07-13T00:39:06.036Z",
+      "version": 1
+    },
+    {
+      "id": "p9",
+      "type": "rectangle",
+      "x": 780,
+      "y": 510,
+      "width": 280,
+      "height": 80,
+      "backgroundColor": "#ffd8a8",
+      "strokeColor": "#e8590c",
+      "label": {
+        "text": "9. Checklist\nquality gates"
+      },
+      "fontSize": 18,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-13T00:39:06.036Z",
+      "updatedAt": "2026-07-13T00:39:06.036Z",
+      "version": 1
+    },
+    {
+      "id": "mrihvgup1z8f0fkdsgh",
+      "type": "arrow",
+      "x": 388,
+      "y": 170,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          44,
+          2.842170943040401e-14
+        ]
+      ],
+      "start": {
+        "id": "p1"
+      },
+      "end": {
+        "id": "p2"
+      },
+      "createdAt": "2026-07-13T00:39:06.037Z",
+      "updatedAt": "2026-07-13T00:39:06.037Z",
+      "version": 1
+    },
+    {
+      "id": "mrihvgupnktfx79u8u",
+      "type": "arrow",
+      "x": 728,
+      "y": 170,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          44,
+          2.842170943040401e-14
+        ]
+      ],
+      "start": {
+        "id": "p2"
+      },
+      "end": {
+        "id": "p3"
+      },
+      "createdAt": "2026-07-13T00:39:06.037Z",
+      "updatedAt": "2026-07-13T00:39:06.037Z",
+      "version": 1
+    },
+    {
+      "id": "mrihvgupvkknf37zacs",
+      "type": "arrow",
+      "x": 920,
+      "y": 218,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          94
+        ]
+      ],
+      "start": {
+        "id": "p3"
+      },
+      "end": {
+        "id": "p4"
+      },
+      "createdAt": "2026-07-13T00:39:06.037Z",
+      "updatedAt": "2026-07-13T00:39:06.037Z",
+      "version": 1
+    },
+    {
+      "id": "mrihvgupowtlavwyasp",
+      "type": "arrow",
+      "x": 772,
+      "y": 360,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -44,
+          0
+        ]
+      ],
+      "start": {
+        "id": "p4"
+      },
+      "end": {
+        "id": "p5"
+      },
+      "createdAt": "2026-07-13T00:39:06.037Z",
+      "updatedAt": "2026-07-13T00:39:06.037Z",
+      "version": 1
+    },
+    {
+      "id": "mrihvguprzuhikuey0p",
+      "type": "arrow",
+      "x": 432,
+      "y": 360,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -44,
+          0
+        ]
+      ],
+      "start": {
+        "id": "p5"
+      },
+      "end": {
+        "id": "p6"
+      },
+      "createdAt": "2026-07-13T00:39:06.038Z",
+      "updatedAt": "2026-07-13T00:39:06.038Z",
+      "version": 1
+    },
+    {
+      "id": "mrihvgupbhlk77dzg6c",
+      "type": "arrow",
+      "x": 240,
+      "y": 408,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          94
+        ]
+      ],
+      "start": {
+        "id": "p6"
+      },
+      "end": {
+        "id": "p7"
+      },
+      "createdAt": "2026-07-13T00:39:06.038Z",
+      "updatedAt": "2026-07-13T00:39:49.731Z",
+      "version": 2
+    },
+    {
+      "id": "mrihvgupweh7ynmit1i",
+      "type": "arrow",
+      "x": 427.9991350883806,
+      "y": 552.2353068369356,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          4.0017298232387475,
+          -0.0588489679888653
+        ]
+      ],
+      "start": {
+        "id": "p7"
+      },
+      "end": {
+        "id": "p8"
+      },
+      "createdAt": "2026-07-13T00:39:06.038Z",
+      "updatedAt": "2026-07-13T00:39:49.732Z",
+      "version": 2
+    },
+    {
+      "id": "mrihvgup3e8wtvydzaa",
+      "type": "arrow",
+      "x": 728,
+      "y": 550,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ],
+      "start": {
+        "id": "p8"
+      },
+      "end": {
+        "id": "p9"
+      },
+      "createdAt": "2026-07-13T00:39:06.038Z",
+      "updatedAt": "2026-07-13T00:39:06.038Z",
+      "version": 1
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": null
+  }
+}

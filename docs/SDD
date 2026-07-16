@@ -1,0 +1,272 @@
+# SDD — Software Design Document
+**Project:** Agento — Nénufar (Handmade Jewelry)
+**Version:** 2.1 (MVP pivot — catalog + blog + CRM + Telegram command center)
+**Date:** July 2026
+**Source of truth:** `docs/BRD.md` v2.1 · `docs/PRD.md` v2.1
+**Supersedes:** v1.0 (agentic chat MVP, frozen — contained architectural hallucinations)
+**Product overview diagram:** `specs/product-overview.excalidraw` (capabilities + lifecycle of an order)
+**Architecture diagram:** `specs/architecture.excalidraw` (layered architecture — rendered preview in §2)
+
+---
+
+## Table of Contents
+
+1. [System Overview](#1-system-overview)
+2. [Architecture Diagram](#2-architecture-diagram)
+3. [Module Breakdown](#3-module-breakdown)
+4. [Database Design](#4-database-design)
+5. [Security Considerations](#5-security-considerations)
+6. [Cross-Reference Matrix (BRD / PRD)](#6-cross-reference-matrix)
+7. [ChangeLog](#changelog)
+
+---
+
+## 1. System Overview
+
+The Agento v2.1 system is **three simple tools for a solopreneur**, none of them
+agentic:
+
+1. **Storefront** — Next.js App Router editorial site (home, `/tienda`, `/blog`).
+   Hydrates from Payload headless via server components. Spanish, COP. No cart,
+   no checkout: CTAs route to WhatsApp (`wa.me`) so the buyer contacts Shirley
+   directly. (BRD §3.1 Cap 01, PRD §3.1)
+2. **Intrinsic CRM** — Payload admin (`/admin`) with two operator-facing
+   collections, `products` (Catalog) and `orders` (Dispatches), plus the
+   `posts` collection backing the blog. Shirley creates products, confirms
+   payments (`CHECKOUT_READY → PAID`), marks dispatches
+   (`PAID → DISPATCHED`), cancels orders (admin only).
+   (BRD §3.1 Cap 02–03, PRD §3.2–3.3)
+3. **Telegram Command Center** — a single Telegram bot that is **Shirley's**
+   mobile command nexus (not a customer-facing chatbot): real-time pings on new
+   orders, `/pagado`, `/despachado`, `/pedido`, `/pendientes`, `/help`, `/nuevo`
+   for manual order registration, photo-to-draft for catalog capture, and a 09:00
+   America/Bogota daily digest. (BRD §3.1 Cap 04, PRD §3.4)
+
+### What is deliberately NOT in the runtime path (v2.1)
+
+There is **no LLM in the runtime path**. The following v1.0 components are
+**explicitly removed** and must not reappear in code, env, or comments:
+
+- ~~Vercel AI SDK~~ — frozen for the agentic phase.
+- ~~Gemini 2.5 Flash~~ — frozen for the agentic phase.
+- ~~Gemini Embedding 2~~ / ~~pgvector~~ — no semantic search in v2.1.
+- ~~Pre-LLM Guardian~~ — no LLM to protect.
+- ~~n8n orchestration~~ — async work lives in Next.js route handlers + external
+  cron. (PRD §4 — Maintainability: "no external orchestration tools".)
+- ~~Payment gateway (Wompi/Stripe)~~ — settlement is external (Nequi, transfer,
+  cash on delivery). Shirley confirms manually via Telegram or admin.
+  (BRD §3.2, PRD §2 `**No LLM in MVP**`.)
+- ~~`token_usage_logs`~~ / ~~Unit Economics cost metric~~ — no tokens to audit
+  in v2.1. (BRD §6 note, PRD changelog v1.1 → v2.0.)
+
+### Topology
+
+The system is a pnpm monorepo (BRD §3.1 Cap 05): `apps/web` (storefront +
+Payload admin embedded + Telegram webhook route), `packages/db` (Drizzle),
+`packages/types` (payload-types + Zod), `packages/telegram` (command handler).
+Single deploy, end-to-end TypeScript. `tsc --noEmit` blocks merge.
+
+---
+
+## 2. Architecture Diagram
+
+High-level flow (real v2.1 flow — no LLM, no n8n, no payment webhook):
+
+1. Buyer browses the storefront; product/blog data is hydrated from Payload via
+   Next.js server components (`getPayload({ config })`), served from the ISR
+   cache. Product/blog detail pages revalidate on Payload `afterChange` hook.
+2. Buyer clicks **Contactar por WhatsApp** on a product card → `wa.me` deep link
+   opens WhatsApp to Shirley's business number. No system involvement beyond the
+   storefront link. (PRD §3.1 ct-text, AC-01.2)
+3. Shirley receives the message on her phone. She IS the context layer of the
+   MVP: she bridges social channels → system by typing `/nuevo` in Telegram.
+4. The Telegram update hits `POST /api/webhooks/telegram` (Next.js route
+   handler). The handler validates `X-Telegram-Bot-Api-Secret-Token` and the
+   authorized chat ID, then dispatches the message to `packages/telegram`.
+   (PRD §3.4.5, AC-04.12 / AC-04.13)
+5. The command handler reads/mutates Payload (`orders`, `products`) and replies
+   via the Telegram Bot API (`sendMessage`).
+6. Order state mutations (`CHECKOUT_READY → PAID → DISPATCHED`) happen ONLY via
+   admin buttons or Telegram commands. There is no event bus, no n8n flow, no
+   dispatch-sheet auto-generation. (PRD §3.3, PRD §3.4.1)
+7. A 09:00 America/Bogota external cron calls
+   `POST /api/cron/daily-digest`, which queries Payload for yesterday's
+   activity and pushes the digest message via the Telegram Bot API.
+   (PRD §3.4.3, AC-04.10)
+
+> Two canonical diagrams live in `specs/`:
+> - `product-overview.excalidraw` — capabilities + order lifecycle (what the system does)
+> - `architecture.excalidraw` — layered architecture (how it is built)
+> The Mermaid block below is the portable fallback for plain-text viewers.
+
+```mermaid
+flowchart TD
+    subgraph Public["Public web"]
+        A[Storefront<br/>Next.js App Router — ISR]
+    end
+    subgraph Core["Monorepo (apps/web + packages/*)"]
+        P[(Payload CMS<br/>products · orders · posts)]
+        WH[Next.js Route Handler<br/>POST /api/webhooks/telegram]
+        CR[Next.js Route Handler<br/>POST /api/cron/daily-digest]
+    end
+    subgraph External["External / Shirley's phone"]
+        W[WhatsApp<br/>wa.me deep link]
+        T[Telegram API<br/>Bot sendMessage / getFile]
+        C[External Cron<br/>09:00 America/Bogota]
+        S[(Shirley<br/>authorized chat ID)]
+    end
+
+    A <-->|getPayload server components<br/>afterChange revalidate| P
+    A -->|wa.me CTA| W
+    W -. manual .-> S
+
+    S <-->|text / photo / command<br/>reply| T
+    T -->|webhook update<br/>X-Telegram-Bot-Api-Secret-Token| WH
+    WH <-->|read / mutate<br/>sendMessage reply| P
+    WH -->|sendMessage / getFile| T
+    WH -->|photo upload| SB[(Supabase Storage<br/>bucket: product-drafts)]
+
+    C -->|scheduled POST| CR
+    CR <-->|yesterday query| P
+    CR -->|sendMessage digest| T
+
+    P <-->|Drizzle ORM| DB[(Supabase PostgreSQL<br/>no pgvector in MVP)]
+
+    classDef web fill:#E6F1FB,stroke:#185FA5,color:#0C447C;
+    classDef core fill:#E1F5EE,stroke:#0F6E56,color:#04342C;
+    classDef ext fill:#FAECE7,stroke:#993C1D,color:#4A1B0C;
+    classDef sto fill:#FFF6E6,stroke:#7A2E0F,color:#4A1B0C;
+
+    class A web;
+    class P,WH,CR core;
+    class W,T,C,S ext;
+    class SB,DB sto;
+```
+
+---
+
+## 3. Module Breakdown
+
+| Module | Responsibility | Technology |
+|---|---|---|
+| Storefront | Editorial home + masonry gallery (`/tienda`) + blog (`/blog`, `/blog/[slug]`). WhatsApp-only CTA, no cart. Hydrates from Payload via server components. ISR + on-demand revalidation on `afterChange`. | Next.js App Router (Turbopack) |
+| Payload Admin (CRM) | Authenticated admin with Catalog (`products`), Dispatches (`orders`), and `posts` collections. Status transitions: `CHECKOUT_READY → PAID → DISPATCHED`, `CANCELLED` (admin only). | Payload CMS (embedded in `apps/web`) |
+| Drizzle DB layer | Type-safe DB access, schema mirroring Payload collections. Types shared via `packages/types` to keep Drizzle and `payload-types.ts` in sync. | Drizzle ORM (`packages/db`) |
+| Telegram Webhook Route | Single Next.js route handler receiving Telegram updates; validates `X-Telegram-Bot-Api-Secret-Token` and authorized chat ID before any DB access. | Next.js Route Handler (`apps/web`) |
+| Telegram Command Handler | Parses commands (`/nuevo`, `/pagado`, `/despachado`, `/pedido`, `/pendientes`, `/help`), photo uploads, unrecognized text. Mutates Payload, replies via Telegram Bot API. Idempotent `/pagado` and `/despachado`. | `packages/telegram` |
+| Daily Digest Cron | 09:00 America/Bogota scheduled POST that queries Payload for yesterday's activity and pushes a digest to Shirley. | External cron (e.g. Upstash QStash) → Next.js Route Handler |
+| Photo Storage | Stores photo-to-draft uploads from Telegram `getFile`. `/public/` is read-only on Vercel, so production media lives here. | Supabase Storage (bucket `product-drafts`) |
+
+There is intentionally no "Closing Agent", no "Web Agent Orchestrator", no
+"Embedding Engine", no "Pre-LLM Guardian", and no "Async Orchestration via n8n".
+Those modules were part of the frozen v1.0 agentic design and are out of scope
+for v2.1. (BRD §3.2 — Explicitly out of scope.)
+
+---
+
+## 4. Database Design
+
+Engine: PostgreSQL (Supabase) accessed by Payload and by Drizzle in
+`packages/db`. **No pgvector extension, no embeddings, no vector index, no
+`token_usage_logs`.** Only three operator-facing collections back the MVP, plus
+the Payload-internal `users` collection:
+
+| Collection | Purpose | Notes |
+|---|---|---|
+| `products` | Single source of truth for the catalog. Edited only from Payload admin or photo-to-draft (which creates a draft with `available = false`). | Fields: `name`, `description`, `price_cop`, `materials[]`, `images[{url}]`, `available` (default true), `handoff_ttl_hours` (DEPRECATED, unused in v2.1), `is_upsell` (default false, unused in v2.1). Products with `available = false` are **excluded from all public storefront listings**. (PRD §3.1, AC-01.5.) |
+| `orders` | Dispatch queue. Status mutates ONLY via admin buttons or Telegram commands. | Fields: `sessionCode` (unique, format `AX-XXXX`), `customerName`, `customerPhone`, `customerAddress`, `items[{productId, name, price_cop, quantity}]`, `totalPrice`, `status` (`CHECKOUT_READY \| PAID \| DISPATCHED \| CANCELLED`), `paymentMethod` (`Nequi \| Transferencia \| Efectivo`), `paidAt`, `dispatchedAt`. `items` stores an **immutable price snapshot** — later product price changes do not affect existing orders. (PRD §3.3, AC-03.5.) |
+| `posts` | Blog content backing `/blog` and `/blog/[slug]`. | Fields: `title`, `excerpt`, `content` (Lexical), `coverImage` (upload → Supabase Storage), `author`, `category`, `format` (`standard \| quote \| audio`), `audioUrl`, `quoteText`, `quoteAuthor`, `publishedAt`, `slug`. (PRD §3.2.) |
+| `users` (internal) | Admin auth. | `auth: true`. Admin login only. (PRD §3.3.) |
+
+Shirley's authorized Telegram chat ID and the webhook secret live in
+environment variables, not in the database. All types are generated by
+Payload (`payload-types.ts`) and re-exported by `packages/types` so Drizzle
+and the Telegram handler share the same shape; a drift check (build script)
+fails the build on mismatch.
+
+### Removed tables (relative to v1.0)
+
+| Removed | Reason |
+|---|---|
+| `product_embeddings` | No pgvector / no semantic search in v2.1. (BRD §3.2.) |
+| `token_usage_logs` | No LLM in runtime — no tokens to audit. (BRD §6 note.) |
+| `sessions` (frozen intent) | No Intent Chips / no WhatsApp handoff in v2.1. |
+| `dispatch_sheets` | No auto-generated dispatch sheet; Shirley packs manually. |
+
+---
+
+## 5. Security Considerations
+
+- **No LLM attack surface:** there is no model invocation in the runtime path,
+  so prompt-injection, token-abuse, and cost-blowup risks do not exist for v2.1.
+  (They return — with explicit mitigations — in the deferred agentic phase.)
+- **Telegram webhook authentication:** `POST /api/webhooks/telegram` validates
+  the `X-Telegram-Bot-Api-Secret-Token` header against `TELEGRAM_WEBHOOK_SECRET`
+  using a constant-time compare and rejects invalid/missing secrets with 401
+  before any DB access. (PRD §3.4.5, AC-04.12.)
+- **Telegram authorization:** only Shirley's chat ID
+  (`SHIRLEY_TELEGRAM_CHAT_ID`) is authorized. Messages from any other chat ID
+  receive a polite "No autorizado" and no state mutation occurs. (AC-04.13.)
+- **Input validation:** every command that accepts `AX-XXXX` validates the
+  format via `^AX-[A-Z2-9]{4}$` before touching the DB. `/nuevo` parses with
+  tolerance (separators `— - : |`; strips `$ . , COP`; trims whitespace) and
+  on failure returns a format example without creating an order. (PRD §3.4.1,
+  AC-04.2, AC-04.3.)
+- **Idempotency:** `/pagado` on an already-`PAID` order and `/despachado` on
+  an already-`DISPATCHED` order return the "Ya está confirmado ✅" / "Ya está
+  despachado 📦" message without mutating state. (PRD §3.4.1, AC-04.4.)
+- **No public writes:** no public REST/GraphQL mutation surface on `orders` or
+  `products`. The storefront is read-only (ISR); only the authenticated admin
+  and the validated Telegram webhook can mutate. (PRD §4 — Security.)
+- **Order snapshot immutability:** `orders.items` freezes product name + price
+  at creation time. Editing a product later never rewrites existing orders.
+  (AC-03.5.)
+- **Admin auth:** Payload admin is protected by `users` collection auth
+  (`auth: true`). MVP uses `read: () => true` as a known limitation; formal
+  roles are deferred and tracked in the BRD/PRD. (PRD §3.3.)
+- **Secrets:** `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`,
+  `SHIRLEY_TELEGRAM_CHAT_ID`, `WHATSAPP_BUSINESS_NUMBER`, Supabase keys, and
+  cron signing keys are environment-managed, never committed. (PRD §4.)
+
+---
+
+## 6. Cross-Reference Matrix
+
+Map of SDD sections to the BRD/PRD items they implement:
+
+| SDD section | BRD ref | PRD ref |
+|---|---|---|
+| §1 (Storefront) | §3.1 Cap 01 | §1, §3.1, AC-01.1–01.6 |
+| §1 (Blog) | §3.1 Cap 02 | §3.2, AC-02.1–02.4 |
+| §1 (CRM) | §3.1 Cap 03 | §3.3, AC-03.1–03.5 |
+| §1 (Telegram) | §3.1 Cap 04 | §3.4, AC-04.1–04.14 |
+| §1 (Monorepo) | §3.1 Cap 05 | §4 Type safety |
+| §2 (Diagram nodes) | §3.1 (all) | §3.x (all) |
+| §3 (Modules) | §3.1, §3.2 | §3.x |
+| §4 (DB) | §3.1, §3.2 | §3.3, AC-03.5 |
+| §5 (Security) | §3.2 | §3.4.5, §4, AC-04.12 / 04.13 / 04.4 |
+
+---
+
+## ChangeLog
+
+### v1.0 → v2.1 (this refactor)
+- **Document re-aligned** with BRD v2.1 and PRD v2.1, the single source of
+  truth. v1.0 references to agentic features removed throughout.
+- **Removed modules (§1, §3):** Vercel AI SDK, Gemini 2.5 Flash, Gemini
+  Embedding 2 + pgvector, Pre-LLM Guardian, n8n async orchestration, payment
+  gateway (Wompi/Stripe).
+- **Diagram (§2) rewritten** as Next.js Storefront ↔ Payload CMS ↔ Next.js
+  Route Handler (Telegram webhook) ↔ Telegram API, plus Daily Digest cron and
+  Supabase Storage. Excalidraw source added at `specs/architecture.excalidraw`;
+  Mermaid kept as portable fallback.
+- **Database (§4) rewritten:** only `products`, `orders`, `posts`, plus
+  internal `users`. Added "Removed tables" subsection documenting
+  `product_embeddings`, `token_usage_logs`, `sessions`, `dispatch_sheets` as
+  intentionally gone.
+- **Security (§5) rewritten:** removed Pre-LLM Guardian and Zod-vs-agent
+  schema guardrails; added Telegram secret token, authorized chat ID,
+  command idempotency, order snapshot immutability.
+- **Cross-reference matrix (§6) added** so reviewers can trace each SDD
+  section back to BRD/PRD.
+- **TOC added.**

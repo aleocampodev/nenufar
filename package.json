@@ -1,49 +1,29 @@
 {
-  "name": "tmp-app",
-  "version": "0.1.0",
+  "name": "nenufar-monorepo",
+  "version": "2.1.0",
   "private": true,
+  "description": "Nénufar — handmade jewelry solopreneur platform (storefront + CRM + Telegram command center). No LLM in runtime.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "dev": "pnpm --filter @nenufar/web dev",
+    "build": "pnpm --filter @nenufar/web build",
+    "start": "pnpm --filter @nenufar/web start",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
     "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9",
+    "lint-staged": "^17"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
       "eslint --fix",
       "bash -c 'tsc --noEmit'"
     ]
-  },
-  "dependencies": {
-    "@ai-sdk/google": "^3.0.80",
-    "@ai-sdk/react": "^3.0.197",
-    "@payloadcms/db-postgres": "^3.85.0",
-    "@payloadcms/next": "^3.85.0",
-    "@payloadcms/richtext-lexical": "^3.85.0",
-    "@supabase/supabase-js": "^2.107.0",
-    "@upstash/redis": "^1.38.0",
-    "ai": "^6.0.195",
-    "drizzle-orm": "^0.45.2",
-    "graphql": "^16.14.1",
-    "next": "16.2.7",
-    "payload": "^3.85.0",
-    "pgvector": "^0.3.0",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "sharp": "^0.34.5"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.7",
-    "husky": "^9.1.7",
-    "lint-staged": "^17.0.7",
-    "tailwindcss": "^4",
-    "typescript": "^5"
   }
 }

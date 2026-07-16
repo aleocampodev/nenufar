@@ -19,7 +19,10 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@nenufar/db": ["../../packages/db/src"],
+      "@nenufar/types": ["../../packages/types/src"],
+      "@nenufar/telegram": ["../../packages/telegram/src"]
     }
   },
   "include": [
