@@ -90,6 +90,70 @@ idempotent (Telegram retries cause no duplicate effects).
 
 ---
 
+## Telegram command center
+
+Shirley's phone is her office. She doesn't open a laptop to run the business —
+she runs it from Telegram. The bot is **her personal operations assistant**,
+not a customer-facing chatbot. Only her chat ID is authorized; everyone else
+gets "No autorizado."
+
+### Why Telegram
+
+| Without the bot | With the bot |
+|---|---|
+| Order lands on WhatsApp → Shirley remembers it | Order registered via `/nuevo` → lives in the system |
+| Payment confirmed mentally → forgotten | `/pagado AX-XXXX` → state transitions, timestamp recorded |
+| Dispatch tracked on a notebook | `/despachado AX-XXXX` → leaves the active queue |
+| "How much did I sell this week?" → manual math | `/pendientes` or 9am digest → answer in < 10s |
+| New product = open laptop, fill a form | Send a photo → draft created, fill details later |
+
+### Commands (deterministic — no AI)
+
+```
+/nuevo               Register an order from WhatsApp/Instagram conversations
+                     Shirley IS the context layer — she types the customer
+                     details, address, items, and total manually.
+
+/pagado AX-XXXX      Confirm payment → order moves to PAID
+/despachado AX-XXXX  Mark dispatched → order moves to DISPATCHED
+/pedido AX-XXXX      Check full order details (customer, items, total, status)
+/pendientes          See all orders still needing payment or dispatch
+/help                 Command reference
+
+📸 Photo             Send a photo → creates a product draft (available=false)
+                     Fill name, price, materials later in /admin
+
+🌼 9am digest        Yesterday's summary: new orders, outstanding payments,
+                     paid, pending dispatch — automatically, every morning
+```
+
+Every command is **idempotent** — `/pagado` on an already-PAID order responds
+"Ya está confirmado ✅" without side effects.
+
+### The agentic future (deferred)
+
+Today, Shirley manually bridges WhatsApp/Instagram → system by typing `/nuevo`.
+She reads the customer's message, extracts the details, and registers the
+order. **She is the context layer.**
+
+This works because her volume is manageable. But if order volume scales,
+`/nuevo` becomes a bottleneck — and that bottleneck is the **signal to move to
+the agentic phase**:
+
+```
+MVP (today)                          Agentic phase (deferred)
+─────────────                        ─────────────────────────
+Shirley types /nuevo manually   →    LLM reads WhatsApp messages
+Shirley answers catalog Qs      →    LLM answers from catalog (RAG)
+Shirley confirms every payment  →    LLM qualifies + proposes checkout
+No LLM in runtime               →    Gemini + pgvector + Vercel AI SDK
+```
+
+The MVP proves the operational backbone works before adding intelligence on top.
+Adding an LLM without this backbone is building a roof without walls.
+
+---
+
 ## Documentation
 
 | Document | Path | Description |
