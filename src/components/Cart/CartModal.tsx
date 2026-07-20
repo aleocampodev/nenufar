@@ -175,8 +175,8 @@ export function CartModal() {
                   )}
 
                   <Button asChild>
-                    <Link className="w-full" href="/checkout">
-                      Proceed to Checkout
+                    <Link className="w-full" href="/pedidos/enviar">
+                      Confirmar pedido
                     </Link>
                   </Button>
                 </div>

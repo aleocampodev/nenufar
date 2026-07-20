@@ -5,7 +5,8 @@ import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { ecommercePlugin } from '@payloadcms/plugin-ecommerce'
 
-import { stripeAdapter } from '@payloadcms/plugin-ecommerce/payments/stripe'
+// Nénufar v3.1: Stripe removed — orders go to Telegram invisibly (constitution §2.1)
+// import { stripeAdapter } from '@payloadcms/plugin-ecommerce/payments/stripe'
 
 import { Page, Product } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -116,13 +117,9 @@ export const plugins: Plugin[] = [
       }),
     },
     payments: {
-      paymentMethods: [
-        stripeAdapter({
-          secretKey: process.env.STRIPE_SECRET_KEY!,
-          publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-          webhookSecret: process.env.STRIPE_WEBHOOKS_SIGNING_SECRET!,
-        }),
-      ],
+      // Nénufar v3.1: no payment gateway — order goes to Telegram, payment is off-system
+      // (Shirley closes via WhatsApp/Nequi per BRD §3.2 and constitution §2.1)
+      paymentMethods: [],
     },
     products: {
       productsCollectionOverride: ProductsCollection,
