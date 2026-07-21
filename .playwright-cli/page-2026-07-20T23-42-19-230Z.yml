@@ -1,0 +1,14 @@
+- generic [ref=f2e2]:
+  - separator [ref=f2e3]
+  - iframe [ref=f2e8]:
+    - generic [ref=f3e2]:
+      - generic [ref=f3e3]:
+        - checkbox "I'm not a robot" [ref=f3e7]
+        - generic [ref=f3e9]: I'm not a robot
+      - generic [ref=f3e12]: reCAPTCHA
+  - separator [ref=f2e9]
+  - generic [ref=f2e10]:
+    - text: About this page Our systems have detected unusual traffic from your computer network. This page checks to see if it's really you sending the requests, and not a robot.
+    - link "Why did this happen?" [ref=f2e11] [cursor=pointer]:
+      - /url: "#"
+    - generic [ref=f2e12]: "IP address: 2800:e2:2380:33c2:b566:5bcf:cc0e:f31aTime: 2026-07-20T23:42:19ZURL: https://www.google.com/search?q=nenufar.co+joyeria+cartagena+instagram&sei=WbJeapT4MaiOwPAPvu606Qk"

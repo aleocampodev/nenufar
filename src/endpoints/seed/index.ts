@@ -520,7 +520,7 @@ export const seed = async ({
           {
             link: {
               type: 'custom',
-              label: 'Shop',
+              label: 'Tienda',
               url: '/shop',
             },
           },

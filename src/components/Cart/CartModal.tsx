@@ -46,15 +46,15 @@ export function CartModal() {
 
       <SheetContent className="flex flex-col">
         <SheetHeader>
-          <SheetTitle>My Cart</SheetTitle>
+          <SheetTitle>Mi Carrito</SheetTitle>
 
-          <SheetDescription>Manage your cart here, add items to view the total.</SheetDescription>
+          <SheetDescription>Administra tu carrito aquí, agrega productos para ver el total.</SheetDescription>
         </SheetHeader>
 
         {!cart || cart?.items?.length === 0 ? (
           <div className="text-center flex flex-col items-center gap-2">
             <ShoppingCart className="h-16" />
-            <p className="text-center text-2xl font-bold">Your cart is empty.</p>
+            <p className="text-center text-2xl font-bold">Tu carrito está vacío.</p>
           </div>
         ) : (
           <div className="grow flex px-4">
@@ -78,12 +78,12 @@ export function CartModal() {
                       : undefined
 
                   let image = firstGalleryImage || metaImage
-                  let price = product.priceInUSD
+                  let price = product.priceInCOP
 
                   const isVariant = Boolean(variant) && typeof variant === 'object'
 
                   if (isVariant) {
-                    price = variant?.priceInUSD
+                    price = variant?.priceInCOP
 
                     const imageVariant = product.gallery?.find((item) => {
                       if (!item.variantOption) return false

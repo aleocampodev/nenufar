@@ -79,12 +79,12 @@ function variantOptionsLines(item: NonNullable<Cart['items']>[number]): string[]
 
 function unitPrice(item: NonNullable<Cart['items']>[number]): number {
   const variant = item?.variant
-  if (typeof variant === 'object' && variant && 'priceInUSD' in variant) {
-    return Number((variant as { priceInUSD?: number | null }).priceInUSD ?? 0)
+  if (typeof variant === 'object' && variant && 'priceInCOP' in variant) {
+    return Number((variant as { priceInCOP?: number | null }).priceInCOP ?? 0)
   }
   const product = item?.product
-  if (typeof product === 'object' && product && 'priceInUSD' in product) {
-    return Number((product as { priceInUSD?: number | null }).priceInUSD ?? 0)
+  if (typeof product === 'object' && product && 'priceInCOP' in product) {
+    return Number((product as { priceInCOP?: number | null }).priceInCOP ?? 0)
   }
   return 0
 }

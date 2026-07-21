@@ -85,6 +85,18 @@ export const plugins: Plugin[] = [
       isAdmin,
       isDocumentOwner,
     },
+    currencies: {
+      defaultCurrency: 'COP',
+      supportedCurrencies: [
+        {
+          code: 'COP',
+          decimals: 0,
+          label: 'Peso Colombiano',
+          symbol: '$',
+          symbolDisplay: 'symbol',
+        },
+      ],
+    },
     customers: {
       slug: 'users',
     },
@@ -117,8 +129,8 @@ export const plugins: Plugin[] = [
       }),
     },
     payments: {
-      // Nénufar v3.1: no payment gateway — order goes to Telegram, payment is off-system
-      // (Shirley closes via WhatsApp/Nequi per BRD §3.2 and constitution §2.1)
+      // Nenúfar v3.1: no payment gateway — order goes to Telegram, payment is off-system
+      // (Shirley closes via Telegram per BRD §3.2 and constitution §2.1)
       paymentMethods: [],
     },
     products: {

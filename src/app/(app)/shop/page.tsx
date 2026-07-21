@@ -5,8 +5,8 @@ import { getPayload } from 'payload'
 import React from 'react'
 
 export const metadata = {
-  description: 'Search for products in the store.',
-  title: 'Shop',
+  description: 'Busca productos en la tienda.',
+  title: 'Tienda',
 }
 
 type SearchParams = { [key: string]: string | string[] | undefined }
@@ -28,7 +28,7 @@ export default async function ShopPage({ searchParams }: Props) {
       slug: true,
       gallery: true,
       categories: true,
-      priceInUSD: true,
+      priceInCOP: true,
     },
     ...(sort ? { sort } : { sort: 'title' }),
     ...(searchValue || category
@@ -73,21 +73,21 @@ export default async function ShopPage({ searchParams }: Props) {
       : {}),
   })
 
-  const resultsText = products.docs.length > 1 ? 'results' : 'result'
+  const resultsText = products.docs.length > 1 ? 'resultados' : 'resultado'
 
   return (
     <div>
       {searchValue ? (
         <p className="mb-4">
           {products.docs?.length === 0
-            ? 'There are no products that match '
-            : `Showing ${products.docs.length} ${resultsText} for `}
+            ? 'No hay productos que coincidan con '
+            : `Mostrando ${products.docs.length} ${resultsText} para `}
           <span className="font-bold">&quot;{searchValue}&quot;</span>
         </p>
       ) : null}
 
       {!searchValue && products.docs?.length === 0 && (
-        <p className="mb-4">No products found. Please try different filters.</p>
+        <p className="mb-4">No se encontraron productos. Por favor intenta con otros filtros.</p>
       )}
 
       {products?.docs.length > 0 ? (

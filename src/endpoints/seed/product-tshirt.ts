@@ -1169,8 +1169,8 @@ export const productTshirtData: (
     gallery: galleryImages,
     title: 'Tshirt',
     slug: 'tshirt',
-    priceInUSDEnabled: true,
-    priceInUSD: 4999,
+    priceInCOPEnabled: true,
+    priceInCOP: 4999,
     relatedProducts: relatedProducts,
   }
 }
@@ -1179,7 +1179,7 @@ type ProductVariantArgs = {
   product: Product
   variantOptions: VariantOption[]
   inventory?: number
-  priceInUSD?: number
+  priceInCOP?: number
 }
 
 export const productTshirtVariant: (
@@ -1188,14 +1188,14 @@ export const productTshirtVariant: (
   product,
   variantOptions,
   inventory = 492,
-  priceInUSD = 4999,
+  priceInCOP = 120000,
 }) => {
   return {
     product: product,
     options: variantOptions,
     inventory,
-    priceInUSDEnabled: true,
-    priceInUSD,
+    priceInCOPEnabled: true,
+    priceInCOP,
     _status: 'published',
   }
 }

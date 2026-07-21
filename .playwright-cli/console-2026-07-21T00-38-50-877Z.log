@@ -1,0 +1,5 @@
+[     469ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:3000/favicon.ico:0
+[     520ms] [LOG] Server sync status: undefined elements @ http://127.0.0.1:3000/assets/index-CJ8IXn8v.js:348
+[     567ms] [LOG] Server sync status: undefined elements @ http://127.0.0.1:3000/assets/index-CJ8IXn8v.js:348
+[    7060ms] [LOG] Received viewport control request {type: set_viewport, requestId: mrtxe3yorq9arg0er3, scrollToContent: true} @ http://127.0.0.1:3000/assets/index-CJ8IXn8v.js:348
+[    7061ms] [LOG] Received viewport control request {type: set_viewport, requestId: mrtxe3yorq9arg0er3, scrollToContent: true} @ http://127.0.0.1:3000/assets/index-CJ8IXn8v.js:348

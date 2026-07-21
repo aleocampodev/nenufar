@@ -43,7 +43,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html
       className={[GeistSans.variable, GeistMono.variable].filter(Boolean).join(' ')}
-      lang="en"
+      lang="es"
       suppressHydrationWarning
     >
       <head>
