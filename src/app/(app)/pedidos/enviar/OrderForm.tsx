@@ -82,6 +82,22 @@ export function OrderForm() {
         </p>
       </div>
 
+      <div>
+        <label htmlFor="note" className="block text-sm font-medium mb-1">
+          Notas del pedido (opcional)
+        </label>
+        <textarea
+          id="note"
+          name="note"
+          rows={3}
+          className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-900"
+          placeholder="Instrucciones especiales, comentarios para Shirley, etc."
+        />
+        <p className="text-xs text-neutral-500 mt-1">
+          Cualquier detalle adicional que Shirley deba saber sobre tu pedido.
+        </p>
+      </div>
+
       <div className="flex items-start gap-3">
         <input
           id="consent"

@@ -97,6 +97,44 @@ export const plugins: Plugin[] = [
         },
       ],
     },
+    carts: {
+      cartsCollectionOverride: ({ defaultCollection }) => ({
+        ...defaultCollection,
+        fields: [
+          ...defaultCollection.fields,
+          {
+            name: 'attributes',
+            type: 'array',
+            label: 'Personalización',
+            fields: [
+              {
+                name: 'key',
+                type: 'text',
+                label: 'Campo',
+                required: true,
+              },
+              {
+                name: 'value',
+                type: 'text',
+                label: 'Valor',
+                required: true,
+              },
+            ],
+            admin: {
+              description: 'Opciones de personalización del pedido (talla, color, grabado, etc.)',
+            },
+          },
+          {
+            name: 'note',
+            type: 'textarea',
+            label: 'Notas del pedido',
+            admin: {
+              description: 'Instrucciones especiales o comentarios para Shirley',
+            },
+          },
+        ],
+      }),
+    },
     customers: {
       slug: 'users',
     },

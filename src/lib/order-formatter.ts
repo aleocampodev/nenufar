@@ -146,8 +146,13 @@ export function formatOrderMessage({
     lines.push('')
   })
 
-  // Cart-level note — Fase 5 will add this to the schema
-  // (left as hook for future: if (cart.note?.trim()) { ... })
+  // Cart-level note — Fase 5 personalization
+  const cartNote = (cart as { note?: string | null }).note?.trim()
+  if (cartNote) {
+    lines.push('<b>📝 Notas del pedido</b>')
+    lines.push(escapeHtml(cartNote))
+    lines.push('')
+  }
 
   // Totals — prefer cart.subtotal, fall back to calculated
   const total = cart.subtotal ?? calculatedSubtotal

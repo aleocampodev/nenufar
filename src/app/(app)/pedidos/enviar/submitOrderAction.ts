@@ -41,6 +41,7 @@ export async function submitOrderAction(
   const buyerContact = String(formData.get('buyerContact') ?? '').trim()
   const consent = formData.get('consent')
   const cartId = String(formData.get('cartId') ?? '').trim()
+  const note = String(formData.get('note') ?? '').trim()
 
   // 2. Basic field validation
   if (!buyerName || buyerName.length < 2) {
@@ -94,6 +95,21 @@ export async function submitOrderAction(
     return {
       status: 'error',
       errorMessage: 'Tu carrito está vacío. Agregá productos antes de enviar el pedido.',
+    }
+  }
+
+  // 5b. Update cart with note (personalization)
+  if (note) {
+    try {
+      await payload.update({
+        collection: 'carts',
+        id: cartId,
+        data: { note },
+        overrideAccess: true,
+      })
+    } catch (err) {
+      payload.logger.error({ msg: '[submitOrder] Failed to update cart note', err, cartId })
+      // Non-fatal — continue without note
     }
   }
 
