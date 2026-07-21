@@ -143,27 +143,28 @@ export async function submitOrderAction(
   }
 
   // 7. Format and send Telegram message
+  const orderId = String(order.id)
   const message = formatOrderMessage({
     cart,
     buyer: { name: buyerName, contact: buyerContact },
-    orderId: order.id,
+    orderId,
   })
 
   const telegramResult = await sendTelegramMessage({ text: message })
   if (!telegramResult.ok) {
     payload.logger.error({
       msg: '[submitOrder] Telegram send failed — Order created but Shirley NOT notified',
-      orderId: order.id,
+      orderId,
       error: telegramResult.error,
     })
     // The Order exists in DB — Shirley can still see it in admin.
     // Tell the buyer it went through (don't leak Telegram internals) but log the issue.
-    markSeen(cartId, order.id)
-    redirect(`/pedidos/enviar/confirmacion?id=${order.id}&warn=1`)
+    markSeen(cartId, orderId)
+    redirect(`/pedidos/enviar/confirmacion?id=${orderId}&warn=1`)
   }
 
   // 8. Mark idempotency (after Telegram succeeds + Order exists)
-  markSeen(cartId, order.id)
+  markSeen(cartId, orderId)
 
   // 9. Mark cart as purchased (optional, for analytics)
   try {
