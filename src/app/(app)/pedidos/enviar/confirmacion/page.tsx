@@ -2,8 +2,8 @@
  * /pedidos/enviar/confirmacion — success page after order submission.
  *
  * Buyer sees this after the server action dispatches the Telegram message.
- * Shows order ID, a reassuring message, and a WhatsApp deep link to ping
- * Shirley directly (optional convenience, not required).
+ * Shows order ID and a reassuring message. Shirley responds by Telegram
+ * (not WhatsApp — per design brief).
  *
  * The page is server-rendered — the order ID comes from the URL search params.
  */
@@ -27,7 +27,7 @@ export default async function ConfirmationPage({ searchParams }: ConfirmationPag
     notFound()
   }
 
-  // Fetch the order to get buyer info for the WhatsApp link
+  // Fetch the order to get buyer info
   const payload = await getPayload({ config: configPromise })
   let buyerName = ''
   let buyerContact = ''
@@ -43,9 +43,6 @@ export default async function ConfirmationPage({ searchParams }: ConfirmationPag
   } catch {
     // If we can't fetch the order, still show confirmation
   }
-
-  const waText = `Hola Shirley, te escribo desde la web por mi pedido #${orderId} 😊`
-  const waLink = `https://wa.me/?text=${encodeURIComponent(waText)}`
 
   const hasWarning = params.warn === '1'
 
@@ -66,6 +63,13 @@ export default async function ConfirmationPage({ searchParams }: ConfirmationPag
           y te va a contactar en las próximas 24 horas.
         </p>
 
+        {buyerContact && !buyerContact.includes('@') && (
+          <p className="text-sm text-neutral-600 mb-6">
+            Shirley te va a escribir por Telegram al número{' '}
+            <span className="font-medium">{buyerContact}</span>.
+          </p>
+        )}
+
         {hasWarning && (
           <div className="mb-6 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm rounded">
             Tu pedido fue registrado pero podría haber un pequeño retraso en la
@@ -74,17 +78,8 @@ export default async function ConfirmationPage({ searchParams }: ConfirmationPag
         )}
 
         <a
-          href={waLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 w-full py-3 px-6 bg-[#25D366] text-white font-medium rounded-md hover:bg-[#1da851] transition mb-3"
-        >
-          <span>Escribirle a Shirley por WhatsApp</span>
-        </a>
-
-        <a
           href="/"
-          className="inline-block text-sm text-neutral-600 hover:text-neutral-900 underline"
+          className="inline-block px-6 py-3 bg-[#6A1B9A] text-white font-medium rounded-md hover:bg-[#4A148C] transition mb-3"
         >
           Volver al inicio
         </a>
