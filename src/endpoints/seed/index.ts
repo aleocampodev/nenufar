@@ -513,22 +513,50 @@ export const seed = async ({
           {
             link: {
               type: 'custom',
-              label: 'Home',
+              label: 'Inicio',
               url: '/',
             },
           },
           {
             link: {
               type: 'custom',
-              label: 'Tienda',
+              label: 'Colecciones',
               url: '/shop',
             },
           },
           {
             link: {
               type: 'custom',
-              label: 'Account',
-              url: '/account',
+              label: 'Joyería',
+              url: '/shop',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Blog',
+              url: '/blog',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Eventos',
+              url: '/eventos',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Sobre Nenúfar',
+              url: '/sobre-nenufar',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Contacto',
+              url: '/contacto',
             },
           },
         ],
@@ -541,31 +569,22 @@ export const seed = async ({
           {
             link: {
               type: 'custom',
-              label: 'Admin',
-              url: '/admin',
+              label: 'Política de privacidad',
+              url: '/privacidad',
             },
           },
           {
             link: {
               type: 'custom',
-              label: 'Find my order',
-              url: '/find-order',
+              label: 'Términos y condiciones',
+              url: '/terminos',
             },
           },
           {
             link: {
               type: 'custom',
-              label: 'Source Code',
-              newTab: true,
-              url: 'https://github.com/payloadcms/payload/tree/main/templates/website',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Payload',
-              newTab: true,
-              url: 'https://payloadcms.com/',
+              label: 'Contacto',
+              url: '/contacto',
             },
           },
         ],
