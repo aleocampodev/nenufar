@@ -7,10 +7,20 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { ensureStartsWith } from '@/utilities/ensureStartsWith'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
-import { GeistSans } from 'geist/font/sans'
+import { Inter, Playfair_Display } from 'next/font/google'
 import { GeistMono } from 'geist/font/mono'
 import React from 'react'
 import './globals.css'
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+})
 
 /* const { SITE_NAME, TWITTER_CREATOR, TWITTER_SITE } = process.env
 const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
@@ -42,7 +52,7 @@ const twitterSite = TWITTER_SITE ? ensureStartsWith(TWITTER_SITE, 'https://') : 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
-      className={[GeistSans.variable, GeistMono.variable].filter(Boolean).join(' ')}
+      className={[inter.variable, playfair.variable, GeistMono.variable].filter(Boolean).join(' ')}
       lang="es"
       suppressHydrationWarning
     >
