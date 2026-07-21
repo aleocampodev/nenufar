@@ -2,7 +2,7 @@
 
 > Seeds the v3.0 specification. Answers **what** and **why** — never **how**.
 > The how (framework, APIs, credentials) lives in `specs/constitution.md`.
-> Formerly known internally as "Agento"; renamed to Nénufar (the brand name)
+> **Nenúfar** (the brand name)
 > because the MVP is deterministic and the old name implied an agentic system
 > that is not built in this iteration.
 

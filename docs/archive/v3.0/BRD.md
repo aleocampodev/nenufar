@@ -173,6 +173,6 @@ tested in this MVP. It is deferred and documented as a maturity ladder.
 - **Persistence removed:** no database; orders live only in the Telegram channel
   (known debt).
 - **Monorepo collapsed:** a single app.
-- **Renamed:** "Agento" → "Nénufar" / `nenufar`.
+- **Renamed:** "Nenúfar" / `nenufar`.
 - **This document de-teched:** capabilities described in business language per
   the BRD standard; framework/API/route detail moved to the TSD.

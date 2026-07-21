@@ -16,7 +16,7 @@ she reads from her phone.
 closes and fulfills manually on WhatsApp, the way she always has — but the buyer
 does the intake work, structured.
 
-> Formerly known internally as **"Agento"**; renamed to **Nénufar** (the brand
+> **Nenúfar** (the brand
 > name) because the MVP is deterministic and the old name implied an agentic
 > system that is deferred (see the maturity ladder in the constitution).
 
@@ -162,6 +162,6 @@ Adding an LLM before this backbone exists is building a roof without walls.
 
 - **v3.0** — Shopify headless pivot. Storefront on Hydrogen + Storefront API;
   buyer assembles the order; Telegram is a one-way channel. No Payload, no DB,
-  no command bot. Renamed "Agento" → "Nénufar". Docs restructured to the
+  no command bot. Renamed to "Nenúfar". Docs restructured to the
   BRD/PRD/SDD/TSD standard.
 - **v2.1** (frozen) — Payload + Next.js + Telegram command center + WhatsApp CTA.

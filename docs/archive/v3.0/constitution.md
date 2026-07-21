@@ -17,7 +17,7 @@
 | **Source of truth** | `docs/BRD.md` v3.0 · `docs/PRD.md` v3.0 |
 | **Tech & data authority** | `docs/TRD.md` v3.0 (§1 stack, §3 data) |
 | **Supersedes** | v2.1 (Payload + Next.js + Telegram command center — frozen) |
-| **Project name** | Nénufar (brand) / `nenufar` (code, ASCII). Formerly "Agento" — renamed (D-3.0-09). |
+| **Project name** | Nenúfar (brand) / `nenufar` (code, ASCII). |
 
 ---
 
@@ -188,7 +188,7 @@ so "deferred" is a real plan, not a hand-wave. Each level has a trigger.
 | **D-3.0-06** | Storefront API public token only — no Admin API in the MVP. | ✅ |
 | **D-3.0-07** | Personalization via Shopify variants (structured) + cart line attributes (free text). | ✅ |
 | **D-3.0-08** | No LLM in runtime. Agentic future documented as a ladder (§5). (Reaffirms v2.1 D-2.1-01.) | ✅ |
-| **D-3.0-09** | Project renamed "Agento" → "Nénufar" (brand) / `nenufar` (code). | ✅ |
+| **D-3.0-09** | Project renamed "Nenúfar" (brand) / `nenufar` (code). | ✅ |
 | **D-3.0-10** | Fresh Hydrogen starter, rebranded. No website-clone / Krafti port. | ✅ |
 | **D-3.0-11** | Doc convention: constitution = guardrails/decisions only; stack & data live in the TSD. | ✅ |
 
@@ -260,5 +260,5 @@ digest, photo-to-draft, immutable snapshot) is archived — it does not apply to
 | Storefront = no cart, `wa.me` CTA | Cart + personalization → Telegram | D-2.1-12 supersede |
 | Orders state machine | None — single one-way flow | §3 |
 | Constitution held stack + data model | Delegated to TSD; constitution = guardrails + ADRs | D-3.0-11 |
-| "Agento" codename | "Nénufar" / `nenufar` | D-3.0-09 |
+| "Nenúfar" / `nenufar` | D-3.0-09 |
 | Agentic = "deferred" (vague) | Documented maturity ladder L0–L4 | §5 |

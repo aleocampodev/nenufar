@@ -1,0 +1,483 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "mcp-excalidraw-server",
+  "elements": [
+    {
+      "id": "title",
+      "type": "text",
+      "x": 200,
+      "y": 30,
+      "width": 600,
+      "height": 35,
+      "strokeColor": "#1e1e1e",
+      "text": "Nenúfar — Arquitectura v3.1",
+      "fontSize": 28,
+      "fontFamily": 1,
+      "createdAt": "2026-07-21T00:38:18.877Z",
+      "updatedAt": "2026-07-21T00:38:18.877Z",
+      "version": 1
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "x": 180,
+      "y": 75,
+      "width": 640,
+      "height": 20,
+      "strokeColor": "#6B7280",
+      "text": "Payload Ecommerce Template · Next.js App Router · Telegram Bot API · Neon Postgres · $0/mes",
+      "fontSize": 14,
+      "fontFamily": 3,
+      "createdAt": "2026-07-21T00:38:18.878Z",
+      "updatedAt": "2026-07-21T00:38:18.878Z",
+      "version": 1
+    },
+    {
+      "id": "tier1-label",
+      "type": "text",
+      "x": 30,
+      "y": 120,
+      "width": 200,
+      "height": 20,
+      "strokeColor": "#6B7280",
+      "text": "▼ FRONTEND",
+      "fontSize": 14,
+      "fontFamily": 3,
+      "createdAt": "2026-07-21T00:38:18.878Z",
+      "updatedAt": "2026-07-21T00:38:18.878Z",
+      "version": 1
+    },
+    {
+      "id": "comprador",
+      "type": "rectangle",
+      "x": 30,
+      "y": 150,
+      "width": 180,
+      "height": 80,
+      "backgroundColor": "#E6F1FB",
+      "strokeColor": "#185FA5",
+      "strokeWidth": 2,
+      "label": {
+        "text": "Comprador\n(browser)"
+      },
+      "fontSize": 16,
+      "fontFamily": 2,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-21T00:38:18.878Z",
+      "updatedAt": "2026-07-21T00:38:18.878Z",
+      "version": 1
+    },
+    {
+      "id": "admin",
+      "type": "rectangle",
+      "x": 30,
+      "y": 260,
+      "width": 180,
+      "height": 70,
+      "backgroundColor": "#F3E5F5",
+      "strokeColor": "#6A1B9A",
+      "strokeWidth": 2,
+      "label": {
+        "text": "Shirley\n(Payload Admin)"
+      },
+      "fontSize": 16,
+      "fontFamily": 2,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-21T00:38:18.878Z",
+      "updatedAt": "2026-07-21T00:38:18.878Z",
+      "version": 1
+    },
+    {
+      "id": "nextjs",
+      "type": "rectangle",
+      "x": 280,
+      "y": 150,
+      "width": 220,
+      "height": 80,
+      "backgroundColor": "#E8F5E9",
+      "strokeColor": "#2E7D32",
+      "strokeWidth": 2,
+      "label": {
+        "text": "Next.js App Router\n/ · /tienda · /blog\n/eventos · /productos"
+      },
+      "fontSize": 14,
+      "fontFamily": 2,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-21T00:38:18.878Z",
+      "updatedAt": "2026-07-21T00:38:18.878Z",
+      "version": 1
+    },
+    {
+      "id": "server-action",
+      "type": "rectangle",
+      "x": 280,
+      "y": 260,
+      "width": 220,
+      "height": 70,
+      "backgroundColor": "#FFF3E0",
+      "strokeColor": "#E65100",
+      "strokeWidth": 2,
+      "label": {
+        "text": "Server Action\nsubmitOrderAction.ts\n(consent → Telegram)"
+      },
+      "fontSize": 14,
+      "fontFamily": 2,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-21T00:38:18.878Z",
+      "updatedAt": "2026-07-21T00:38:18.878Z",
+      "version": 1
+    },
+    {
+      "id": "payload",
+      "type": "rectangle",
+      "x": 570,
+      "y": 150,
+      "width": 220,
+      "height": 80,
+      "backgroundColor": "#FFF6E6",
+      "strokeColor": "#7A2E0F",
+      "strokeWidth": 2,
+      "label": {
+        "text": "Payload CMS 3.86\nplugin-ecommerce\nplugin-seo"
+      },
+      "fontSize": 14,
+      "fontFamily": 2,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-21T00:38:18.878Z",
+      "updatedAt": "2026-07-21T00:38:18.878Z",
+      "version": 1
+    },
+    {
+      "id": "telegram",
+      "type": "rectangle",
+      "x": 570,
+      "y": 260,
+      "width": 220,
+      "height": 70,
+      "backgroundColor": "#E1F5EE",
+      "strokeColor": "#0F6E56",
+      "strokeWidth": 2,
+      "label": {
+        "text": "Telegram Bot API\nsendMessage → Canal\n@nenufarpedidos"
+      },
+      "fontSize": 14,
+      "fontFamily": 2,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-21T00:38:18.879Z",
+      "updatedAt": "2026-07-21T00:38:18.879Z",
+      "version": 1
+    },
+    {
+      "id": "shirley",
+      "type": "rectangle",
+      "x": 860,
+      "y": 260,
+      "width": 180,
+      "height": 70,
+      "backgroundColor": "#FCE4EC",
+      "strokeColor": "#C62828",
+      "strokeWidth": 2,
+      "label": {
+        "text": "Shirley\n(lee y responde\npor Telegram)"
+      },
+      "fontSize": 14,
+      "fontFamily": 2,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-21T00:38:18.879Z",
+      "updatedAt": "2026-07-21T00:38:18.879Z",
+      "version": 1
+    },
+    {
+      "id": "neon",
+      "type": "rectangle",
+      "x": 570,
+      "y": 370,
+      "width": 220,
+      "height": 60,
+      "backgroundColor": "#FFF6E6",
+      "strokeColor": "#7A2E0F",
+      "strokeWidth": 2,
+      "label": {
+        "text": "Neon Postgres\n(products, orders,\nposts, events)"
+      },
+      "fontSize": 14,
+      "fontFamily": 2,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-21T00:38:18.879Z",
+      "updatedAt": "2026-07-21T00:38:18.879Z",
+      "version": 1
+    },
+    {
+      "id": "vercel",
+      "type": "rectangle",
+      "x": 280,
+      "y": 370,
+      "width": 220,
+      "height": 60,
+      "backgroundColor": "#E3F2FD",
+      "strokeColor": "#1565C0",
+      "strokeWidth": 2,
+      "label": {
+        "text": "Vercel (free tier)\nHosting + ISR + SSR"
+      },
+      "fontSize": 14,
+      "fontFamily": 2,
+      "fillStyle": "solid",
+      "createdAt": "2026-07-21T00:38:18.879Z",
+      "updatedAt": "2026-07-21T00:38:18.879Z",
+      "version": 1
+    },
+    {
+      "id": "ar-comp-next",
+      "type": "arrow",
+      "x": 218,
+      "y": 190,
+      "strokeColor": "#1e1e1e",
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          54,
+          0
+        ]
+      ],
+      "start": {
+        "id": "comprador"
+      },
+      "end": {
+        "id": "nextjs"
+      },
+      "createdAt": "2026-07-21T00:38:31.658Z",
+      "updatedAt": "2026-07-21T00:38:31.658Z",
+      "version": 1
+    },
+    {
+      "id": "ar-admin-payload",
+      "type": "arrow",
+      "x": 217.86297749547458,
+      "y": 276.6506917195985,
+      "strokeColor": "#6A1B9A",
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          344.2740450090509,
+          -64.55138343919702
+        ]
+      ],
+      "start": {
+        "id": "admin"
+      },
+      "end": {
+        "id": "payload"
+      },
+      "createdAt": "2026-07-21T00:38:31.658Z",
+      "updatedAt": "2026-07-21T00:38:31.658Z",
+      "version": 1
+    },
+    {
+      "id": "ar-next-payload",
+      "type": "arrow",
+      "x": 508,
+      "y": 190,
+      "strokeColor": "#1e1e1e",
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          54,
+          0
+        ]
+      ],
+      "start": {
+        "id": "nextjs"
+      },
+      "end": {
+        "id": "payload"
+      },
+      "createdAt": "2026-07-21T00:38:31.658Z",
+      "updatedAt": "2026-07-21T00:38:31.658Z",
+      "version": 1
+    },
+    {
+      "id": "ar-next-action",
+      "type": "arrow",
+      "x": 390,
+      "y": 238,
+      "strokeColor": "#E65100",
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          14
+        ]
+      ],
+      "start": {
+        "id": "nextjs"
+      },
+      "end": {
+        "id": "server-action"
+      },
+      "createdAt": "2026-07-21T00:38:31.658Z",
+      "updatedAt": "2026-07-21T00:38:31.658Z",
+      "version": 1
+    },
+    {
+      "id": "ar-action-tg",
+      "type": "arrow",
+      "x": 508,
+      "y": 295,
+      "strokeColor": "#0F6E56",
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          54,
+          0
+        ]
+      ],
+      "start": {
+        "id": "server-action"
+      },
+      "end": {
+        "id": "telegram"
+      },
+      "createdAt": "2026-07-21T00:38:31.658Z",
+      "updatedAt": "2026-07-21T00:38:31.658Z",
+      "version": 1
+    },
+    {
+      "id": "ar-tg-shirley",
+      "type": "arrow",
+      "x": 798,
+      "y": 295,
+      "strokeColor": "#C62828",
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          54,
+          0
+        ]
+      ],
+      "start": {
+        "id": "telegram"
+      },
+      "end": {
+        "id": "shirley"
+      },
+      "createdAt": "2026-07-21T00:38:31.659Z",
+      "updatedAt": "2026-07-21T00:38:31.659Z",
+      "version": 1
+    },
+    {
+      "id": "ar-payload-neon",
+      "type": "arrow",
+      "x": 680,
+      "y": 238,
+      "strokeColor": "#7A2E0F",
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          124
+        ]
+      ],
+      "start": {
+        "id": "payload"
+      },
+      "end": {
+        "id": "neon"
+      },
+      "createdAt": "2026-07-21T00:38:31.659Z",
+      "updatedAt": "2026-07-21T00:38:31.659Z",
+      "version": 1
+    },
+    {
+      "id": "ar-next-vercel",
+      "type": "arrow",
+      "x": 390,
+      "y": 238,
+      "strokeColor": "#1565C0",
+      "strokeWidth": 2,
+      "strokeStyle": "dashed",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          124
+        ]
+      ],
+      "start": {
+        "id": "nextjs"
+      },
+      "end": {
+        "id": "vercel"
+      },
+      "createdAt": "2026-07-21T00:38:31.659Z",
+      "updatedAt": "2026-07-21T00:38:31.659Z",
+      "version": 1
+    },
+    {
+      "id": "legend",
+      "type": "text",
+      "x": 30,
+      "y": 460,
+      "width": 700,
+      "height": 15,
+      "strokeColor": "#6B7280",
+      "text": "Leyenda: azul=comprador · verde=Next.js · naranja=server action · crema=Payload · verde oscuro=Telegram · rojo=Shirley · morado=admin",
+      "fontSize": 12,
+      "fontFamily": 3,
+      "createdAt": "2026-07-21T00:38:31.659Z",
+      "updatedAt": "2026-07-21T00:38:31.659Z",
+      "version": 1
+    },
+    {
+      "id": "flow-label",
+      "type": "text",
+      "x": 30,
+      "y": 490,
+      "width": 900,
+      "height": 40,
+      "strokeColor": "#222222",
+      "text": "Flujo: Comprador navega → agrega al carrito → \"Confirmar pedido\" → Server Action valida consento → crea Order en DB → formatea mensaje → envía a Telegram → Shirley lee y responde por Telegram",
+      "fontSize": 13,
+      "fontFamily": 3,
+      "createdAt": "2026-07-21T00:38:31.659Z",
+      "updatedAt": "2026-07-21T00:38:31.659Z",
+      "version": 1
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": null
+  }
+}
