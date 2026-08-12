@@ -16,49 +16,55 @@ export async function Footer() {
   const copyrightDate = 2023 + (currentYear > 2023 ? `-${currentYear}` : '')
   const skeleton = 'w-full h-6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700'
 
-  const copyrightName = COMPANY_NAME || SITE_NAME || ''
+  const copyrightName = COMPANY_NAME || SITE_NAME || 'Nénufar'
 
   return (
-    <footer className="text-sm text-neutral-500 dark:text-neutral-400">
+    <footer className="border-t border-border bg-card/50 mt-auto">
       <div className="container">
-        <div className="flex w-full flex-col gap-6 border-t border-neutral-200 py-12 text-sm md:flex-row md:gap-12 dark:border-neutral-700">
-          <div>
-            <Link className="flex items-center gap-2 text-black md:pt-1 dark:text-white" href="/">
-              <LogoIcon className="w-6" />
-              <span className="sr-only">{SITE_NAME}</span>
+        <div className="flex flex-col gap-8 py-16 md:flex-row md:gap-12">
+          {/* Brand Section */}
+          <div className="flex flex-col gap-4 md:w-1/3">
+            <Link className="flex items-center gap-3 hover:opacity-80 transition-opacity" href="/">
+              <LogoIcon className="w-8 h-8 text-primary" />
+              <span className="font-serif text-2xl text-foreground">Nénufar</span>
             </Link>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              Joyería hecha a mano en Colombia. Cada pieza cuenta una historia.
+            </p>
           </div>
-          <Suspense
-            fallback={
-              <div className="flex h-[188px] w-[200px] flex-col gap-2">
-                <div className={skeleton} />
-                <div className={skeleton} />
-                <div className={skeleton} />
+
+          {/* Navigation */}
+          <div className="flex-1">
+            <Suspense fallback={
+              <div className="flex h-[120px] w-[200px] flex-col gap-2">
                 <div className={skeleton} />
                 <div className={skeleton} />
                 <div className={skeleton} />
               </div>
-            }
-          >
-            <FooterMenu menu={menu} />
-          </Suspense>
-          <div className="md:ml-auto flex flex-col gap-4 items-end">
+            }>
+              <FooterMenu menu={menu} />
+            </Suspense>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-col gap-4 items-start md:items-end">
             <ThemeSelector />
           </div>
         </div>
       </div>
-      <div className="border-t border-neutral-200 py-6 text-sm dark:border-neutral-700">
-        <div className="container mx-auto flex w-full flex-col items-center gap-1 md:flex-row md:gap-0">
-          <p>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-border py-6 bg-background">
+        <div className="container flex flex-col items-center gap-4 md:flex-row md:gap-0">
+          <p className="text-sm text-muted-foreground">
             &copy; {copyrightDate} {copyrightName}
-            {copyrightName.length && !copyrightName.endsWith('.') ? '.' : ''} All rights reserved.
+            {copyrightName.length && !copyrightName.endsWith('.') ? '.' : ''}
           </p>
-          <hr className="mx-4 hidden h-4 w-px border-l border-neutral-400 md:inline-block" />
-          <p>Designed in Michigan</p>
-          <p className="md:ml-auto">
-            <a className="text-black dark:text-white" href="https://payloadcms.com">
-              Crafted by Payload
-            </a>
+
+          <div className="hidden md:block mx-auto h-px w-16 bg-border/50" />
+
+          <p className="text-sm text-muted-foreground">
+            Hecho con <span className="text-accent">❤</span> en Colombia
           </p>
         </div>
       </div>

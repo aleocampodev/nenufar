@@ -12,6 +12,10 @@ import { cssVariables } from '@/cssVariables'
 
 const { breakpoints } = cssVariables
 
+const payloadLoader = ({ src }: { src: string; width: number; quality?: number }) => {
+  return src
+}
+
 export const Image: React.FC<MediaProps> = (props) => {
   const {
     alt: altFromProps,
@@ -47,9 +51,7 @@ export const Image: React.FC<MediaProps> = (props) => {
     height = heightFromProps ?? fullHeight
     alt = altFromResource
 
-    const filename = fullFilename
-
-    src = `${process.env.NEXT_PUBLIC_SERVER_URL}${url}`
+    src = url || ''
   }
 
   // NOTE: this is used by the browser to determine which image to download at different screen sizes
@@ -65,6 +67,7 @@ export const Image: React.FC<MediaProps> = (props) => {
       className={cn(imgClassName)}
       fill={fill}
       height={!fill ? height || heightFromProps : undefined}
+      loader={payloadLoader}
       onClick={onClick}
       onLoad={() => {
         setIsLoading(false)
@@ -76,6 +79,7 @@ export const Image: React.FC<MediaProps> = (props) => {
       quality={90}
       sizes={sizes}
       src={src}
+      unoptimized
       width={!fill ? width || widthFromProps : undefined}
     />
   )

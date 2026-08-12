@@ -135,11 +135,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } catch (e) {
         setUser(null)
-        throw new Error('An error occurred while fetching your account.')
+        // Silently fail instead of throwing
+        console.debug('Auth fetch failed:', e)
       }
     }
 
-    void fetchMe()
+    fetchMe()
   }, [])
 
   const forgotPassword = useCallback<ForgotPassword>(async (args) => {

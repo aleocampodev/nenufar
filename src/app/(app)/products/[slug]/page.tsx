@@ -13,6 +13,7 @@ import React, { Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import { ChevronLeftIcon } from 'lucide-react'
 import { Metadata } from 'next'
+import Script from 'next/script'
 
 type Args = {
   params: Promise<{
@@ -111,11 +112,12 @@ export default async function ProductPage({ params }: Args) {
 
   return (
     <React.Fragment>
-      <script
+      <Script
+        id="product-jsonld"
+        type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(productJsonLd),
         }}
-        type="application/ld+json"
       />
       <div className="container pt-8 pb-8">
         <Button asChild variant="ghost" className="mb-4">

@@ -23,6 +23,7 @@ export default async function ShopPage({ searchParams }: Props) {
     collection: 'products',
     draft: false,
     overrideAccess: false,
+    depth: 2,
     select: {
       title: true,
       slug: true,
@@ -76,24 +77,45 @@ export default async function ShopPage({ searchParams }: Props) {
   const resultsText = products.docs.length > 1 ? 'resultados' : 'resultado'
 
   return (
-    <div>
+    <div className="container py-12">
       {searchValue ? (
-        <p className="mb-4">
+        <p className="mb-8 font-serif text-lg text-muted-foreground">
           {products.docs?.length === 0
             ? 'No hay productos que coincidan con '
             : `Mostrando ${products.docs.length} ${resultsText} para `}
-          <span className="font-bold">&quot;{searchValue}&quot;</span>
+          <span className="text-foreground">&quot;{searchValue}&quot;</span>
         </p>
       ) : null}
 
       {!searchValue && products.docs?.length === 0 && (
-        <p className="mb-4">No se encontraron productos. Por favor intenta con otros filtros.</p>
+        <div className="text-center py-16">
+          <div className="text-6xl mb-4 opacity-30">✦</div>
+          <p className="font-serif text-xl text-muted-foreground">
+            No se encontraron productos.
+          </p>
+          <p className="text-sm text-muted-foreground/70 mt-2">
+            Por favor intenta con otros filtros.
+          </p>
+        </div>
       )}
 
       {products?.docs.length > 0 ? (
-        <Grid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.docs.map((product) => {
-            return <ProductGridItem key={product.id} product={product} />
+        <Grid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {products.docs.map((product, index) => {
+            return (
+              <div
+                key={product.id}
+                className="opacity-0 animate-in"
+                style={{
+                  animationName: 'fadeInUp',
+                  animationDuration: '0.6s',
+                  animationDelay: `${index * 0.1}s`,
+                  animationFillMode: 'forwards',
+                }}
+              >
+                <ProductGridItem product={product} />
+              </div>
+            )
           })}
         </Grid>
       ) : null}

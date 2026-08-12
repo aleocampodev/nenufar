@@ -14,6 +14,7 @@ import {
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
+import { es } from '@payloadcms/translations/languages/es'
 
 import { Categories } from '@/collections/Categories'
 import { Media } from '@/collections/Media'
@@ -43,7 +44,11 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
+      max: 15,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000,
     },
+    push: true,
   }),
   editor: lexicalEditor({
     features: () => {
@@ -83,6 +88,10 @@ export default buildConfig({
   //email: nodemailerAdapter(),
   endpoints: [],
   globals: [Header, Footer],
+  i18n: {
+    supportedLanguages: { es },
+    fallbackLanguage: 'es',
+  },
   plugins,
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

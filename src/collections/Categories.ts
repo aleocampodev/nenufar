@@ -12,7 +12,7 @@ export const Categories: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    group: 'Content',
+    group: 'Contenido',
   },
   fields: [
     {

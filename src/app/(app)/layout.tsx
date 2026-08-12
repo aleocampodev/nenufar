@@ -70,6 +70,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <main>{children}</main>
           <Footer />
         </Providers>
+
+        <link href="/(app)/animations.css" rel="stylesheet" />
       </body>
     </html>
   )

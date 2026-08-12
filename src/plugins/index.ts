@@ -43,7 +43,7 @@ export const plugins: Plugin[] = [
         update: isAdmin,
       },
       admin: {
-        group: 'Content',
+        group: 'Contenido',
       },
     },
     formOverrides: {
@@ -54,7 +54,7 @@ export const plugins: Plugin[] = [
         create: isAdmin,
       },
       admin: {
-        group: 'Content',
+        group: 'Contenido',
       },
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
@@ -100,6 +100,10 @@ export const plugins: Plugin[] = [
     carts: {
       cartsCollectionOverride: ({ defaultCollection }) => ({
         ...defaultCollection,
+        admin: {
+          ...defaultCollection.admin,
+          group: 'Comercio',
+        },
         fields: [
           ...defaultCollection.fields,
           {
@@ -141,6 +145,10 @@ export const plugins: Plugin[] = [
     orders: {
       ordersCollectionOverride: ({ defaultCollection }) => ({
         ...defaultCollection,
+        admin: {
+          ...defaultCollection.admin,
+          group: 'Comercio',
+        },
         fields: [
           ...defaultCollection.fields,
           {
@@ -171,8 +179,26 @@ export const plugins: Plugin[] = [
       // (Shirley closes via Telegram per BRD §3.2 and constitution §2.1)
       paymentMethods: [],
     },
+    transactions: {
+      transactionsCollectionOverride: ({ defaultCollection }) => ({
+        ...defaultCollection,
+        admin: {
+          ...defaultCollection.admin,
+          group: 'Comercio',
+        },
+      }),
+    },
     products: {
-      productsCollectionOverride: ProductsCollection,
+      productsCollectionOverride: ({ defaultCollection }) => {
+        const overridden = ProductsCollection({ defaultCollection })
+        return {
+          ...overridden,
+          admin: {
+            ...overridden.admin,
+            group: 'Comercio',
+          },
+        }
+      },
     },
   }),
 ]

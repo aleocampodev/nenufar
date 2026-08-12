@@ -6,6 +6,15 @@ import clsx from 'clsx'
 import { Media } from '@/components/Media'
 import { Price } from '@/components/Price'
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '')
+}
+
 type Props = {
   product: Partial<Product>
 }
@@ -32,27 +41,41 @@ export const ProductGridItem: React.FC<Props> = ({ product }) => {
   const image =
     gallery?.[0]?.image && typeof gallery[0]?.image !== 'string' ? gallery[0]?.image : false
 
+  const productSlug = product.slug || (title ? slugify(title) : String(product.id))
+
   return (
-    <Link className="relative inline-block h-full w-full group" href={`/products/${product.slug}`}>
-      {image ? (
-        <Media
-          className={clsx(
-            'relative aspect-square object-cover border rounded-2xl p-8 bg-primary-foreground',
-          )}
-          height={80}
-          imgClassName={clsx('h-full w-full object-cover rounded-2xl', {
-            'transition duration-300 ease-in-out group-hover:scale-102': true,
-          })}
-          resource={image}
-          width={80}
-        />
-      ) : null}
+    <Link
+      className="relative inline-block h-full w-full group"
+      href={`/products/${productSlug}`}
+    >
+      {/* Image Container with better hover */}
+      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-card border border-border/50">
+        {image ? (
+          <Media
+            className="h-full w-full object-cover transition-all duration-500 ease-out group-hover:scale-105 group-hover:brightness-95"
+            resource={image}
+            priority={false}
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-muted/30">
+            <span className="text-muted-foreground/50 text-6xl">✦</span>
+          </div>
+        )}
 
-      <div className="font-mono text-primary/50 group-hover:text-primary flex justify-between items-center mt-4">
-        <div>{title}</div>
+        {/* Hover overlay with subtle gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+      </div>
 
+      {/* Product Info */}
+      <div className="mt-5 flex flex-col gap-2">
+        {/* Title - Serif for elegance */}
+        <div className="font-serif text-lg leading-tight text-foreground group-hover:text-primary transition-colors duration-300">
+          {title}
+        </div>
+
+        {/* Price - Mono for technical feel */}
         {typeof price === 'number' && (
-          <div className="">
+          <div className="font-mono text-sm text-muted-foreground">
             <Price amount={price} />
           </div>
         )}
