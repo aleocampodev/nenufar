@@ -171,8 +171,10 @@ src/
 
 | Document | Description |
 |----------|-------------|
-| [`docs/BRD.md`](docs/BRD.md) | Business requirements — what Shirley needs |
-| [`docs/PRD.md`](docs/PRD.md) | Product requirements with acceptance criteria |
+| [`docs/BRD.md`](docs/BRD.md) | Business requirements — goals, KPIs, scope |
+| [`docs/PRD.md`](docs/PRD.md) | Product requirements — user stories, acceptance criteria |
+| [`docs/SDD.md`](docs/SDD.md) | Software design — architecture, modules, data flow |
+| [`docs/TSD.md`](docs/TSD.md) | Technical spec — stack, data models, API, deployment |
 | [`CLAUDE.md`](CLAUDE.md) | Technical context for AI-assisted development |
 
 ## Design Decisions
