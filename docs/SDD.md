@@ -70,14 +70,59 @@ Nénufar is a **monolithic full-stack application** running Next.js and Payload 
 | `Header` (global) | Navigation links |
 | `Footer` (global) | Footer links |
 
-### 2.3 Order Flow (`src/app/(app)/pedidos/`)
+### 2.3 Telegram Bots — Two-Bot Strategy
+
+The system uses **two separate Telegram bots** with distinct responsibilities:
+
+| Bot | Username | Audience | Direction |
+|-----|----------|----------|-----------|
+| **Pedidos** | `@NenufarPedidosBot` | Shirley (reads) | One-way: system → Shirley |
+| **Admin** | `@NenufarAdminBot` | Shirley (writes) | Two-way: Shirley ↔ system |
+
+#### @NenufarPedidosBot — Order Inbox
+
+Shirley's inbox for new orders. Every time a buyer submits their cart, the full order arrives here as a structured message:
+
+```
+🌸 Nuevo Pedido #1042
+
+👤 María García
+📱 +57 300 123 4567
+
+🛒 Items:
+  • Anillo Esmeralda × 1 — $485.000
+    ↳ Talla 7 / Plata
+    ↳ Nota: Con grabado "MG"
+  • Aretes Coral × 2 — $290.000
+    ↳ Sin variante
+
+💰 Total: $775.000 COP
+📝 Nota general: Para regalo, incluir tarjeta
+```
+
+Shirley reads the message, sees exactly what the buyer wants including all cart items, variants, and personalization notes, then **contacts the buyer directly on WhatsApp** using the number in the message. No reply needed in Telegram — it's a read-only inbox.
+
+#### @NenufarAdminBot — Management Tool
+
+Shirley's private tool for managing the store from her phone. Two-way: she sends commands and the bot responds.
+
+| Action | How | Result |
+|--------|-----|--------|
+| Upload photo | Send as **file** (not photo) | Saved to Payload Media with WebP variants |
+| Create product | File → name → price | Draft product created in Payload |
+| View pending orders | `/pendientes` | List of unconfirmed orders |
+| Mark order confirmed | `/confirmar 1042` | Order status → `confirmed` in Payload |
+
+Security: the webhook only accepts messages from Shirley's personal `chatId` — any other sender is silently ignored.
+
+### 2.4 Order Flow (`src/app/(app)/pedidos/`)
 
 ```
 OrderForm.tsx (client component)
   → submitOrderAction.ts (server action)
       → idempotency.ts (in-memory dedup by cartHash+email)
       → payload.create('orders', {...}) 
-      → telegram.ts → order-formatter.ts → Telegram Bot API
+      → telegram.ts → order-formatter.ts → @NenufarPedidosBot
   → redirect to /pedidos/enviar/confirmacion
 ```
 
