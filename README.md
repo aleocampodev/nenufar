@@ -1,10 +1,10 @@
-# 🌸 Nénufar — Joyería Artesanal Colombiana
+# 🌸 Nénufar — Handcrafted Jewelry from Colombia
 
 <div align="center">
 
-*Cada pieza cuenta una historia. Hecha a mano en Cartagena.*
+*Every piece tells a story. Handmade in Cartagena.*
 
-[![Estado](https://img.shields.io/badge/estado-en%20desarrollo-yellow?style=flat-square)](https://github.com/aleocampodev/nenufar)
+[![Status](https://img.shields.io/badge/status-in%20development-yellow?style=flat-square)](https://github.com/aleocampodev/nenufar)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org)
 [![Payload CMS](https://img.shields.io/badge/Payload-v3-7C3AED?style=flat-square)](https://payloadcms.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
@@ -14,178 +14,183 @@
 
 ---
 
-## ¿Qué es Nénufar?
+## What is Nénufar?
 
-Nénufar es la tienda online de Shirley, artesana de joyería en Cartagena, Colombia. Esta plataforma le permite mostrar su catálogo de piezas únicas hechas a mano — anillos, aretes, collares — y recibir pedidos directamente en su Telegram, sin depender de pasarelas de pago, sin comisiones, sin intermediarios.
+Nénufar is the online store for Shirley, an artisan jeweler based in Cartagena, Colombia. The platform lets her showcase her catalog of handmade pieces — rings, earrings, necklaces — and receive orders directly on Telegram, without payment gateways, without commissions, without middlemen.
 
-**El flujo es simple a propósito:** el comprador elige sus piezas, agrega notas de personalización (grabado, talla, instrucciones), llena sus datos de contacto — y Shirley recibe todo organizado en Telegram. Ella cierra la venta por WhatsApp, como siempre lo ha hecho. La plataforma no reemplaza su forma de trabajar; la potencia.
+**The flow is intentionally simple:** buyers browse the catalog, pick their pieces, add personalization notes (engraving, size, special instructions), and fill in their contact details. Shirley receives a structured order summary on Telegram and closes the sale over WhatsApp — exactly the way she's always worked. The platform doesn't replace her workflow; it amplifies it.
 
-## Cómo funciona un pedido
+## How an Order Works
 
 ```
-Catálogo → Producto → Carrito → Formulario → Telegram de Shirley → WhatsApp
+Catalog → Product → Cart → Order Form → Shirley's Telegram → WhatsApp
 ```
 
-| # | Quién | Qué pasa |
-|---|-------|----------|
-| 1 | Comprador | Explora el catálogo, elige variantes (material, talla) |
-| 2 | Comprador | Agrega notas de personalización al carrito |
-| 3 | Comprador | Llena nombre + WhatsApp o email, acepta política de datos (Ley 1581) |
-| 4 | Sistema | Guarda el pedido en Payload + envía resumen a Telegram |
-| 5 | Shirley | Recibe el pedido, confirma precio y coordina envío por WhatsApp |
+| Step | Who | What happens |
+|------|-----|--------------|
+| 1 | Buyer | Browses catalog, selects variants (material, size) |
+| 2 | Buyer | Adds personalization notes to the cart |
+| 3 | Buyer | Fills in name + WhatsApp/email, accepts data policy (Law 1581) |
+| 4 | System | Saves the order in Payload + sends a formatted message to Telegram |
+| 5 | Shirley | Receives the order, confirms price, and coordinates shipping via WhatsApp |
 
-Sin pasarela. Sin checkout complejo. Sin fricción.
+No gateway. No complex checkout. No friction.
 
 ## Tech Stack
 
-| Capa | Tecnología |
-|------|-----------|
+| Layer | Technology |
+|-------|------------|
 | Framework | [Next.js 15](https://nextjs.org) App Router + TypeScript |
 | CMS & API | [Payload CMS v3](https://payloadcms.com) |
-| Base de datos | PostgreSQL 16 |
+| Database | PostgreSQL 16 |
 | UI | TailwindCSS v4 + [shadcn/ui](https://ui.shadcn.com) |
-| Tipografía | Playfair Display · Inter · Geist Mono |
-| Imágenes | Sharp — WebP automático calidad 92, original intacto |
-| Notificaciones | Telegram Bot API (mensajes de pedidos a Shirley) |
-| Ecommerce | `@payloadcms/plugin-ecommerce` (adaptado sin Stripe) |
+| Typography | Playfair Display · Inter · Geist Mono |
+| Images | Sharp — automatic WebP at quality 92, original preserved |
+| Notifications | Telegram Bot API (one-way order delivery to Shirley) |
+| E-commerce | `@payloadcms/plugin-ecommerce` (adapted — no Stripe) |
 
-## Setup local
+## Local Setup
 
-### Requisitos
+### Requirements
 
 - Node.js 20+
 - pnpm 9+
-- Docker (para PostgreSQL)
+- Docker (for PostgreSQL)
 
-### Instrucciones
+### Steps
 
 ```bash
-# 1. Clonar el repo
+# 1. Clone the repo
 git clone https://github.com/aleocampodev/nenufar.git
 cd nenufar
 
-# 2. Configurar variables de entorno
+# 2. Set up environment variables
 cp .env.example .env
-# Editar .env con tus valores
+# Fill in your values (see table below)
 
-# 3. Levantar la base de datos
+# 3. Start the database
 docker-compose up -d
 
-# 4. Instalar dependencias
+# 4. Install dependencies
 pnpm install
 
-# 5. Arrancar el servidor de desarrollo
+# 5. Start the dev server
 pnpm dev
 ```
 
 **Frontend** → http://localhost:3002  
 **Admin** → http://localhost:3002/admin
 
-> En el admin, ir a Dashboard → **"Seed database"** para cargar productos y páginas de ejemplo.
+> In the admin, go to Dashboard → **"Seed database"** to load sample products and pages.
 
-### Variables de entorno
+### Environment Variables
 
 ```env
 # Payload
-PAYLOAD_SECRET=string-largo-aleatorio-min-32-chars
+PAYLOAD_SECRET=long-random-string-min-32-chars
 DATABASE_URL=postgres://postgres:postgres@localhost:5433/nenufar
 
-# URL pública
+# Public URL
 NEXT_PUBLIC_SERVER_URL=http://localhost:3002
 
-# Telegram (pedidos llegan aquí)
-TELEGRAM_BOT_TOKEN=       # Crear con @BotFather en Telegram
-TELEGRAM_CHANNEL_ID=      # ID del chat de Shirley
+# Telegram (orders are delivered here)
+TELEGRAM_BOT_TOKEN=       # Create with @BotFather on Telegram
+TELEGRAM_CHANNEL_ID=      # Shirley's chat ID
 
 # Draft preview
-PREVIEW_SECRET=otro-string-aleatorio
+PREVIEW_SECRET=another-random-string
 ```
 
-## Comandos
+## Commands
 
 ```bash
 pnpm dev                  # Dev server → localhost:3002
-pnpm build                # Build de producción
-pnpm start                # Servidor en producción
-pnpm payload migrate      # Migraciones de DB (producción)
-pnpm generate:types       # Regenerar tipos desde Payload
+pnpm build                # Production build
+pnpm start                # Production server
+pnpm payload migrate      # Run DB migrations (production)
+pnpm generate:types       # Regenerate Payload types
 ```
 
-## Páginas del sitio
+## Site Routes
 
-| Ruta | Descripción |
-|------|-------------|
-| `/` | Home con hero y bloques CMS |
-| `/shop` | Catálogo con búsqueda y filtros |
-| `/products/[slug]` | Detalle de producto con variantes |
-| `/blog` | Blog de Shirley |
-| `/blog/[slug]` | Artículo con rich text y fotos |
-| `/eventos` | Próximas ferias y eventos |
-| `/pedidos/enviar` | Formulario de pedido |
-| `/pedidos/enviar/confirmacion` | Confirmación post-pedido |
-| `/sobre-nenufar` | Historia de la marca |
-| `/contacto` | Información de contacto |
-| `/privacidad` | Política de privacidad (Ley 1581/2012) |
-| `/terminos` | Términos y condiciones |
-| `/(account)/` | Cuenta del usuario, pedidos, direcciones |
-| `/admin` | Panel de administración (Payload CMS) |
+| Route | Description |
+|-------|-------------|
+| `/` | Home with hero and CMS page builder blocks |
+| `/shop` | Product catalog with search and filters |
+| `/products/[slug]` | Product detail with variants |
+| `/blog` | Shirley's blog |
+| `/blog/[slug]` | Article with Lexical rich text and photos |
+| `/eventos` | Upcoming fairs and events |
+| `/pedidos/enviar` | Order confirmation form |
+| `/pedidos/enviar/confirmacion` | Post-order success screen |
+| `/sobre-nenufar` | Brand story |
+| `/contacto` | Contact information |
+| `/privacidad` | Privacy policy (Colombian Law 1581/2012) |
+| `/terminos` | Terms and conditions |
+| `/(account)/` | User account, orders, addresses |
+| `/admin` | Payload CMS admin panel |
 
-## Imágenes
+## Image Pipeline
 
-Al subir una foto al admin, Payload genera automáticamente variantes en WebP (calidad 92) **sin tocar el original**:
+When a photo is uploaded to the admin, Payload automatically generates WebP variants (quality 92) **without modifying the original**:
 
-| Variante | Dimensiones | Uso |
-|----------|-------------|-----|
-| `thumbnail` | 400 × 500 | Carrito, miniaturas |
-| `card` | 800 × 1000 | Grilla de productos |
-| `hero` | 1920 × 1080 | Fondos de páginas |
-| `og` | 1200 × 630 | Redes sociales y SEO |
+| Variant | Dimensions | Usage |
+|---------|------------|-------|
+| `thumbnail` | 400 × 500 | Cart, thumbnails |
+| `card` | 800 × 1000 | Product grid |
+| `hero` | 1920 × 1080 | Page backgrounds |
+| `og` | 1200 × 630 | Social media / SEO |
 
-## Estructura del proyecto
+## Project Structure
 
 ```
 src/
 ├── app/
-│   ├── (app)/              # Frontend público (Next.js App Router)
-│   │   ├── shop/           # Catálogo de joyas
-│   │   ├── products/       # Detalle de producto
+│   ├── (app)/              # Public frontend (Next.js App Router)
+│   │   ├── shop/           # Product catalog
+│   │   ├── products/       # Product detail
 │   │   ├── blog/           # Blog
-│   │   ├── eventos/        # Eventos y ferias
-│   │   ├── pedidos/        # Flujo de pedido → Telegram
-│   │   └── (account)/      # Cuenta del usuario
-│   └── (payload)/          # Admin de Payload
+│   │   ├── eventos/        # Events and fairs
+│   │   ├── pedidos/        # Order flow → Telegram
+│   │   └── (account)/      # User account
+│   └── (payload)/          # Payload admin
 ├── collections/
-│   ├── Events.ts           # Eventos y ferias de Shirley
-│   ├── Media.ts            # Imágenes con WebP automático
-│   ├── Posts.ts            # Blog
-│   └── Products/           # Catálogo de joyas
+│   ├── Events.ts           # Events and fairs
+│   ├── Media.ts            # Media with automatic WebP
+│   ├── Posts.ts            # Blog posts
+│   └── Products/           # Jewelry catalog
 ├── blocks/
-│   └── UpcomingEvents/     # Bloque de próximos eventos (home)
+│   └── UpcomingEvents/     # Upcoming events block (home page)
 └── lib/
-    ├── telegram.ts         # Envío de pedidos a Telegram
-    ├── order-formatter.ts  # Formato del mensaje HTML
-    └── idempotency.ts      # Deduplicación de pedidos
+    ├── telegram.ts         # Telegram order delivery
+    ├── order-formatter.ts  # HTML message formatter
+    └── idempotency.ts      # Order deduplication
 ```
 
-## Documentación
+## Documentation
 
-| Documento | Descripción |
-|-----------|-------------|
-| [`docs/BRD.md`](docs/BRD.md) | Requisitos de negocio (qué necesita Shirley) |
-| [`docs/PRD.md`](docs/PRD.md) | Requisitos del producto con criterios de aceptación |
-| [`CLAUDE.md`](CLAUDE.md) | Contexto técnico para desarrollo asistido por IA |
+| Document | Description |
+|----------|-------------|
+| [`docs/BRD.md`](docs/BRD.md) | Business requirements — what Shirley needs |
+| [`docs/PRD.md`](docs/PRD.md) | Product requirements with acceptance criteria |
+| [`CLAUDE.md`](CLAUDE.md) | Technical context for AI-assisted development |
 
-## Decisiones de diseño
+## Design Decisions
 
-- **Sin pasarela de pago** — intencional. El cobro es manual, como Shirley siempre lo ha manejado. Agregar Stripe agregaría fricción y comisiones innecesarias para su volumen actual.
-- **Telegram como notificación** — no es un bot interactivo. Solo recibe el pedido organizado. Shirley responde por WhatsApp donde ya tiene a sus clientes.
-- **COP sin decimales** — `Intl.NumberFormat('es-CO', { currency: 'COP' })`. Los pesos colombianos no usan centavos.
-- **WebP en el servidor** — Sharp convierte al subir. El original nunca se toca; las variantes se sirven según el contexto.
+**No payment gateway** — intentional. Payments are handled manually by WhatsApp, as Shirley has always done. Adding Stripe would introduce friction and fees that don't make sense for her current volume.
+
+**Telegram as notification only** — not an interactive bot. The system sends a structured order summary; Shirley replies on WhatsApp where her customers already are.
+
+**COP without decimals** — `Intl.NumberFormat('es-CO', { currency: 'COP' })`. Colombian pesos don't use cents.
+
+**WebP on upload** — Sharp converts images on the server when uploaded. The original is never touched; the right variant is served depending on context.
+
+**Single-instance idempotency** — order deduplication uses an in-memory Map. For multi-instance deployments (e.g., Vercel), replace with Vercel KV.
 
 ---
 
 <div align="center">
 
-Privado — © 2026 Nénufar · Hecho con cariño para Shirley 🌸
+Private — © 2026 Nénufar · Built with care for Shirley 🌸
 
 </div>
