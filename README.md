@@ -1,150 +1,188 @@
-# Nénufar — Tienda de Joyería Artesanal
+# Nénufar — Joyería Artesanal Colombiana
 
-> Plataforma de e-commerce para joyería artesanal colombiana. Pedidos sin pasarela de pago — coordinación directa por WhatsApp vía notificación a Telegram.
+<div align="center">
 
-![Estado](https://img.shields.io/badge/estado-en%20desarrollo-yellow)
-![Stack](https://img.shields.io/badge/stack-Payload%20CMS%20%2B%20Next.js-black)
-![Lenguaje](https://img.shields.io/badge/idioma-Español-blue)
-![Moneda](https://img.shields.io/badge/moneda-COP-green)
+**Tienda online para joyería hecha a mano en Cartagena, Colombia**
+
+[![Estado](https://img.shields.io/badge/estado-en%20desarrollo-yellow?style=flat-square)](https://github.com/aleocampodev/nenufar)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org)
+[![Payload CMS](https://img.shields.io/badge/Payload-v3-7C3AED?style=flat-square)](https://payloadcms.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql&logoColor=white)](https://postgresql.org)
+[![Moneda](https://img.shields.io/badge/moneda-COP-green?style=flat-square)](https://github.com/aleocampodev/nenufar)
+
+</div>
 
 ---
 
-## ¿Qué es esto?
+## Qué es
 
-Nénufar es la tienda online de Shirley, artesana de joyería en Cartagena, Colombia. Los compradores exploran el catálogo, arman su pedido con variantes y personalización, y al confirmar — el pedido llega estructurado al Telegram de Shirley. Sin pasarela de pago. Sin bots. Shirley cierra la venta por WhatsApp como siempre.
+Nénufar es la tienda online de Shirley, artesana de joyería en Cartagena. Los compradores exploran el catálogo, arman su pedido con variantes y personalización, y al confirmar — el pedido llega estructurado al Telegram de Shirley. Sin pasarela de pago. Sin intermediarios. Shirley cierra la venta por WhatsApp como siempre.
 
 ## Flujo de compra
 
 ```
-/shop → /products/[slug] → Carrito → /pedidos/enviar → Telegram de Shirley
+/shop → /products/[slug] → Carrito → /pedidos/enviar → Telegram de Shirley → WhatsApp
 ```
 
-1. Comprador elige productos y variantes
-2. Agrega notas de personalización (grabado, talla, instrucciones)
-3. Llena nombre + WhatsApp/email + acepta consentimiento (Ley 1581)
-4. Sistema crea Order en Payload + envía mensaje a Telegram
-5. Shirley coordina pago y envío por WhatsApp
+| Paso | Quién | Qué pasa |
+|------|-------|----------|
+| 1 | Comprador | Elige productos, variantes y agrega notas (grabado, talla) |
+| 2 | Comprador | Llena nombre + WhatsApp/email + acepta Ley 1581 |
+| 3 | Sistema | Crea `Order` en Payload + envía mensaje HTML a Telegram |
+| 4 | Shirley | Recibe el pedido, coordina pago y envío por WhatsApp |
 
 ## Tech Stack
 
 | Capa | Tecnología |
 |------|-----------|
-| Framework | [Next.js 15](https://nextjs.org) App Router |
-| CMS | [Payload CMS v3](https://payloadcms.com) |
+| Framework | [Next.js 15](https://nextjs.org) App Router + TypeScript |
+| CMS & API | [Payload CMS v3](https://payloadcms.com) |
 | Base de datos | PostgreSQL 16 |
-| UI | TailwindCSS + [shadcn/ui](https://ui.shadcn.com) |
-| Tipografía | Playfair Display + Inter + Geist Mono |
+| UI | TailwindCSS v4 + [shadcn/ui](https://ui.shadcn.com) |
+| Tipografía | Playfair Display · Inter · Geist Mono |
 | Imágenes | Sharp — WebP automático calidad 92 |
 | Notificaciones | Telegram Bot API (one-way) |
-| Ecommerce | `@payloadcms/plugin-ecommerce` |
-
-## Requisitos
-
-- Node.js 20+
-- pnpm 9+
-- PostgreSQL 16 (o Docker)
+| Ecommerce | `@payloadcms/plugin-ecommerce` (sin Stripe) |
 
 ## Setup local
 
+### Requisitos
+
+- Node.js 20+
+- pnpm 9+
+- Docker (para PostgreSQL)
+
+### Instrucciones
+
 ```bash
 # 1. Clonar
-git clone https://github.com/aleocampodev/poc_agento.git nenufar
+git clone https://github.com/aleocampodev/nenufar.git
 cd nenufar
 
 # 2. Variables de entorno
 cp .env.example .env
-# Editar .env con tus valores (ver sección Variables)
+# Completar con tus valores (ver tabla abajo)
 
-# 3. Base de datos con Docker
-docker-compose up -d
+# 3. Base de datos
+docker-compose up -d          # PostgreSQL en puerto 5433
 
-# 4. Instalar dependencias
+# 4. Dependencias
 pnpm install
 
-# 5. Desarrollo
+# 5. Dev server
 pnpm dev
-# → http://localhost:3002
-# → http://localhost:3002/admin
 ```
 
-## Variables de entorno
+Abrir → **http://localhost:3002** · Admin → **http://localhost:3002/admin**
+
+Ir al admin → Dashboard → **"Seed database"** para cargar datos de prueba.
+
+### Variables de entorno
 
 ```env
 # Payload
-PAYLOAD_SECRET=string-largo-aleatorio
+PAYLOAD_SECRET=string-largo-aleatorio-min-32-chars
 DATABASE_URL=postgres://postgres:postgres@localhost:5433/nenufar
 
 # URLs
 NEXT_PUBLIC_SERVER_URL=http://localhost:3002
 
-# Telegram (notificaciones de pedidos)
-TELEGRAM_BOT_TOKEN=     # Obtener con @BotFather en Telegram
-TELEGRAM_CHANNEL_ID=    # ID del chat/canal de Shirley
+# Telegram (notificaciones de pedidos — ver docs/setup-telegram.md)
+TELEGRAM_BOT_TOKEN=       # Crear con @BotFather
+TELEGRAM_CHANNEL_ID=      # ID del chat de Shirley
 
-# Preview
-PREVIEW_SECRET=string-para-draft-preview
+# Draft preview
+PREVIEW_SECRET=otro-string-aleatorio
 ```
-
-> Ver `.env.example` para la lista completa con instrucciones.
 
 ## Comandos
 
 ```bash
-pnpm dev              # Dev server (puerto 3002)
-pnpm build            # Build producción
-pnpm start            # Servidor producción
-pnpm payload migrate  # Correr migraciones (producción)
-pnpm test:int         # Tests de integración (Vitest)
-pnpm test:e2e         # Tests E2E (Playwright)
+pnpm dev                  # Dev server → localhost:3002
+pnpm build                # Build de producción
+pnpm start                # Servidor en producción
+pnpm payload migrate      # Migraciones de DB (producción)
+pnpm generate:types       # Regenerar tipos de Payload
 ```
 
-## Estructura del proyecto
+## Rutas del sitio
+
+| Ruta | Descripción |
+|------|-------------|
+| `/` | Home (CMS page builder) |
+| `/shop` | Catálogo con búsqueda y filtros |
+| `/products/[slug]` | Detalle de producto con variantes |
+| `/blog` | Blog de Shirley |
+| `/blog/[slug]` | Artículo individual (Lexical rich text) |
+| `/eventos` | Próximas ferias y eventos |
+| `/pedidos/enviar` | Formulario de confirmación del pedido |
+| `/pedidos/enviar/confirmacion` | Pantalla de éxito post-pedido |
+| `/sobre-nenufar` | Historia de la marca |
+| `/contacto` | Información de contacto |
+| `/privacidad` | Política de privacidad (Ley 1581/2012) |
+| `/terminos` | Términos y condiciones |
+| `/(account)/` | Cuenta del usuario, pedidos, direcciones |
+| `/admin` | Panel de administración (Payload) |
+
+## Imágenes
+
+Al subir una foto al admin, Payload genera automáticamente estas variantes en WebP (calidad 92) sin modificar el original:
+
+| Variante | Dimensiones | Uso |
+|----------|-------------|-----|
+| `thumbnail` | 400 × 500 | Carrito, miniaturas |
+| `card` | 800 × 1000 | Grilla de productos |
+| `hero` | 1920 × 1080 | Fondos de páginas |
+| `og` | 1200 × 630 | Redes sociales / SEO |
+
+## Estructura
 
 ```
 src/
 ├── app/
-│   ├── (app)/          # Frontend público
-│   │   ├── shop/       # Catálogo de productos
-│   │   ├── blog/       # Blog de Shirley
-│   │   ├── eventos/    # Eventos y ferias
-│   │   ├── pedidos/    # Flujo de pedido → Telegram
-│   │   └── (account)/  # Cuenta de usuario
-│   └── (payload)/      # Admin de Payload
+│   ├── (app)/              # Frontend público
+│   │   ├── shop/           # Catálogo
+│   │   ├── products/       # Detalle de producto
+│   │   ├── blog/           # Blog
+│   │   ├── eventos/        # Eventos
+│   │   ├── pedidos/        # Flujo de pedido → Telegram
+│   │   └── (account)/      # Cuenta del usuario
+│   └── (payload)/          # Admin de Payload
 ├── collections/
-│   ├── Events.ts       # Eventos de Shirley
-│   ├── Media.ts        # Imágenes con conversión WebP
-│   ├── Posts.ts        # Blog
-│   └── Products/       # Catálogo de joyas
+│   ├── Events.ts           # Eventos y ferias
+│   ├── Media.ts            # Imágenes (WebP automático)
+│   ├── Posts.ts            # Blog
+│   └── Products/           # Catálogo de joyas
 ├── blocks/
-│   └── UpcomingEvents/ # Bloque de eventos para el home
+│   └── UpcomingEvents/     # Bloque de próximos eventos para el home
 ├── lib/
-│   ├── telegram.ts     # Cliente Telegram
+│   ├── telegram.ts         # Cliente Telegram
 │   ├── order-formatter.ts  # Formato del mensaje de pedido
-│   └── idempotency.ts  # Deduplicación de pedidos
+│   └── idempotency.ts      # Deduplicación de pedidos
 └── docs/
-    ├── BRD.md          # Business Requirements
-    └── PRD.md          # Product Requirements
+    ├── BRD.md              # Requisitos de negocio
+    └── PRD.md              # Requisitos del producto
 ```
-
-## Imágenes
-
-Al subir una foto al admin, Payload genera automáticamente:
-
-| Variante | Tamaño | Uso |
-|----------|--------|-----|
-| `thumbnail` | 400×500 WebP | Carrito, miniaturas |
-| `card` | 800×1000 WebP | Grilla de productos |
-| `hero` | 1920×1080 WebP | Fondo de páginas |
-| `og` | 1200×630 WebP | Redes sociales / SEO |
-
-El original nunca se modifica.
 
 ## Documentación
 
-- [`docs/BRD.md`](docs/BRD.md) — Requisitos de negocio
-- [`docs/PRD.md`](docs/PRD.md) — Requisitos del producto
-- [`CLAUDE.md`](CLAUDE.md) — Contexto técnico para desarrollo con IA
+| Documento | Descripción |
+|-----------|-------------|
+| [`docs/BRD.md`](docs/BRD.md) | Requisitos de negocio |
+| [`docs/PRD.md`](docs/PRD.md) | Requisitos del producto con criterios de aceptación |
+| [`CLAUDE.md`](CLAUDE.md) | Contexto técnico para desarrollo asistido por IA |
 
-## Licencia
+## Arquitectura — decisiones clave
+
+- **Sin pasarela de pago**: `payments.paymentMethods: []` — intencional. El cobro es manual por WhatsApp.
+- **Idempotencia de pedidos**: Map en memoria (single-instance). Para multi-instancia → Vercel KV.
+- **Moneda COP**: `Intl.NumberFormat('es-CO', { currency: 'COP' })` — sin decimales.
+- **Color de marca**: token CSS `--brand: oklch(38% 0.2 307deg)` → clases `bg-brand`, `text-brand`, `hover:bg-brand-dark`.
+
+---
+
+<div align="center">
 
 Privado — © 2026 Nénufar. Todos los derechos reservados.
+
+</div>
