@@ -228,7 +228,7 @@
       "strokeColor": "#065F46",
       "strokeWidth": 2,
       "fillStyle": "solid",
-      "label": { "text": "Telegram Bot API\nsendMessage (HTML)\ncallback_query\ndocument (foto)" },
+      "label": { "text": "Telegram Bot API\n@NenufarBot\nsendMessage · callback_query\ndocument (foto)" },
       "fontSize": 13,
       "fontFamily": 2
     },
@@ -451,6 +451,31 @@
       "fontFamily": 3
     },
 
+    {
+      "id": "bot-names",
+      "type": "rectangle",
+      "x": 940,
+      "y": 130,
+      "width": 190,
+      "height": 130,
+      "backgroundColor": "#F0FDF4",
+      "strokeColor": "#065F46",
+      "strokeWidth": 1,
+      "fillStyle": "solid",
+      "strokeStyle": "dashed"
+    },
+    {
+      "id": "bot-names-label",
+      "type": "text",
+      "x": 950,
+      "y": 138,
+      "width": 170,
+      "height": 120,
+      "strokeColor": "#065F46",
+      "text": "🤖 Nombre del Bot\n\n✅ @NenufarBot\n   (recomendado)\n\n○ @NenufarJoyasBot\n○ @LilyNenufarBot",
+      "fontSize": 12,
+      "fontFamily": 3
+    },
     {
       "id": "legend",
       "type": "text",
