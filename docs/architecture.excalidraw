@@ -1,479 +1,467 @@
 {
   "type": "excalidraw",
   "version": 2,
-  "source": "mcp-excalidraw-server",
+  "source": "claude-code",
   "elements": [
     {
       "id": "title",
       "type": "text",
-      "x": 200,
-      "y": 30,
-      "width": 600,
+      "x": 320,
+      "y": 20,
+      "width": 560,
       "height": 35,
       "strokeColor": "#1e1e1e",
-      "text": "Nenúfar — Arquitectura v3.1",
-      "fontSize": 28,
+      "text": "Nénufar — Arquitectura del Sistema",
+      "fontSize": 26,
       "fontFamily": 1,
-      "createdAt": "2026-07-21T00:38:18.877Z",
-      "updatedAt": "2026-07-21T00:38:18.877Z",
-      "version": 1
+      "textAlign": "center"
     },
     {
       "id": "subtitle",
       "type": "text",
-      "x": 180,
-      "y": 75,
-      "width": 640,
-      "height": 20,
+      "x": 200,
+      "y": 60,
+      "width": 800,
+      "height": 18,
       "strokeColor": "#6B7280",
-      "text": "Payload Ecommerce Template · Next.js App Router · Telegram Bot API · Neon Postgres · $0/mes",
-      "fontSize": 14,
+      "text": "Next.js 15 · Payload CMS v3 · PostgreSQL 16 · Telegram Bot API · Self-hosted VPS",
+      "fontSize": 13,
       "fontFamily": 3,
-      "createdAt": "2026-07-21T00:38:18.878Z",
-      "updatedAt": "2026-07-21T00:38:18.878Z",
-      "version": 1
+      "textAlign": "center"
     },
+
     {
-      "id": "tier1-label",
+      "id": "lbl-actors",
       "type": "text",
       "x": 30,
-      "y": 120,
-      "width": 200,
-      "height": 20,
-      "strokeColor": "#6B7280",
-      "text": "▼ FRONTEND",
-      "fontSize": 14,
-      "fontFamily": 3,
-      "createdAt": "2026-07-21T00:38:18.878Z",
-      "updatedAt": "2026-07-21T00:38:18.878Z",
-      "version": 1
+      "y": 105,
+      "width": 120,
+      "height": 16,
+      "strokeColor": "#9CA3AF",
+      "text": "ACTORES",
+      "fontSize": 11,
+      "fontFamily": 3
     },
+    {
+      "id": "lbl-app",
+      "type": "text",
+      "x": 290,
+      "y": 105,
+      "width": 200,
+      "height": 16,
+      "strokeColor": "#9CA3AF",
+      "text": "APLICACIÓN (Next.js + Payload)",
+      "fontSize": 11,
+      "fontFamily": 3
+    },
+    {
+      "id": "lbl-infra",
+      "type": "text",
+      "x": 680,
+      "y": 105,
+      "width": 160,
+      "height": 16,
+      "strokeColor": "#9CA3AF",
+      "text": "INFRAESTRUCTURA",
+      "fontSize": 11,
+      "fontFamily": 3
+    },
+    {
+      "id": "lbl-external",
+      "type": "text",
+      "x": 940,
+      "y": 105,
+      "width": 140,
+      "height": 16,
+      "strokeColor": "#9CA3AF",
+      "text": "EXTERNO",
+      "fontSize": 11,
+      "fontFamily": 3
+    },
+
     {
       "id": "comprador",
       "type": "rectangle",
       "x": 30,
-      "y": 150,
-      "width": 180,
-      "height": 80,
-      "backgroundColor": "#E6F1FB",
-      "strokeColor": "#185FA5",
+      "y": 130,
+      "width": 170,
+      "height": 75,
+      "backgroundColor": "#DBEAFE",
+      "strokeColor": "#1D4ED8",
       "strokeWidth": 2,
-      "label": {
-        "text": "Comprador\n(browser)"
-      },
-      "fontSize": 16,
-      "fontFamily": 2,
       "fillStyle": "solid",
-      "createdAt": "2026-07-21T00:38:18.878Z",
-      "updatedAt": "2026-07-21T00:38:18.878Z",
-      "version": 1
+      "label": { "text": "🛍 Comprador\n(browser / móvil)" },
+      "fontSize": 14,
+      "fontFamily": 2
     },
     {
-      "id": "admin",
+      "id": "shirley-admin",
       "type": "rectangle",
       "x": 30,
-      "y": 260,
-      "width": 180,
-      "height": 70,
-      "backgroundColor": "#F3E5F5",
+      "y": 280,
+      "width": 170,
+      "height": 65,
+      "backgroundColor": "#EDE9FE",
       "strokeColor": "#6A1B9A",
       "strokeWidth": 2,
-      "label": {
-        "text": "Shirley\n(Payload Admin)"
-      },
-      "fontSize": 16,
-      "fontFamily": 2,
       "fillStyle": "solid",
-      "createdAt": "2026-07-21T00:38:18.878Z",
-      "updatedAt": "2026-07-21T00:38:18.878Z",
-      "version": 1
+      "label": { "text": "🖥 Shirley\n(Admin Payload)" },
+      "fontSize": 14,
+      "fontFamily": 2
     },
+    {
+      "id": "shirley-tg",
+      "type": "rectangle",
+      "x": 30,
+      "y": 430,
+      "width": 170,
+      "height": 100,
+      "backgroundColor": "#FCE7F3",
+      "strokeColor": "#BE185D",
+      "strokeWidth": 2,
+      "fillStyle": "solid",
+      "label": { "text": "📱 Shirley\n(Telegram)\nfoto · /pendientes\nconfirmar pedido" },
+      "fontSize": 13,
+      "fontFamily": 2
+    },
+
     {
       "id": "nextjs",
       "type": "rectangle",
-      "x": 280,
-      "y": 150,
-      "width": 220,
-      "height": 80,
-      "backgroundColor": "#E8F5E9",
-      "strokeColor": "#2E7D32",
+      "x": 290,
+      "y": 130,
+      "width": 240,
+      "height": 90,
+      "backgroundColor": "#DCFCE7",
+      "strokeColor": "#15803D",
       "strokeWidth": 2,
-      "label": {
-        "text": "Next.js App Router\n/ · /tienda · /blog\n/eventos · /productos"
-      },
-      "fontSize": 14,
-      "fontFamily": 2,
       "fillStyle": "solid",
-      "createdAt": "2026-07-21T00:38:18.878Z",
-      "updatedAt": "2026-07-21T00:38:18.878Z",
-      "version": 1
+      "label": { "text": "Next.js App Router\n/shop · /products · /blog\n/eventos · /pedidos · /(account)" },
+      "fontSize": 13,
+      "fontFamily": 2
     },
     {
       "id": "server-action",
       "type": "rectangle",
-      "x": 280,
-      "y": 260,
-      "width": 220,
-      "height": 70,
-      "backgroundColor": "#FFF3E0",
-      "strokeColor": "#E65100",
+      "x": 290,
+      "y": 280,
+      "width": 240,
+      "height": 65,
+      "backgroundColor": "#FEF3C7",
+      "strokeColor": "#D97706",
       "strokeWidth": 2,
-      "label": {
-        "text": "Server Action\nsubmitOrderAction.ts\n(consent → Telegram)"
-      },
-      "fontSize": 14,
-      "fontFamily": 2,
       "fillStyle": "solid",
-      "createdAt": "2026-07-21T00:38:18.878Z",
-      "updatedAt": "2026-07-21T00:38:18.878Z",
-      "version": 1
+      "label": { "text": "submitOrderAction.ts\nvalida · crea Order · notifica" },
+      "fontSize": 13,
+      "fontFamily": 2
     },
+    {
+      "id": "webhook",
+      "type": "rectangle",
+      "x": 290,
+      "y": 430,
+      "width": 240,
+      "height": 100,
+      "backgroundColor": "#FDF4FF",
+      "strokeColor": "#9333EA",
+      "strokeWidth": 2,
+      "fillStyle": "solid",
+      "label": { "text": "Webhook /api/telegram\n── recibe comandos Shirley\n── procesa foto → Media\n── actualiza estado Order" },
+      "fontSize": 12,
+      "fontFamily": 2
+    },
+
     {
       "id": "payload",
       "type": "rectangle",
-      "x": 570,
-      "y": 150,
-      "width": 220,
-      "height": 80,
-      "backgroundColor": "#FFF6E6",
-      "strokeColor": "#7A2E0F",
+      "x": 680,
+      "y": 130,
+      "width": 200,
+      "height": 100,
+      "backgroundColor": "#FFF7ED",
+      "strokeColor": "#C2410C",
       "strokeWidth": 2,
-      "label": {
-        "text": "Payload CMS 3.86\nplugin-ecommerce\nplugin-seo"
-      },
-      "fontSize": 14,
-      "fontFamily": 2,
       "fillStyle": "solid",
-      "createdAt": "2026-07-21T00:38:18.878Z",
-      "updatedAt": "2026-07-21T00:38:18.878Z",
-      "version": 1
+      "label": { "text": "Payload CMS v3\nLocal API\nAdmin UI · REST API\nplugin-ecommerce" },
+      "fontSize": 13,
+      "fontFamily": 2
     },
     {
-      "id": "telegram",
+      "id": "sharp",
       "type": "rectangle",
-      "x": 570,
-      "y": 260,
-      "width": 220,
-      "height": 70,
-      "backgroundColor": "#E1F5EE",
-      "strokeColor": "#0F6E56",
+      "x": 680,
+      "y": 280,
+      "width": 200,
+      "height": 65,
+      "backgroundColor": "#F0FDF4",
+      "strokeColor": "#166534",
       "strokeWidth": 2,
-      "label": {
-        "text": "Telegram Bot API\nsendMessage → Canal\n@nenufarpedidos"
-      },
-      "fontSize": 14,
-      "fontFamily": 2,
       "fillStyle": "solid",
-      "createdAt": "2026-07-21T00:38:18.879Z",
-      "updatedAt": "2026-07-21T00:38:18.879Z",
-      "version": 1
+      "label": { "text": "Sharp (imagen upload)\nthumbnail · card · hero · og\nWebP q92 — original intacto" },
+      "fontSize": 12,
+      "fontFamily": 2
     },
     {
-      "id": "shirley",
+      "id": "postgres",
       "type": "rectangle",
-      "x": 860,
-      "y": 260,
-      "width": 180,
-      "height": 70,
-      "backgroundColor": "#FCE4EC",
-      "strokeColor": "#C62828",
+      "x": 680,
+      "y": 390,
+      "width": 200,
+      "height": 75,
+      "backgroundColor": "#EFF6FF",
+      "strokeColor": "#1E40AF",
       "strokeWidth": 2,
-      "label": {
-        "text": "Shirley\n(lee y responde\npor Telegram)"
-      },
-      "fontSize": 14,
-      "fontFamily": 2,
       "fillStyle": "solid",
-      "createdAt": "2026-07-21T00:38:18.879Z",
-      "updatedAt": "2026-07-21T00:38:18.879Z",
-      "version": 1
+      "label": { "text": "PostgreSQL 16\nproducts · orders · posts\nevents · media · users" },
+      "fontSize": 13,
+      "fontFamily": 2
     },
+
     {
-      "id": "neon",
+      "id": "telegram-api",
       "type": "rectangle",
-      "x": 570,
-      "y": 370,
-      "width": 220,
-      "height": 60,
-      "backgroundColor": "#FFF6E6",
-      "strokeColor": "#7A2E0F",
+      "x": 940,
+      "y": 280,
+      "width": 190,
+      "height": 100,
+      "backgroundColor": "#ECFDF5",
+      "strokeColor": "#065F46",
       "strokeWidth": 2,
-      "label": {
-        "text": "Neon Postgres\n(products, orders,\nposts, events)"
-      },
-      "fontSize": 14,
-      "fontFamily": 2,
       "fillStyle": "solid",
-      "createdAt": "2026-07-21T00:38:18.879Z",
-      "updatedAt": "2026-07-21T00:38:18.879Z",
-      "version": 1
+      "label": { "text": "Telegram Bot API\nsendMessage (HTML)\ncallback_query\ndocument (foto)" },
+      "fontSize": 13,
+      "fontFamily": 2
     },
-    {
-      "id": "vercel",
-      "type": "rectangle",
-      "x": 280,
-      "y": 370,
-      "width": 220,
-      "height": 60,
-      "backgroundColor": "#E3F2FD",
-      "strokeColor": "#1565C0",
-      "strokeWidth": 2,
-      "label": {
-        "text": "Vercel (free tier)\nHosting + ISR + SSR"
-      },
-      "fontSize": 14,
-      "fontFamily": 2,
-      "fillStyle": "solid",
-      "createdAt": "2026-07-21T00:38:18.879Z",
-      "updatedAt": "2026-07-21T00:38:18.879Z",
-      "version": 1
-    },
+
     {
       "id": "ar-comp-next",
       "type": "arrow",
-      "x": 218,
-      "y": 190,
-      "strokeColor": "#1e1e1e",
+      "x": 200,
+      "y": 167,
+      "points": [[0,0],[82,0]],
+      "strokeColor": "#1D4ED8",
       "strokeWidth": 2,
-      "points": [
-        [
-          0,
-          0
-        ],
-        [
-          54,
-          0
-        ]
-      ],
-      "start": {
-        "id": "comprador"
-      },
-      "end": {
-        "id": "nextjs"
-      },
-      "createdAt": "2026-07-21T00:38:31.658Z",
-      "updatedAt": "2026-07-21T00:38:31.658Z",
-      "version": 1
-    },
-    {
-      "id": "ar-admin-payload",
-      "type": "arrow",
-      "x": 217.86297749547458,
-      "y": 276.6506917195985,
-      "strokeColor": "#6A1B9A",
-      "strokeWidth": 2,
-      "points": [
-        [
-          0,
-          0
-        ],
-        [
-          344.2740450090509,
-          -64.55138343919702
-        ]
-      ],
-      "start": {
-        "id": "admin"
-      },
-      "end": {
-        "id": "payload"
-      },
-      "createdAt": "2026-07-21T00:38:31.658Z",
-      "updatedAt": "2026-07-21T00:38:31.658Z",
-      "version": 1
+      "start": { "id": "comprador" },
+      "end": { "id": "nextjs" },
+      "label": { "text": "HTTP", "fontSize": 11 }
     },
     {
       "id": "ar-next-payload",
+      "x": 530,
+      "y": 175,
       "type": "arrow",
-      "x": 508,
-      "y": 190,
-      "strokeColor": "#1e1e1e",
+      "points": [[0,0],[142,0]],
+      "strokeColor": "#15803D",
       "strokeWidth": 2,
-      "points": [
-        [
-          0,
-          0
-        ],
-        [
-          54,
-          0
-        ]
-      ],
-      "start": {
-        "id": "nextjs"
-      },
-      "end": {
-        "id": "payload"
-      },
-      "createdAt": "2026-07-21T00:38:31.658Z",
-      "updatedAt": "2026-07-21T00:38:31.658Z",
-      "version": 1
+      "start": { "id": "nextjs" },
+      "end": { "id": "payload" },
+      "label": { "text": "Local API", "fontSize": 11 }
     },
     {
       "id": "ar-next-action",
+      "x": 410,
+      "y": 220,
       "type": "arrow",
-      "x": 390,
-      "y": 238,
-      "strokeColor": "#E65100",
+      "points": [[0,0],[0,52]],
+      "strokeColor": "#D97706",
       "strokeWidth": 2,
-      "points": [
-        [
-          0,
-          0
-        ],
-        [
-          0,
-          14
-        ]
-      ],
-      "start": {
-        "id": "nextjs"
-      },
-      "end": {
-        "id": "server-action"
-      },
-      "createdAt": "2026-07-21T00:38:31.658Z",
-      "updatedAt": "2026-07-21T00:38:31.658Z",
-      "version": 1
+      "start": { "id": "nextjs" },
+      "end": { "id": "server-action" }
+    },
+    {
+      "id": "ar-action-payload",
+      "x": 530,
+      "y": 305,
+      "type": "arrow",
+      "points": [[0,0],[142,0]],
+      "strokeColor": "#D97706",
+      "strokeWidth": 2,
+      "start": { "id": "server-action" },
+      "end": { "id": "payload" },
+      "label": { "text": "create Order", "fontSize": 11 }
     },
     {
       "id": "ar-action-tg",
+      "x": 530,
+      "y": 330,
       "type": "arrow",
-      "x": 508,
-      "y": 295,
-      "strokeColor": "#0F6E56",
+      "points": [[0,0],[402,0]],
+      "strokeColor": "#065F46",
       "strokeWidth": 2,
-      "points": [
-        [
-          0,
-          0
-        ],
-        [
-          54,
-          0
-        ]
-      ],
-      "start": {
-        "id": "server-action"
-      },
-      "end": {
-        "id": "telegram"
-      },
-      "createdAt": "2026-07-21T00:38:31.658Z",
-      "updatedAt": "2026-07-21T00:38:31.658Z",
-      "version": 1
+      "start": { "id": "server-action" },
+      "end": { "id": "telegram-api" },
+      "label": { "text": "sendMessage (pedido)", "fontSize": 11 }
     },
     {
-      "id": "ar-tg-shirley",
+      "id": "ar-tg-shirley-out",
+      "x": 940,
+      "y": 360,
       "type": "arrow",
-      "x": 798,
-      "y": 295,
-      "strokeColor": "#C62828",
-      "strokeWidth": 2,
-      "points": [
-        [
-          0,
-          0
-        ],
-        [
-          54,
-          0
-        ]
-      ],
-      "start": {
-        "id": "telegram"
-      },
-      "end": {
-        "id": "shirley"
-      },
-      "createdAt": "2026-07-21T00:38:31.659Z",
-      "updatedAt": "2026-07-21T00:38:31.659Z",
-      "version": 1
-    },
-    {
-      "id": "ar-payload-neon",
-      "type": "arrow",
-      "x": 680,
-      "y": 238,
-      "strokeColor": "#7A2E0F",
-      "strokeWidth": 2,
-      "points": [
-        [
-          0,
-          0
-        ],
-        [
-          0,
-          124
-        ]
-      ],
-      "start": {
-        "id": "payload"
-      },
-      "end": {
-        "id": "neon"
-      },
-      "createdAt": "2026-07-21T00:38:31.659Z",
-      "updatedAt": "2026-07-21T00:38:31.659Z",
-      "version": 1
-    },
-    {
-      "id": "ar-next-vercel",
-      "type": "arrow",
-      "x": 390,
-      "y": 238,
-      "strokeColor": "#1565C0",
+      "points": [[0,0],[-770,120]],
+      "strokeColor": "#BE185D",
       "strokeWidth": 2,
       "strokeStyle": "dashed",
-      "points": [
-        [
-          0,
-          0
-        ],
-        [
-          0,
-          124
-        ]
-      ],
-      "start": {
-        "id": "nextjs"
-      },
-      "end": {
-        "id": "vercel"
-      },
-      "createdAt": "2026-07-21T00:38:31.659Z",
-      "updatedAt": "2026-07-21T00:38:31.659Z",
-      "version": 1
+      "start": { "id": "telegram-api" },
+      "end": { "id": "shirley-tg" },
+      "label": { "text": "notificación + botones", "fontSize": 11 }
     },
+    {
+      "id": "ar-shirley-tg-in",
+      "x": 200,
+      "y": 480,
+      "type": "arrow",
+      "points": [[0,0],[82,0]],
+      "strokeColor": "#BE185D",
+      "strokeWidth": 2,
+      "start": { "id": "shirley-tg" },
+      "end": { "id": "webhook" },
+      "label": { "text": "foto / cmd / tap", "fontSize": 11 }
+    },
+    {
+      "id": "ar-webhook-tg",
+      "x": 530,
+      "y": 460,
+      "type": "arrow",
+      "points": [[0,0],[402,-80]],
+      "strokeColor": "#9333EA",
+      "strokeWidth": 2,
+      "start": { "id": "webhook" },
+      "end": { "id": "telegram-api" },
+      "label": { "text": "respuesta bot", "fontSize": 11 }
+    },
+    {
+      "id": "ar-webhook-payload",
+      "x": 530,
+      "y": 480,
+      "type": "arrow",
+      "points": [[0,0],[142,0]],
+      "strokeColor": "#9333EA",
+      "strokeWidth": 2,
+      "start": { "id": "webhook" },
+      "end": { "id": "payload" },
+      "label": { "text": "update / create", "fontSize": 11 }
+    },
+    {
+      "id": "ar-shirley-admin",
+      "x": 200,
+      "y": 312,
+      "type": "arrow",
+      "points": [[0,0],[82,0]],
+      "strokeColor": "#6A1B9A",
+      "strokeWidth": 2,
+      "strokeStyle": "dashed",
+      "start": { "id": "shirley-admin" },
+      "end": { "id": "nextjs" },
+      "label": { "text": "/admin", "fontSize": 11 }
+    },
+    {
+      "id": "ar-payload-sharp",
+      "x": 780,
+      "y": 230,
+      "type": "arrow",
+      "points": [[0,0],[0,42]],
+      "strokeColor": "#166534",
+      "strokeWidth": 2,
+      "start": { "id": "payload" },
+      "end": { "id": "sharp" }
+    },
+    {
+      "id": "ar-payload-pg",
+      "x": 780,
+      "y": 345,
+      "type": "arrow",
+      "points": [[0,0],[0,37]],
+      "strokeColor": "#1E40AF",
+      "strokeWidth": 2,
+      "start": { "id": "sharp" },
+      "end": { "id": "postgres" }
+    },
+
+    {
+      "id": "box-bot-flows",
+      "type": "rectangle",
+      "x": 30,
+      "y": 570,
+      "width": 1100,
+      "height": 130,
+      "backgroundColor": "#FAFAFA",
+      "strokeColor": "#D1D5DB",
+      "strokeWidth": 1,
+      "fillStyle": "solid",
+      "strokeStyle": "dashed"
+    },
+    {
+      "id": "lbl-bot-flows",
+      "type": "text",
+      "x": 40,
+      "y": 578,
+      "width": 300,
+      "height": 16,
+      "strokeColor": "#6B7280",
+      "text": "FLUJOS DEL BOT — Shirley desde el teléfono",
+      "fontSize": 11,
+      "fontFamily": 3
+    },
+    {
+      "id": "flow-a",
+      "type": "text",
+      "x": 50,
+      "y": 600,
+      "width": 240,
+      "height": 90,
+      "strokeColor": "#065F46",
+      "text": "A — Confirmar pedido\nRecibe notif → toca ✅ Confirmar\n→ Webhook → Order.status\n= 'confirmed' en Payload",
+      "fontSize": 12,
+      "fontFamily": 3
+    },
+    {
+      "id": "flow-b",
+      "type": "text",
+      "x": 310,
+      "y": 600,
+      "width": 240,
+      "height": 90,
+      "strokeColor": "#7C3AED",
+      "text": "B — Subir foto\nEnvía foto como archivo\n→ Webhook descarga\n→ Payload Media (WebP auto)",
+      "fontSize": 12,
+      "fontFamily": 3
+    },
+    {
+      "id": "flow-c",
+      "type": "text",
+      "x": 570,
+      "y": 600,
+      "width": 240,
+      "height": 90,
+      "strokeColor": "#C2410C",
+      "text": "C — Crear producto\nFoto → nombre → precio\n→ Webhook → payload.create\n('products', borrador)",
+      "fontSize": 12,
+      "fontFamily": 3
+    },
+    {
+      "id": "flow-d",
+      "type": "text",
+      "x": 830,
+      "y": 600,
+      "width": 240,
+      "height": 90,
+      "strokeColor": "#1D4ED8",
+      "text": "D — Ver pendientes\n/pendientes →  Webhook\n→ payload.find('orders')\n→ lista en Telegram",
+      "fontSize": 12,
+      "fontFamily": 3
+    },
+
     {
       "id": "legend",
       "type": "text",
       "x": 30,
-      "y": 460,
-      "width": 700,
-      "height": 15,
-      "strokeColor": "#6B7280",
-      "text": "Leyenda: azul=comprador · verde=Next.js · naranja=server action · crema=Payload · verde oscuro=Telegram · rojo=Shirley · morado=admin",
-      "fontSize": 12,
-      "fontFamily": 3,
-      "createdAt": "2026-07-21T00:38:31.659Z",
-      "updatedAt": "2026-07-21T00:38:31.659Z",
-      "version": 1
-    },
-    {
-      "id": "flow-label",
-      "type": "text",
-      "x": 30,
-      "y": 490,
+      "y": 715,
       "width": 900,
-      "height": 40,
-      "strokeColor": "#222222",
-      "text": "Flujo: Comprador navega → agrega al carrito → \"Confirmar pedido\" → Server Action valida consento → crea Order en DB → formatea mensaje → envía a Telegram → Shirley lee y responde por Telegram",
-      "fontSize": 13,
-      "fontFamily": 3,
-      "createdAt": "2026-07-21T00:38:31.659Z",
-      "updatedAt": "2026-07-21T00:38:31.659Z",
-      "version": 1
+      "height": 16,
+      "strokeColor": "#9CA3AF",
+      "text": "── sólido: flujo activo   - - - dashed: flujo planeado (bot bidireccional)   🔒 solo Shirley puede escribirle al bot (whitelist por chatId)",
+      "fontSize": 11,
+      "fontFamily": 3
     }
   ],
   "appState": {
