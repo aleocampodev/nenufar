@@ -19,7 +19,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'Payload Ecommerce Template',
+                  text: 'Nénufar',
                   version: 1,
                 },
               ],
@@ -33,35 +33,12 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
               type: 'paragraph',
               children: [
                 {
-                  type: 'link',
-                  children: [
-                    {
-                      type: 'text',
-                      detail: 0,
-                      format: 0,
-                      mode: 'normal',
-                      style: '',
-                      text: 'Visit the admin dashboard',
-                      version: 1,
-                    },
-                  ],
-                  direction: 'ltr',
-                  fields: {
-                    linkType: 'custom',
-                    newTab: false,
-                    url: '/admin',
-                  },
-                  format: '',
-                  indent: 0,
-                  version: 2,
-                },
-                {
                   type: 'text',
                   detail: 0,
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: ' to make your account and seed content for your website.',
+                  text: 'Joyería hecha a mano en Colombia. Cada pieza cuenta una historia.',
                   version: 1,
                 },
               ],
@@ -81,9 +58,9 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
     },
     layout: [],
     meta: {
-      description: 'An open-source ecommerce site built with Payload and Next.js.',
-      title: 'Payload Ecommerce Template',
+      description: 'Joyería artesanal hecha a mano en Colombia. Cada pieza cuenta una historia.',
+      title: 'Nénufar — Joyería Artesanal',
     },
-    title: 'Home',
+    title: 'Inicio',
   }
 }

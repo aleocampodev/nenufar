@@ -32,6 +32,7 @@ export const MediumImpactHero: React.FC<Page['hero']> = ({ links, media, richTex
               imgClassName=""
               priority
               resource={media}
+              sizeName="hero"
             />
             {media?.caption && (
               <div className="mt-3">

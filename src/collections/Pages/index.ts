@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { Banner } from '@/blocks/Banner/config'
 import { Carousel } from '@/blocks/Carousel/config'
 import { ThreeItemGrid } from '@/blocks/ThreeItemGrid/config'
+import { UpcomingEventsBlock } from '@/blocks/UpcomingEvents/config'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { adminOnly } from '@/access/adminOnly'
 import { Archive } from '@/blocks/ArchiveBlock/config'
@@ -95,6 +96,7 @@ export const Pages: CollectionConfig = {
                 ThreeItemGrid,
                 Banner,
                 FormBlock,
+                UpcomingEventsBlock,
               ],
               required: true,
             },

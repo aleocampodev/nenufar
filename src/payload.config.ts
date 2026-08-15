@@ -17,6 +17,7 @@ import { fileURLToPath } from 'url'
 import { es } from '@payloadcms/translations/languages/es'
 
 import { Categories } from '@/collections/Categories'
+import { Events } from '@/collections/Events'
 import { Media } from '@/collections/Media'
 import { Pages } from '@/collections/Pages'
 import { Posts } from '@/collections/Posts'
@@ -40,7 +41,7 @@ export default buildConfig({
     },
     user: Users.slug,
   },
-  collections: [Users, Pages, Categories, Media, Posts],
+  collections: [Users, Pages, Categories, Media, Posts, Events],
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL || '',

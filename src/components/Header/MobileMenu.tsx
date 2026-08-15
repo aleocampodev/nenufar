@@ -53,7 +53,7 @@ export function MobileMenu({ menu }: Props) {
 
       <SheetContent side="left" className="px-4">
         <SheetHeader className="px-0 pt-4 pb-0">
-          <SheetTitle>My Store</SheetTitle>
+          <SheetTitle>Nénufar</SheetTitle>
 
           <SheetDescription />
         </SheetHeader>
@@ -72,35 +72,35 @@ export function MobileMenu({ menu }: Props) {
 
         {user ? (
           <div className="mt-4">
-            <h2 className="text-xl mb-4">My account</h2>
+            <h2 className="text-xl mb-4">Mi cuenta</h2>
             <hr className="my-2" />
             <ul className="flex flex-col gap-2">
               <li>
-                <Link href="/orders">Orders</Link>
+                <Link href="/orders">Mis pedidos</Link>
               </li>
               <li>
-                <Link href="/account/addresses">Addresses</Link>
+                <Link href="/account/addresses">Direcciones</Link>
               </li>
               <li>
-                <Link href="/account">Manage account</Link>
+                <Link href="/account">Mi cuenta</Link>
               </li>
               <li className="mt-6">
                 <Button asChild variant="outline">
-                  <Link href="/logout">Log out</Link>
+                  <Link href="/logout">Cerrar sesión</Link>
                 </Button>
               </li>
             </ul>
           </div>
         ) : (
           <div>
-            <h2 className="text-xl mb-4">My account</h2>
+            <h2 className="text-xl mb-4">Mi cuenta</h2>
             <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
               <Button asChild className="w-full sm:flex-1" variant="outline">
-                <Link href="/login">Log in</Link>
+                <Link href="/login">Iniciar sesión</Link>
               </Button>
-              <span className="text-center text-sm text-muted-foreground sm:text-base">or</span>
+              <span className="text-center text-sm text-muted-foreground sm:text-base">o</span>
               <Button asChild className="w-full sm:flex-1">
-                <Link href="/create-account">Create an account</Link>
+                <Link href="/create-account">Crear cuenta</Link>
               </Button>
             </div>
           </div>

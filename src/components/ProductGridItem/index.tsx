@@ -6,15 +6,6 @@ import clsx from 'clsx'
 import { Media } from '@/components/Media'
 import { Price } from '@/components/Price'
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '')
-}
-
 type Props = {
   product: Partial<Product>
 }
@@ -41,7 +32,7 @@ export const ProductGridItem: React.FC<Props> = ({ product }) => {
   const image =
     gallery?.[0]?.image && typeof gallery[0]?.image !== 'string' ? gallery[0]?.image : false
 
-  const productSlug = product.slug || (title ? slugify(title) : String(product.id))
+  const productSlug = product.slug || String(product.id)
 
   return (
     <Link
@@ -54,6 +45,7 @@ export const ProductGridItem: React.FC<Props> = ({ product }) => {
           <Media
             className="h-full w-full object-cover transition-all duration-500 ease-out group-hover:scale-105 group-hover:brightness-95"
             resource={image}
+            sizeName="card"
             priority={false}
           />
         ) : (

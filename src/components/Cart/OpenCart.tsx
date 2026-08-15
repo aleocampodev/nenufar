@@ -18,7 +18,7 @@ export function OpenCartButton({
       className="navLink relative items-end hover:cursor-pointer"
       {...rest}
     >
-      <span>Cart</span>
+      <span>Carrito</span>
 
       {quantity ? (
         <>

@@ -125,6 +125,10 @@
   --success: oklch(78% 0.08 200deg);
   --warning: oklch(89% 0.1 75deg);
   --error: oklch(75% 0.15 25deg);
+  /* Nénufar brand violet — #6A1B9A */
+  --brand: oklch(38% 0.2 307deg);
+  --brand-dark: oklch(28% 0.18 307deg);
+  --brand-foreground: oklch(99% 0 0deg);
 }
 
 [data-theme='dark'] {
@@ -205,6 +209,9 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-foreground: var(--brand-foreground);
 }
 
 @layer base {

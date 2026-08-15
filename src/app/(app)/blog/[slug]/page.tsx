@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { RichText } from '@/components/RichText'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
@@ -47,12 +48,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           )}
         </header>
 
-        <div className="prose prose-neutral max-w-none">
-          {/* Rich text content would be rendered here */}
-          <p className="text-neutral-600">
-            Contenido del artículo próximamente.
-          </p>
-        </div>
+        {post.content && (
+          <div className="prose prose-neutral max-w-none">
+            <RichText data={post.content} enableGutter={false} />
+          </div>
+        )}
 
         {post.relatedProducts && post.relatedProducts.length > 0 && (
           <section className="mt-12 pt-8 border-t border-neutral-200">
@@ -77,7 +77,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         )}
 
         <footer className="mt-12 pt-8 border-t border-neutral-200">
-          <a href="/blog" className="text-[#6A1B9A] hover:underline">
+          <a href="/blog" className="text-brand hover:underline">
             ← Volver al blog
           </a>
         </footer>

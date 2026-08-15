@@ -58,7 +58,7 @@ export default function SobreNenufarPage() {
             </p>
             <a
               href="/contacto"
-              className="inline-block mt-4 px-6 py-3 bg-[#6A1B9A] text-white rounded-md hover:bg-[#4A148C] transition"
+              className="inline-block mt-4 px-6 py-3 bg-brand text-brand-foreground rounded-md hover:bg-brand-dark transition"
             >
               Contactar a Shirley
             </a>

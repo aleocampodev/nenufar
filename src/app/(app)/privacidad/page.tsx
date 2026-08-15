@@ -2,15 +2,15 @@ import type { Metadata } from 'next'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 
+const LAST_UPDATED = '1 de agosto de 2026'
+
 export default function PrivacidadPage() {
   return (
     <main className="container py-12 max-w-3xl mx-auto">
       <article className="prose prose-neutral max-w-none">
         <h1 className="text-4xl font-serif mb-6 text-neutral-900">Política de Privacidad</h1>
 
-        <p className="text-neutral-600 mb-8">
-          Última actualización: {new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}
-        </p>
+        <p className="text-neutral-600 mb-8">Última actualización: {LAST_UPDATED}</p>
 
         <section className="mb-8">
           <h2 className="text-2xl font-serif mb-3 text-neutral-900">1. Información que recopilamos</h2>
@@ -85,7 +85,7 @@ export default function PrivacidadPage() {
           <h2 className="text-2xl font-serif mb-3 text-neutral-900">7. Contacto</h2>
           <p className="text-neutral-700 leading-relaxed">
             Si tenés preguntas sobre esta política de privacidad, contactanos a través de nuestra{' '}
-            <a href="/contacto" className="text-[#6A1B9A] hover:underline">
+            <a href="/contacto" className="text-brand hover:underline">
               página de contacto
             </a>.
           </p>

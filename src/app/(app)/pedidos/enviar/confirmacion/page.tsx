@@ -79,7 +79,7 @@ export default async function ConfirmationPage({ searchParams }: ConfirmationPag
 
         <a
           href="/"
-          className="inline-block px-6 py-3 bg-[#6A1B9A] text-white font-medium rounded-md hover:bg-[#4A148C] transition mb-3"
+          className="inline-block px-6 py-3 bg-brand text-brand-foreground font-medium rounded-md hover:bg-brand-dark transition mb-3"
         >
           Volver al inicio
         </a>

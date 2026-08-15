@@ -103,7 +103,8 @@ export default {
       },
       fontFamily: {
         mono: ['var(--font-geist-mono)'],
-        sans: ['var(--font-geist-sans)'],
+        sans: ['var(--font-inter)'],
+        serif: ['var(--font-playfair)'],
       },
       keyframes: {
         fadeIn: {

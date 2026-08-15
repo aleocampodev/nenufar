@@ -83,7 +83,7 @@ export default function ContactoPage() {
             </p>
             <a
               href="/shop"
-              className="inline-block px-6 py-3 bg-[#6A1B9A] text-white font-medium rounded-md hover:bg-[#4A148C] transition"
+              className="inline-block px-6 py-3 bg-brand text-brand-foreground font-medium rounded-md hover:bg-brand-dark transition"
             >
               Ver catálogo
             </a>

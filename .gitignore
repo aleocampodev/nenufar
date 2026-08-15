@@ -8,8 +8,11 @@
 # testing
 /coverage
 .playwright
+.playwright-cli/
+.playwright-mcp/
 playwright-report/
 playwright-report/index.html
+test-results/
 
 # next.js
 /.next/

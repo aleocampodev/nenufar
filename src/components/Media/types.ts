@@ -16,6 +16,7 @@ export interface Props {
   ref?: Ref<HTMLImageElement | HTMLVideoElement | null>
   resource?: MediaType | string | number // for Payload media
   size?: string // for NextImage only
+  sizeName?: 'thumbnail' | 'card' | 'hero' | 'og' // which Payload-generated WebP to serve
   src?: StaticImageData // for static media
   videoClassName?: string
   width?: number
