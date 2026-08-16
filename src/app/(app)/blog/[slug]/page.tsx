@@ -1,13 +1,35 @@
 import type { Metadata } from 'next'
+import type { Media } from '@/payload-types'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { getServerSideURL } from '@/utilities/getURL'
 import { RichText } from '@/components/RichText'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
+import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
+import Script from 'next/script'
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>
+}
+
+/** Google exige URLs absolutas en JSON-LD. Prefija el dominio solo si es relativa. */
+const toAbsoluteUrl = (url?: string | null): string | undefined => {
+  if (!url) return undefined
+  return url.startsWith('http') ? url : `${getServerSideURL()}${url}`
+}
+
+const plainExcerpt = (content: unknown, max = 155): string => {
+  if (!content) return ''
+  try {
+    const text = convertLexicalToPlaintext({ data: content as any })
+      .replace(/\s+/g, ' ')
+      .trim()
+    return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text
+  } catch {
+    return ''
+  }
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -32,8 +54,35 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound()
   }
 
+  const metaImage = typeof post.meta?.image === 'object' ? (post.meta?.image as Media) : undefined
+  const author =
+    typeof post.author === 'object' && post.author !== null
+      ? (post.author as { name?: string | null }).name || 'Nénufar'
+      : 'Nénufar'
+
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.meta?.description || plainExcerpt(post.content),
+    image: toAbsoluteUrl(metaImage?.url),
+    datePublished: post.publishedAt || post.createdAt,
+    dateModified: post.updatedAt,
+    author: { '@type': 'Person', name: author },
+    publisher: { '@type': 'Organization', name: 'Nénufar' },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${getServerSideURL()}/blog/${post.slug}`,
+    },
+  }
+
   return (
     <main className="container py-12 max-w-3xl mx-auto">
+      <Script
+        id="blog-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <article>
         <header className="mb-8">
           <h1 className="text-4xl font-serif mb-4 text-neutral-900">{post.title}</h1>
@@ -106,16 +155,38 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
   if (!post) {
     return {
-      title: 'Artículo no encontrado | Nenúfar',
+      title: 'Artículo no encontrado | Nénufar',
+      robots: { index: false, follow: false },
     }
   }
 
+  const title = post.meta?.title || `${post.title} | Nénufar Blog`
+  const description =
+    post.meta?.description || plainExcerpt(post.content) || `Lee este artículo en el blog de Nénufar.`
+  const canonical = `${getServerSideURL()}/blog/${post.slug}`
+  const metaImage = typeof post.meta?.image === 'object' ? (post.meta?.image as Media) : undefined
+  const ogImages = metaImage?.url
+    ? [{ url: metaImage.url, alt: metaImage.alt || post.title }]
+    : undefined
+
   return {
-    description: post.meta?.description || `Lee este artículo en el blog de Nenúfar.`,
+    title,
+    description,
+    alternates: { canonical },
     openGraph: mergeOpenGraph({
-      title: `${post.title} | Nenúfar Blog`,
-      url: `/blog/${post.slug}`,
+      type: 'article',
+      title,
+      description,
+      url: canonical,
+      publishedTime: post.publishedAt || post.createdAt,
+      modifiedTime: post.updatedAt,
+      images: ogImages,
     }),
-    title: `${post.title} | Nenúfar Blog`,
+    twitter: {
+      card: ogImages ? 'summary_large_image' : 'summary',
+      title,
+      description,
+      images: ogImages?.map((i) => i.url),
+    },
   }
 }

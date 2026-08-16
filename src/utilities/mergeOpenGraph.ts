@@ -2,14 +2,16 @@ import type { Metadata } from 'next'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
-  description: 'An open-source website built with Payload and Next.js.',
+  locale: 'es_CO',
+  description:
+    'Joyería artesanal colombiana hecha a mano en Cartagena. Piezas únicas de Nénufar.',
   images: [
     {
-      url: 'https://payloadcms.com/images/og-image.jpg',
+      url: '/og-default.jpg',
     },
   ],
-  siteName: 'Payload Website Template',
-  title: 'Payload Website Template',
+  siteName: 'Nénufar',
+  title: 'Nénufar — Joyería Artesanal Colombiana',
 }
 
 export const mergeOpenGraph = (og?: Partial<Metadata['openGraph']>): Metadata['openGraph'] => {
