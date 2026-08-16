@@ -31,13 +31,32 @@ Instagram / Facebook  →  página de PRODUCTO  →  /pedidos/enviar  →  Teleg
 
 | Campo | Contenido |
 |-------|-----------|
-| **Industria** | E-commerce — joyería artesanal (moda / hecho a mano) |
+| **Industria** | Taller artesanal — moda y accesorios hechos a mano |
 | **Sitio web** | https://nenufar.co (o dominio final) |
 | **Etapa** | [CONFIRMAR: lanzamiento / crecimiento] |
-| **Producto core** | Joyería artesanal colombiana hecha a mano en Cartagena |
+| **Producto core** | Piezas artesanales hechas a mano en Cartagena (joyería + textil + talleres) |
 | **Dueña / marca** | Shirley — Cartagena, Colombia |
+| **Modelo de negocio** | **Por encargo** — Shirley produce según lo que le pidan. Venta directa vía catálogo + pedidos personalizados |
 | **Modelo de compra** | Sin pasarela online: formulario → pedido → Shirley coordina pago y envío |
 | **Moneda** | COP (peso colombiano) |
+
+### Líneas de negocio (NO es solo joyería)
+
+Nénufar es un **taller artesanal**, no solo una tienda de joyas. El marketing debe cubrir todo:
+
+| Línea | Qué es | Dónde se promociona |
+|-------|--------|---------------------|
+| **Joyería artesanal** | Aretes, collares, etc. hechos a mano | Productos del ecommerce (`/shop`) |
+| **Trabajo en mezclilla / textil** | Joyas combinadas con mezclilla, **blusas**, piezas textiles artesanales | Productos del ecommerce |
+| **Piezas por encargo** | Diseños personalizados según lo que pida el cliente | CTA "hazlo a tu medida" / pedido personalizado |
+| **Talleres** | Clases/talleres artesanales que dicta Shirley | **Ruta `/eventos`** + blog |
+
+**Implicaciones para el copy:**
+- No encasillar la marca solo como "joyería" — es artesanía hecha a mano (joyas, mezclilla, blusas, talleres).
+- Resaltar el **"por encargo / personalizado"** como diferenciador de venta.
+- Los **talleres** se promocionan como eventos (ruta `/eventos`) y con artículos de blog; también generan comunidad y ventas.
+- Keywords a ampliar: además de joyería, sumar "artesanías Cartagena", "talleres artesanales Cartagena",
+  "blusas artesanales", "accesorios en mezclilla", "hecho a la medida / por encargo".
 
 **Redes sociales (sameAs):**
 - Instagram: https://www.instagram.com/nenufar.co/
