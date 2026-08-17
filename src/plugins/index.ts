@@ -1,3 +1,4 @@
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { Plugin } from 'payload'
@@ -28,6 +29,19 @@ const generateURL: GenerateURL<Product | Page> = ({ doc }) => {
 }
 
 export const plugins: Plugin[] = [
+  // Vercel Blob: persists uploaded images across deploys (production).
+  // In dev, falls back to local disk (public/media/) when BLOB_READ_WRITE_TOKEN is absent.
+  ...(process.env.BLOB_READ_WRITE_TOKEN
+    ? [
+        vercelBlobStorage({
+          enabled: true,
+          collections: {
+            media: true,
+          },
+          token: process.env.BLOB_READ_WRITE_TOKEN,
+        }),
+      ]
+    : []),
   seoPlugin({
     generateTitle,
     generateURL,
