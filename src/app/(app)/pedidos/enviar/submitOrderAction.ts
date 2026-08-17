@@ -21,10 +21,12 @@ import { getPayload } from 'payload'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
+import path from 'path'
+
 import { validateConsent } from '@/lib/consent'
 import { checkIdempotency, markSeen } from '@/lib/idempotency'
 import { formatOrderMessage } from '@/lib/order-formatter'
-import { sendTelegramMessage } from '@/lib/telegram'
+import { sendTelegramMessage, sendTelegramPhoto } from '@/lib/telegram'
 
 export interface SubmitOrderState {
   status: 'idle' | 'error' | 'success'
@@ -161,6 +163,40 @@ export async function submitOrderAction(
     // Tell the buyer it went through (don't leak Telegram internals) but log the issue.
     markSeen(cartId, orderId)
     redirect(`/pedidos/enviar/confirmacion?id=${orderId}&warn=1`)
+  }
+
+  // 7b. Send one photo per product (non-fatal — order already confirmed above)
+  const mediaDir = path.join(process.cwd(), 'public', 'media')
+  const seenProducts = new Set<string>()
+  for (const item of cart.items ?? []) {
+    const product = typeof item?.product === 'object' ? item.product : null
+    if (!product || !('id' in product)) continue
+    const productId = String(product.id)
+    if (seenProducts.has(productId)) continue
+    seenProducts.add(productId)
+
+    const gallery = (product as { gallery?: Array<{ image?: unknown }> }).gallery ?? []
+    const firstImage = gallery[0]?.image
+    if (!firstImage || typeof firstImage !== 'object') continue
+
+    const media = firstImage as { filename?: string; url?: string; title?: string }
+    const title = (product as { title?: string }).title ?? 'Producto'
+    const qty = item.quantity ?? 1
+    const caption = qty > 1 ? `${title} ×${qty}` : title
+
+    const photoResult = await sendTelegramPhoto({
+      filePath: media.filename ? path.join(mediaDir, media.filename) : undefined,
+      photoUrl: media.url ?? undefined,
+      caption,
+    })
+
+    if (!photoResult.ok) {
+      payload.logger.warn({
+        msg: '[submitOrder] Photo send skipped',
+        productId,
+        error: photoResult.error,
+      })
+    }
   }
 
   // 8. Mark idempotency (after Telegram succeeds + Order exists)

@@ -84,3 +84,83 @@ interface TelegramApiResponse {
  * We use 4000 (below the 4096 hard cap) to leave room for HTML wrapping.
  */
 export const TELEGRAM_MESSAGE_MAX_LENGTH = 4000
+
+export interface SendTelegramPhotoArgs {
+  /** Absolute path to a local file — used in dev (localhost not reachable by Telegram). */
+  filePath?: string
+  /** Full public URL — used in production (Cloudinary / Vercel Blob). */
+  photoUrl?: string
+  caption?: string
+}
+
+/**
+ * Sends one photo to the configured Telegram chat.
+ * Tries local file upload first (dev), falls back to public URL (production).
+ * Returns ok=false (never throws) — photo failures are non-fatal for the order flow.
+ */
+export async function sendTelegramPhoto({
+  filePath,
+  photoUrl,
+  caption,
+}: SendTelegramPhotoArgs): Promise<SendTelegramMessageResult> {
+  const token = process.env.TELEGRAM_BOT_TOKEN
+  const channelId = process.env.TELEGRAM_CHANNEL_ID
+
+  if (!token || !channelId) {
+    return { ok: false, error: 'Telegram not configured' }
+  }
+
+  // 1. Local file upload (works in dev — Telegram can't reach localhost)
+  if (filePath) {
+    try {
+      const fs = await import('fs')
+      if (fs.existsSync(filePath)) {
+        const fileBuffer = fs.readFileSync(filePath)
+        const form = new FormData()
+        form.append('chat_id', channelId)
+        form.append('photo', new Blob([fileBuffer]), filePath.split('/').pop() ?? 'photo.jpg')
+        if (caption) form.append('caption', caption)
+
+        const response = await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendPhoto`, {
+          method: 'POST',
+          body: form,
+          signal: AbortSignal.timeout(30_000),
+        })
+        const data: TelegramApiResponse = await response.json()
+        if (data.ok) return { ok: true, messageId: data.result?.message_id }
+      }
+    } catch {
+      // fall through to URL approach
+    }
+  }
+
+  // 2. Public URL (works in production with Vercel Blob / Cloudinary)
+  if (photoUrl) {
+    const fullUrl = photoUrl.startsWith('http')
+      ? photoUrl
+      : `${process.env.NEXT_PUBLIC_SERVER_URL ?? ''}${photoUrl}`
+
+    try {
+      const response = await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendPhoto`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: channelId,
+          photo: fullUrl,
+          caption: caption ?? undefined,
+        }),
+        signal: AbortSignal.timeout(30_000),
+      })
+      const data: TelegramApiResponse = await response.json()
+      if (!response.ok || !data.ok) {
+        return { ok: false, error: data.description || `HTTP ${response.status}` }
+      }
+      return { ok: true, messageId: data.result?.message_id }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      return { ok: false, error: message }
+    }
+  }
+
+  return { ok: false, error: 'No filePath or photoUrl provided' }
+}
