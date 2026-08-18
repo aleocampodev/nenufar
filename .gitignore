@@ -1,12 +1,12 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/node_modules
-/.pnp
+# dependencies (monorepo: en cualquier nivel)
+node_modules/
+.pnp
 .pnp.js
 
 # testing
-/coverage
+coverage/
 .playwright
 .playwright-cli/
 .playwright-mcp/
@@ -14,12 +14,12 @@ playwright-report/
 playwright-report/index.html
 test-results/
 
-# next.js
-/.next/
-/out/
+# next.js (en cualquier app)
+.next/
+out/
 
 # production
-/build
+build/
 
 # misc
 .DS_Store
