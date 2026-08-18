@@ -53,7 +53,9 @@ export default buildConfig({
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
     },
-    push: true,
+    // push: true auto-mutates schema on every start — dangerous in production.
+    // Use `pnpm payload migrate` for schema changes.
+    push: process.env.NODE_ENV === 'development',
   }),
   editor: lexicalEditor({
     features: () => {
@@ -98,7 +100,11 @@ export default buildConfig({
     fallbackLanguage: 'es',
   },
   plugins,
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: (() => {
+    const s = process.env.PAYLOAD_SECRET
+    if (!s) throw new Error('PAYLOAD_SECRET env var is required')
+    return s
+  })(),
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

@@ -165,9 +165,11 @@ export async function submitOrderAction(
     redirect(`/pedidos/enviar/confirmacion?id=${orderId}&warn=1`)
   }
 
-  // 7b. Send one photo per product (non-fatal — order already confirmed above)
+  // 7b. Send one photo per unique product in parallel (non-fatal)
   const mediaDir = path.join(process.cwd(), 'public', 'media')
   const seenProducts = new Set<string>()
+  const photoTasks: Promise<void>[] = []
+
   for (const item of cart.items ?? []) {
     const product = typeof item?.product === 'object' ? item.product : null
     if (!product || !('id' in product)) continue
@@ -184,20 +186,20 @@ export async function submitOrderAction(
     const qty = item.quantity ?? 1
     const caption = qty > 1 ? `${title} ×${qty}` : title
 
-    const photoResult = await sendTelegramPhoto({
-      filePath: media.filename ? path.join(mediaDir, media.filename) : undefined,
-      photoUrl: media.url ?? undefined,
-      caption,
-    })
-
-    if (!photoResult.ok) {
-      payload.logger.warn({
-        msg: '[submitOrder] Photo send skipped',
-        productId,
-        error: photoResult.error,
-      })
-    }
+    photoTasks.push(
+      sendTelegramPhoto({
+        filePath: media.filename ? path.join(mediaDir, media.filename) : undefined,
+        photoUrl: media.url ?? undefined,
+        caption,
+      }).then((result) => {
+        if (!result.ok) {
+          payload.logger.warn({ msg: '[submitOrder] Photo send skipped', productId, error: result.error })
+        }
+      }),
+    )
   }
+
+  await Promise.allSettled(photoTasks)
 
   // 8. Mark idempotency (after Telegram succeeds + Order exists)
   markSeen(cartId, orderId)
