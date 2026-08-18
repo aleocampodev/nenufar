@@ -15,6 +15,19 @@ un producto útil para la tienda **y** un vehículo de aprendizaje (Claude API, 
 | [03](./03-SDD.md) | **SDD** — Software Design | ¿Cómo se estructura? Arquitectura, datos, flujos | Diseño / arquitectura |
 | [04](./04-TSD.md) | **TSD** — Technical Specification | ¿Cómo se implementa? Contratos, schemas, tools | Implementación |
 
+### Documentos transversales
+
+| # | Documento | Tema |
+|---|-----------|------|
+| [05](./05-seguridad-guardrails.md) | **Seguridad y Guardrails** | Modelo de amenazas, inyección de prompts, permisos de tools |
+| [06](./06-diseno-conversacion.md) | **Diseño de Conversación** | Voz, tono, flujos de diálogo, escalamiento a humano |
+| [07](./07-evals.md) | **Evals** | Cómo medimos la calidad del agente (~20 casos, LLM-juez) |
+| [08](./08-glosario.md) | **Glosario** | Lenguaje ubicuo (dominio + técnico) |
+
+### Diagrama
+
+- [`diagrama-arquitectura.html`](./diagrama-arquitectura.html) — ruta de aprendizaje de 3 etapas (abrir en navegador).
+
 ## Alcance del proyecto: 3 etapas
 
 El mismo bot crece de forma incremental. Cada etapa suma un concepto sin rehacer lo anterior.

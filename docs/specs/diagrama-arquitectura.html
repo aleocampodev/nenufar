@@ -1,0 +1,345 @@
+<title>Concierge Nénufar</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --bg: #f6f3fa;
+    --panel: #fffdff;
+    --ink: #241a2e;
+    --ink-soft: #6a5d78;
+    --ink-faint: #b3a6bf;
+    --hair: #e2d9ec;
+
+    --msg-fill: #e8f1fb;   --msg-line: #2f7fd0;   --msg-ink: #1a4d80;
+    --edge-fill: #f1e8fa;  --edge-line: #6a1b9a;  --edge-ink: #4c1471;
+    --agent-fill: #e3f4f0; --agent-line: #0f766e; --agent-ink: #0b4f4a;
+    --rag-fill: #e6f5ec;   --rag-line: #1f9d55;   --rag-ink: #146c3a;
+    --multi-fill: #fbe9f2; --multi-line: #c2477f; --multi-ink: #8a2a58;
+    --tool-fill: #f9f0dd;  --tool-line: #b07d2b;  --tool-ink: #7a5312;
+    --data-fill: #eee9f2;  --data-line: #6b5b7e;  --data-ink: #40324f;
+
+    --warn-fill: #fbf1e2;  --warn-line: #c07d1f;  --warn-ink: #855012;
+    --arrow: #6a5d78;
+    --zone: rgba(106,27,154,0.04);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17111d;
+      --panel: #211829;
+      --ink: #f0e9f5;
+      --ink-soft: #b3a4c1;
+      --ink-faint: #6d5f7c;
+      --hair: #362a42;
+
+      --msg-fill: #142735;   --msg-line: #5aa6e6;   --msg-ink: #b9dcfb;
+      --edge-fill: #2a1740;  --edge-line: #b17ad6;  --edge-ink: #e6d3f6;
+      --agent-fill: #0c2b28; --agent-line: #4bbfb0; --agent-ink: #b6ede6;
+      --rag-fill: #0d2f1c;   --rag-line: #3fbd72;   --rag-ink: #a7edc2;
+      --multi-fill: #3a1428; --multi-line: #e072a8; --multi-ink: #f6c0da;
+      --tool-fill: #33260f;  --tool-line: #d6a44e;  --tool-ink: #f3d99f;
+      --data-fill: #241c30;  --data-line: #a08cb6;  --data-ink: #dccdec;
+
+      --warn-fill: #362613;  --warn-line: #d6a044;  --warn-ink: #f3d49a;
+      --arrow: #a191b0;
+      --zone: rgba(177,122,214,0.06);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #17111d;
+    --panel: #211829;
+    --ink: #f0e9f5;
+    --ink-soft: #b3a4c1;
+    --ink-faint: #6d5f7c;
+    --hair: #362a42;
+
+    --msg-fill: #142735;   --msg-line: #5aa6e6;   --msg-ink: #b9dcfb;
+    --edge-fill: #2a1740;  --edge-line: #b17ad6;  --edge-ink: #e6d3f6;
+    --agent-fill: #0c2b28; --agent-line: #4bbfb0; --agent-ink: #b6ede6;
+    --rag-fill: #0d2f1c;   --rag-line: #3fbd72;   --rag-ink: #a7edc2;
+    --multi-fill: #3a1428; --multi-line: #e072a8; --multi-ink: #f6c0da;
+    --tool-fill: #33260f;  --tool-line: #d6a44e;  --tool-ink: #f3d99f;
+    --data-fill: #241c30;  --data-line: #a08cb6;  --data-ink: #dccdec;
+
+    --warn-fill: #362613;  --warn-line: #d6a044;  --warn-ink: #f3d49a;
+    --arrow: #a191b0;
+    --zone: rgba(177,122,214,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    line-height: 1.5;
+    padding: 40px 20px 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .wrap { width: 100%; max-width: 1080px; }
+
+  header { margin-bottom: 8px; }
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--edge-line); margin-bottom: 10px;
+  }
+  h1 {
+    font-family: "Fraunces", Georgia, serif; font-weight: 600;
+    font-size: clamp(28px, 4vw, 44px); line-height: 1.05;
+    letter-spacing: -0.01em; text-wrap: balance; margin-bottom: 12px;
+  }
+  .lede { max-width: 64ch; color: var(--ink-soft); font-size: 16px; }
+  .lede b { color: var(--ink); font-weight: 600; }
+
+  figure {
+    margin: 24px 0 8px; background: var(--panel);
+    border: 1px solid var(--hair); border-radius: 16px;
+    padding: 10px 10px 4px; overflow-x: auto;
+  }
+  svg { display: block; width: 1040px; min-width: 1040px; height: auto; }
+
+  svg text { font-family: "IBM Plex Sans", sans-serif; }
+  .t-zone { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+  .t-title { font-size: 15px; font-weight: 600; }
+  .t-sub { font-size: 12.5px; }
+  .t-mono { font-family: "IBM Plex Mono", monospace; font-size: 12px; }
+  .t-badge { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 600; fill: #fff; }
+  .lbl { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; fill: var(--ink-soft); }
+  .pill-t { font-family: "IBM Plex Mono", monospace; font-size: 13px; font-weight: 500; }
+
+  figcaption { font-size: 13.5px; color: var(--ink-soft); padding: 12px 8px 4px; max-width: 74ch; }
+  figcaption b { color: var(--ink); font-weight: 600; }
+  figcaption code, .card code { font-family: "IBM Plex Mono", monospace; font-size: 12px; background: var(--edge-fill); color: var(--edge-ink); padding: 1px 5px; border-radius: 4px; }
+
+  .callout {
+    display: flex; gap: 14px; align-items: flex-start;
+    margin-top: 22px; padding: 16px 18px;
+    background: var(--warn-fill); border: 1px solid var(--warn-line);
+    border-radius: 12px; color: var(--warn-ink); font-size: 14.5px; max-width: 1080px;
+  }
+  .callout .mark { font-size: 20px; line-height: 1.2; }
+  .callout b { font-weight: 600; }
+
+  .legend { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 12px 22px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-soft); }
+  .sw { width: 26px; height: 15px; border-radius: 4px; border: 2px solid; flex-shrink: 0; }
+  .dot { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+
+  .grid { margin-top: 34px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--hair); border-radius: 12px; padding: 16px 18px; }
+  .card.stage { border-top: 3px solid var(--edge-line); }
+  .card.s1 { border-top-color: var(--agent-line); }
+  .card.s2 { border-top-color: var(--rag-line); }
+  .card.s3 { border-top-color: var(--multi-line); }
+  .card .step { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.1em; color: var(--ink-faint); }
+  .card h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 18px; margin: 2px 0 8px; }
+  .card p { font-size: 13.5px; color: var(--ink-soft); }
+  .card .learn { margin-top: 8px; font-size: 12.5px; color: var(--ink); }
+  .card .learn b { font-weight: 600; }
+  .card ul { list-style: none; font-size: 13.5px; color: var(--ink-soft); margin-top: 4px; }
+  .card li { padding-left: 16px; position: relative; margin-top: 4px; }
+  .card li::before { content: "→"; position: absolute; left: 0; color: var(--agent-line); }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Nénufar · Ruta de aprendizaje — Claude Agent SDK</div>
+    <h1>Del notificador al concierge multiagente</h1>
+    <p class="lede">Un mapa para <b>aprender construyendo</b>: el mismo bot de Telegram crece en tres etapas sobre el <b>Claude Agent SDK</b> — <b>①</b> agente + herramientas, <b>②</b> RAG con pgvector, <b>③</b> multiagente con subagentes. Cada etapa suma un concepto sin rehacer lo anterior.</p>
+  </header>
+
+  <figure>
+    <svg viewBox="0 0 1040 770" role="img" aria-label="Ruta de aprendizaje y arquitectura objetivo del bot de Nénufar con el Claude Agent SDK. Arriba, tres etapas: 1 agente más herramientas, 2 RAG con pgvector, 3 multiagente con subagentes. Abajo, la arquitectura: Telegram de dos vías entra por el edge de Vercel que resuelve el rol por chat.id y reenvía a un contenedor con el Agent SDK; el orquestador query() delega en subagentes de catálogo, pedido y gestión; las herramientas usan la Payload Local API y una tool de retrieval consulta la base de conocimiento pgvector; todo lee y escribe en PostgreSQL; el bot responde por Telegram y conserva la notificación al canal de Shirley. Cada componente lleva una insignia con la etapa en que se construye.">
+      <defs>
+        <marker id="ar" markerWidth="9" markerHeight="7" refX="7.5" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="var(--arrow)"/></marker>
+        <marker id="ar-agent" markerWidth="9" markerHeight="7" refX="7.5" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="var(--multi-line)"/></marker>
+        <marker id="ar-rag" markerWidth="9" markerHeight="7" refX="7.5" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="var(--rag-line)"/></marker>
+        <marker id="ar-msg" markerWidth="9" markerHeight="7" refX="7.5" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="var(--msg-line)"/></marker>
+        <marker id="ar-tool" markerWidth="9" markerHeight="7" refX="7.5" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="var(--tool-line)"/></marker>
+      </defs>
+
+      <!-- ===== ROADMAP STRIP ===== -->
+      <rect x="34" y="22" width="300" height="46" rx="23" fill="var(--agent-fill)" stroke="var(--agent-line)" stroke-width="1.8"/>
+      <circle cx="60" cy="45" r="12" fill="var(--agent-line)"/><text x="60" y="49" text-anchor="middle" class="t-badge">1</text>
+      <text x="80" y="49" class="pill-t" fill="var(--agent-ink)">Agente + tools · Agent SDK</text>
+
+      <path d="M 338 45 L 366 45" stroke="var(--arrow)" stroke-width="1.8" marker-end="url(#ar)"/>
+
+      <rect x="370" y="22" width="300" height="46" rx="23" fill="var(--rag-fill)" stroke="var(--rag-line)" stroke-width="1.8"/>
+      <circle cx="396" cy="45" r="12" fill="var(--rag-line)"/><text x="396" y="49" text-anchor="middle" class="t-badge">2</text>
+      <text x="416" y="49" class="pill-t" fill="var(--rag-ink)">RAG · pgvector (grounding)</text>
+
+      <path d="M 674 45 L 702 45" stroke="var(--arrow)" stroke-width="1.8" marker-end="url(#ar)"/>
+
+      <rect x="706" y="22" width="300" height="46" rx="23" fill="var(--multi-fill)" stroke="var(--multi-line)" stroke-width="1.8"/>
+      <circle cx="732" cy="45" r="12" fill="var(--multi-line)"/><text x="732" y="49" text-anchor="middle" class="t-badge">3</text>
+      <text x="752" y="49" class="pill-t" fill="var(--multi-ink)">Multiagente · subagentes</text>
+
+      <!-- ===== ROLE CHIPS ===== -->
+      <rect x="212" y="90" width="176" height="38" rx="19" fill="var(--msg-fill)" stroke="var(--msg-line)" stroke-width="1.5"/>
+      <text x="300" y="114" text-anchor="middle" class="t-title" fill="var(--msg-ink)">🙋 Cliente</text>
+      <rect x="652" y="90" width="196" height="38" rx="19" fill="var(--msg-fill)" stroke="var(--msg-line)" stroke-width="1.5"/>
+      <text x="750" y="114" text-anchor="middle" class="t-title" fill="var(--msg-ink)">💎 Shirley · admin</text>
+
+      <!-- ===== TELEGRAM ===== -->
+      <rect x="400" y="148" width="240" height="54" rx="12" fill="var(--msg-fill)" stroke="var(--msg-line)" stroke-width="2.2"/>
+      <text x="520" y="172" text-anchor="middle" class="t-title" fill="var(--msg-ink)">Telegram · bot único</text>
+      <text x="520" y="191" text-anchor="middle" class="t-sub" fill="var(--msg-ink)">conversación de dos vías</text>
+      <path d="M 300 128 C 320 148, 388 150, 430 158" fill="none" stroke="var(--msg-line)" stroke-width="1.5" marker-end="url(#ar-msg)"/>
+      <path d="M 750 128 C 730 148, 652 150, 610 158" fill="none" stroke="var(--msg-line)" stroke-width="1.5" marker-end="url(#ar-msg)"/>
+
+      <path d="M 520 202 L 520 234" fill="none" stroke="var(--arrow)" stroke-width="1.8" marker-end="url(#ar)"/>
+      <text x="532" y="221" class="lbl">webhook · secret token</text>
+
+      <!-- ===== EDGE ===== -->
+      <rect x="120" y="236" width="800" height="58" rx="11" fill="var(--edge-fill)" stroke="var(--edge-line)" stroke-width="2"/>
+      <text x="140" y="259" class="t-zone" fill="var(--edge-line)">Edge · Vercel — ingress</text>
+      <text x="140" y="281" class="t-sub" fill="var(--edge-ink)">verifica secret · resuelve ROL por chat.id (cliente / admin) · reenvía</text>
+
+      <path d="M 520 294 L 520 326" fill="none" stroke="var(--arrow)" stroke-width="1.8" marker-end="url(#ar)"/>
+      <text x="532" y="313" class="lbl">reenvía turno + rol</text>
+
+      <!-- ===== AGENT SDK CONTAINER ===== -->
+      <rect x="84" y="328" width="872" height="238" rx="14" fill="var(--zone)" stroke="var(--agent-line)" stroke-width="2.4" stroke-dasharray="7 5"/>
+      <text x="104" y="352" class="t-zone" fill="var(--agent-line)">Contenedor · Claude Agent SDK — proceso long-running (query)</text>
+
+      <!-- orchestrator -->
+      <rect x="112" y="366" width="360" height="60" rx="10" fill="var(--agent-fill)" stroke="var(--agent-line)" stroke-width="2.2"/>
+      <circle cx="130" cy="384" r="11" fill="var(--agent-line)"/><text x="130" y="388" text-anchor="middle" class="t-badge">1</text>
+      <text x="300" y="392" text-anchor="middle" class="t-title" fill="var(--agent-ink)">Orquestador · query()</text>
+      <text x="300" y="412" text-anchor="middle" class="t-sub" fill="var(--agent-ink)">system prompt por rol · maxTurns</text>
+
+      <!-- session -->
+      <rect x="500" y="366" width="344" height="60" rx="10" fill="var(--agent-fill)" stroke="var(--agent-line)" stroke-width="1.6"/>
+      <text x="672" y="392" text-anchor="middle" class="t-title" fill="var(--agent-ink)">Sesión por chat · resume(chatId)</text>
+      <text x="672" y="412" text-anchor="middle" class="t-mono" fill="var(--agent-ink)">⇄ SessionStore → Postgres</text>
+
+      <!-- subagents (stage 3) -->
+      <rect x="112" y="474" width="236" height="76" rx="10" fill="var(--multi-fill)" stroke="var(--multi-line)" stroke-width="1.8"/>
+      <text x="230" y="500" text-anchor="middle" class="t-title" fill="var(--multi-ink)">Subagente · Catálogo</text>
+      <text x="230" y="520" text-anchor="middle" class="t-sub" fill="var(--multi-ink)">solo lectura</text>
+      <text x="230" y="539" text-anchor="middle" class="t-mono" fill="var(--multi-ink)">Haiku</text>
+
+      <rect x="392" y="474" width="236" height="76" rx="10" fill="var(--multi-fill)" stroke="var(--multi-line)" stroke-width="1.8"/>
+      <text x="510" y="500" text-anchor="middle" class="t-title" fill="var(--multi-ink)">Subagente · Pedido</text>
+      <text x="510" y="520" text-anchor="middle" class="t-sub" fill="var(--multi-ink)">carrito + consent</text>
+      <text x="510" y="539" text-anchor="middle" class="t-mono" fill="var(--multi-ink)">Sonnet</text>
+
+      <rect x="672" y="474" width="236" height="76" rx="10" fill="var(--multi-fill)" stroke="var(--multi-line)" stroke-width="1.8"/>
+      <text x="790" y="500" text-anchor="middle" class="t-title" fill="var(--multi-ink)">Subagente · Gestión</text>
+      <text x="790" y="520" text-anchor="middle" class="t-sub" fill="var(--multi-ink)">estados · resumen</text>
+      <text x="790" y="539" text-anchor="middle" class="t-mono" fill="var(--multi-ink)">admin · Sonnet/Opus</text>
+
+      <circle cx="128" cy="486" r="11" fill="var(--multi-line)"/><text x="128" y="490" text-anchor="middle" class="t-badge">3</text>
+
+      <path d="M 250 426 C 235 452, 230 460, 230 474" fill="none" stroke="var(--multi-line)" stroke-width="1.7" marker-end="url(#ar-agent)"/>
+      <path d="M 320 426 C 400 456, 470 462, 505 474" fill="none" stroke="var(--multi-line)" stroke-width="1.7" marker-end="url(#ar-agent)"/>
+      <path d="M 360 424 C 520 458, 700 462, 785 474" fill="none" stroke="var(--multi-line)" stroke-width="1.7" marker-end="url(#ar-agent)"/>
+      <text x="330" y="450" class="lbl" fill="var(--multi-line)">delega · subagents (etapa 3)</text>
+
+      <!-- container -> tools / rag -->
+      <path d="M 300 566 L 300 596" fill="none" stroke="var(--tool-line)" stroke-width="1.8" marker-end="url(#ar-tool)"/>
+      <text x="312" y="585" class="lbl" fill="var(--tool-line)">tool calls</text>
+      <path d="M 790 566 L 790 596" fill="none" stroke="var(--rag-line)" stroke-width="1.8" marker-end="url(#ar-rag)"/>
+      <text x="802" y="585" class="lbl" fill="var(--rag-line)">retrieval</text>
+
+      <!-- ===== TOOLS (stage 1) ===== -->
+      <rect x="96" y="598" width="536" height="66" rx="11" fill="var(--tool-fill)" stroke="var(--tool-line)" stroke-width="2"/>
+      <circle cx="114" cy="616" r="11" fill="var(--tool-line)"/><text x="114" y="620" text-anchor="middle" class="t-badge">1</text>
+      <text x="364" y="622" text-anchor="middle" class="t-title" fill="var(--tool-ink)">Herramientas → Payload Local API</text>
+      <text x="364" y="642" text-anchor="middle" class="t-sub" fill="var(--tool-ink)">buscar/ver_producto · crear_pedido (consent + idempotency) · estados · resumen</text>
+      <text x="364" y="659" text-anchor="middle" class="t-mono" fill="var(--ink-soft)">custom tools / MCP in-process</text>
+
+      <!-- ===== RAG (stage 2) ===== -->
+      <rect x="656" y="598" width="288" height="66" rx="11" fill="var(--rag-fill)" stroke="var(--rag-line)" stroke-width="2"/>
+      <circle cx="674" cy="616" r="11" fill="var(--rag-line)"/><text x="674" y="620" text-anchor="middle" class="t-badge">2</text>
+      <text x="800" y="622" text-anchor="middle" class="t-title" fill="var(--rag-ink)">Base de conocimiento · pgvector</text>
+      <text x="800" y="642" text-anchor="middle" class="t-sub" fill="var(--rag-ink)">embeddings: cuidado de piezas, materiales, FAQ</text>
+      <text x="800" y="659" text-anchor="middle" class="t-mono" fill="var(--rag-ink)">tool: buscar_conocimiento</text>
+
+      <!-- tools/rag -> data -->
+      <path d="M 300 664 L 300 694" fill="none" stroke="var(--arrow)" stroke-width="1.8" marker-end="url(#ar)"/>
+      <text x="312" y="683" class="lbl">lee / escribe</text>
+      <path d="M 800 664 C 800 682 560 682 470 694" fill="none" stroke="var(--rag-line)" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#ar-rag)"/>
+
+      <!-- ===== DATA ===== -->
+      <g>
+        <path d="M 216 700 v 28 a 84 9 0 0 0 168 0 v -28" fill="var(--data-fill)" stroke="var(--data-line)" stroke-width="2"/>
+        <ellipse cx="300" cy="700" rx="84" ry="9" fill="var(--data-fill)" stroke="var(--data-line)" stroke-width="2"/>
+        <text x="300" y="718" text-anchor="middle" class="t-title" fill="var(--data-ink)">PostgreSQL</text>
+        <text x="300" y="734" text-anchor="middle" class="t-sub" fill="var(--data-ink)">orders · carts · + pgvector</text>
+      </g>
+      <rect x="440" y="698" width="188" height="44" rx="10" fill="var(--data-fill)" stroke="var(--data-line)" stroke-width="1.8"/>
+      <text x="534" y="717" text-anchor="middle" class="t-title" fill="var(--data-ink)">Payload CMS v3</text>
+      <text x="534" y="733" text-anchor="middle" class="t-sub" fill="var(--data-ink)">productos · pedidos</text>
+
+      <rect x="666" y="696" width="266" height="48" rx="10" fill="var(--msg-fill)" stroke="var(--msg-line)" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <text x="799" y="716" text-anchor="middle" class="t-title" fill="var(--msg-ink)">Canal de Shirley (aviso)</text>
+      <text x="799" y="733" text-anchor="middle" class="t-sub" fill="var(--msg-ink)">notificación saliente — conservada</text>
+      <path d="M 620 640 C 660 660 720 672 740 696" fill="none" stroke="var(--msg-line)" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar-msg)"/>
+
+      <!-- reply path -->
+      <path d="M 956 396 L 998 396 Q 1012 396 1012 382 L 1012 189 Q 1012 175 998 175 L 642 175"
+            fill="none" stroke="var(--msg-line)" stroke-width="1.8" stroke-dasharray="2 3" marker-end="url(#ar-msg)"/>
+      <text x="1004" y="290" text-anchor="middle" class="lbl" fill="var(--msg-line)" transform="rotate(-90 1004 290)">responde · sendMessage(chatId)</text>
+    </svg>
+    <figcaption>La <b>arquitectura objetivo</b> con insignias de etapa. Construís en orden: primero el <b>①</b> orquestador + herramientas (Agent SDK), luego la <b>②</b> capa RAG con pgvector para respuestas fundamentadas, y por último los <b>③</b> subagentes que el orquestador delega. Telegram, edge, Payload y Postgres son la base común; el aviso a Shirley se conserva desde el día uno.</figcaption>
+  </figure>
+
+  <div class="callout">
+    <span class="mark">⚠︎</span>
+    <div><b>El Agent SDK necesita un proceso de larga vida</b> (levanta un subproceso <code>claude</code> con estado en disco), así que no corre en el serverless de Vercel: mientras aprendés, lo corrés <b>local</b> o en un contenedor barato (Fly.io / Railway). El <b>edge de Vercel</b> sigue siendo el que recibe el webhook y reenvía. Poné un <b>límite de gasto</b> en la consola de Anthropic y acotá con <code>maxTurns</code>.</div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><span class="dot" style="background:var(--agent-line)">1</span>Etapa 1 · agente + tools</div>
+    <div class="legend-item"><span class="dot" style="background:var(--rag-line)">2</span>Etapa 2 · RAG</div>
+    <div class="legend-item"><span class="dot" style="background:var(--multi-line)">3</span>Etapa 3 · multiagente</div>
+    <div class="legend-item"><span class="sw" style="background:var(--msg-fill);border-color:var(--msg-line)"></span>Telegram</div>
+    <div class="legend-item"><span class="sw" style="background:var(--edge-fill);border-color:var(--edge-line)"></span>Edge / Vercel</div>
+    <div class="legend-item"><span class="sw" style="background:var(--data-fill);border-color:var(--data-line)"></span>Datos</div>
+  </div>
+
+  <div class="grid">
+    <div class="card stage s1">
+      <div class="step">ETAPA 01</div>
+      <h3>Agente + herramientas</h3>
+      <p>Un solo agente con el Agent SDK (<code>query()</code>) y tools que hablan con Payload. Roles por <code>chat.id</code>.</p>
+      <p class="learn"><b>Aprendés:</b> el agent loop, tool use, sesiones y permisos.</p>
+    </div>
+    <div class="card stage s2">
+      <div class="step">ETAPA 02</div>
+      <h3>RAG con pgvector</h3>
+      <p>Una base de conocimiento (cuidado de piezas, materiales, política de personalizados, FAQ) indexada con embeddings sobre el mismo Postgres.</p>
+      <p class="learn"><b>Aprendés:</b> embeddings, retrieval y grounding (respuestas con fundamento).</p>
+    </div>
+    <div class="card stage s3">
+      <div class="step">ETAPA 03</div>
+      <h3>Multiagente</h3>
+      <p>El orquestador delega en subagentes especializados (<code>AgentDefinition</code>): catálogo, pedido, gestión. Fan-out en lotes chicos.</p>
+      <p class="learn"><b>Aprendés:</b> delegación, subagentes, orquestación y el patrón del artículo de Anthropic.</p>
+    </div>
+    <div class="card">
+      <h3>Sobre el curso</h3>
+      <p>«Claude API, RAG y Agentes con Node» es buen fit (Node = tu stack). Tomá los <b>conceptos</b>, pero verificá los <b>specifics del API</b> (model IDs, <code>thinking</code>, tool use) contra la doc actual — envejecen rápido.</p>
+    </div>
+    <div class="card">
+      <h3>Reusás lo que ya hay</h3>
+      <ul>
+        <li><code>validateConsent</code> (Ley 1581)</li>
+        <li><code>idempotency</code></li>
+        <li><code>order-formatter</code></li>
+        <li>Payload · Postgres · Telegram</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Por dónde arrancar</h3>
+      <p>Etapa 1 con dos tools: <code>buscar_productos</code> y <code>crear_pedido</code>. Un webhook, un <code>query()</code>, y validás el flujo de punta a punta antes de sumar RAG.</p>
+    </div>
+  </div>
+</div>
