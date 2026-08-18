@@ -1,74 +1,81 @@
 # Nénufar — Claude Code Context
 
-## Qué es este proyecto
+## Working Rules
 
-Tienda de joyería artesanal colombiana de Shirley (Cartagena). Stack: **Payload CMS v3 + Next.js App Router + PostgreSQL + TailwindCSS + shadcn/ui**.
+- **Never make changes directly on `main`.** Always create a feature branch (`feature/...`) and work from a separate worktree.
+- Development worktree: `/home/ale/Work/nenufar-dev`
+- For each feature: `git worktree add ../nenufar-dev feature/<name>` before editing.
 
-Basado en el template `@payloadcms/plugin-ecommerce`. El flujo de compra es **sin pasarela de pago online**: el comprador llena un formulario → se envía un mensaje a Telegram con el detalle del pedido → Shirley coordina pago y envío manualmente.
+## What is this project
 
-## Flujo de pedido (core del negocio)
+Colombian artisan jewelry store by Shirley (Cartagena). Stack: **Payload CMS v3 + Next.js App Router + PostgreSQL + TailwindCSS + shadcn/ui**.
 
-```
-/shop → /products/[slug] → carrito → /pedidos/enviar → Telegram + Payload Order → /pedidos/enviar/confirmacion
-```
+Based on the `@payloadcms/plugin-ecommerce` template. The purchase flow has **no online payment gateway**: the buyer fills out a form → a message is sent to Telegram with the order details → Shirley coordinates payment and shipping manually via WhatsApp.
 
-- `src/app/(app)/pedidos/enviar/OrderForm.tsx` — formulario (nombre, contacto, nota, consentimiento)
-- `src/app/(app)/pedidos/enviar/submitOrderAction.ts` — server action: valida, crea Order en Payload, envía a Telegram
-- `src/lib/telegram.ts` — cliente Telegram (real, no stub)
-- `src/lib/order-formatter.ts` — formatea el mensaje HTML para Telegram
-
-## Configuración requerida
-
-Variables de entorno mínimas (ver `.env.example`):
+## Order flow (core business logic)
 
 ```
-PAYLOAD_SECRET=         # secreto de Payload
-DATABASE_URL=           # PostgreSQL (docker-compose da postgres en :5433)
-NEXT_PUBLIC_SERVER_URL= # URL pública (ej: http://localhost:3002)
-TELEGRAM_BOT_TOKEN=     # token del bot de Telegram (BotFather)
-TELEGRAM_CHANNEL_ID=    # ID del canal Telegram (@nombre o -100xxxxxxxx)
+/shop → /products/[slug] → cart → /pedidos/enviar → Telegram + Payload Order → /pedidos/enviar/confirmacion
 ```
 
-## Comandos clave
+- `src/app/(app)/pedidos/enviar/OrderForm.tsx` — form (name, WhatsApp, personalization, consent). Two modes: standard and custom.
+- `src/app/(app)/pedidos/enviar/submitOrderAction.ts` — server action: validates, creates Order in Payload, sends to Telegram
+- `src/lib/telegram.ts` — Telegram client (real, not a stub)
+- `src/lib/order-formatter.ts` — formats the HTML message for Telegram. Includes a prominent PERSONALIZATION block when custom mode is used.
+
+## Required configuration
+
+Minimum environment variables (see `.env.example`):
+
+```
+PAYLOAD_SECRET=         # Payload secret
+DATABASE_URL=           # PostgreSQL (docker-compose runs postgres on :5433)
+NEXT_PUBLIC_SERVER_URL= # Public URL (e.g. http://localhost:3002)
+TELEGRAM_BOT_TOKEN=     # Telegram bot token (from BotFather)
+TELEGRAM_CHANNEL_ID=    # Telegram channel ID (@name or -100xxxxxxxx)
+```
+
+## Key commands
 
 ```bash
-docker-compose up -d    # levanta PostgreSQL en puerto 5433
-pnpm dev                # dev server en puerto 3002 (no 3000)
-pnpm build              # build producción (incluye payload build)
-pnpm payload migrate    # corre migraciones en producción
+docker-compose up -d    # start PostgreSQL on port 5433
+pnpm dev                # dev server on port 3002 (not 3000)
+pnpm build              # production build (includes payload build)
+pnpm payload migrate    # run migrations in production
 ```
 
-Para seedear datos de prueba: ir a `/admin` → "Seed database" en el dashboard.
+To seed test data: go to `/admin` → "Seed database" on the dashboard.
 
-## Estructura de rutas frontend
+## Frontend route structure
 
 ```
 /                    → home (CMS page builder, slug: 'home')
-/shop                → catálogo con búsqueda y filtros
-/products/[slug]     → detalle de producto con variantes
-/blog                → listado de artículos
-/blog/[slug]         → artículo individual (Lexical rich text)
-/pedidos/enviar      → formulario de confirmación de pedido
-/pedidos/enviar/confirmacion → pantalla de éxito post-pedido
-/sobre-nenufar       → historia de la marca (estático)
-/contacto            → info de contacto (estático)
-/privacidad          → política de privacidad (Ley 1581/2012)
-/terminos            → términos y condiciones
-/eventos             → próximos eventos
-/find-order          → buscar pedido por ID + email (invitados)
-/(account)/          → cuenta de usuario, pedidos, direcciones
+/shop                → catalog with search and filters
+/products/[slug]     → product detail with variants + "Personalize this piece" button
+/blog                → blog post listing
+/blog/[slug]         → individual post (Lexical rich text)
+/pedidos/enviar      → order confirmation form (standard or custom mode)
+/pedidos/enviar/confirmacion → post-order success screen
+/sobre-nenufar       → brand story (static)
+/contacto            → contact info (static)
+/privacidad          → privacy policy (Ley 1581/2012)
+/terminos            → terms and conditions
+/eventos             → upcoming events
+/find-order          → look up order by ID + email (guests)
+/(account)/          → user account, orders, addresses
 ```
 
-## Color de marca
+## Brand color
 
-El violeta Nénufar (`#6A1B9A`) está formalizado como token CSS:
+Nénufar violet (`#6A1B9A`) is formalized as a CSS token:
 - `bg-brand` / `text-brand` / `hover:bg-brand-dark`
-- Definido en `globals.css` como `--brand: oklch(38% 0.2 307deg)`
+- Defined in `globals.css` as `--brand: oklch(38% 0.2 307deg)`
 
-## Notas de arquitectura
+## Architecture notes
 
-- **Sin Stripe**: comentado intencionalmente. `payments.paymentMethods: []` en el plugin.
-- **Idempotencia**: in-memory Map (single-instance). Para multi-instancia → Vercel KV.
-- **Moneda**: COP, sin decimales. `Intl.NumberFormat('es-CO', { currency: 'COP' })`.
-- **Campos de comprador**: `buyerName` y `buyerContact` se guardan en `order.shippingAddress.firstName` y `.phone` (hack temporal, Fase 6 agrega campos propios).
-- **Telegram splitting**: mensajes > 4000 chars no se parten (gap documentado).
+- **No Stripe**: intentionally commented out. `payments.paymentMethods: []` in the plugin.
+- **Idempotency**: in-memory Map (single-instance). For multi-instance deployments → Vercel KV.
+- **Currency**: COP, no decimals. `Intl.NumberFormat('es-CO', { currency: 'COP' })`.
+- **Buyer fields**: `buyerName` and `buyerContact` (WhatsApp) are stored in `order.shippingAddress.firstName` and `.phone` (temporary hack; Phase 6 adds proper fields via ordersCollectionOverride).
+- **Telegram splitting**: messages > 4000 chars are not split (documented gap).
+- **Personalization flow**: custom orders include a mandatory free-text field. The Telegram message header changes to "✦ Pedido PERSONALIZADO" and includes a highlighted PERSONALIZATION block.
