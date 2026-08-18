@@ -24,6 +24,13 @@ un producto útil para la tienda **y** un vehículo de aprendizaje (Claude API, 
 | [07](./07-evals.md) | **Evals** | Cómo medimos la calidad del agente (~20 casos, LLM-juez) |
 | [08](./08-glosario.md) | **Glosario** | Lenguaje ubicuo (dominio + técnico) |
 | [09](./09-estructura-proyecto.md) | **Estructura del Proyecto** | Monorepo, acceso a Payload desde el bot, runtime del edge, migración |
+| [10](./10-operacion-y-costos.md) | **Operación, Costos y Release** | Presupuesto de tokens, observabilidad, Definición de Done, rollback |
+
+### Frontend / Storefront (track aparte)
+
+| Documento | Tema |
+|-----------|------|
+| [frontend/](./frontend/README.md) | Specs del storefront: [PRD](./frontend/01-PRD-storefront.md) + [Diseño](./frontend/02-diseno-storefront.md) (masonry estilo Krafti) |
 
 ### Diagrama de arquitectura
 

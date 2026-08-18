@@ -82,10 +82,29 @@ Cliente → Telegram → Edge(webhook)
 - `orders` — pedido (items, amount, currency, status, shippingAddress con nombre/WhatsApp).
 
 **Nuevo:**
-- `conversations` *(Etapa 1–2, opcional en E1)* — `chatId`, `rol`, `messages[]`, `updatedAt`.
-  Implementa el `SessionStore`. Puede vivir en Payload o en Redis.
-- `knowledge_chunks` *(Etapa 2)* — `content`, `embedding vector`, `source`, `metadata`.
-  Requiere extensión **pgvector** sobre el Postgres existente.
+
+- `conversations` *(Etapa 1–2, opcional en E1)* — implementa el `SessionStore`.
+  | Campo | Tipo | Notas |
+  |-------|------|-------|
+  | `id` | uuid/serial | PK |
+  | `chatId` | text | **único**; identifica la sesión de Telegram |
+  | `rol` | enum(`cliente`,`admin`) | rol resuelto |
+  | `messages` | jsonb | `[{ role, content, ts }]` (transcript) |
+  | `createdAt` / `updatedAt` | timestamptz | para purga por retención (ver [operación §4](./10-operacion-y-costos.md)) |
+
+- `knowledge_chunks` *(Etapa 2)* — requiere extensión **pgvector**.
+  | Campo | Tipo | Notas |
+  |-------|------|-------|
+  | `id` | uuid/serial | PK |
+  | `content` | text | fragmento indexable |
+  | `embedding` | `vector(N)` | N depende del modelo (ver nota) |
+  | `source` | text/ref | pieza, post o página de Payload de origen |
+  | `metadata` | jsonb | título, tipo, url |
+  | índice | ivfflat / hnsw | sobre `embedding` |
+
+  > **Nota de alineación:** ya existe una branch `feat/vector-indexing-gemini`. El RAG debería
+  > usar **embeddings de Gemini** (p. ej. `text-embedding-004`, dimensión **768**) para ser
+  > consistente con ese trabajo. `N` = dimensión del modelo elegido.
 
 ## 6. Decisiones de diseño (ADR breves)
 
