@@ -23,6 +23,7 @@ un producto útil para la tienda **y** un vehículo de aprendizaje (Claude API, 
 | [06](./06-diseno-conversacion.md) | **Diseño de Conversación** | Voz, tono, flujos de diálogo, escalamiento a humano |
 | [07](./07-evals.md) | **Evals** | Cómo medimos la calidad del agente (~20 casos, LLM-juez) |
 | [08](./08-glosario.md) | **Glosario** | Lenguaje ubicuo (dominio + técnico) |
+| [09](./09-estructura-proyecto.md) | **Estructura del Proyecto** | Monorepo, acceso a Payload desde el bot, runtime del edge, migración |
 
 ### Diagrama de arquitectura
 

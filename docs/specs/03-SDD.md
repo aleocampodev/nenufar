@@ -100,6 +100,10 @@ Cliente → Telegram → Edge(webhook)
   infra adicional ni costo.
 - **ADR-5 · Reuso del núcleo actual:** `validateConsent`, `idempotency`, `order-formatter`,
   `telegram` se reutilizan; el bot es una nueva **capa de entrada**, no un reemplazo.
+- **ADR-6 · Acceso a Payload desde el contenedor del bot:** la Local API corre en cualquier
+  proceso Node con el `payload.config` + `DATABASE_URL` (no está atada a Next). El bot usa
+  Local API importando el config compartido (monorepo). Alternativa: REST/GraphQL por HTTP.
+  Migraciones: solo `apps/web`. Detalle en [09-estructura-proyecto](./09-estructura-proyecto.md).
 
 ## 7. Hosting
 
