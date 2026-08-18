@@ -24,9 +24,55 @@ un producto útil para la tienda **y** un vehículo de aprendizaje (Claude API, 
 | [07](./07-evals.md) | **Evals** | Cómo medimos la calidad del agente (~20 casos, LLM-juez) |
 | [08](./08-glosario.md) | **Glosario** | Lenguaje ubicuo (dominio + técnico) |
 
-### Diagrama
+### Diagrama de arquitectura
 
-- [`diagrama-arquitectura.html`](./diagrama-arquitectura.html) — ruta de aprendizaje de 3 etapas (abrir en navegador).
+Insignias de etapa: 🟩 **E1** agente + tools · 🟢 **E2** RAG · 🩷 **E3** multiagente.
+
+```mermaid
+flowchart TD
+    cliente(["🙋 Cliente"])
+    shirley(["💎 Shirley · admin"])
+    tg["Telegram · bot único (2 vías)"]
+    cliente --> tg
+    shirley --> tg
+
+    subgraph edge["Edge · Vercel (ingress)"]
+        wh["Webhook: verifica secret · resuelve rol por chat.id"]
+    end
+    tg -- "webhook + secret" --> wh
+
+    subgraph cont["Contenedor · Claude Agent SDK (long-running)"]
+        orq["Orquestador query() · prompt por rol · maxTurns"]:::s1
+        sub1["Subagente Catálogo · Haiku"]:::s3
+        sub2["Subagente Pedido · Sonnet"]:::s3
+        sub3["Subagente Gestión · admin"]:::s3
+        orq -- "delega (E3)" --> sub1
+        orq -- "delega (E3)" --> sub2
+        orq -- "delega (E3)" --> sub3
+    end
+    wh -- "reenvía turno + rol" --> orq
+
+    tools["Herramientas → Payload Local API"]:::s1
+    rag["RAG · pgvector (buscar_conocimiento)"]:::s2
+    orq -- "tool calls" --> tools
+    orq -- "retrieval (E2)" --> rag
+
+    db[("PostgreSQL: orders · carts · + pgvector")]
+    cms["Payload CMS"]
+    tools --> db
+    rag --> db
+    tools --> cms
+
+    canal[["Canal de Shirley · aviso saliente"]]
+    tools -- "aviso de pedido" --> canal
+    orq -- "responde (sendMessage)" --> tg
+
+    classDef s1 fill:#e3f4f0,stroke:#0f766e,color:#0b4f4a;
+    classDef s2 fill:#e6f5ec,stroke:#1f9d55,color:#146c3a;
+    classDef s3 fill:#fbe9f2,stroke:#c2477f,color:#8a2a58;
+```
+
+**Versión detallada:** [`diagrama-arquitectura.html`](./diagrama-arquitectura.html) (abrir en navegador) · [artifact en vivo](https://claude.ai/code/artifact/ab3e9525-3e45-4cce-97d2-68a7868d9af5) (privado).
 
 ## Alcance del proyecto: 3 etapas
 
@@ -37,10 +83,6 @@ El mismo bot crece de forma incremental. Cada etapa suma un concepto sin rehacer
 3. **Etapa 3 — Multiagente** (orquestador + subagentes)
 
 El **TSD** detalla la **Etapa 1**; las etapas 2 y 3 quedan esbozadas y se detallarán al llegar a ellas.
-
-## Diagrama de arquitectura (vivo)
-
-Artifact: <https://claude.ai/code/artifact/ab3e9525-3e45-4cce-97d2-68a7868d9af5>
 
 ## Estado
 
