@@ -20,6 +20,7 @@ export interface FormatOrderMessageArgs {
   cart: Cart
   buyer: BuyerInfo
   orderId: string
+  personalizacion?: string
   timestamp?: Date
 }
 
@@ -97,12 +98,18 @@ export function formatOrderMessage({
   cart,
   buyer,
   orderId,
+  personalizacion,
   timestamp = new Date(),
 }: FormatOrderMessageArgs): string {
   const lines: string[] = []
 
-  // Header
-  lines.push('🔔 <b>Nuevo pedido — Nénufar</b>')
+  // Header — destacar si es personalizado
+  const esPersonalizado = Boolean(personalizacion)
+  lines.push(
+    esPersonalizado
+      ? '✦ <b>Pedido PERSONALIZADO — Nénufar</b>'
+      : '🔔 <b>Nuevo pedido — Nénufar</b>',
+  )
   lines.push('━━━━━━━━━━━━━━━━━━━━━━━')
   lines.push(`🎫 Pedido: <code>#${escapeHtml(orderId)}</code>`)
   lines.push(`📅 ${escapeHtml(DATE_FORMATTER.format(timestamp))}`)
@@ -112,7 +119,7 @@ export function formatOrderMessage({
   // Buyer
   lines.push('<b>👤 Cliente</b>')
   lines.push(`Nombre: ${escapeHtml(buyer.name)}`)
-  lines.push(`Contacto: ${escapeHtml(buyer.contact)}`)
+  lines.push(`WhatsApp: ${escapeHtml(buyer.contact)}`)
   lines.push('')
 
   // Items
@@ -146,7 +153,17 @@ export function formatOrderMessage({
     lines.push('')
   })
 
-  // Cart-level note — Fase 5 personalization
+  // Personalización — bloque destacado para que Shirley lo vea de inmediato
+  if (personalizacion) {
+    lines.push('✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦')
+    lines.push('<b>🎨 PERSONALIZACIÓN REQUERIDA</b>')
+    lines.push('✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦')
+    lines.push(escapeHtml(personalizacion))
+    lines.push('✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦')
+    lines.push('')
+  }
+
+  // Cart-level note
   const cartNote = (cart as { note?: string | null }).note?.trim()
   if (cartNote) {
     lines.push('<b>📝 Notas del pedido</b>')

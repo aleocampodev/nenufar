@@ -63,9 +63,9 @@ export default async function ConfirmationPage({ searchParams }: ConfirmationPag
           y te va a contactar en las próximas 24 horas.
         </p>
 
-        {buyerContact && !buyerContact.includes('@') && (
+        {buyerContact && (
           <p className="text-sm text-neutral-600 mb-6">
-            Shirley te va a escribir por Telegram al número{' '}
+            Shirley te va a escribir por WhatsApp al número{' '}
             <span className="font-medium">{buyerContact}</span>.
           </p>
         )}

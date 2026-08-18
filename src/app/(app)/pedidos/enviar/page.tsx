@@ -10,13 +10,16 @@
  */
 
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { OrderForm } from './OrderForm'
 
 export default function PedidosEnviarPage() {
   return (
     <main className="min-h-[80vh] bg-neutral-50">
-      <OrderForm />
+      <Suspense>
+        <OrderForm />
+      </Suspense>
     </main>
   )
 }

@@ -44,6 +44,9 @@ export async function submitOrderAction(
   const consent = formData.get('consent')
   const cartId = String(formData.get('cartId') ?? '').trim()
   const note = String(formData.get('note') ?? '').trim()
+  const modo = String(formData.get('modo') ?? '').trim()
+  const personalizacion =
+    modo === 'personalizado' ? String(formData.get('personalizacion') ?? '').trim() : undefined
 
   // 2. Basic field validation
   if (!buyerName || buyerName.length < 2) {
@@ -52,7 +55,14 @@ export async function submitOrderAction(
   if (!buyerContact || buyerContact.length < 6) {
     return {
       status: 'error',
-      errorMessage: 'Por favor ingresás un contacto válido (WhatsApp o email).',
+      errorMessage: 'Por favor ingresá un número de WhatsApp válido.',
+    }
+  }
+
+  if (modo === 'personalizado' && (!personalizacion || personalizacion.length < 5)) {
+    return {
+      status: 'error',
+      errorMessage: 'Por favor describí cómo querés personalizar tu pedido.',
     }
   }
   if (!cartId) {
@@ -126,7 +136,7 @@ export async function submitOrderAction(
         amount: cart.subtotal ?? null,
         currency: cart.currency ?? null,
         status: 'processing',
-        customerEmail: buyerContact.includes('@') ? buyerContact : null,
+        customerEmail: null,
         // NOTE: buyerName + buyerContact go into shippingAddress for now
         // (Fase 6 will add proper fields via ordersCollectionOverride)
         shippingAddress: {
@@ -150,6 +160,7 @@ export async function submitOrderAction(
     cart,
     buyer: { name: buyerName, contact: buyerContact },
     orderId,
+    personalizacion,
   })
 
   const telegramResult = await sendTelegramMessage({ text: message })
