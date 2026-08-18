@@ -87,6 +87,13 @@ export function ProductDescription({ product }: { product: Product }) {
           <AddToCart product={product} />
         </Suspense>
       </div>
+
+      <a
+        href="/pedidos/enviar?modo=personalizado"
+        className="w-full text-center py-3 px-6 border border-brand text-brand font-medium rounded-md hover:bg-brand hover:text-brand-foreground transition text-sm"
+      >
+        ✦ Personalizar esta pieza
+      </a>
     </div>
   )
 }

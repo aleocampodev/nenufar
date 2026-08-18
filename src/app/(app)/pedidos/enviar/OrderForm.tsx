@@ -1,19 +1,20 @@
 'use client'
 
-/**
- * Order form — client component.
- * Reads cart via useCart() from plugin-ecommerce, passes cartId to server action.
- */
-
 import { useActionState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useCart } from '@payloadcms/plugin-ecommerce/client/react'
 import { submitOrderAction, type SubmitOrderState } from './submitOrderAction'
 import { CONSENT_TEXT, PRIVACY_URL } from '@/lib/consent'
+import { useState } from 'react'
 
 const initialState: SubmitOrderState = { status: 'idle' }
 
 export function OrderForm() {
   const { cart } = useCart()
+  const searchParams = useSearchParams()
+  const initialMode = searchParams.get('modo') === 'personalizado' ? 'personalizado' : 'standard'
+  const [mode, setMode] = useState<'standard' | 'personalizado'>(initialMode)
+
   const [state, formAction, isPending] = useActionState(submitOrderAction, initialState)
 
   const cartId = cart?.id ?? ''
@@ -28,7 +29,7 @@ export function OrderForm() {
         </p>
         <a
           href="/shop"
-          className="inline-block px-6 py-3 bg-neutral-900 text-white rounded-md hover:bg-neutral-700 transition"
+          className="inline-block px-6 py-3 bg-brand text-brand-foreground rounded-md hover:bg-brand-dark transition"
         >
           Ver catálogo
         </a>
@@ -46,8 +47,58 @@ export function OrderForm() {
         </p>
       </header>
 
-      {/* Hidden cartId — server action needs it to fetch the cart */}
+      {/* Selector de modo */}
+      <div className="grid grid-cols-2 gap-3 p-1 bg-neutral-100 rounded-lg">
+        <button
+          type="button"
+          onClick={() => setMode('standard')}
+          className={`py-3 px-4 rounded-md text-sm font-medium transition ${
+            mode === 'standard'
+              ? 'bg-white shadow text-neutral-900'
+              : 'text-neutral-500 hover:text-neutral-700'
+          }`}
+        >
+          Lo quiero tal como está
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode('personalizado')}
+          className={`py-3 px-4 rounded-md text-sm font-medium transition ${
+            mode === 'personalizado'
+              ? 'bg-white shadow text-brand'
+              : 'text-neutral-500 hover:text-neutral-700'
+          }`}
+        >
+          ✦ Lo quiero personalizado
+        </button>
+      </div>
+
       <input type="hidden" name="cartId" value={cartId} />
+      <input type="hidden" name="modo" value={mode} />
+
+      {/* Campo de personalización — solo en modo personalizado */}
+      {mode === 'personalizado' && (
+        <div className="p-5 bg-brand/5 border border-brand/20 rounded-lg space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-brand text-lg">✦</span>
+            <h2 className="font-medium text-neutral-900">¿Cómo querés personalizarla?</h2>
+          </div>
+          <textarea
+            id="personalizacion"
+            name="personalizacion"
+            rows={5}
+            required
+            className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand bg-white"
+            placeholder={
+              'Contale a Shirley todos los detalles:\n• Colores de hilo preferidos\n• Largo o talla (muñeca, cuello, dedo)\n• Nombre o texto para incluir\n• Ocasión (regalo, uso diario, evento...)\n• Cualquier otro detalle'
+            }
+          />
+          <p className="text-xs text-neutral-500">
+            Shirley te contacta por WhatsApp para confirmar los detalles y darte el tiempo de
+            elaboración.
+          </p>
+        </div>
+      )}
 
       <div>
         <label htmlFor="buyerName" className="block text-sm font-medium mb-1">
@@ -66,36 +117,33 @@ export function OrderForm() {
 
       <div>
         <label htmlFor="buyerContact" className="block text-sm font-medium mb-1">
-          WhatsApp o email *
+          Número de WhatsApp *
         </label>
         <input
           id="buyerContact"
           name="buyerContact"
-          type="text"
+          type="tel"
           required
           autoComplete="tel"
           className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-900"
           placeholder="+57 321 456 7890"
         />
         <p className="text-xs text-neutral-500 mt-1">
-          Shirley te contacta por este medio. No lo compartimos con terceros.
+          Shirley te contacta por WhatsApp. No lo compartimos con terceros.
         </p>
       </div>
 
       <div>
         <label htmlFor="note" className="block text-sm font-medium mb-1">
-          Notas del pedido (opcional)
+          Notas adicionales (opcional)
         </label>
         <textarea
           id="note"
           name="note"
-          rows={3}
+          rows={2}
           className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-900"
-          placeholder="Instrucciones especiales, comentarios para Shirley, etc."
+          placeholder="Instrucciones de envío, comentarios, etc."
         />
-        <p className="text-xs text-neutral-500 mt-1">
-          Cualquier detalle adicional que Shirley deba saber sobre tu pedido.
-        </p>
       </div>
 
       <div className="flex items-start gap-3">
@@ -127,13 +175,14 @@ export function OrderForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full py-3 px-6 bg-neutral-900 text-white font-medium rounded-md hover:bg-neutral-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-3 px-6 bg-brand text-brand-foreground font-medium rounded-md hover:bg-brand-dark transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isPending ? 'Enviando pedido…' : 'Confirmar pedido'}
       </button>
 
       <p className="text-xs text-neutral-500 text-center">
-        Al confirmar, Shirley recibe tu pedido y te escribe. No se hace cargo a tu tarjeta.
+        Al confirmar, Shirley recibe tu pedido y te escribe por WhatsApp. No se hace cargo a tu
+        tarjeta.
       </p>
     </form>
   )
