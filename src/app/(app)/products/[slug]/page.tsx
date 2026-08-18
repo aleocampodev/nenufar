@@ -14,6 +14,29 @@ import { Button } from '@/components/ui/button'
 import { ChevronLeftIcon } from 'lucide-react'
 import { Metadata } from 'next'
 import Script from 'next/script'
+import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
+import { getServerSideURL } from '@/utilities/getURL'
+
+const SITE_NAME = 'Nénufar'
+
+/** Google exige URLs absolutas en JSON-LD. Prefija el dominio solo si es relativa. */
+const toAbsoluteUrl = (url?: string | null): string | undefined => {
+  if (!url) return undefined
+  return url.startsWith('http') ? url : `${getServerSideURL()}${url}`
+}
+
+/** Convierte el richText de descripción a texto plano y lo recorta para meta/JSON-LD. */
+const plainDescription = (product: Product, max = 300): string => {
+  if (!product.description) return ''
+  try {
+    const text = convertLexicalToPlaintext({ data: product.description as any })
+      .replace(/\s+/g, ' ')
+      .trim()
+    return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text
+  } catch {
+    return ''
+  }
+}
 
 type Args = {
   params: Promise<{
@@ -33,30 +56,51 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const canIndex = product._status === 'published'
 
   const seoImage = metaImage || (gallery.length ? (gallery[0]?.image as Media) : undefined)
+  const description =
+    product.meta?.description ||
+    plainDescription(product, 155) ||
+    `${product.title} — joyería artesanal colombiana hecha a mano por Nénufar.`
+  const title = product.meta?.title || `${product.title} | ${SITE_NAME} Joyería Artesanal`
+  const canonical = `${getServerSideURL()}/products/${product.slug}`
+
+  const images = seoImage?.url
+    ? [
+        {
+          alt: seoImage.alt || product.title,
+          height: seoImage.height!,
+          url: seoImage.url,
+          width: seoImage.width!,
+        },
+      ]
+    : undefined
 
   return {
-    description: product.meta?.description || '',
-    openGraph: seoImage?.url
-      ? {
-          images: [
-            {
-              alt: seoImage?.alt,
-              height: seoImage.height!,
-              url: seoImage?.url,
-              width: seoImage.width!,
-            },
-          ],
-        }
-      : null,
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      type: 'website',
+      locale: 'es_CO',
+      siteName: SITE_NAME,
+      title,
+      description,
+      url: canonical,
+      images,
+    },
+    twitter: {
+      card: images ? 'summary_large_image' : 'summary',
+      title,
+      description,
+      images: images?.map((i) => i.url),
+    },
     robots: {
       follow: canIndex,
+      index: canIndex,
       googleBot: {
         follow: canIndex,
         index: canIndex,
       },
-      index: canIndex,
     },
-    title: product.meta?.title || product.title,
   }
 }
 
@@ -93,17 +137,33 @@ export default async function ProductPage({ params }: Args) {
     }, price)
   }
 
+  const productUrl = `${getServerSideURL()}/products/${product.slug}`
+  const jsonLdImages = [
+    typeof metaImage === 'object' ? metaImage?.url : undefined,
+    ...gallery.map((item) => item.image?.url),
+  ]
+    .map(toAbsoluteUrl)
+    .filter((url): url is string => Boolean(url))
+
   const productJsonLd = {
-    name: product.title,
     '@context': 'https://schema.org',
     '@type': 'Product',
-    description: product.description,
-    image: metaImage?.url,
+    name: product.title,
+    description: plainDescription(product) || product.title,
+    image: jsonLdImages.length ? jsonLdImages : undefined,
+    url: productUrl,
+    sku: String(product.id),
+    brand: {
+      '@type': 'Brand',
+      name: SITE_NAME,
+    },
     offers: {
-      '@type': 'AggregateOffer',
+      '@type': 'Offer',
+      url: productUrl,
       availability: hasStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      price: price,
-      priceCurrency: 'usd',
+      itemCondition: 'https://schema.org/NewCondition',
+      price: price ?? undefined,
+      priceCurrency: 'COP',
     },
   }
 

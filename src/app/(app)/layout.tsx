@@ -4,8 +4,24 @@ import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { ensureStartsWith } from '@/utilities/ensureStartsWith'
+import { getServerSideURL } from '@/utilities/getURL'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { Providers } from '@/providers'
+import type { Metadata } from 'next'
+import Script from 'next/script'
+
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Nénufar',
+  description: 'Joyería artesanal colombiana hecha a mano en Cartagena.',
+  url: getServerSideURL(),
+  logo: `${getServerSideURL()}/favicon.svg`,
+  sameAs: [
+    'https://www.facebook.com/Nenufar.co',
+    'https://www.instagram.com/nenufar.co/',
+  ],
+}
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { Inter, Playfair_Display } from 'next/font/google'
 import { GeistMono } from 'geist/font/mono'
@@ -22,32 +38,23 @@ const playfair = Playfair_Display({
   variable: '--font-playfair',
 })
 
-/* const { SITE_NAME, TWITTER_CREATOR, TWITTER_SITE } = process.env
-const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-  : 'http://localhost:3000'
-const twitterCreator = TWITTER_CREATOR ? ensureStartsWith(TWITTER_CREATOR, '@') : undefined
-const twitterSite = TWITTER_SITE ? ensureStartsWith(TWITTER_SITE, 'https://') : undefined
- */
-/* export const metadata = {
-  metadataBase: new URL(baseUrl),
+export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
+  title: {
+    default: 'Nénufar — Joyería Artesanal Colombiana',
+    template: '%s | Nénufar',
+  },
+  description:
+    'Joyería artesanal colombiana hecha a mano en Cartagena. Piezas únicas de Nénufar.',
   robots: {
     follow: true,
     index: true,
   },
-  title: {
-    default: SITE_NAME,
-    template: `%s | ${SITE_NAME}`,
+  openGraph: mergeOpenGraph(),
+  twitter: {
+    card: 'summary_large_image',
   },
-  ...(twitterCreator &&
-    twitterSite && {
-      twitter: {
-        card: 'summary_large_image',
-        creator: twitterCreator,
-        site: twitterSite,
-      },
-    }),
-} */
+}
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -62,6 +69,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
       <body>
+        <Script
+          id="organization-jsonld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <Providers>
           <AdminBar />
           <LivePreviewListener />
