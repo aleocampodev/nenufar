@@ -45,6 +45,7 @@ Todo en `docs/specs/`:
 | D2 | Modelo de embeddings para RAG (Etapa 2) | **Gemini** (ya hay branch `feat/vector-indexing-gemini`, dim 768) |
 | D3 | Ubicación del bot | `apps/bot` en el monorepo |
 | D4 | Firmas exactas del Agent SDK | **Verificar** en code.claude.com/docs/en/agent-sdk (no inventar) |
+| D5 | Hosting del bot | **Oracle Cloud Always Free — Ampere A1 (ARM)**; verificar binario del SDK en **linux/arm64** (ver SDD §7) |
 
 ## 6. Por dónde empezar: Etapa 1
 

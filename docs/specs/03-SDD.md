@@ -126,10 +126,21 @@ Cliente → Telegram → Edge(webhook)
 
 ## 7. Hosting
 
-- **Edge:** Vercel (Hobby, free).
-- **Servicio-bot:** contenedor long-running (local mientras se aprende; luego Fly.io/Railway).
-  El Agent SDK levanta un subproceso `claude` con estado en disco → **no serverless**.
-- **DB:** PostgreSQL (Docker en dev; plano free tipo Supabase/Neon en prod). pgvector en Etapa 2.
+- **Edge:** Vercel (Hobby, free) — recibe el webhook y reenvía.
+- **Servicio-bot:** contenedor long-running. El Agent SDK levanta un subproceso `claude` con
+  estado en disco → **no serverless**.
+  - **Decisión (costo $0): Oracle Cloud "Always Free" con Ampere A1 (ARM).** Hasta 4 OCPU /
+    24 GB RAM, gratis para siempre. Una sola VM aloja el **bot** (y, si se quiere, **Postgres**)
+    → infra $0, solo se pagan tokens.
+  - **Ojo:** usar la forma **Ampere A1 (ARM)**, **no** la `VM.Standard.E2.1.Micro` (1 GB RAM,
+    insuficiente para el Agent SDK).
+  - **Riesgos a manejar:** (a) es **ARM/aarch64** → **verificar que el binario nativo del Agent
+    SDK soporte linux/arm64**; (b) capacidad ARM escasa en algunas regiones ("out of capacity");
+    (c) Oracle puede reclamar instancias Always Free **inactivas** (evitar con actividad o
+    pasando a Pay-as-you-go); (d) es IaaS → SO/parches/firewall (*security lists*) a cargo tuyo.
+  - Alternativas de pago-por-uso si se prefiere PaaS: Fly Machines, Railway, Modal (microVMs).
+- **DB:** PostgreSQL (Docker en dev; en prod, misma VM Oracle o plano free Supabase/Neon).
+  pgvector en Etapa 2.
 
 ## 8. Seguridad y cumplimiento
 
