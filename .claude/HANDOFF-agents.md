@@ -115,21 +115,28 @@ SHIRLEY escribe → Bot (@NenufarPedidosBot — mismo TELEGRAM_BOT_TOKEN)
 > **Diseño detallado (inglés):** las fases 3.3 y 4.0 están especificadas en
 > [`docs/RAG-MEMORY-design.md`](../docs/RAG-MEMORY-design.md). Topología acordada:
 > **Opción A (unificada)** — Payload + un schema `rag` en un solo Supabase.
+> **Principio clave:** Supabase es un **índice derivado, nunca la fuente** — el
+> conocimiento vive en `knowledge/*.md` (git) + Payload; Supabase se puede reconstruir.
 
-### Fase 3.3 — RAG del catálogo (Supabase)
+### Fase 3.3 — RAG de conocimiento (Supabase)
 
-**Objetivo:** la skill `buscarProducto` pasa de query por título (`like`) a búsqueda semántica. Consumidor = **Shirley** (el bot es solo de ella).
+**Objetivo:** una sola búsqueda semántica sobre **dos fuentes**: el catálogo (Payload) y el conocimiento de marca curado en `knowledge/*.md` (esencia, políticas, cuidado, FAQ). Consumidor = **Shirley** (el bot es solo de ella).
 
 **Stack (todo gratis):**
 - Embeddings: `Transformers.js` con `multilingual-e5-small` (384d, local, sin API key; prefijos `passage:`/`query:`)
 - Vector store: **Supabase** (pgvector) en un schema `rag`, misma DB que Payload; dev con Supabase local (offline)
-- Ingesta: `afterChange`/`afterDelete` hook en Products → chunk → embed → upsert en `rag.product_chunks` (FK a `public.products`)
+- Tabla única `rag.chunks` (`source_type` = `product` | `knowledge`) → una query cubre productos y conocimiento
+- Ingesta (idempotente, delete-then-insert por `source_id`):
+  - Productos: `afterChange`/`afterDelete` hook en Products → chunk → embed → upsert
+  - Conocimiento: `scripts/ingest-knowledge.ts` lee `knowledge/*.md`, parte por `##`, embed, upsert
 
 **Impacto en el código:**
-- `src/lib/agents/skills/buscarProductos.ts` → reemplazar `payload.find` con búsqueda vectorial
+- `knowledge/*.md` — conocimiento curado (fuente de verdad, en git)
+- `src/lib/agents/skills/buscarProductos.ts` → reemplazar `like` con búsqueda vectorial sobre `rag.chunks`
 - Nuevo: `src/lib/embeddings.ts` — embedder local (singleton)
-- Nuevo: `src/lib/vectorStore.ts` — upsert / delete / search sobre `rag.product_chunks`
+- Nuevo: `src/lib/vectorStore.ts` — upsert / delete / search sobre `rag.chunks`
 - Nuevo: `src/hooks/products/indexProduct.ts` — hooks afterChange/afterDelete de Payload
+- Nuevo: `scripts/ingest-knowledge.ts` + `scripts/reindex-all.ts`
 - Nuevo: `supabase/migrations/*.sql` — schema `rag`, extensión `vector`, tablas, índices
 
 ### Fase 3.4 — MCP para el CMS
@@ -145,7 +152,7 @@ SHIRLEY escribe → Bot (@NenufarPedidosBot — mismo TELEGRAM_BOT_TOKEN)
 
 **Objetivo:** el bot recuerda los últimos turnos por `chat_id` → habilita multi-turn para Shirley ("confírmalo").
 
-**Enfoque:** memoria *windowed* (últimos ~N turnos) en `rag.conversation_messages` (misma DB que el RAG), cargada en `routeAndRun` y pasada a Groq. Memoria semántica de largo plazo = opcional/futuro. Detalle en `docs/RAG-MEMORY-design.md §6`.
+**Enfoque (con higiene, sin volcado crudo):** memoria *windowed* (últimos ~N turnos) en `rag.conversation_messages`, cargada en `routeAndRun` y pasada a Groq. Cuando crece, se **resume** lo viejo en una fila `kind='summary'` (vía Groq) y se borra el crudo → row count acotado. La memoria NO es la base de conocimiento: los datos durables van en `knowledge/*.md`, no en memoria. Memoria semántica de largo plazo = opcional/futuro. Detalle en `docs/RAG-MEMORY-design.md §6`.
 
 ---
 

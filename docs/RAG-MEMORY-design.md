@@ -1,31 +1,60 @@
-# Design — Catalog RAG + Conversation Memory on Supabase
+# Design — Knowledge (RAG) + Conversation Memory on Supabase
 **Project:** Nénufar — Handcrafted Jewelry Store
-**Phases:** 3.3 (catalog RAG) + 4.0 (conversation memory)
+**Phases:** 3.3 (knowledge RAG) + 4.0 (conversation memory)
 **Status:** Design — not yet implemented
 **Audience:** Developers continuing the agent work
 
 > This document extends the v3.2 agent system (see `SDD.md §2.3` and
-> `.claude/HANDOFF-agents.md`). It describes how semantic catalog search (RAG) and
-> multi-turn conversation memory are added on top of **Supabase**, keeping the
-> project free and mostly local.
+> `.claude/HANDOFF-agents.md`). It describes how semantic knowledge search (RAG) and
+> multi-turn conversation memory are added on top of **Supabase**, keeping the project
+> free, mostly local, and — crucially — keeping Supabase from becoming a dumping ground.
 
 ---
 
-## 1. Context & Goals
+## 1. Guiding principle — Supabase is a derived index, never the source
+
+The single most important rule of this design:
+
+> **Supabase holds only what can be regenerated.** The canonical knowledge lives in
+> **Markdown files (git)** and **Payload** (products). Supabase stores a *derived* vector
+> index of that knowledge plus a *bounded* conversation memory. Wipe Supabase, re-run the
+> ingest, and everything comes back. Nothing precious or unique ever lives only in
+> Supabase.
+
+This is what prevents "filling Supabase dumbly": we never dump raw, un-curated, or
+un-regenerable data into it.
+
+```
+SOURCE OF TRUTH (curated, in git / Payload)
+├── knowledge/*.md        ← Nénufar's essence, policies, care, FAQ   (Markdown, human-written)
+└── Payload                ← products (price, stock, variants)
+
+        │  ingest = chunk + embed        (regenerable, idempotent)
+        ▼
+DERIVED INDEX (Supabase · pgvector)       ← disposable; rebuilt from the sources
+└── rag.chunks              ← embedded pieces of BOTH the .md files AND the products
+
+CONVERSATION MEMORY (Supabase · lean)
+└── rag.conversation_messages  ← short window + rolling summary, not raw-forever
+```
+
+---
+
+## 2. Context, goals & audience
 
 The v3.2 bot is **Shirley's management tool only** — buyers never talk to it (see
-`SDD.md §2.3`). So both features below serve **Shirley**, not buyers:
+`SDD.md §2.3`). Everything below serves **Shirley**.
 
-- **Catalog RAG (3.3):** today `buscarProductos` matches product titles with a `like`
-  query. RAG upgrades it to **semantic search** so Shirley can say *"the emerald ring
-  from last week"* or *"the silver piece with the engraving"* and the bot finds it even
-  without an exact title match.
-- **Conversation memory (4.0):** today every webhook message is stateless. Memory lets
-  Shirley have **multi-turn** exchanges — *"show my pending orders"* → *"confirm the
-  first one"* — where the bot remembers what "the first one" refers to.
+- **Knowledge RAG (3.3):** one semantic search over two kinds of knowledge:
+  - **Catalog** — *"the emerald ring from last week"* → finds the product even without an
+    exact title match.
+  - **Brand knowledge** — *"do we ship to Medellín?"*, *"how do I care for silver?"* →
+    answers from the curated Markdown, not from products.
+- **Conversation memory (4.0):** multi-turn exchanges — *"show my pending orders"* →
+  *"confirm the first one"* — where the bot remembers what "the first one" is.
 
 **Non-goals:** a buyer-facing assistant, a web chat widget, or any Chat SDK / Vercel AI
-SDK (explicitly out of scope — see the product decisions in `README.md`).
+SDK (explicitly out of scope — see `README.md`).
 
 ### Cost — everything is free
 
@@ -40,200 +69,210 @@ restore). For local dev, **Supabase local** (`supabase start`, Docker) is fully 
 
 ---
 
-## 2. Database Topology — Option A (unified)
+## 3. Knowledge sources (the source of truth)
 
-**One Supabase Postgres holds everything.** Payload's database moves to Supabase, and the
-AI tables live in a dedicated `rag` schema in the **same** database. One `DATABASE_URL`.
+### 3.1 Brand knowledge — `knowledge/*.md`
+
+Curated, human-written Markdown lives in the repo (git-versioned, reviewable in PRs).
+This is the "essence and important topics" of Nénufar — the durable knowledge that is
+**not** product data.
+
+```
+knowledge/
+├── brand-essence.md    # who Nénufar is: story, tone of voice, values
+├── policies.md         # shipping, payments (Nequi / transfer / cash), exchanges
+├── care.md             # how to care for silver / emerald / coral pieces
+└── faq.md              # frequently asked questions
+```
+
+Each file uses `##` headings so the ingester can split on sections (see §5.2). A short
+YAML front-matter (`title`, `topic`, `updated`) helps tag chunks with metadata.
+
+> **Why Markdown and not a Supabase table?** Because this content is *authored and
+> curated*, not generated. Keeping it in git makes it reviewable, diffable, and the source
+> of truth. Supabase only ever holds a rebuildable embedding of it.
+
+### 3.2 Catalog — Payload `products`
+
+Product facts (title, description, price, stock, variants) stay in Payload as today.
+Payload remains the source of truth for the catalog; Supabase indexes a text projection of
+each published product.
+
+---
+
+## 4. Database topology & schema
+
+**One Supabase Postgres holds everything** (unified — "Option A"). Payload's database
+moves to Supabase; the AI tables live in a dedicated `rag` schema in the **same** database.
+One `DATABASE_URL`.
 
 ```
 Supabase Postgres (free tier / local)
 ├── public/                     ← Payload-managed (Drizzle)
-│   ├── products
-│   ├── orders
-│   ├── users …
+│   ├── products · orders · users …
 └── rag/                        ← managed by hand (SQL migrations, Payload-agnostic)
-    ├── product_chunks          (embedding vector(384), FK → public.products.id)
-    └── conversation_messages   (chat_id, role, content, created_at)
+    ├── chunks                  (embedding vector(384); source = product | knowledge)
+    └── conversation_messages   (chat_id, role, content, kind, created_at)
 ```
 
-**Why unified over a separate vector DB:**
-- One connection string, one database to back up.
-- `rag.product_chunks` can hold a **real foreign key** to `public.products` with
-  `ON DELETE CASCADE` — deleting a product removes its chunks automatically.
-- No `product_id` synchronization between two databases.
-- Still $0.
-
-**Schema ownership boundary:** Payload owns `public`; it never sees or manages `rag`.
-Payload's Postgres adapter leaves unknown schemas untouched, but we keep `rag` in a
-**separate schema** (not `public`) so `push: true` in dev never interferes with it. The
-`rag` tables are created and migrated with **plain SQL** (Supabase migrations), not
-through Payload.
-
-### Connection notes (Supabase specifics)
-
-- **Runtime** app connection → Supabase **transaction pooler** (pgBouncer, port `6543`).
-- **Payload migrations** need a **direct/session** connection (port `5432`) — pooled
-  transaction mode does not support the DDL Payload runs. Keep a `DIRECT_DATABASE_URL`
-  for `pnpm payload migrate`.
-
----
-
-## 3. Schema (`rag` schema, raw SQL)
+Payload owns `public`; it never sees `rag`. The `rag` tables are created with plain SQL
+(Supabase migrations), kept in a **separate schema** so Payload's `push: true` in dev never
+touches them.
 
 ```sql
--- once per database
 create schema if not exists rag;
 create extension if not exists vector;   -- pgvector
 
--- 3.1 Catalog chunks (RAG)
-create table rag.product_chunks (
-  id          bigint generated always as identity primary key,
-  product_id  integer not null
-              references public.products(id) on delete cascade,
-  chunk_index smallint not null default 0,
-  content     text not null,             -- the text that was embedded
-  embedding   vector(384) not null,      -- multilingual-e5-small
-  metadata    jsonb not null default '{}',
-  updated_at  timestamptz not null default now(),
-  unique (product_id, chunk_index)
+-- 4.1 Unified knowledge index — products AND markdown, one retrieval surface
+create table rag.chunks (
+  id           bigint generated always as identity primary key,
+  source_type  text  not null check (source_type in ('product','knowledge')),
+  source_id    text  not null,           -- product id (as text) OR "policies.md#shipping"
+  content      text  not null,           -- the exact text that was embedded
+  embedding    vector(384) not null,     -- multilingual-e5-small
+  metadata     jsonb not null default '{}',  -- {title, topic, price, slug, …}
+  updated_at   timestamptz not null default now(),
+  unique (source_type, source_id)
 );
 
--- Approximate-NN index (cosine). Build after some rows exist.
-create index on rag.product_chunks
-  using ivfflat (embedding vector_cosine_ops) with (lists = 100);
+create index on rag.chunks using ivfflat (embedding vector_cosine_ops) with (lists = 100);
+create index on rag.chunks (source_type, source_id);
 
--- 3.2 Conversation memory
+-- 4.2 Conversation memory
 create table rag.conversation_messages (
   id         bigint generated always as identity primary key,
   chat_id    bigint not null,            -- Telegram chat id (Shirley's, in practice)
-  role       text not null check (role in ('user','assistant')),
-  content    text not null,
+  role       text   not null check (role in ('user','assistant')),
+  kind       text   not null default 'turn' check (kind in ('turn','summary')),
+  content    text   not null,
   created_at timestamptz not null default now()
 );
 
 create index on rag.conversation_messages (chat_id, created_at desc);
 ```
 
-> `product_id` is `integer` to match Payload's default numeric IDs. Confirm the actual
-> column type in the generated Payload schema before applying.
+**One table for both knowledge kinds** means a single vector query can return the best
+matches across products *and* brand knowledge. The `source_type` + `metadata` tell the
+agent whether it found a product (attach price/stock from Payload) or a knowledge paragraph
+(quote it).
+
+> **Deletion:** with a unified table we don't use a DB foreign key; instead the ingesters
+> are **idempotent** — re-indexing a product or a Markdown section deletes its old chunk(s)
+> by `(source_type, source_id)` and inserts fresh ones. A product `afterDelete` hook
+> removes its chunks the same way.
+
+Connection notes (Supabase): app runtime uses the **transaction pooler** (`:6543`);
+`pnpm payload migrate` needs a **direct** connection (`:5432`) — keep both as
+`DATABASE_URL` and `DIRECT_DATABASE_URL`.
 
 ---
 
-## 4. Embeddings — local, free
+## 5. Knowledge RAG
+
+### 5.1 Embeddings — local, free
 
 - **Library:** `@huggingface/transformers` (Transformers.js).
-- **Model:** `Xenova/multilingual-e5-small` — 384 dimensions, multilingual (handles
-  Spanish product data), small footprint (~120 MB, downloaded once, then cached).
-- **E5 prefix convention (important):** e5 models expect a task prefix.
-  - Documents (chunks): `"passage: <text>"`
-  - Queries: `"query: <text>"`
-  Mixing these up quietly degrades retrieval quality.
-- Runs in-process; the model loads once (singleton) and is reused.
+- **Model:** `Xenova/multilingual-e5-small` — 384-d, multilingual (handles Spanish),
+  ~120 MB downloaded once, then cached; loaded as a singleton.
+- **E5 prefix convention (important):** documents use `"passage: <text>"`, queries use
+  `"query: <text>"`. Mixing them quietly degrades retrieval.
 
 ```ts
 // src/lib/embeddings.ts
 import { pipeline, type FeatureExtractionPipeline } from '@huggingface/transformers'
 
 let extractor: FeatureExtractionPipeline | null = null
+const get = async () =>
+  (extractor ??= await pipeline('feature-extraction', 'Xenova/multilingual-e5-small'))
 
-async function getExtractor(): Promise<FeatureExtractionPipeline> {
-  if (!extractor) {
-    extractor = await pipeline('feature-extraction', 'Xenova/multilingual-e5-small')
-  }
-  return extractor
-}
-
-/** Returns a 384-d unit vector. `kind` selects the required e5 prefix. */
+/** 384-d unit vector. `kind` selects the required e5 prefix. */
 export async function embed(text: string, kind: 'passage' | 'query'): Promise<number[]> {
-  const model = await getExtractor()
-  const output = await model(`${kind}: ${text}`, { pooling: 'mean', normalize: true })
-  return Array.from(output.data as Float32Array)
+  const model = await get()
+  const out = await model(`${kind}: ${text}`, { pooling: 'mean', normalize: true })
+  return Array.from(out.data as Float32Array)
 }
 ```
 
-> **Alternative (documented, not chosen):** Supabase Edge Functions expose a built-in
-> `gte-small` (384-d) embedder via `Supabase.ai`. It keeps embeddings off the Node
-> process but adds an Edge Function dependency. We prefer local Transformers.js to stay
-> fully offline in dev. Both are free and 384-d, so the schema is compatible.
+### 5.2 Ingestion (write path) — two idempotent ingesters
 
----
+Both write into the same `rag.chunks`; both are idempotent (delete-then-insert by
+`source_id`), so re-running is always safe and never duplicates.
 
-## 5. Catalog RAG
-
-### 5.1 Ingestion (write path)
-
-A Payload `afterChange` hook on the `Products` collection re-indexes a product whenever
-it is created or updated; `afterDelete` cascades via the FK.
-
+**Products** — Payload `afterChange` / `afterDelete` hook on `Products`:
 ```
-Product created / updated (published)
-  → buildProductText(product)         // title + description + category + variants + price
-  → chunk(text)                       // small products = 1 chunk; long descriptions split
-  → embed(chunk, 'passage')           // local, 384-d
-  → upsert into rag.product_chunks     // delete old chunks for product_id, insert new
+product published/updated
+  → buildProductText(product)          # title + description + category + variants + price
+  → embed(text, 'passage')
+  → upsert rag.chunks (source_type='product', source_id=<id>, metadata={price,slug,stock})
+product deleted → delete rag.chunks where source_type='product' and source_id=<id>
 ```
 
-- Only index **published** products; skip drafts.
-- Re-index replaces all chunks for that `product_id` (delete-then-insert) so stale text
-  never lingers.
-- Embedding happens off the request's critical path where possible; a failed index is
-  logged, not fatal (same philosophy as the Telegram send).
+**Brand knowledge** — a script that reads `knowledge/*.md`, run on demand (and optionally
+as a build step or a file-watch in dev):
+```
+for each knowledge/*.md
+  → split on '##' headings into sections
+  → for each section: embed(section, 'passage')
+  → upsert rag.chunks (source_type='knowledge', source_id='<file>#<slug>', metadata={title,topic})
+  → delete any chunks for that file whose section no longer exists (idempotent sync)
+```
 
-Files:
-- `src/lib/vectorStore.ts` — `upsertProductChunks(productId, chunks)`, `deleteProductChunks(productId)`, `searchProducts(queryEmbedding, k)`.
-- `src/hooks/products/indexProduct.ts` — the `afterChange` / `afterDelete` hooks.
+Only **published** products are indexed; drafts are skipped.
 
-### 5.2 Retrieval (read path) — inside `buscarProducto`
+### 5.3 Retrieval (read path)
+
+Used by the catalog/knowledge skill(s). One embedding, one query, both kinds:
 
 ```
-Shirley: "the emerald ring from last week"
-  → embed(query, 'query')
-  → SELECT product_id, content,
+Shirley's message
+  → embed(message, 'query')
+  → SELECT source_type, source_id, content, metadata,
            1 - (embedding <=> $1) AS score
-      FROM rag.product_chunks
+      FROM rag.chunks
      ORDER BY embedding <=> $1
-     LIMIT $2            -- k, e.g. 5
+     LIMIT $2                    -- k, e.g. 5
   → keep rows above a score threshold
-  → load canonical product data from Payload (price, stock, slug) by product_id
-  → return to the agent → Groq composes the reply for Shirley
+  → for source_type='product': load canonical price/stock from Payload by id
+    for source_type='knowledge': use the section text directly
+  → Groq composes the reply for Shirley from the retrieved context
 ```
 
-- `<=>` is pgvector's cosine distance; `1 - distance` is a readable similarity score.
-- Always resolve final product facts (price, stock) from **Payload**, not from the chunk
-  text — the chunk is only the retrieval surface, Payload is the source of truth.
-- The skill's tool schema is unchanged from the agent's perspective; only the
-  implementation swaps `like` for vector search.
+Product facts (price, stock) always come from **Payload**, never from the chunk text — the
+chunk is only the retrieval surface; Payload is the source of truth.
 
 ---
 
-## 6. Conversation Memory
+## 6. Conversation memory (lean, with hygiene)
 
-Two layers; only the first is in scope for phase 4.0.
+Store memory in Supabase, but **never as a raw ever-growing log**. Three hygiene rules keep
+it small and meaningful:
 
-### 6.1 Short-term (windowed) — in scope
+1. **Short window.** Only the last N turns (e.g. 10) — or last ~30 min — are read and sent
+   to Groq. That is what resolves *"confirm the first one"* against the previous turns.
 
-Keep the last N turns per `chat_id`, load them at the start of `routeAndRun`, and pass
-them to Groq as prior messages.
+2. **Rolling summary.** When the raw turns for a `chat_id` exceed a threshold (e.g. 40),
+   summarize the oldest ones into a single `kind='summary'` row (via Groq) and delete the
+   raw turns they covered. Context survives; row count stays bounded.
+
+3. **Selective persistence (optional).** Skip trivial/duplicate turns; always keep turns
+   that changed state (confirmed an order, updated stock) since those carry the useful
+   thread.
 
 ```
 POST /telegram/webhook (Shirley)
-  → getRecentTurns(chatId, n = 10)      // rag.conversation_messages, newest N, chronological
-  → routeAndRun(message, { history })   // history injected into the Groq messages array
+  → history = getContext(chatId)         # rolling summary (if any) + last N turns
+  → routeAndRun(message, { history })    # history injected into the Groq messages array
   → appendTurn(chatId, 'user', message)
   → appendTurn(chatId, 'assistant', reply)
-  → pruneOldTurns(chatId, keep = 40)    // optional cap to bound growth
+  → maybeSummarize(chatId)               # if over threshold: summarize old → delete raw
 ```
 
-- Window by **count** (last ~10 turns) and/or **age** (e.g. last 30 min) — count is
-  simpler and enough for a single-user admin bot.
-- This is what enables *"confirm the first one"* to resolve against the previous turn.
+**What memory is NOT:** it is not the brand knowledge base. Durable facts about Nénufar
+belong in `knowledge/*.md` (§3.1), not in conversation memory. Memory only holds the
+*recent thread of a conversation*.
 
-File: `src/lib/memory.ts` — `getRecentTurns`, `appendTurn`, `pruneOldTurns`.
-
-### 6.2 Long-term (semantic) — future, optional
-
-Embed past messages and retrieve relevant ones by similarity (reusing `pgvector`).
-Overkill for a single-user admin bot today; documented as a later option only.
+> **Long-term semantic memory** (embedding past messages for similarity recall) is possible
+> with the same `pgvector` but is out of scope — overkill for a single-user admin bot.
 
 ---
 
@@ -241,25 +280,27 @@ Overkill for a single-user admin bot today; documented as a later option only.
 
 | Existing file | Change |
 |---------------|--------|
-| `src/app/(app)/telegram/webhook/route.ts` | Load memory before `routeAndRun`; append turns after. |
+| `src/app/(app)/telegram/webhook/route.ts` | Load memory before `routeAndRun`; append turns + `maybeSummarize` after. |
 | `src/lib/agents/orchestrator.ts` | Accept `history` in the context; pass it to Groq. |
-| `src/lib/agents/skills/buscarProductos.ts` | Replace `like` query with `vectorStore.searchProducts`. |
+| `src/lib/agents/skills/buscarProductos.ts` | Replace `like` query with `vectorStore.search` over `rag.chunks`. |
 
-| New file | Responsibility |
-|----------|----------------|
+| New file / path | Responsibility |
+|-----------------|----------------|
+| `knowledge/*.md` | Curated brand knowledge (essence, policies, care, FAQ) — source of truth. |
 | `src/lib/embeddings.ts` | Local Transformers.js embedder (singleton). |
-| `src/lib/vectorStore.ts` | Upsert / delete / search over `rag.product_chunks`. |
-| `src/lib/memory.ts` | Read / append / prune `rag.conversation_messages`. |
-| `src/hooks/products/indexProduct.ts` | Payload `afterChange` / `afterDelete` indexing hooks. |
+| `src/lib/vectorStore.ts` | Upsert / delete / search over `rag.chunks`. |
+| `src/lib/memory.ts` | `getContext`, `appendTurn`, `maybeSummarize`, prune. |
+| `src/hooks/products/indexProduct.ts` | Payload `afterChange` / `afterDelete` indexing. |
+| `scripts/ingest-knowledge.ts` | Chunk + embed `knowledge/*.md` into `rag.chunks`. |
+| `scripts/reindex-all.ts` | One-off full rebuild (products + knowledge) from the sources. |
 | `supabase/migrations/*.sql` | `rag` schema, `vector` extension, tables, indexes. |
 
-**DB access for the `rag` schema:** use a small dedicated `pg` pool (node-postgres) rather
-than routing raw vector SQL through Payload's Drizzle instance — it keeps the vector code
-independent of Payload's schema generation.
+Use a small dedicated `pg` pool for the `rag` schema, independent of Payload's Drizzle
+instance.
 
 ---
 
-## 8. Environment Variables (additions)
+## 8. Environment variables (additions)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -268,32 +309,23 @@ independent of Payload's schema generation.
 | `EMBEDDINGS_MODEL` | ⬜ | Override the default `Xenova/multilingual-e5-small`. |
 
 No `SUPABASE_URL` / service-role keys are needed: the app talks to Postgres directly over
-`DATABASE_URL`. Those keys only become relevant if Supabase Edge Functions or
-`supabase-js` are adopted later (see §4 alternative).
+`DATABASE_URL`.
 
 ---
 
 ## 9. Setup (dev → prod)
 
-**Local dev (offline, free):**
-
 ```bash
-# 1. Start Supabase locally (Postgres + studio) via the Supabase CLI
-supabase start
-# → prints a local DATABASE_URL (port 54322 by default)
-
-# 2. Apply the rag schema
-supabase migration up          # or psql < supabase/migrations/xxxx_rag.sql
-
-# 3. Point Payload at the local Supabase Postgres, then migrate
-pnpm payload migrate
-
-# 4. Backfill embeddings for existing products (one-off script)
-pnpm tsx scripts/reindex-products.ts
+# Local dev (offline, free)
+supabase start                         # Postgres + studio via Supabase CLI
+supabase migration up                  # apply the rag schema
+pnpm payload migrate                   # point Payload at Supabase, migrate public schema
+pnpm tsx scripts/ingest-knowledge.ts   # embed knowledge/*.md into rag.chunks
+pnpm tsx scripts/reindex-all.ts        # backfill product chunks (one-off)
 ```
 
 **Production:** create a Supabase Cloud project (free), set `DATABASE_URL` /
-`DIRECT_DATABASE_URL` from its connection settings, run the same migrations and reindex.
+`DIRECT_DATABASE_URL`, run the same migrations + ingest.
 
 ---
 
@@ -303,34 +335,35 @@ pnpm tsx scripts/reindex-products.ts
 |---------|---------|
 | `@huggingface/transformers` | Local embeddings (Transformers.js). |
 | `pg` | Direct SQL to the `rag` schema (pool). |
-| `pgvector` (Postgres extension) | Vector column + ANN index — enabled via SQL, not npm. |
-| Supabase CLI (dev dependency / tool) | Local Supabase + migrations. |
+| `pgvector` (Postgres extension) | Vector column + ANN index — enabled via SQL. |
+| Supabase CLI (tool) | Local Supabase + migrations. |
 
 ---
 
 ## 11. Phasing
 
-1. **3.3a — Schema + embeddings.** `rag` schema, `embeddings.ts`, `vectorStore.ts`, a
-   one-off reindex script. Verify search quality from a test harness.
-2. **3.3b — Live indexing.** Payload `afterChange` / `afterDelete` hooks; swap
-   `buscarProducto` to vector search.
-3. **4.0 — Windowed memory.** `memory.ts` + webhook/orchestrator wiring for multi-turn.
+1. **3.3a — Foundation.** `rag` schema, `embeddings.ts`, `vectorStore.ts`,
+   `ingest-knowledge.ts`, `reindex-all.ts`. Author the first `knowledge/*.md`. Verify
+   search quality from a test harness (products + knowledge).
+2. **3.3b — Live indexing.** Product `afterChange` / `afterDelete` hooks; swap
+   `buscarProducto` to unified vector search.
+3. **4.0 — Lean memory.** `memory.ts` (window + rolling summary) wired into the webhook
+   and orchestrator.
 
 Each phase is independently shippable and testable (mock Groq + Telegram at the boundary,
-as the existing `agents.int.spec.ts` does).
+like the existing `agents.int.spec.ts`).
 
 ---
 
 ## 12. Risks & open questions
 
-- **Payload DB migration.** Moving Payload from local Postgres to Supabase is a real
-  migration; do it while still in dev (low data volume) to keep it cheap.
-- **`product_id` type.** Confirm Payload's ID column type before writing the FK (assumed
-  `integer` here).
-- **Pooler vs. migrations.** Payload DDL needs the direct connection; do not run
-  migrations through the transaction pooler.
-- **ivfflat index tuning.** `lists` and query-time `probes` trade recall for speed; tune
-  once the catalog has enough rows. For a small catalog, an exact scan is fine and the
-  index can wait.
-- **Free-tier pause.** Supabase Cloud free pauses after 7 days idle — fine for a learning
-  project; note it for any demo.
+- **Keep Supabase derivable.** Never let unique data accumulate only in `rag.*`. If a fact
+  matters, it belongs in `knowledge/*.md` or Payload, and Supabase re-derives it.
+- **Payload DB migration.** Moving Payload to Supabase is a real migration; do it in dev
+  (low data volume) to keep it cheap.
+- **`source_id` for products.** Store the Payload id as text; confirm the id type.
+- **Pooler vs. migrations.** Payload DDL needs the direct connection, not the pooler.
+- **Summary quality.** The rolling summary is generated by Groq; keep it short and factual,
+  and always keep the last N raw turns alongside it.
+- **ivfflat tuning.** For a small corpus an exact scan is fine; tune `lists`/`probes` once
+  there are enough rows.
