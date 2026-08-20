@@ -74,46 +74,64 @@ Nénufar is a **monolithic full-stack application** running Next.js and Payload 
 
 The system uses **two separate Telegram bots** with distinct responsibilities:
 
-| Bot | Username | Audience | Direction |
-|-----|----------|----------|-----------|
-| **Pedidos** | `@NenufarPedidosBot` | Shirley (reads) | One-way: system → Shirley |
-| **Admin** | `@NenufarAdminBot` | Shirley (writes) | Two-way: Shirley ↔ system |
+| Bot | Env var | Audience | Direction | Status |
+|-----|---------|----------|-----------|--------|
+| **Pedidos** (`@NenufarPedidosBot`) | `TELEGRAM_BOT_TOKEN` | Shirley (reads) | One-way: system → Shirley | ⚠️ Config pending |
+| **Asistente** (`@NenufarAsistenteBot`) | `TELEGRAM_ASSISTANT_BOT_TOKEN` | Buyers (write) | Two-way: buyer ↔ agents | 🔨 Slice 1 implemented |
 
 #### @NenufarPedidosBot — Order Inbox
 
-Shirley's inbox for new orders. Every time a buyer submits their cart, the full order arrives here as a structured message:
+Shirley's inbox for new orders. Every time a buyer submits their cart, the full order arrives here as a structured HTML message via `src/lib/telegram.ts → sendTelegramMessage()`. No reply needed — read-only inbox. Shirley contacts the buyer on WhatsApp.
+
+#### @NenufarAsistenteBot — AI Assistant for Buyers
+
+Conversational bot that answers buyers' questions about the catalog and routes purchase/personalization requests to Shirley. Built with a multi-agent architecture using Groq (Llama 3.3 70B) for LLM inference — free tier, zero infra cost.
+
+**Business guardrail:** the bot assists and hands off — it never closes a sale, confirms payment, or takes autonomous action. Shirley always closes.
+
+**Architecture (slice 1):**
 
 ```
-🌸 Nuevo Pedido #1042
-
-👤 María García
-📱 +57 300 123 4567
-
-🛒 Items:
-  • Anillo Esmeralda × 1 — $485.000
-    ↳ Talla 7 / Plata
-    ↳ Nota: Con grabado "MG"
-  • Aretes Coral × 2 — $290.000
-    ↳ Sin variante
-
-💰 Total: $775.000 COP
-📝 Nota general: Para regalo, incluir tarjeta
+Telegram → POST /telegram/webhook (route handler — outside /api to avoid Payload catch-all)
+                │
+                ▼
+          Orchestrator (Groq, temperature=0)
+           classifies intent → 'catalogo' | 'conversacion'
+                │
+        ┌───────┴────────┐
+        ▼                ▼
+  Catálogo Agent    Conversación Agent
+  (Groq + tools)    (Groq + tools)
+        │                │
+  skill:                skill:
+  buscarProductos   derivarAShirley
+  (payload.find)    (sendTelegramMessage
+                     → Shirley's channel)
+        │                │
+        └───────┬────────┘
+                ▼
+        sendTelegramReply(chatId)  ← replies to buyer
 ```
 
-Shirley reads the message, sees exactly what the buyer wants including all cart items, variants, and personalization notes, then **contacts the buyer directly on WhatsApp** using the number in the message. No reply needed in Telegram — it's a read-only inbox.
+**Files (all in `src/lib/agents/` and `src/app/(app)/telegram/`):**
 
-#### @NenufarAdminBot — Management Tool
+| File | Role |
+|------|------|
+| `src/lib/groq.ts` | Groq client singleton (`GROQ_API_KEY`, model: `llama-3.3-70b-versatile`) |
+| `src/lib/agents/types.ts` | Shared interfaces: `AgentContext`, `Skill`, `Agent`, `ToolDefinition` |
+| `src/lib/agents/runtime.ts` | Tool-calling loop — max 4 rounds per request |
+| `src/lib/agents/orchestrator.ts` | `routeAndRun(message, ctx)` — 1 Groq call to classify, then delegates |
+| `src/lib/agents/catalogo.ts` | Catalog agent definition + skill `buscarProductos` |
+| `src/lib/agents/conversacion.ts` | Conversation agent definition + skill `derivarAShirley` |
+| `src/lib/agents/skills/buscarProductos.ts` | `payload.find({ collection: 'products', where: { title: { like: query } } })` |
+| `src/lib/agents/skills/derivarAShirley.ts` | Calls `sendTelegramMessage()` to notify Shirley; tells buyer "Shirley will contact you" |
+| `src/app/(app)/telegram/webhook/route.ts` | POST handler: validates secret header, dedupes by `update_id`, calls `routeAndRun` |
+| `scripts/set-telegram-webhook.ts` | CLI: set / get info / delete webhook (`pnpm tsx scripts/set-telegram-webhook.ts <url>`) |
 
-Shirley's private tool for managing the store from her phone. Two-way: she sends commands and the bot responds.
-
-| Action | How | Result |
-|--------|-----|--------|
-| Upload photo | Send as **file** (not photo) | Saved to Payload Media with WebP variants |
-| Create product | File → name → price | Draft product created in Payload |
-| View pending orders | `/pendientes` | List of unconfirmed orders |
-| Mark order confirmed | `/confirmar 1042` | Order status → `confirmed` in Payload |
-
-Security: the webhook only accepts messages from Shirley's personal `chatId` — any other sender is silently ignored.
+**Webhook security:**
+- `TELEGRAM_WEBHOOK_SECRET` → validated against `x-telegram-bot-api-secret-token` header
+- `update_id` deduplication via in-memory Set (max 1000 entries, same pattern as `idempotency.ts`)
+- Route at `/telegram/webhook`, not `/api/telegram/webhook`, to avoid Payload's catch-all at `src/app/(payload)/api/[...slug]/route.ts`
 
 ### 2.4 Order Flow (`src/app/(app)/pedidos/`)
 
@@ -121,12 +139,12 @@ Security: the webhook only accepts messages from Shirley's personal `chatId` —
 OrderForm.tsx (client component)
   → submitOrderAction.ts (server action)
       → idempotency.ts (in-memory dedup by cartHash+email)
-      → payload.create('orders', {...}) 
-      → telegram.ts → order-formatter.ts → @NenufarPedidosBot
+      → payload.create('orders', {...})
+      → telegram.ts → order-formatter.ts → sendTelegramMessage() → @NenufarPedidosBot
   → redirect to /pedidos/enviar/confirmacion
 ```
 
-### 2.4 Blocks (`src/blocks/`)
+### 2.5 Blocks (`src/blocks/`)
 
 Page builder blocks available in the CMS editor:
 

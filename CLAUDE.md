@@ -3,8 +3,8 @@
 ## Working Rules
 
 - **Never make changes directly on `main`.** Always create a feature branch (`feature/...`) and work from a separate worktree.
-- Development worktree: `/home/ale/Work/nenufar-dev`
-- For each feature: `git worktree add ../nenufar-dev feature/<name>` before editing.
+- For each feature: `git worktree add ../<name> feature/<name>` before editing.
+- Active worktrees: `../nenufar-dev` (feature/sharp-image-optimization), `../nenufar-telegram` (feature/telegram-agentes), `../nenufar-docs` (feature/docs-update).
 
 ## What is this project
 
@@ -28,11 +28,17 @@ Based on the `@payloadcms/plugin-ecommerce` template. The purchase flow has **no
 Minimum environment variables (see `.env.example`):
 
 ```
-PAYLOAD_SECRET=         # Payload secret
-DATABASE_URL=           # PostgreSQL (docker-compose runs postgres on :5433)
-NEXT_PUBLIC_SERVER_URL= # Public URL (e.g. http://localhost:3002)
-TELEGRAM_BOT_TOKEN=     # Telegram bot token (from BotFather)
-TELEGRAM_CHANNEL_ID=    # Telegram channel ID (@name or -100xxxxxxxx)
+PAYLOAD_SECRET=                   # Payload secret
+DATABASE_URL=                     # PostgreSQL (docker-compose runs postgres on :5433)
+NEXT_PUBLIC_SERVER_URL=           # Public URL (e.g. http://localhost:3002)
+TELEGRAM_BOT_TOKEN=               # Orders bot token — sends order summaries to Shirley's channel
+TELEGRAM_CHANNEL_ID=              # Shirley's channel ID (@name or -100xxxxxxxx)
+
+# v3.2 — AI assistant bot (feature/telegram-agentes)
+TELEGRAM_ASSISTANT_BOT_TOKEN=     # Conversational bot token (separate from orders bot)
+TELEGRAM_WEBHOOK_SECRET=          # Random secret for webhook authentication
+GROQ_API_KEY=                     # Free at console.groq.com — powers the AI agents
+# GROQ_MODEL=llama-3.3-70b-versatile  # Optional override
 ```
 
 ## Key commands
@@ -79,3 +85,23 @@ Nénufar violet (`#6A1B9A`) is formalized as a CSS token:
 - **Buyer fields**: `buyerName` and `buyerContact` (WhatsApp) are stored in `order.shippingAddress.firstName` and `.phone` (temporary hack; Phase 6 adds proper fields via ordersCollectionOverride).
 - **Telegram splitting**: messages > 4000 chars are not split (documented gap).
 - **Personalization flow**: custom orders include a mandatory free-text field. The Telegram message header changes to "✦ Pedido PERSONALIZADO" and includes a highlighted PERSONALIZATION block.
+
+## AI Assistant Bot (feature/telegram-agentes)
+
+Conversational Telegram bot for buyers. Separate bot token from the orders notification bot.
+
+```
+src/lib/groq.ts                          — Groq client (GROQ_API_KEY)
+src/lib/agents/types.ts                  — AgentContext, Skill, Agent interfaces
+src/lib/agents/runtime.ts               — tool-calling loop (max 4 rounds)
+src/lib/agents/orchestrator.ts          — routeAndRun(): classifies → delegates
+src/lib/agents/catalogo.ts              — Catalog agent + buscarProductos skill
+src/lib/agents/conversacion.ts          — Conversation agent + derivarAShirley skill
+src/lib/agents/skills/buscarProductos.ts — payload.find({ collection: 'products' })
+src/lib/agents/skills/derivarAShirley.ts — notifies Shirley; tells buyer to expect her call
+src/app/(app)/telegram/webhook/route.ts  — POST /telegram/webhook (not under /api)
+scripts/set-telegram-webhook.ts          — pnpm tsx scripts/set-telegram-webhook.ts <url>
+tests/int/agents.int.spec.ts            — 4 tests; Groq + Telegram mocked; all pass
+```
+
+**Business guardrail**: agents assist and hand off — never close sales, confirm orders, or process payment. Shirley always closes.

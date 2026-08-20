@@ -1,6 +1,6 @@
 # PRD — Product Requirement Document
 **Proyecto:** Nénufar — Joyería Artesanal
-**Versión:** 3.1 (Payload CMS + Next.js)
+**Versión:** 3.2 (Bot asistente Telegram + Agentes IA — en desarrollo)
 **Fecha:** Agosto 2026
 **Supersede:** v3.0 (Shopify headless — archivado en `docs/archive/v3.0/PRD.md`)
 
@@ -266,19 +266,23 @@ Ver en admin → nenufar.co/admin/collections/orders/42
 | Conversión de imágenes a WebP | ✅ Completo |
 | Home page con fotos reales | ⚠️ Pendiente — crear desde admin |
 | Fotos reales de productos | ⚠️ Pendiente — subir desde Drive |
-| Bot de Telegram activo | ⚠️ Pendiente — configurar |
+| Bot de pedidos (notificaciones) | ⚠️ Pendiente — configurar `TELEGRAM_BOT_TOKEN` + canal |
+| **Bot asistente (agentes IA)** | 🔨 En desarrollo — slice 1 implementado, falta config live |
 | Analytics | ❌ No implementado |
 | Deploy en producción | ❌ No implementado |
 | Rate limiting en formulario | ❌ No implementado |
 
 ---
 
-## 8. Roadmap futuro (fuera de scope v3.1)
+## 8. Roadmap futuro
 
-| Fase | Funcionalidad | Descripción |
-|------|---------------|-------------|
-| v3.2 | Analytics | Google Analytics o Plausible para medir tráfico al catálogo. |
-| v3.2 | Formulario en /contacto | Conectar el bloque de formulario existente con envío a email o Telegram. |
-| v3.3 | Rate limiting | Evitar spam en el formulario de pedidos. |
-| v3.3 | Wompi / PSE | Pasarela de pago colombiana si el volumen de pedidos lo justifica. |
-| v4.0 | Asistente agéntico | Un asistente que ayude a cerrar ventas en WhatsApp (hipótesis de largo plazo). |
+| Fase | Estado | Funcionalidad | Descripción |
+|------|--------|---------------|-------------|
+| **v3.2** | 🔨 En desarrollo | **Bot asistente Telegram** | Orquestador + 2 agentes IA (Groq) con skills: busca productos en el catálogo real y deriva consultas de compra a Shirley. |
+| v3.2 | ❌ Pendiente | Analytics | Plausible o Umami (self-hosted, gratis) para medir tráfico al catálogo. |
+| v3.2 | ❌ Pendiente | Formulario en /contacto | Conectar el bloque de formulario existente con envío a email o Telegram. |
+| v3.3 | ❌ Pendiente | RAG del catálogo | Búsqueda semántica: pgvector (Supabase free tier) + embeddings locales (Transformers.js). La skill `buscarProductos` pasa de query por título a búsqueda por significado. |
+| v3.3 | ❌ Pendiente | Rate limiting | Evitar spam en el formulario de pedidos. |
+| v3.4 | ❌ Pendiente | MCP para el CMS | Exponer Payload como herramientas MCP para que los agentes consulten y actualicen el catálogo de forma estructurada. |
+| v3.4 | ❌ Pendiente | Wompi / PSE | Pasarela de pago colombiana si el volumen de pedidos lo justifica. |
+| v4.0 | ❌ Futuro | Más agentes + memoria | Historial de conversación persistente y agentes especializados adicionales. |

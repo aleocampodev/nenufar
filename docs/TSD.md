@@ -1,6 +1,6 @@
 # TSD — Technical Specification Document
 **Project:** Nénufar — Handcrafted Jewelry Store
-**Version:** 1.0
+**Version:** 1.1
 **Date:** August 2026
 **Audience:** Developers, QA, DevOps
 
@@ -19,7 +19,8 @@
 | Styling | TailwindCSS | v4 | CSS-first config, OKLCH tokens |
 | Package manager | pnpm | 9 | Workspace-friendly, fast installs |
 | Image processing | Sharp | — | WebP conversion on upload, server-side |
-| Notifications | Telegram Bot API | — | One-way HTTP POST, no library needed |
+| Notifications | Telegram Bot API | — | One-way HTTP POST to Shirley's channel (orders) |
+| AI agents | Groq SDK (`groq-sdk`) | — | Llama 3.3 70B via Groq free tier; OpenAI-compatible tool-calling |
 | Testing (unit/int) | Vitest | — | Fast, ESM-native |
 | Testing (E2E) | Playwright | — | Cross-browser, headless |
 | Linting | ESLint + Prettier | — | Enforced on commit via Husky |
@@ -88,8 +89,12 @@ nenufar/
 | `PAYLOAD_SECRET` | ✅ | JWT signing secret — min 32 chars random string |
 | `DATABASE_URL` | ✅ | PostgreSQL connection string |
 | `NEXT_PUBLIC_SERVER_URL` | ✅ | Public base URL (used for og images, redirects) |
-| `TELEGRAM_BOT_TOKEN` | ✅ | Bot token from @BotFather |
-| `TELEGRAM_CHANNEL_ID` | ✅ | Target chat ID for order notifications |
+| `TELEGRAM_BOT_TOKEN` | ✅ | Orders bot token — sends structured order summaries to Shirley's channel |
+| `TELEGRAM_CHANNEL_ID` | ✅ | Shirley's Telegram channel ID for order notifications |
+| `TELEGRAM_ASSISTANT_BOT_TOKEN` | ✅ (v3.2) | Assistant bot token — conversational bot that receives buyer messages via webhook |
+| `TELEGRAM_WEBHOOK_SECRET` | ✅ (v3.2) | Random secret validated in `x-telegram-bot-api-secret-token` header to authenticate Telegram's POST |
+| `GROQ_API_KEY` | ✅ (v3.2) | Groq API key (free at console.groq.com) — powers the AI agents |
+| `GROQ_MODEL` | ⬜ | Override Groq model (default: `llama-3.3-70b-versatile`) |
 | `PREVIEW_SECRET` | ⬜ | Enables draft preview mode |
 | `CRON_SECRET` | ⬜ | Secures cron job endpoints |
 
@@ -219,6 +224,7 @@ Config: `vitest.config.mts`, env: `.env.test`
 | Test | What it verifies |
 |------|-----------------|
 | `api.int.spec.ts` | Payload REST endpoints return correct status and shape |
+| `agents.int.spec.ts` | Multi-agent system: orchestrator routing, agent tool-calling loop, `buscarProductos` and `derivarAShirley` skills — all Groq and Telegram calls mocked, no network |
 
 Run: `pnpm test:int`
 
@@ -236,7 +242,8 @@ Run: `pnpm test:e2e`
 
 ### What is NOT tested (intentionally)
 
-- Telegram delivery (external service, mocked at boundary)
+- Telegram delivery (external service, mocked at boundary in both order notifications and agent replies)
+- Groq LLM responses (mocked in agent tests — actual model behavior is not unit-tested)
 - WebP generation (Sharp is tested by its own library)
 - Payment flows (there are none)
 

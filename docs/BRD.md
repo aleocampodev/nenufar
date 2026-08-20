@@ -1,6 +1,6 @@
 # BRD — Business Requirement Document
 **Proyecto:** Nénufar — Joyería Artesanal
-**Versión:** 3.1 (Payload CMS + Next.js — stack actual)
+**Versión:** 3.2 (Bot asistente Telegram + Agentes IA — en desarrollo)
 **Fecha:** Agosto 2026
 **Supersede:** v3.0 (Shopify headless — archivado en `docs/archive/v3.0/BRD.md`)
 
@@ -59,10 +59,17 @@ El problema central: los compradores no pueden armar un pedido solos. Le escribe
 | 08 | Admin Payload | Shirley gestiona productos, pedidos, blog y medios desde `/admin`. |
 | 09 | Imágenes WebP | Fotos de cámara profesional se convierten automáticamente a WebP (calidad 92) en 4 tamaños al subir. |
 
-### 3.2 Explícitamente fuera de alcance (v3.1)
+### 3.2 Incluido en v3.2 (en desarrollo)
+
+| # | Capacidad | Descripción de negocio |
+|---|-----------|------------------------|
+| 10 | Bot asistente Telegram | Un bot conversacional (separado del de notificaciones) que atiende preguntas de clientas sobre el catálogo y deriva consultas de compra/personalización a Shirley. El bot asiste; Shirley siempre cierra la venta. |
+| 11 | Agentes IA con skills | El bot usa un orquestador (Groq/Llama) que enruta a 2 agentes especializados: Catálogo (busca productos reales) y Conversación (handoff a Shirley). |
+
+### 3.3 Explícitamente fuera de alcance
 
 - **Pago online.** Sin pasarela de pago (Stripe, Wompi, etc.). El pago se coordina externamente por Nequi, transferencia o efectivo.
-- **Bot de Telegram con comandos.** Telegram es notificación de una sola vía — solo llegan los pedidos.
+- **Bot autónomo que cierre ventas.** El bot asistente asiste y deriva — nunca cobra, confirma pedidos ni toma decisiones sin Shirley.
 - **Resumen diario automatizado.** No hay digest automático de pedidos ni reportes.
 - **Analytics.** No hay Google Analytics ni similar todavía — gap conocido.
 - **App móvil.** El sitio es responsive; no hay app nativa.
@@ -125,3 +132,10 @@ La hipótesis agéntica (un asistente que reemplaza a Shirley en el cierre de ve
 - **Registro de pedidos:** los pedidos ahora quedan en Payload (colección `Orders`) además de llegar a Telegram.
 - **Imágenes:** conversión automática a WebP (calidad 92, 4 tamaños) via Sharp integrado en Payload.
 - **Color de marca:** violeta Nénufar (`#6A1B9A`) formalizado como token CSS (`--brand`).
+
+### v3.1 → v3.2 (Bot asistente Telegram — en desarrollo)
+- **Bot conversacional:** nuevo bot de Telegram (separado del de pedidos) que atiende preguntas de clientas.
+- **Arquitectura multiagente:** orquestador (Groq/Llama) → Agente Catálogo (skill `buscarProductos`) + Agente Conversación (skill `derivarAShirley`).
+- **Guardarraíl de negocio:** el bot asiste y hace handoff; Shirley siempre cierra la venta.
+- **Infraestructura cero costo:** Groq free tier como LLM, `cloudflared` para túnel local en desarrollo.
+- **Webhook seguro:** `X-Telegram-Bot-Api-Secret-Token` + deduplicación por `update_id`.
