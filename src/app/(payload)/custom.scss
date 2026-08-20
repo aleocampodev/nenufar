@@ -69,6 +69,18 @@ html[data-theme='dark'] {
 
 /* ── Detalles ──────────────────────────────────────────────── */
 
+/* CTA "Crear" de las listas: violeta suave para destacarlo */
+.list-create-new-doc__create-new-button {
+  background-color: var(--nenufar-brand);
+  color: #ffffff;
+  transition: background-color 0.2s ease;
+}
+
+.list-create-new-doc__create-new-button:hover {
+  background-color: var(--nenufar-brand-dark);
+  color: #ffffff;
+}
+
 /* Foco visible accesible en violeta */
 :where(a, button, input, select, textarea):focus-visible {
   outline: 2px solid var(--nenufar-brand);
