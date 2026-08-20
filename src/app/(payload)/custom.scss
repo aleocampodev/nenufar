@@ -1,115 +1,84 @@
 /* ─────────────────────────────────────────────────────────────
    Nénufar Admin — tema violeta artesanal
-   Payload v3 expone variables CSS --theme-* que alimentan su
-   design system. Sobreescribimos desde custom.scss (punto
-   oficial de customización, upgrade-safe).
-   Paleta: violeta marca #6A1B9A sobre neutros cálidos.
+   Estrategia (upgrade-safe):
+   1. Payload mapea --theme-elevation-* desde --color-base-*.
+      Redefinimos esa escala con neutros CÁLIDOS VIOLÁCEOS
+      (misma luminancia que los grises default) → todo el panel
+      (fondos, cards, sidebar, bordes, texto) se entibia solo,
+      y el modo oscuro de Payload invierte el mapeo por sí mismo.
+   2. El botón primario usa --bg-color: var(--theme-elevation-800).
+      Lo sobreescribimos con tokens propios para que sea violeta
+      marca, sin tocar el texto (que también usa elevation-800).
    ───────────────────────────────────────────────────────────── */
 
 :root {
-  /* Violeta Nénufar como accent del admin */
-  --theme-accent: #6a1b9a;
-  --theme-accent-100: #f3e8fb;
-  --theme-accent-150: #ecdcf7;
-  --theme-accent-300: #cda5e3;
-  --theme-accent-500: #8e34c4;
-  --theme-accent-600: #6a1b9a;
-  --theme-accent-700: #57147d;
-  --theme-accent-800: #451061;
-  --theme-accent-900: #320a46;
+  /* Tokens de marca Nénufar */
+  --nenufar-brand: #6a1b9a;
+  --nenufar-brand-dark: #57147d;
+  --nenufar-brand-light: #8e34c4;
 
-  /* Neutros cálidos (mismo sesgo del storefront) */
-  --theme-bg: #faf8fc;
-  --theme-elevation-100: #ffffff;
-  --theme-elevation-200: #f5f1f9;
-  --theme-elevation-300: #ece6f3;
-  --theme-elevation-400: #e0d8ea;
+  /* Escala base: gris puro → neutro cálido violáceo */
+  --color-base-0: #ffffff;
+  --color-base-50: #f7f4fa;
+  --color-base-100: #efe9f5;
+  --color-base-150: #e4dcec;
+  --color-base-200: #d7cde2;
+  --color-base-250: #c9bcda;
+  --color-base-300: #bbaad1;
+  --color-base-350: #ac9cc7;
+  --color-base-400: #9d8dbc;
+  --color-base-450: #8f7fb1;
+  --color-base-500: #7f6ba3;
+  --color-base-550: #6f5c94;
+  --color-base-600: #5f4d83;
+  --color-base-650: #4f3e6f;
+  --color-base-700: #40305b;
+  --color-base-750: #322348;
+  --color-base-800: #261a37;
+  --color-base-850: #1a1127;
+  --color-base-900: #0f0916;
+  --color-base-950: #070410;
+  --color-base-1000: #000000;
 
-  /* Tinta cercana al negro-berenjena */
-  --theme-text: #241b2e;
-  --theme-text-100: #4a3d58;
-  --theme-text-200: #6e5f7e;
-  --theme-text-300: #9284a1;
-
-  --theme-success-500: #3a7d44;
-  --theme-warning-500: #b07c1f;
-  --theme-error-500: #b3261e;
-
-  /* Bordes suaves violáceos */
-  --theme-border: #e5ddf0;
+  /* Success/warning/error: tonos algo más cálidos */
+  --color-success-500: rgb(58, 125, 68);
+  --color-error-500: rgb(179, 38, 30);
+  --color-warning-500: rgb(176, 124, 31);
 }
 
-/* Modo oscuro: violetas profundos */
-[data-theme='dark'] {
-  --theme-accent: #b07cd9;
-  --theme-accent-100: #2a1a38;
-  --theme-accent-150: #32213f;
-  --theme-accent-300: #4a3060;
-  --theme-accent-500: #8e5bb8;
-  --theme-accent-600: #a86ccf;
-  --theme-accent-700: #c397e0;
-  --theme-accent-800: #d5b3ea;
-  --theme-accent-900: #e7d1f4;
-
-  --theme-bg: #16101d;
-  --theme-elevation-100: #1d1526;
-  --theme-elevation-200: #251b30;
-  --theme-elevation-300: #2e2239;
-  --theme-elevation-400: #382a44;
-
-  --theme-text: #f0eaf6;
-  --theme-text-100: #d5cbe0;
-  --theme-text-200: #b0a3bd;
-  --theme-text-300: #8c7f99;
-
-  --theme-border: #3a2b47;
+html[data-theme='dark'] {
+  /* Fondo oscuro con sesgo violáceo profundo */
+  --color-base-50: #1d1526;
+  --color-base-100: #251b30;
+  --color-base-150: #2e2239;
+  --color-base-900: #0f0916;
 }
 
-/* ── Refinamientos puntuales ─────────────────────────────── */
-
-/* Tipografía con carácter para el panel */
-.admin-root,
-#admin-root {
-  font-family: var(--font-body), 'Inter', system-ui, sans-serif;
+/* ── Botón primario: violeta marca ─────────────────────────── */
+.btn--style-primary {
+  --bg-color: var(--nenufar-brand);
+  --hover-bg: var(--nenufar-brand-dark);
+  --color: #ffffff;
+  --hover-color: #ffffff;
 }
 
-/* Sidebar: fondo con identidad violeta */
-.payload-admin-sidebar,
-nav[class*='nav'],
-aside[class*='Sidebar'] {
-  letter-spacing: 0.01em;
+.btn--style-primary:hover,
+.btn--style-primary:focus-visible {
+  background-color: var(--nenufar-brand-dark);
 }
 
-/* Botones primarios: violeta con hover más profundo */
-button[class*='button--style-primary'],
-.btn--style-primary,
-[class*='button--primary'] {
-  transition:
-    background-color 0.2s ease,
-    transform 0.1s ease;
-}
-
-button[class*='button--style-primary']:hover,
-.btn--style-primary:hover {
-  filter: brightness(0.92);
-}
-
-button[class*='button--style-primary']:active,
-.btn--style-primary:active {
-  transform: translateY(1px);
-}
-
-/* Cards del dashboard: sombras suaves y radios generosos */
-.dashboard__card-list,
-[class*='card'],
-.render-fields {
-  border-radius: 0.5rem;
-}
+/* ── Detalles ──────────────────────────────────────────────── */
 
 /* Foco visible accesible en violeta */
 :where(a, button, input, select, textarea):focus-visible {
-  outline: 2px solid var(--theme-accent-600);
+  outline: 2px solid var(--nenufar-brand);
   outline-offset: 2px;
+}
+
+/* Hover de filas/listados con calidez */
+a[class*='card']:hover,
+.row:hover {
+  background-color: var(--color-base-50);
 }
 
 /* Scrollbar discreta acorde al tema */
@@ -121,15 +90,15 @@ button[class*='button--style-primary']:active,
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--theme-elevation-300);
+  background: var(--color-base-200);
   border-radius: 8px;
-  border: 2px solid var(--theme-bg);
+  border: 2px solid var(--color-base-50);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--theme-accent-300);
+  background: var(--color-base-300);
 }
 
-/* ── Utilidad (existente) ─────────────────────────────────── */
+/* ── Utilidad (existente) ──────────────────────────────────── */
 .visually-hidden {
   position: absolute;
   width: 1px;
