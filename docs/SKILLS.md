@@ -23,8 +23,10 @@
   and write the canonical data.
 - **Status legend:** ✅ built · 🔜 next · 🕓 later.
 
-Skills are grouped by the collection they act on. The three groups the project wants first:
-**update (catalog)**, **orders**, and **landing / content**.
+Skills are grouped by what they act on: **update (catalog)**, **orders**, **landing / content**,
+and **content / copywriting** (a shared helper reachable from both Telegram and the admin).
+**§5 Interaction patterns** covers how any skill is triggered and disambiguated (images,
+references, confirmation).
 
 ---
 
@@ -89,20 +91,88 @@ single field (headline text, a product-id list) over rewriting a whole block.
 
 ---
 
-## 4. Recommended build order
+## 4. Content skills — copywriting help (two surfaces)
+
+Help Shirley write copy that grabs: catchy captions, product descriptions, social-post ideas.
+Unlike the skills above, this is a **shared capability with two doors** — the same generation
+logic is reached from **Telegram** (a skill) and from the **Payload admin on the web** (a
+"✨ Generate" helper next to the field she's editing). "Web" here means Shirley's admin panel,
+not the storefront — buyers never see this.
+
+| Skill / helper | Shirley does… | Produces | Surface | Status |
+|----------------|---------------|----------|---------|--------|
+| `generarCaption` | "a catchy caption for the emerald ring, for Instagram" · or clicks ✨ on the product | 2–3 caption options (hook + body + hashtags) | Telegram + Admin | 🔜 next |
+| `generarDescripcion` | "write the catalog description for the coral studs" · or ✨ on the description field | one on-brand product description (COP-aware) | Telegram + Admin | 🕓 later |
+| `ideasPost` | "give me 3 post ideas for December" | short content ideas / angles | Telegram | 🕓 later |
+
+**Design notes.**
+- **Shared logic.** A single `generateCopy(kind, subject, options)` in `src/lib/copy/*` is called
+  by both the Telegram skill and the admin field component — one implementation, two entry points
+  (mirrors the RAG "shared service" idea).
+- **Brand voice.** Generation is grounded in `knowledge/brand-essence.md` (via the RAG knowledge
+  in `docs/RAG-MEMORY-design.md`) so captions sound like **Nénufar**, not generic AI. This is a
+  concrete reason that file exists.
+- **Grounded in real data.** It pulls the product's facts from Payload (material, price in COP),
+  so the copy is specific, never vague.
+- **Web surface.** A custom Payload admin field/button ("✨ Generar") on `Products` (and later
+  `Pages` / `Posts`) calls a server endpoint → `generateCopy` → fills the field for Shirley to
+  edit. Same capability she gets in Telegram, where she's authoring.
+- **Guardrail: drafts only.** It always returns a few **options**; Shirley picks and edits.
+  Nothing auto-publishes. Output is Spanish (es-CO).
+
+---
+
+## 5. Interaction patterns
+
+How a skill actually gets triggered and disambiguated. These rules apply to every skill above.
+
+**Intent lives in the words, not in Telegram.** Telegram is only the transport — it knows nothing
+about "landing" vs "product". The orchestrator (Groq) classifies the intent from Shirley's
+**text or photo caption**. If the words don't carry the target, the bot **asks**; it never
+guesses.
+
+**Uploading an image (e.g. to the landing).** A bare photo doesn't say what it's for. Resolve in
+this order:
+1. **Caption-driven** — she sends the photo *with* a caption ("this goes in the home hero"); the
+   orchestrator routes from the caption, uploads the file to Payload Media (WebP), applies it,
+   then confirms.
+2. **Ask** — bare photo → the bot asks "What's this photo for? (1) home hero (2) a product
+   (3) blog" and continues from her answer.
+3. **Context** — if she just said "let's change the hero photo" and then sends it, conversation
+   memory ties them (needs phase 4.0).
+   > Technical: the webhook today handles only `message.text`. Photos require handling
+   > `message.photo` + `caption`, downloading via `getFile`, and uploading to Media — which is why
+   > image skills (`actualizarHero`, `crearProductoDraft`) are marked 🕓 later.
+
+**Referencing a thing (e.g. an order).** List → reference → confirm:
+- **By id** — "confirm 42" → robust, works with no memory. ✅ preferred
+- **By name** — "María's order" → if ambiguous, the bot asks which.
+- **By position** — "the first one" → needs memory of the previous list (phase 4.0).
+
+**Always confirm writes.** A write echoes what changed ("Order 42 → confirmed"). Destructive or
+irreversible actions (unpublish, mark shipped, delete) confirm *before* executing.
+
+**Multi-turn references need memory.** "the first one", "yesterday's", "the hero from before"
+only resolve once conversation memory (phase 4.0) is in place; until then, reference by id/name.
+
+---
+
+## 6. Recommended build order
 
 1. **Orders first** — `pedidosPendientes` + `confirmarPedido`. Establishes the `chat_id` auth
    guard and the first Payload write. Highest day-to-day value.
 2. **Catalog update** — `actualizarInventario`, then `actualizarPrecio`. The core
    natural-language-write exercise.
 3. **Landing (safe)** — `destacarProducto`, `publicarEvento`. Structured, low-risk content wins.
-4. **Everything marked 🕓** — once the patterns (parse → confirm → write → echo) are proven.
+4. **Copy help** — `generarCaption` (Telegram first, then the admin ✨ button). High value, no
+   write risk — it only drafts.
+5. **Everything marked 🕓** — once the patterns (parse → confirm → write → echo) are proven.
 
 Each skill ships independently with its own test.
 
 ---
 
-## 5. How skills reach the CMS — direct now, official MCP later
+## 7. How skills reach the CMS — direct now, official MCP later
 
 Today the skills call Payload's **Local API** directly (`payload.find`, `payload.update`).
 That is the simplest path and works now.
@@ -127,7 +197,7 @@ stock, but never delete).
 
 ---
 
-## 6. Cross-cutting rules (every skill)
+## 8. Cross-cutting rules (every skill)
 
 - **Auth:** the webhook processes only `TELEGRAM_ADMIN_CHAT_ID`; skills assume the caller is
   Shirley.
