@@ -1,5 +1,4 @@
-import { Grid } from '@/components/Grid'
-import { ProductGridItem } from '@/components/ProductGridItem'
+import { ProductCard } from '@/components/ProductCard'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -34,6 +33,7 @@ export default async function ShopPage({ searchParams }: Props) {
       slug: true,
       gallery: true,
       categories: true,
+      variants: true,
       priceInCOP: true,
     },
     ...(sort ? { sort } : { sort: 'title' }),
@@ -62,7 +62,7 @@ export default async function ShopPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="container py-12">
+    <div className="container py-16">
       {searchValue ? (
         <p className="mb-8 font-serif text-lg text-muted-foreground">
           {docs.length === 0
@@ -83,11 +83,12 @@ export default async function ShopPage({ searchParams }: Props) {
       )}
 
       {docs.length > 0 ? (
-        <Grid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        /* Masonry estilo Krafti: CSS columns, altura natural de cada imagen */
+        <div className="columns-1 gap-8 sm:columns-2 lg:columns-3 xl:columns-4">
           {docs.map((product, index) => (
             <div
               key={product.id}
-              className="opacity-0 animate-in"
+              className="mb-8 break-inside-avoid"
               style={{
                 animationName: 'fadeInUp',
                 animationDuration: '0.6s',
@@ -95,10 +96,10 @@ export default async function ShopPage({ searchParams }: Props) {
                 animationFillMode: 'forwards',
               }}
             >
-              <ProductGridItem product={product} />
+              <ProductCard product={product} />
             </div>
           ))}
-        </Grid>
+        </div>
       ) : null}
 
       {totalPages > 1 && (
