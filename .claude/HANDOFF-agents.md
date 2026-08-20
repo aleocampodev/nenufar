@@ -141,12 +141,11 @@ SHIRLEY escribe → Bot (@NenufarPedidosBot — mismo TELEGRAM_BOT_TOKEN)
 
 ### Fase 3.4 — MCP para el CMS
 
-**Objetivo:** exponer Payload como herramientas MCP para que los agentes consulten y actualicen el catálogo de forma estructurada, sin SQL directo.
+**Objetivo:** exponer Payload como herramientas MCP para que los skills consulten/actualicen el catálogo de forma estructurada, en vez de llamar Local API directa.
 
-**Herramientas MCP propuestas:**
-- `listarProductos(filtros)` — reemplaza `payload.find` directa
-- `obtenerProducto(slug)` — detalle completo de una pieza
-- `actualizarInventario(productId, stock)` — Shirley le pide al bot que actualice stock
+> **Ya existe plugin oficial:** `@payloadcms/plugin-mcp` (docs: https://payloadcms.com/docs/plugins/mcp). Expone colecciones y globals como tools MCP (find/create/update/delete configurable por operación), con auth por API key y permisos granulares por colección (admin → MCP → API Keys), apuntando a la instancia viva por HTTP. **No hay que construir el MCP desde cero** — se adopta el plugin y los skills apuntan a sus tools. La migración es invisible para el agente: el schema del tool no cambia, solo la implementación (`payload.update(...)` → llamada MCP).
+
+**Catálogo de skills:** ver [`docs/SKILLS.md`](../docs/SKILLS.md) — grupos: actualizar catálogo, pedidos, landing/contenido; orden de construcción y reglas transversales (auth por `chat_id`, confirmar writes).
 
 ### Fase 4.0 — Memoria de conversación (Supabase)
 
