@@ -46,7 +46,8 @@ export const Price = ({
   if (typeof amount === 'number') {
     return (
       <Element className={className} suppressHydrationWarning>
-        {formatCurrency(amount, { currency: currencyToUse })}
+        {/* es-CO: COP sin decimales, formato colombiano ($850.000) */}
+        {formatCurrency(amount, { currency: currencyToUse, locale: 'es-CO' })}
       </Element>
     )
   }
@@ -54,7 +55,7 @@ export const Price = ({
   if (highestAmount && highestAmount !== lowestAmount) {
     return (
       <Element className={className} suppressHydrationWarning>
-        {`${formatCurrency(lowestAmount, { currency: currencyToUse })} - ${formatCurrency(highestAmount, { currency: currencyToUse })}`}
+        {`${formatCurrency(lowestAmount, { currency: currencyToUse, locale: 'es-CO' })} - ${formatCurrency(highestAmount, { currency: currencyToUse, locale: 'es-CO' })}`}
       </Element>
     )
   }
@@ -62,7 +63,7 @@ export const Price = ({
   if (lowestAmount) {
     return (
       <Element className={className} suppressHydrationWarning>
-        {`${formatCurrency(lowestAmount, { currency: currencyToUse })}`}
+        {`${formatCurrency(lowestAmount, { currency: currencyToUse, locale: 'es-CO' })}`}
       </Element>
     )
   }
