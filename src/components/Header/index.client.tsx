@@ -17,7 +17,14 @@ type Props = {
 }
 
 export function HeaderClient({ header }: Props) {
-  const menu = header.navItems || []
+  // Storefront = landing + ecommerce: solo se muestran estas rutas en el nav.
+  // Blog, eventos, sobre-nenufar y contacto quedan fuera del alcance actual.
+  const ALLOWED_NAV_URLS = ['/', '/shop']
+  const allMenu = header.navItems || []
+  const menu = allMenu.filter((item) => {
+    const url = item.link?.url
+    return !url || ALLOWED_NAV_URLS.includes(url)
+  })
   const pathname = usePathname()
 
   return (
