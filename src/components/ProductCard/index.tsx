@@ -85,7 +85,9 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
         </span>
         {typeof price === 'number' && (
           <span className="font-mono text-sm text-muted-foreground">
-            <Price amount={price} />
+            {/* currencyCode explícito: sin él el provider cae a un fallback
+                decimals:2 y renderiza "$8,500.00" en vez de "$8.500" (COP) */}
+            <Price amount={price} currencyCode="COP" />
           </span>
         )}
       </div>
