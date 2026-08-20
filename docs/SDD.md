@@ -36,13 +36,14 @@ Nénufar is a **monolithic full-stack application** running Next.js and Payload 
 │     (Shirley's phone)                                  │
 └─────────────────────────────────────────────────────┘
                ▲
-               │ POST /telegram/webhook (buyer messages)
+               │ POST /telegram/webhook (Shirley's admin messages)
         Telegram Bot API
 ```
 
 **Key design constraints:**
 - No payment gateway — Shirley coordinates manually via WhatsApp.
-- Single bot (`TELEGRAM_BOT_TOKEN`) serves both order notifications and the buyer assistant.
+- Single bot (`TELEGRAM_BOT_TOKEN`) serves both order notifications (outbound to Shirley) and Shirley's admin assistant (inbound from Shirley only).
+- Buyers never touch the bot — they stay on the web (catalog + cart + form) and leave a WhatsApp number.
 - Groq free tier — no infra cost for the AI layer.
 - No Redis, no queues — keeps operational complexity at zero.
 
@@ -81,65 +82,70 @@ Nénufar is a **monolithic full-stack application** running Next.js and Payload 
 
 ### 2.3 Telegram — Single Bot, Dual Role
 
-The system uses **one bot** (`TELEGRAM_BOT_TOKEN`) for two distinct functions:
+The system uses **one bot** (`TELEGRAM_BOT_TOKEN`) for two distinct functions. **Both audiences are Shirley** — buyers never interact with the bot.
 
-| Function | Direction | Who receives |
-|----------|-----------|-------------|
-| **Order notifications** | System → Shirley's channel | Shirley reads the order in `TELEGRAM_CHANNEL_ID` |
-| **Buyer assistant** | Buyer → bot → buyer | Compradoras write to the bot; the multi-agent system replies |
+| Function | Direction | Who |
+|----------|-----------|-----|
+| **Order notifications** | System → Shirley's channel | A buyer's web order lands in `TELEGRAM_CHANNEL_ID`; Shirley reads it |
+| **Admin assistant** | Shirley ↔ bot | Shirley writes to the bot to manage her store; the multi-agent system acts on Payload |
+
+Buyers stay on the web: they browse `/shop`, add to cart, and submit the order (or the personalization form), leaving their **WhatsApp** number. That submission arrives in Shirley's channel as a notification. Buyers have no conversational channel with the bot.
 
 #### Order Notifications — One-Way Inbox
 
 When a buyer submits their cart, the order arrives in Shirley's channel as a structured HTML message. Shirley reads it and contacts the buyer via WhatsApp. No commands, no replies — read-only.
 
-#### Buyer Assistant — Multi-Agent System (v3.2)
+#### Admin Assistant — Multi-Agent System (v3.2)
 
-When a buyer writes to the bot, `POST /telegram/webhook` is called:
+When **Shirley** writes to the bot, `POST /telegram/webhook` is called:
 
 ```
-Compradora escribe al bot
+Shirley escribe al bot ("¿qué pedidos tengo?")
          │
 POST /telegram/webhook
          │
+  ┌──────▼────────────────┐
+  │ chat_id == ADMIN?      │  ← auth: solo el chat_id de Shirley
+  │  no → 200, ignora      │
+  └──────┬────────────────┘
+         │ sí
   ┌──────▼───────┐
   │ routeAndRun()│  orchestrator.ts
   └──────┬───────┘
-         │ Groq: clasifica intención (1 llamada, temp=0)
+         │ Groq: interpreta la intención (temp=0)
          │
-   ┌─────┴──────┐
-   │            │
-'catalogo'  'conversacion'
-   │            │
-┌──▼──────┐ ┌──▼────────────┐
-│ Agente  │ │    Agente     │
-│Catálogo │ │ Conversación  │
-│         │ │               │
-│ skill:  │ │ skill:        │
-│buscarPr.│ │derivarShirley │
-└──┬──────┘ └──┬────────────┘
-   │           │
-payload.find  sendTelegramMessage
-(products)    (Shirley's channel)
-   │           │
-   └─────┬─────┘
-         │
- sendTelegramReply()
- (al chat_id de la compradora)
+   ┌─────┴───────────┬──────────────┐
+'pedidos'        'catalogo'      'inventario'
+   │                 │                │
+┌──▼──────────┐ ┌────▼─────┐ ┌───────▼────────┐
+│ pedidos-    │ │ buscar-  │ │ actualizar-    │
+│ Pendientes  │ │ Producto │ │ Inventario     │
+│ confirmar-  │ │          │ │                │
+│ Pedido      │ │          │ │                │
+└──┬──────────┘ └────┬─────┘ └───────┬────────┘
+   │                 │               │
+payload.find/update  payload.find    payload.update
+(orders)            (products)      (products.stock)
+   │                 │               │
+   └────────┬────────┴───────────────┘
+            │
+    sendTelegramReply()
+    (responde a Shirley)
 ```
 
-**Guardarraíl:** the agents never close a sale or confirm an order. `derivarAShirley` sends a handoff notification to Shirley's channel and tells the buyer that Shirley will contact them.
+**Guardarraíl:** the buyer's purchase decision always stays with Shirley — the bot never charges or closes a sale on the buyer's behalf. Its writes to Payload (confirm order, update stock) are Shirley's own actions, expressed conversationally.
 
-| File | Responsibility |
-|------|---------------|
-| `src/lib/groq.ts` | Groq client singleton (reads `GROQ_API_KEY`) |
-| `src/lib/agents/types.ts` | `AgentContext`, `Skill`, `Agent` interfaces |
-| `src/lib/agents/runtime.ts` | Tool-calling loop (max 4 rounds) |
-| `src/lib/agents/orchestrator.ts` | `routeAndRun()` — classifies and delegates |
-| `src/lib/agents/catalogo.ts` | Catalog agent with `buscarProductos` skill |
-| `src/lib/agents/conversacion.ts` | Conversation agent with `derivarAShirley` skill |
-| `src/lib/agents/skills/buscarProductos.ts` | `payload.find(products)` → returns real pieces with COP prices |
-| `src/lib/agents/skills/derivarAShirley.ts` | Notifies Shirley's channel + tells buyer to expect contact |
-| `src/app/(app)/telegram/webhook/route.ts` | POST handler — validates secret, deduplicates by `update_id` |
+| File | Responsibility | Estado |
+|------|---------------|--------|
+| `src/lib/groq.ts` | Groq client singleton (reads `GROQ_API_KEY`) | ✅ slice 1 |
+| `src/lib/agents/types.ts` | `AgentContext`, `Skill`, `Agent` interfaces | ✅ slice 1 |
+| `src/lib/agents/runtime.ts` | Tool-calling loop (max 4 rounds) | ✅ slice 1 |
+| `src/lib/agents/orchestrator.ts` | `routeAndRun()` — interprets and delegates | ✅ slice 1 (rutas por ampliar) |
+| `src/lib/agents/skills/buscarProductos.ts` | `payload.find(products)` → pieces with COP prices | ✅ slice 1 (se reorienta a Shirley) |
+| `src/app/(app)/telegram/webhook/route.ts` | POST handler — validates secret, dedup by `update_id` | ✅ slice 1 (falta guard por `chat_id`) |
+| `src/lib/agents/skills/pedidosPendientes.ts` | `payload.find(orders, status=pending)` | ⬜ siguiente slice |
+| `src/lib/agents/skills/confirmarPedido.ts` | `payload.update(orders.status)` | ⬜ siguiente slice |
+| `src/lib/agents/skills/actualizarInventario.ts` | `payload.update(products.stock)` | ⬜ siguiente slice |
 
 ### 2.4 Order Flow (`src/app/(app)/pedidos/`)
 
@@ -239,7 +245,7 @@ Body: { chat_id, parse_mode: "HTML", text: formattedOrder }
 
 One-way, fire-and-forget. If Telegram fails, the order is already saved in Payload — the catch block logs but does not block the user.
 
-### Webhook — buyer assistant (inbound, v3.2)
+### Webhook — Shirley's admin assistant (inbound, v3.2)
 
 ```
 POST /telegram/webhook
@@ -247,7 +253,7 @@ Headers: X-Telegram-Bot-Api-Secret-Token: {TELEGRAM_WEBHOOK_SECRET}
 Body: Telegram Update object (JSON)
 ```
 
-Validates the secret header, deduplicates by `update_id` (in-memory Set, max 1000 entries), extracts `message.text` + `chat.id`, calls `routeAndRun()`, and replies to the buyer via `sendTelegramReply()`.
+Validates the secret header, checks `chat.id === TELEGRAM_ADMIN_CHAT_ID` (Shirley only — any other sender returns 200 and is ignored), deduplicates by `update_id` (in-memory Set, max 1000 entries), extracts `message.text`, calls `routeAndRun()`, and replies to Shirley via `sendTelegramReply()`.
 
 ---
 
@@ -263,6 +269,7 @@ Validates the secret header, deduplicates by `update_id` (in-memory Set, max 100
 | SQL injection | Drizzle ORM with parameterized queries — no raw SQL |
 | XSS | Lexical rich text renders via Payload's `RichText` component — no `dangerouslySetInnerHTML` with user input |
 | Webhook authentication | `POST /telegram/webhook` validates `X-Telegram-Bot-Api-Secret-Token` against `TELEGRAM_WEBHOOK_SECRET`; requests without the header return 401 |
+| Webhook authorization | Only `chat.id === TELEGRAM_ADMIN_CHAT_ID` (Shirley) is processed; any other sender is silently ignored — the admin bot is single-user by design |
 | Webhook deduplication | `update_id` tracked in an in-memory Set (max 1000 entries); duplicate POSTs return 200 without reprocessing |
 
 ---

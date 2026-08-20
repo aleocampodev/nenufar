@@ -1,4 +1,4 @@
-# Handoff — Bot Asistente Telegram + Agentes IA (v3.2)
+# Handoff — Bot de gestión de Shirley (Telegram + Agentes IA, v3.2)
 
 > Para agentes de IA que continúen este trabajo. Estado al 20 de agosto de 2026.
 
@@ -8,7 +8,7 @@
 
 **Nénufar** es una tienda de joyería artesanal de una sola persona: Shirley (Cartagena, Colombia). Ella diseña, fabrica, vende, empaca y envía. Su teléfono es su oficina.
 
-**Regla de oro:** los agentes IA asisten y derivan a Shirley — **nunca cierran una venta, nunca confirman un pedido, nunca cobran**. Shirley siempre tiene la última palabra.
+**Regla de oro:** el bot es la **herramienta de gestión de la propia Shirley** — no atiende compradoras. Las compradoras arman su pedido en la web; el bot solo le sirve a Shirley para operar su tienda (ver pedidos, confirmar, actualizar stock) desde Telegram. La venta y su cierre siempre los maneja Shirley por WhatsApp.
 
 ---
 
@@ -42,57 +42,65 @@
    `openssl rand -hex 24`  
    Variable: `TELEGRAM_WEBHOOK_SECRET`
 
-3. **Túnel HTTPS** — para exponer el webhook localmente  
+3. **chat_id de Shirley** — escribirle a `@userinfobot` en Telegram  
+   Variable: `TELEGRAM_ADMIN_CHAT_ID` (único remitente que el bot procesa)
+
+4. **Túnel HTTPS** — para exponer el webhook localmente  
    `cloudflared tunnel --url http://localhost:3002`
 
-4. **Registrar el webhook** (mismo bot que ya tiene para pedidos)  
+5. **Registrar el webhook** (mismo bot que ya tiene para pedidos)  
    `pnpm tsx scripts/set-telegram-webhook.ts <url-del-tunel>`
 
-> **No se necesita un bot adicional.** El mismo `TELEGRAM_BOT_TOKEN` del flujo de pedidos hace las dos cosas: envía notificaciones al canal de Shirley y recibe mensajes de compradoras vía webhook.
+> **No se necesita un bot adicional.** El mismo `TELEGRAM_BOT_TOKEN` del flujo de pedidos hace las dos cosas: envía notificaciones al canal de Shirley y recibe los mensajes de gestión de la propia Shirley vía webhook (auth por `TELEGRAM_ADMIN_CHAT_ID`).
 
 ---
 
 ## Arquitectura del sistema de agentes
 
 ```
-Compradora escribe → Bot (@NenufarPedidosBot — mismo TELEGRAM_BOT_TOKEN)
+SHIRLEY escribe → Bot (@NenufarPedidosBot — mismo TELEGRAM_BOT_TOKEN)
                               │
                      POST /telegram/webhook
                               │
+                    ┌─────────▼──────────┐
+                    │ chat_id == ADMIN?  │  ← auth: solo el chat_id de Shirley
+                    │  no → 200, ignora  │
+                    └─────────┬──────────┘
+                              │ sí
                     ┌─────────▼──────────┐
                     │   routeAndRun()    │
                     │   orchestrator.ts  │
                     └─────────┬──────────┘
                               │
               ┌───────────────▼───────────────┐
-              │         Groq / Llama 3.3       │  ← 1 llamada, temp=0, max_tokens=4
-              │     clasifica la intención     │
-              └───────┬───────────────┬────────┘
-                      │               │
-              'catalogo'         'conversacion'
-                      │               │
-              ┌───────▼───┐   ┌───────▼─────────┐
-              │  Agente   │   │     Agente      │
-              │ Catálogo  │   │  Conversación   │
-              │           │   │                 │
-              │ skill:    │   │ skill:          │
-              │ buscarPr. │   │ derivarShirley  │
-              └─────┬─────┘   └──────┬──────────┘
-                    │                │
-              payload.find      sendTelegramMessage
-              (products)        (canal de Shirley)
-                    │                │
-                    └────────┬───────┘
-                             │
-                    sendTelegramReply()
-                    (al chat_id de la compradora)
+              │         Groq / Llama 3.3       │  ← 1 llamada, temp=0
+              │     interpreta la intención    │
+              └──┬──────────┬──────────┬───────┘
+                 │          │          │
+            'pedidos'  'catalogo' 'inventario'
+                 │          │          │
+           ┌─────▼───┐ ┌────▼────┐ ┌───▼──────────┐
+           │pedidos- │ │buscar-  │ │actualizar-   │
+           │Pendient.│ │Producto │ │Inventario    │
+           │confirmar│ │         │ │              │
+           └─────┬───┘ └────┬────┘ └───┬──────────┘
+                 │          │          │
+          payload.find/  payload.find  payload.update
+          update(orders) (products)    (products.stock)
+                 │          │          │
+                 └──────────┼──────────┘
+                            │
+                   sendTelegramReply()
+                   (responde a Shirley)
 ```
+
+> Slice 1 implementó las rutas `catalogo`/`conversacion` para el supuesto (descartado) de que la compradora escribía. Con el modelo actual el bot es **solo de Shirley**: se agrega el guard por `chat_id` y las skills de gestión (`pedidosPendientes`, `confirmarPedido`, `actualizarInventario`). `derivarAShirley` queda obsoleta (no hay compradora a quien derivar).
 
 ### Decisiones de implementación clave
 
 - **Webhook en `/telegram/webhook`**, NO en `/api/...` — el catch-all de Payload en `src/app/(payload)/api/[...slug]/route.ts` capturaría cualquier ruta bajo `/api`.
 
-- **Un solo bot:** `TELEGRAM_BOT_TOKEN` hace las dos cosas — envía pedidos al canal de Shirley (función original, sin cambios) y recibe mensajes de compradoras vía webhook (función nueva). No se necesita un bot adicional.
+- **Un solo bot, solo Shirley:** `TELEGRAM_BOT_TOKEN` hace las dos cosas — envía pedidos al canal de Shirley (función original, sin cambios) y recibe los mensajes de gestión de la propia Shirley vía webhook (función nueva, autenticada por `TELEGRAM_ADMIN_CHAT_ID`). Las compradoras nunca le escriben al bot. No se necesita un bot adicional.
 
 - **Runtime: max 4 rondas** de tool-calling por request para evitar loops infinitos.
 
@@ -187,7 +195,8 @@ Si eres un agente que entra en frío, lee estos archivos en orden:
 |----------|--------------|----------|
 | `GROQ_API_KEY` | console.groq.com | LLM de los agentes |
 | `TELEGRAM_WEBHOOK_SECRET` | `openssl rand -hex 24` | Autenticar el webhook |
-| `TELEGRAM_BOT_TOKEN` | ya configurado | Bot (pedidos + asistente — no crear uno nuevo) |
+| `TELEGRAM_ADMIN_CHAT_ID` | `@userinfobot` | chat_id de Shirley — único remitente que el bot procesa |
+| `TELEGRAM_BOT_TOKEN` | ya configurado | Bot (pedidos + gestión de Shirley — no crear uno nuevo) |
 | `TELEGRAM_CHANNEL_ID` | ya configurado | Canal de Shirley (no tocar) |
 
-El webhook del bot asistente usa el mismo bot que el flujo de pedidos. El flujo de pedidos existente no se toca — solo se agrega el webhook como canal de entrada nuevo.
+El webhook del bot de gestión usa el mismo bot que el flujo de pedidos. El flujo de pedidos existente no se toca — solo se agrega el webhook como canal de entrada nuevo (solo para Shirley).

@@ -31,7 +31,7 @@
 | `/find-order` | Buscar pedido por ID + email | ✅ Funcional |
 | `/(account)/` | Cuenta, pedidos, direcciones | ✅ Funcional |
 | `/admin` | Admin de Payload (Shirley) | ✅ Funcional |
-| `/telegram/webhook` | Webhook del bot asistente (POST) | ✅ Funcional (v3.2) |
+| `/telegram/webhook` | Webhook del bot de gestión de Shirley (POST — solo su `chat_id`) | ✅ Funcional (v3.2) |
 
 ---
 
@@ -53,7 +53,7 @@
 | Comprador | elegir una variante (talla, material) | obtener exactamente la pieza que quiero |
 | Comprador | agregar una nota de personalización | pedir un grabado o instrucción especial |
 | Comprador | ver y editar mi carrito con el total en COP | revisar antes de confirmar |
-| Comprador | llenar nombre y WhatsApp/email | que Shirley me pueda contactar |
+| Comprador | llenar nombre y **número de WhatsApp** | que Shirley me pueda contactar (muchas compradoras no usan Telegram) |
 | Comprador | ver confirmación al enviar | saber que el pedido llegó |
 
 ### Comprador — Después del pedido
@@ -62,14 +62,6 @@
 |---------|-----------|---------|
 | Comprador registrado | ver mi historial de pedidos | hacer seguimiento |
 | Comprador invitado | buscar mi pedido por ID + email | ver el estado sin cuenta |
-
-### Comprador — Bot asistente (v3.2)
-
-| Como... | Quiero... | Para... |
-|---------|-----------|---------|
-| Comprador en Telegram | preguntarle al bot "¿tienen aretes de plata?" | ver piezas reales con precio sin entrar al sitio |
-| Comprador en Telegram | decirle al bot que quiero comprar | que Shirley me contacte directamente |
-| Comprador en Telegram | recibir una respuesta inmediata | no esperar a que Shirley esté disponible |
 
 ### Shirley — Gestión
 
@@ -80,6 +72,18 @@
 | Shirley | crear y editar productos en el admin | mantener el catálogo actualizado |
 | Shirley | escribir artículos del blog en el admin | publicar contenido sin tocar código |
 | Shirley | ver todos los pedidos en `/admin/collections/orders` | tener un registro consultable |
+
+### Shirley — Bot de gestión por Telegram (v3.2)
+
+El bot es **exclusivamente de Shirley** (autenticado por `chat_id`). Le permite operar la tienda desde el chat sin abrir el admin en el navegador.
+
+| Como... | Quiero... | Para... |
+|---------|-----------|---------|
+| Shirley | preguntarle al bot "¿qué pedidos tengo pendientes?" | revisar sin abrir el admin |
+| Shirley | decirle "confirma el pedido 42" | cambiar el estado desde el chat |
+| Shirley | decirle "quedan 2 anillos esmeralda" | actualizar el inventario hablando natural |
+| Shirley | pedirle "resumen de hoy" | ver el total de pedidos del día |
+| Shirley | buscar un producto por nombre | operar sobre él (stock, precio) |
 
 ---
 
@@ -110,7 +114,7 @@
 
 ### 3.4 Formulario y envío del pedido → Telegram
 
-- La página `/pedidos/enviar` pide: nombre completo, WhatsApp o email, nota opcional, y consentimiento.
+- La página `/pedidos/enviar` pide: nombre completo, **número de WhatsApp** (contacto principal — muchas compradoras no usan Telegram), nota opcional, y consentimiento.
 - Al enviar, el sistema:
   1. Valida los datos y el consentimiento (Ley 1581).
   2. Crea un `Order` en Payload con estado `pending`.
@@ -130,6 +134,14 @@
 - Los compradores pueden registrarse y ver su historial de pedidos.
 - Los compradores invitados pueden buscar un pedido por ID + email en `/find-order` — el sistema envía un link seguro al email con un `accessToken`.
 - Shirley tiene rol `admin` y acceso completo al panel de Payload.
+
+### 3.7 Bot de gestión de Shirley (v3.2)
+
+- El bot vive en el mismo `TELEGRAM_BOT_TOKEN` que envía las notificaciones de pedidos.
+- El webhook `POST /telegram/webhook` procesa **solo** mensajes cuyo `chat_id` coincida con `TELEGRAM_ADMIN_CHAT_ID` (Shirley). Cualquier otro remitente se ignora.
+- El orquestador (Groq) interpreta el mensaje de Shirley y ejecuta la skill correspondiente sobre Payload; responde a Shirley en el mismo chat.
+- Las skills que **escriben** en Payload (confirmar pedido, actualizar stock) son acciones de la propia Shirley expresadas en lenguaje natural — no las ejecuta ninguna compradora.
+- **Las compradoras no tienen ningún canal conversacional con el bot** — su recorrido es 100% web.
 
 ---
 
@@ -240,13 +252,14 @@ Ver en admin → nenufar.co/admin/collections/orders/42
 - **AC-06.1** Dado `/privacidad`, cuando carga, describe: datos recopilados, finalidad, quién los ve, y retención.
 - **AC-06.2** Dado el formulario de pedido, el checkbox de consentimiento está sin marcar por defecto.
 
-### Bot asistente (v3.2)
+### Bot de gestión de Shirley (v3.2)
 
-- **AC-08.1** Dado un mensaje "¿tienen aretes?", el bot responde con piezas reales del catálogo (nombre, precio en COP).
-- **AC-08.2** Dado un mensaje "quiero comprar", el bot notifica a Shirley en su canal y le responde al comprador que Shirley la va a contactar.
-- **AC-08.3** Dado un mensaje duplicado (mismo `update_id`), el bot no responde dos veces.
-- **AC-08.4** Dado un mensaje sin secreto válido en el header, el webhook responde 401 y no procesa nada.
-- **AC-08.5** Los agentes **nunca** confirman precios finales ni cierran una venta.
+- **AC-08.1** Dado que **Shirley** escribe "¿qué pedidos pendientes tengo?", el bot lista los pedidos con estado `pending`.
+- **AC-08.2** Dado que Shirley escribe "confirma el 42", el bot cambia el estado del pedido 42 a `confirmed` en Payload y confirma la acción.
+- **AC-08.3** Dado que Shirley escribe "quedan 2 anillos esmeralda", el bot actualiza el stock del producto correspondiente.
+- **AC-08.4** Dado un mensaje de un `chat_id` que **no es el de Shirley**, el webhook responde 200 y **no procesa nada**.
+- **AC-08.5** Dado un mensaje sin secreto válido en el header, el webhook responde 401 y no procesa nada.
+- **AC-08.6** Dado un mensaje duplicado (mismo `update_id`), el bot no ejecuta la acción dos veces.
 
 ### Imágenes (Cap 07)
 
@@ -282,7 +295,7 @@ Ver en admin → nenufar.co/admin/collections/orders/42
 | Cuenta de usuario | ✅ Completo |
 | Admin de Payload (Shirley) | ✅ Completo |
 | Conversión de imágenes a WebP | ✅ Completo |
-| Bot asistente multiagente (v3.2) | ✅ Implementado — pendiente configurar GROQ_API_KEY + webhook |
+| Bot de gestión de Shirley (v3.2) | ⚙️ Runtime slice 1 listo — pendiente auth por chat_id + skills de gestión + config (GROQ_API_KEY, webhook) |
 | Home page con fotos reales | ⚠️ Pendiente — crear desde admin |
 | Fotos reales de productos | ⚠️ Pendiente — subir desde Drive |
 | Bot de Telegram activo | ⚠️ Pendiente — configurar |

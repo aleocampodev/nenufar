@@ -19,8 +19,8 @@
 | Styling | TailwindCSS | v4 | CSS-first config, OKLCH tokens |
 | Package manager | pnpm | 9 | Workspace-friendly, fast installs |
 | Image processing | Sharp | — | WebP conversion on upload, server-side |
-| Notifications | Telegram Bot API | — | HTTP POST — order notifications (one-way) + buyer assistant webhook (two-way) |
-| AI agents | Groq SDK (`groq-sdk`) | — | Llama 3.3 70B, free tier, tool-calling — orchestrator + 2 agents |
+| Notifications | Telegram Bot API | — | HTTP POST — order notifications (one-way) + Shirley's admin assistant webhook (two-way) |
+| AI agents | Groq SDK (`groq-sdk`) | — | Llama 3.3 70B, free tier, tool-calling — orchestrator + skills over Payload |
 | Testing (unit/int) | Vitest | — | Fast, ESM-native |
 | Testing (E2E) | Playwright | — | Cross-browser, headless |
 | Linting | ESLint + Prettier | — | Enforced on commit via Husky |
@@ -89,10 +89,11 @@ nenufar/
 | `PAYLOAD_SECRET` | ✅ | JWT signing secret — min 32 chars random string |
 | `DATABASE_URL` | ✅ | PostgreSQL connection string |
 | `NEXT_PUBLIC_SERVER_URL` | ✅ | Public base URL (used for og images, redirects) |
-| `TELEGRAM_BOT_TOKEN` | ✅ | Bot token from @BotFather — used for both order notifications and the buyer assistant |
+| `TELEGRAM_BOT_TOKEN` | ✅ | Bot token from @BotFather — used for both order notifications and Shirley's admin assistant |
 | `TELEGRAM_CHANNEL_ID` | ✅ | Target chat ID for order notifications (Shirley's channel) |
 | `GROQ_API_KEY` | ✅ (v3.2) | Groq API key — free at console.groq.com. Powers the orchestrator + agents. |
 | `TELEGRAM_WEBHOOK_SECRET` | ✅ (v3.2) | Random string validating the webhook header `X-Telegram-Bot-Api-Secret-Token`. Generate: `openssl rand -hex 24` |
+| `TELEGRAM_ADMIN_CHAT_ID` | ✅ (v3.2) | Shirley's personal `chat_id` — the only sender the admin bot processes. Get it with @userinfobot. |
 | `GROQ_MODEL` | ⬜ | Overrides the default Groq model (`llama-3.3-70b-versatile`). Groq model IDs rotate; check console.groq.com for current names. |
 | `PREVIEW_SECRET` | ⬜ | Enables draft preview mode |
 | `CRON_SECRET` | ⬜ | Secures cron job endpoints |

@@ -21,7 +21,7 @@ Nénufar es la tienda online de Shirley, joyera artesanal de Cartagena. La plata
 
 El flujo es intencionalmente simple: la compradora explora el catálogo, elige su pieza, agrega notas de personalización (talla, grabado, instrucciones especiales), y llena sus datos de contacto. Shirley recibe el pedido en Telegram y cierra la venta por WhatsApp, tal como siempre lo ha hecho. La plataforma no reemplaza su forma de trabajar: la amplifica.
 
-A partir de la v3.2 el mismo bot de Telegram incorpora un **sistema multiagente**: la compradora escribe al bot, el orquestador clasifica la intención y delega a agentes especializados con skills. Todo con Groq (free tier), sin costo de infraestructura, sin bots adicionales.
+A partir de la v3.2 el mismo bot de Telegram incorpora un **sistema multiagente de gestión, exclusivo para Shirley**: ella le escribe al bot y el orquestador interpreta la intención y ejecuta skills sobre Payload (ver pedidos, confirmar, actualizar stock). Todo con Groq (free tier), sin costo de infraestructura. **Las compradoras no interactúan con el bot** — su recorrido es 100% web.
 
 ---
 
@@ -31,29 +31,31 @@ A partir de la v3.2 el mismo bot de Telegram incorpora un **sistema multiagente*
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  CANALES          APLICACIÓN             AGENTES IA         EXTERNOS    │
 │                                                                         │
-│  ┌───────────┐    ┌──────────────┐   ┌──────────────────┐              │
-│  │  Web /    │───▶│ Next.js +    │──▶│   Orquestador    │──▶ Groq      │
-│  │  Tienda   │    │ Payload CMS  │   │ (clasifica req.) │              │
-│  └───────────┘    │              │   └──────┬─────┬─────┘              │
-│                   │  /pedidos    │          │     │                    │
-│                   │  /shop       │   ┌──────▼─┐ ┌─▼──────────┐        │
-│  ┌───────────┐    │  /admin      │   │ Catálogo│ │Conversación│        │
-│  │ Telegram  │    └──────────────┘   │ Agent  │ │  Agent     │        │
-│  │ comprad.  │          │            │buscarPr.│ │derivarShir.│        │
-│  └─────┬─────┘          │            └────┬───┘ └────┬───────┘        │
-│        │                │                 │           │               │
-│        │    ┌───────────▼──────┐    ┌─────▼──────┐   │               │
-│        └───▶│ /telegram/webhook│    │ PostgreSQL │   ▼               │
-│             │ POST · secret     │    │ products   │  Canal pedidos    │
-│             │ dedup · routeAnd  │    │ orders     │  (Shirley lee)    │
-│             └──────────────────┘    └────────────┘                   │
-│                      │                                                 │
-│                      └─────────────────────────────▶ Bot Asistente    │
-│                                    REPLY (dashed)    (responde a comp.)│
+│  ┌───────────┐    ┌──────────────┐                                     │
+│  │Compradora │───▶│ Next.js +    │                                     │
+│  │  (web)    │    │ Payload CMS  │                                     │
+│  │/shop·carro│    │              │──────────▶ Canal pedidos            │
+│  └───────────┘    │  /pedidos    │  sendMessage  (Shirley lee)         │
+│                   │  /shop       │                                     │
+│                   │  /admin      │   ┌──────────────────┐              │
+│  ┌───────────┐    └──────┬───────┘   │   Orquestador    │──▶ Groq      │
+│  │ Telegram  │           │           │ (interpreta req.)│              │
+│  │ (SHIRLEY) │    ┌──────▼──────────┐└──┬────┬────┬─────┘              │
+│  └─────┬─────┘    │/telegram/webhook│   │    │    │                    │
+│        │          │ POST · secret    │  ▼    ▼    ▼                    │
+│        └─────────▶│ chat_id==ADMIN?  │ pedidos catálogo inventario     │
+│                   │ dedup · routeAnd │  skills sobre Payload            │
+│                   └──────┬──────────┘   │    │    │                    │
+│                          │        ┌─────▼────▼────▼─┐                  │
+│                    REPLY │        │   PostgreSQL    │                  │
+│                    a Shirley◀──────│ products·orders │                  │
+│                                   └─────────────────┘                  │
 └─────────────────────────────────────────────────────────────────────────┘
 
+  El bot es solo de Shirley (auth por chat_id). La compradora nunca le escribe.
+
   FUTURO (Fase 3.3): Supabase pgvector + embeddings locales (Transformers.js)
-  buscarProductos → búsqueda semántica sobre el catálogo
+  buscarProducto → búsqueda semántica sobre el catálogo
 ```
 
 **Diagrama interactivo:** [`docs/arquitectura.html`](docs/arquitectura.html) — ver en browser para los colores.
@@ -64,21 +66,21 @@ A partir de la v3.2 el mismo bot de Telegram incorpora un **sistema multiagente*
 |------|-------|----------|
 | 1 | Compradora | Explora el catálogo, elige variantes (material, talla) |
 | 2 | Compradora | Agrega notas de personalización al carrito |
-| 3 | Compradora | Llena nombre + WhatsApp/email, acepta política Ley 1581 |
+| 3 | Compradora | Llena nombre + número de WhatsApp, acepta política Ley 1581 |
 | 4 | Sistema | Guarda el pedido en Payload + envía mensaje estructurado a Telegram |
 | 5 | Shirley | Lee el pedido, confirma precio y coordina envío por WhatsApp |
 
-### Flujo del bot asistente (v3.2)
+### Flujo del bot de gestión de Shirley (v3.2)
 
 | Paso | Actor | Qué pasa |
 |------|-------|----------|
-| 1 | Compradora | Escribe al bot: "¿tienen aretes de plata?" |
-| 2 | Webhook | Recibe POST, valida secreto, deduplica por `update_id` |
-| 3 | Orquestador | Llama a Groq con temperatura=0, clasifica → `catalogo` |
-| 4 | Agente Catálogo | Ejecuta skill `buscarProductos` → `payload.find(products)` |
-| 5 | Bot Asistente | Responde a la compradora con piezas reales y precios COP |
+| 1 | Shirley | Escribe al bot: "¿qué pedidos pendientes tengo?" |
+| 2 | Webhook | Recibe POST, valida secreto, verifica `chat_id == TELEGRAM_ADMIN_CHAT_ID`, deduplica por `update_id` |
+| 3 | Orquestador | Llama a Groq con temperatura=0, interpreta la intención → `pedidos` |
+| 4 | Skill | Ejecuta la skill sobre Payload → `payload.find(orders, status=pending)` |
+| 5 | Bot | Responde a Shirley en el mismo chat con la lista de pedidos |
 
-**Guardarraíl:** si la compradora quiere comprar o personalizar, el Agente Conversación ejecuta `derivarAShirley` — notifica al canal de Shirley y le dice a la compradora que Shirley la va a contactar. El bot **nunca cobra, nunca cierra la venta**.
+**Solo Shirley:** el webhook procesa únicamente mensajes cuyo `chat_id` sea el de Shirley (`TELEGRAM_ADMIN_CHAT_ID`); cualquier otro remitente se ignora. Las skills que escriben en Payload (confirmar pedido, actualizar stock) son acciones de la propia Shirley expresadas en lenguaje natural.
 
 ---
 
@@ -93,7 +95,7 @@ A partir de la v3.2 el mismo bot de Telegram incorpora un **sistema multiagente*
 | Tipografía | Playfair Display · Inter · Geist Mono | |
 | Imágenes | Sharp | WebP automático en 4 tamaños al subir |
 | Agentes IA | Groq SDK (`groq-sdk`) | Llama 3.3 70B, free tier, tool-calling |
-| Bot Telegram | Telegram Bot API | Un solo bot: notificaciones de pedidos (one-way) + asistente conversacional vía webhook (two-way) |
+| Bot Telegram | Telegram Bot API | Un solo bot: notificaciones de pedidos (one-way) + gestión de Shirley vía webhook (two-way, auth por `chat_id`) |
 | Tests | Vitest + Playwright | Int + E2E |
 
 ---
@@ -105,7 +107,7 @@ A partir de la v3.2 el mismo bot de Telegram incorpora un **sistema multiagente*
 - Node.js 20+
 - pnpm 9+
 - Docker (para PostgreSQL local)
-- Cuenta en [console.groq.com](https://console.groq.com) (gratis) para el bot asistente
+- Cuenta en [console.groq.com](https://console.groq.com) (gratis) para el bot de gestión
 
 ### Paso a paso
 
@@ -143,11 +145,12 @@ NEXT_PUBLIC_SERVER_URL=http://localhost:3002
 TELEGRAM_BOT_TOKEN=123456:ABC-tu-token
 TELEGRAM_CHANNEL_ID=@tucanal   # o -100xxxxxxxx si es privado
 
-# ── Bot asistente (agentes IA, v3.2) ─────────────────────
-# Otro bot diferente, también de @BotFather
-TELEGRAM_ASSISTANT_BOT_TOKEN=123456:ABC-otro-token
+# ── Bot de gestión de Shirley (agentes IA, v3.2) ─────────
+# Usa el MISMO TELEGRAM_BOT_TOKEN de arriba — no se crea otro bot.
 # String aleatorio: openssl rand -hex 24
 TELEGRAM_WEBHOOK_SECRET=tu-secreto-largo
+# chat_id de Shirley (con @userinfobot) — único remitente que el bot procesa
+TELEGRAM_ADMIN_CHAT_ID=123456789
 # Gratis en console.groq.com
 GROQ_API_KEY=gsk_tu_api_key
 # GROQ_MODEL=llama-3.3-70b-versatile   # opcional
@@ -156,7 +159,7 @@ GROQ_API_KEY=gsk_tu_api_key
 PREVIEW_SECRET=otro-string-aleatorio
 ```
 
-### Activar el bot asistente
+### Activar el bot de gestión
 
 Una vez que tengas las variables configuradas y el servidor corriendo:
 
@@ -172,7 +175,7 @@ pnpm tsx scripts/set-telegram-webhook.ts https://xxxxx.trycloudflare.com
 pnpm tsx scripts/set-telegram-webhook.ts info
 ```
 
-Ahora escríbele al bot asistente en Telegram y el sistema responderá.
+Ahora escríbele al bot de gestión en Telegram y el sistema responderá.
 
 ---
 
@@ -187,7 +190,7 @@ pnpm test:e2e              # Tests E2E (Playwright)
 pnpm payload migrate       # Migraciones de DB (producción)
 pnpm generate:types        # Regenerar tipos de Payload
 
-# Webhook del bot asistente
+# Webhook del bot de gestión
 pnpm tsx scripts/set-telegram-webhook.ts <url>   # registrar
 pnpm tsx scripts/set-telegram-webhook.ts info    # consultar
 pnpm tsx scripts/set-telegram-webhook.ts delete  # eliminar
@@ -213,7 +216,7 @@ pnpm tsx scripts/set-telegram-webhook.ts delete  # eliminar
 | `/terminos` | Términos y condiciones |
 | `/(account)/` | Cuenta de compradora, pedidos, direcciones |
 | `/admin` | Panel de Payload CMS (Shirley) |
-| `/telegram/webhook` | Webhook del bot asistente (POST) |
+| `/telegram/webhook` | Webhook del bot de gestión (POST) |
 
 ---
 
@@ -228,7 +231,7 @@ src/
 │   │   ├── blog/                   # Blog
 │   │   ├── eventos/                # Eventos y ferias
 │   │   ├── pedidos/enviar/         # Formulario de pedido → Telegram
-│   │   ├── telegram/webhook/       # Webhook del bot asistente ← NUEVO
+│   │   ├── telegram/webhook/       # Webhook del bot de gestión ← NUEVO
 │   │   └── (account)/             # Cuenta de compradora
 │   └── (payload)/                  # Admin de Payload
 ├── collections/
@@ -285,9 +288,9 @@ Al subir una foto al admin, Payload genera automáticamente variantes WebP (cali
 
 **Sin pasarela de pago** — intencional. Los pagos se coordinan manualmente por WhatsApp (Nequi, transferencia, efectivo). Agregar Stripe introduciría fricción y comisiones que no tienen sentido para el volumen actual.
 
-**Un solo bot de Telegram** — el mismo `TELEGRAM_BOT_TOKEN` hace dos cosas: envía notificaciones de pedidos al canal de Shirley (`TELEGRAM_CHANNEL_ID`) y recibe mensajes de compradoras vía webhook respondiendo con el sistema multiagente. No se necesita un bot adicional.
+**Un solo bot de Telegram** — el mismo `TELEGRAM_BOT_TOKEN` hace dos cosas: envía notificaciones de pedidos al canal de Shirley (`TELEGRAM_CHANNEL_ID`) y recibe los mensajes de gestión de la propia Shirley vía webhook (autenticados por `TELEGRAM_ADMIN_CHAT_ID`). No se necesita un bot adicional, y las compradoras nunca le escriben al bot.
 
-**Agentes que asisten, no que venden** — los agentes IA están diseñados para responder preguntas y hacer handoff a Shirley. Nunca confirman precios, cierran ventas ni procesan pagos. La autonomía la tiene Shirley.
+**El bot es la herramienta de Shirley, no un vendedor** — los agentes IA ejecutan las acciones de gestión que Shirley pide en lenguaje natural (ver pedidos, confirmar, actualizar stock). No hay agente que atienda compradoras: la venta y su cierre siempre los maneja Shirley por WhatsApp.
 
 **COP sin decimales** — `Intl.NumberFormat('es-CO', { currency: 'COP' })`. Los pesos colombianos no usan centavos.
 

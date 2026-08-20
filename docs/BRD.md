@@ -59,19 +59,22 @@ El problema central: los compradores no pueden armar un pedido solos. Le escribe
 | 08 | Admin Payload | Shirley gestiona productos, pedidos, blog y medios desde `/admin`. |
 | 09 | Imágenes WebP | Fotos de cámara profesional se convierten automáticamente a WebP (calidad 92) en 4 tamaños al subir. |
 
-### 3.2 Incluido en v3.2 (bot multiagente)
+### 3.2 Incluido en v3.2 (bot multiagente de gestión — solo Shirley)
+
+El bot multiagente es la **herramienta de gestión conversacional de Shirley**: opera su tienda desde Telegram sin abrir el admin en el navegador. **Las compradoras no interactúan con el bot** — su recorrido sigue siendo 100% web (ver §3.4).
 
 | # | Capacidad | Descripción de negocio |
 |---|-----------|------------------------|
-| 10 | Bot asistente conversacional | El mismo bot de pedidos recibe mensajes de compradoras vía webhook. Responde preguntas sobre el catálogo y deriva a Shirley cuando quieren comprar. |
-| 11 | Orquestador + 2 agentes IA | Groq (Llama 3.3, free tier) clasifica la intención y delega: Agente Catálogo (busca productos reales) o Agente Conversación (handoff a Shirley). |
-| 12 | Guardarraíl de negocio | Los agentes **nunca cierran una venta ni confirman un pedido**. Shirley siempre tiene la última palabra. |
+| 10 | Admin conversacional | Shirley le escribe al bot en Telegram para consultar y gestionar su tienda: pedidos, inventario, productos. |
+| 11 | Orquestador + agentes IA con skills | Groq (Llama 3.3, free tier) interpreta lo que Shirley pide y ejecuta la skill correspondiente sobre Payload (buscar producto, listar pedidos, etc.). |
+| 12 | Autenticación por `chat_id` | El bot **solo responde al `chat_id` de Shirley**. Cualquier otro remitente se ignora en silencio. |
+
+> **Estado de implementación (slice 1):** ya está el runtime — orquestador, loop de tool-calling, webhook con deduplicación por `update_id`, cliente Groq y la skill `buscarProductos`. La reorientación completa a Shirley (auth por `chat_id` + skills de gestión de pedidos e inventario) es el siguiente slice.
 
 ### 3.3 Explícitamente fuera de alcance (v3.2)
 
 - **Pago online.** Sin pasarela de pago (Stripe, Wompi, etc.). El pago se coordina externamente por Nequi, transferencia o efectivo.
-- **Bot de gestión de inventario.** El bot asistente no puede crear ni actualizar productos — eso sigue siendo responsabilidad de Shirley en el admin de Payload.
-- **Resumen diario automatizado.** No hay digest automático de pedidos ni reportes.
+- **Chat comprador ↔ bot.** La compradora **no le escribe al bot**. No hay asistente conversacional para compradoras ni widget de chat en la web. El bot es exclusivamente de Shirley.
 - **Analytics.** No hay Google Analytics ni similar todavía — gap conocido.
 - **App móvil.** El sitio es responsive; no hay app nativa.
 - **Envíos automatizados.** Sin integración con transportadoras. El envío se coordina manualmente.
@@ -82,8 +85,8 @@ El problema central: los compradores no pueden armar un pedido solos. Le escribe
 
 | Rol | Descripción | Interés principal |
 |-----|-------------|-------------------|
-| Shirley (dueña-operadora) | Soloprenuer. Diseña, fabrica, vende, empaca y envía. Opera todo desde su celular. Gestiona catálogo/blog en el admin; lee pedidos en Telegram; cierra en WhatsApp. | Presencia web profesional, recibir pedidos ordenados, no ser cuello de botella. |
-| Comprador final (B2C) | Turista, persona buscando regalo, o cliente habitual. Descubre Nénufar en la web o Instagram, explora el catálogo, arma y envía su pedido. | Ver fotos reales con precios en COP, sentir confianza, armar un pedido sin hablar con nadie primero. |
+| Shirley (dueña-operadora) | Soloprenuer. Diseña, fabrica, vende, empaca y envía. Opera todo desde su celular. Gestiona catálogo en el admin **o por el bot de Telegram**; recibe pedidos en Telegram; cierra en WhatsApp. | Presencia web profesional, recibir pedidos ordenados, gestionar sin depender del navegador. |
+| Comprador final (B2C) | Turista, persona buscando regalo, o cliente habitual. Descubre Nénufar en la web o Instagram, explora el catálogo, arma y envía su pedido **desde la web**, dejando su WhatsApp para contacto. | Ver fotos reales con precios en COP, sentir confianza, armar un pedido sin hablar con nadie primero. |
 | Equipo de producto | Diseño y evolución del MVP. | Validar que Payload + Telegram es suficiente para que Shirley pase de "memoria + WhatsApp" a un intake estructurado. |
 
 ---
@@ -125,11 +128,12 @@ La hipótesis agéntica (un asistente que reemplaza a Shirley en el cierre de ve
 
 ## 7. ChangeLog
 
-### v3.1 → v3.2 (bot multiagente)
-- **Bot asistente:** el mismo bot de pedidos (`TELEGRAM_BOT_TOKEN`) ahora también recibe mensajes de compradoras vía webhook y responde con el sistema multiagente.
-- **Sistema de agentes:** orquestador (Groq) + Agente Catálogo (`buscarProductos`) + Agente Conversación (`derivarAShirley`).
-- **Sin bot adicional:** se simplificó la arquitectura — un solo bot hace las dos cosas (notificaciones de pedidos + asistencia conversacional).
-- **Nuevas variables de entorno:** `GROQ_API_KEY`, `TELEGRAM_WEBHOOK_SECRET`.
+### v3.1 → v3.2 (bot multiagente de gestión — solo Shirley)
+- **Admin conversacional:** el mismo bot de pedidos (`TELEGRAM_BOT_TOKEN`) ahora también recibe mensajes vía webhook, pero **solo de Shirley** — es su herramienta para gestionar la tienda desde Telegram.
+- **La compradora se queda en la web:** decisión de producto — no hay chat comprador ↔ bot ni widget de chat en el sitio. La compradora arma su pedido en la web y deja su WhatsApp.
+- **Sistema de agentes:** orquestador (Groq) + skills sobre Payload. El slice 1 dejó el runtime y `buscarProductos`; las skills de gestión (pedidos, inventario) siguen.
+- **Un solo bot:** notificaciones de pedidos + admin conversacional, ambos con `TELEGRAM_BOT_TOKEN`.
+- **Nuevas variables de entorno:** `GROQ_API_KEY`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_ADMIN_CHAT_ID` (el `chat_id` de Shirley).
 
 ### v3.0 → v3.1 (Payload CMS pivot)
 - **Stack:** Shopify headless → Payload CMS v3 + Next.js App Router autopropelido. Sin costo de plataforma recurrente.
