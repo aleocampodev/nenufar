@@ -164,3 +164,58 @@ export async function sendTelegramPhoto({
 
   return { ok: false, error: 'No filePath or photoUrl provided' }
 }
+
+export interface SendTelegramReplyArgs {
+  /** chat_id de la persona que escribió al bot. */
+  chatId: number | string
+  text: string
+  parseMode?: 'HTML' | 'MarkdownV2'
+  /** Token del bot a usar. Por defecto el bot asistente (conversacional). */
+  botToken?: string
+}
+
+/**
+ * Responde a un chat concreto (la clienta) — usado por el bot ASISTENTE.
+ *
+ * A diferencia de sendTelegramMessage (que apunta al canal de pedidos), esto
+ * envía a un chat_id arbitrario con el bot conversacional. Nunca lanza.
+ */
+export async function sendTelegramReply({
+  chatId,
+  text,
+  parseMode = 'HTML',
+  botToken,
+}: SendTelegramReplyArgs): Promise<SendTelegramMessageResult> {
+  const token =
+    botToken ?? process.env.TELEGRAM_ASSISTANT_BOT_TOKEN ?? process.env.TELEGRAM_BOT_TOKEN
+
+  if (!token) {
+    return { ok: false, error: 'No hay token de bot asistente configurado' }
+  }
+
+  try {
+    const response = await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        parse_mode: parseMode,
+        disable_web_page_preview: true,
+      }),
+      signal: AbortSignal.timeout(10_000),
+    })
+
+    const data: TelegramApiResponse = await response.json()
+    if (!response.ok || !data.ok) {
+      return {
+        ok: false,
+        error: data.description || `Telegram API returned HTTP ${response.status}`,
+      }
+    }
+    return { ok: true, messageId: data.result?.message_id }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return { ok: false, error: message }
+  }
+}
