@@ -310,6 +310,7 @@ Al subir una foto al admin, Payload genera automáticamente variantes WebP (cali
 | [`docs/PRD.md`](docs/PRD.md) | Requerimientos de producto — user stories, criterios de aceptación |
 | [`docs/SDD.md`](docs/SDD.md) | Diseño de software — arquitectura, módulos, flujos |
 | [`docs/TSD.md`](docs/TSD.md) | Especificación técnica — stack, modelos de datos, API, deploy |
+| [`docs/RAG-MEMORY-design.md`](docs/RAG-MEMORY-design.md) | Diseño de RAG del catálogo + memoria de conversación sobre Supabase (fases 3.3 / 4.0) |
 | [`docs/arquitectura.html`](docs/arquitectura.html) | Diagrama de arquitectura interactivo |
 | [`CLAUDE.md`](CLAUDE.md) | Contexto técnico para agentes de IA |
 | [`.claude/HANDOFF-agents.md`](.claude/HANDOFF-agents.md) | Handoff de estado para agentes — qué está hecho y qué sigue |

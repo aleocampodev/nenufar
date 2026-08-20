@@ -112,35 +112,40 @@ SHIRLEY escribe → Bot (@NenufarPedidosBot — mismo TELEGRAM_BOT_TOKEN)
 
 ## Qué sigue (próximas fases)
 
-### Fase 3.3 — RAG del catálogo
+> **Diseño detallado (inglés):** las fases 3.3 y 4.0 están especificadas en
+> [`docs/RAG-MEMORY-design.md`](../docs/RAG-MEMORY-design.md). Topología acordada:
+> **Opción A (unificada)** — Payload + un schema `rag` en un solo Supabase.
 
-**Objetivo:** la skill `buscarProductos` pasa de query por título (`like`) a búsqueda semántica.
+### Fase 3.3 — RAG del catálogo (Supabase)
 
-**Stack planificado (todo gratis/local):**
-- Embeddings: `Transformers.js` con `multilingual-e5-small` (local, sin API key)
-- Vector store: Supabase pgvector (free tier) o PostgreSQL + pgvector local
-- Job de ingesta: `afterChange` hook en la colección Products → split en chunks → embed → upsert
+**Objetivo:** la skill `buscarProducto` pasa de query por título (`like`) a búsqueda semántica. Consumidor = **Shirley** (el bot es solo de ella).
+
+**Stack (todo gratis):**
+- Embeddings: `Transformers.js` con `multilingual-e5-small` (384d, local, sin API key; prefijos `passage:`/`query:`)
+- Vector store: **Supabase** (pgvector) en un schema `rag`, misma DB que Payload; dev con Supabase local (offline)
+- Ingesta: `afterChange`/`afterDelete` hook en Products → chunk → embed → upsert en `rag.product_chunks` (FK a `public.products`)
 
 **Impacto en el código:**
-- `src/lib/agents/skills/buscarProductos.ts` → reemplazar `payload.find` con búsqueda semántica
-- Nuevo: `src/lib/embeddings.ts` — cliente de embeddings locales
-- Nuevo: `src/lib/vectorStore.ts` — cliente de pgvector
-- Nuevo: `src/hooks/products/indexarProducto.ts` — hook afterChange de Payload
+- `src/lib/agents/skills/buscarProductos.ts` → reemplazar `payload.find` con búsqueda vectorial
+- Nuevo: `src/lib/embeddings.ts` — embedder local (singleton)
+- Nuevo: `src/lib/vectorStore.ts` — upsert / delete / search sobre `rag.product_chunks`
+- Nuevo: `src/hooks/products/indexProduct.ts` — hooks afterChange/afterDelete de Payload
+- Nuevo: `supabase/migrations/*.sql` — schema `rag`, extensión `vector`, tablas, índices
 
 ### Fase 3.4 — MCP para el CMS
 
-**Objetivo:** exponer Payload como herramientas MCP para que los agentes puedan consultar y actualizar el catálogo de forma estructurada, sin SQL directo.
+**Objetivo:** exponer Payload como herramientas MCP para que los agentes consulten y actualicen el catálogo de forma estructurada, sin SQL directo.
 
 **Herramientas MCP propuestas:**
 - `listarProductos(filtros)` — reemplaza `payload.find` directa
 - `obtenerProducto(slug)` — detalle completo de una pieza
-- `actualizarInventario(productId, stock)` — Shirley puede pedirle al bot que actualice stock
+- `actualizarInventario(productId, stock)` — Shirley le pide al bot que actualice stock
 
-### Fase 4.0 — Memoria de conversación persistente
+### Fase 4.0 — Memoria de conversación (Supabase)
 
-**Objetivo:** el bot recuerda el contexto de la conversación entre mensajes.
+**Objetivo:** el bot recuerda los últimos turnos por `chat_id` → habilita multi-turn para Shirley ("confírmalo").
 
-**Opciones:** Supabase (misma DB que el RAG), Redis, o PostgreSQL local con tabla `conversations`.
+**Enfoque:** memoria *windowed* (últimos ~N turnos) en `rag.conversation_messages` (misma DB que el RAG), cargada en `routeAndRun` y pasada a Groq. Memoria semántica de largo plazo = opcional/futuro. Detalle en `docs/RAG-MEMORY-design.md §6`.
 
 ---
 

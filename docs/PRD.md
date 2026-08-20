@@ -309,10 +309,10 @@ Ver en admin → nenufar.co/admin/collections/orders/42
 
 | Fase | Funcionalidad | Descripción |
 |------|---------------|-------------|
-| v3.3 | RAG del catálogo | `buscarProductos` pasa de búsqueda por título a búsqueda semántica con embeddings locales (Transformers.js) y pgvector. |
+| v3.3 | RAG del catálogo (Supabase) | `buscarProducto` pasa de búsqueda por título a búsqueda semántica: embeddings locales (Transformers.js) + pgvector en Supabase. Diseño en [`docs/RAG-MEMORY-design.md`](RAG-MEMORY-design.md). |
 | v3.3 | Formulario en /contacto | Conectar el bloque de formulario existente con envío a email o Telegram. |
 | v3.3 | Analytics | Umami o Plausible (self-hosted, privacy-first) para medir tráfico al catálogo. |
 | v3.4 | MCP para el CMS | Exponer Payload como herramientas MCP para que los agentes consulten y actualicen el catálogo de forma estructurada. |
-| v4.0 | Memoria de conversación | El bot recuerda el contexto entre mensajes (PostgreSQL o Redis). |
+| v4.0 | Memoria de conversación (Supabase) | El bot recuerda los últimos turnos por `chat_id` (tabla en Supabase) → multi-turn para Shirley. Diseño en [`docs/RAG-MEMORY-design.md`](RAG-MEMORY-design.md). |
 | v4.0 | Rate limiting | Evitar spam en formulario de pedidos y en el webhook del bot. |
 | v5.0 | Wompi / PSE | Pasarela de pago colombiana si el volumen lo justifica. |
