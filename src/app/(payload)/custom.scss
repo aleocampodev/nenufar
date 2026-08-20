@@ -1,3 +1,135 @@
+/* ─────────────────────────────────────────────────────────────
+   Nénufar Admin — tema violeta artesanal
+   Payload v3 expone variables CSS --theme-* que alimentan su
+   design system. Sobreescribimos desde custom.scss (punto
+   oficial de customización, upgrade-safe).
+   Paleta: violeta marca #6A1B9A sobre neutros cálidos.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* Violeta Nénufar como accent del admin */
+  --theme-accent: #6a1b9a;
+  --theme-accent-100: #f3e8fb;
+  --theme-accent-150: #ecdcf7;
+  --theme-accent-300: #cda5e3;
+  --theme-accent-500: #8e34c4;
+  --theme-accent-600: #6a1b9a;
+  --theme-accent-700: #57147d;
+  --theme-accent-800: #451061;
+  --theme-accent-900: #320a46;
+
+  /* Neutros cálidos (mismo sesgo del storefront) */
+  --theme-bg: #faf8fc;
+  --theme-elevation-100: #ffffff;
+  --theme-elevation-200: #f5f1f9;
+  --theme-elevation-300: #ece6f3;
+  --theme-elevation-400: #e0d8ea;
+
+  /* Tinta cercana al negro-berenjena */
+  --theme-text: #241b2e;
+  --theme-text-100: #4a3d58;
+  --theme-text-200: #6e5f7e;
+  --theme-text-300: #9284a1;
+
+  --theme-success-500: #3a7d44;
+  --theme-warning-500: #b07c1f;
+  --theme-error-500: #b3261e;
+
+  /* Bordes suaves violáceos */
+  --theme-border: #e5ddf0;
+}
+
+/* Modo oscuro: violetas profundos */
+[data-theme='dark'] {
+  --theme-accent: #b07cd9;
+  --theme-accent-100: #2a1a38;
+  --theme-accent-150: #32213f;
+  --theme-accent-300: #4a3060;
+  --theme-accent-500: #8e5bb8;
+  --theme-accent-600: #a86ccf;
+  --theme-accent-700: #c397e0;
+  --theme-accent-800: #d5b3ea;
+  --theme-accent-900: #e7d1f4;
+
+  --theme-bg: #16101d;
+  --theme-elevation-100: #1d1526;
+  --theme-elevation-200: #251b30;
+  --theme-elevation-300: #2e2239;
+  --theme-elevation-400: #382a44;
+
+  --theme-text: #f0eaf6;
+  --theme-text-100: #d5cbe0;
+  --theme-text-200: #b0a3bd;
+  --theme-text-300: #8c7f99;
+
+  --theme-border: #3a2b47;
+}
+
+/* ── Refinamientos puntuales ─────────────────────────────── */
+
+/* Tipografía con carácter para el panel */
+.admin-root,
+#admin-root {
+  font-family: var(--font-body), 'Inter', system-ui, sans-serif;
+}
+
+/* Sidebar: fondo con identidad violeta */
+.payload-admin-sidebar,
+nav[class*='nav'],
+aside[class*='Sidebar'] {
+  letter-spacing: 0.01em;
+}
+
+/* Botones primarios: violeta con hover más profundo */
+button[class*='button--style-primary'],
+.btn--style-primary,
+[class*='button--primary'] {
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+button[class*='button--style-primary']:hover,
+.btn--style-primary:hover {
+  filter: brightness(0.92);
+}
+
+button[class*='button--style-primary']:active,
+.btn--style-primary:active {
+  transform: translateY(1px);
+}
+
+/* Cards del dashboard: sombras suaves y radios generosos */
+.dashboard__card-list,
+[class*='card'],
+.render-fields {
+  border-radius: 0.5rem;
+}
+
+/* Foco visible accesible en violeta */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--theme-accent-600);
+  outline-offset: 2px;
+}
+
+/* Scrollbar discreta acorde al tema */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--theme-elevation-300);
+  border-radius: 8px;
+  border: 2px solid var(--theme-bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-accent-300);
+}
+
+/* ── Utilidad (existente) ─────────────────────────────────── */
 .visually-hidden {
   position: absolute;
   width: 1px;
