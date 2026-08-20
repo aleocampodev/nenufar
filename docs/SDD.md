@@ -20,7 +20,8 @@ Nénufar is a **monolithic full-stack application** running Next.js and Payload 
 │  ┌─────────────────────┐  ┌────────────────────────┐ │
 │  │  App Router (RSC)   │  │   Payload CMS v3       │ │
 │  │  /shop, /blog,      │  │   Admin UI + REST API  │ │
-│  │  /pedidos, etc.     │  │   /api/[collection]    │ │
+│  │  /pedidos,          │  │   /api/[collection]    │ │
+│  │  /telegram/webhook  │  │                        │ │
 │  └──────────┬──────────┘  └──────────┬─────────────┘ │
 │             │                        │                │
 │             └──────────┬─────────────┘                │
@@ -28,14 +29,22 @@ Nénufar is a **monolithic full-stack application** running Next.js and Payload 
 │  ┌─────────────────────▼──────────────────────────┐   │
 │  │              PostgreSQL (Drizzle ORM)           │   │
 │  └────────────────────────────────────────────────┘   │
+│             │                        │                │
+│             │ sendMessage (orders)   │ Groq API       │
+│             ▼                        ▼  (agents)      │
+│     Telegram Channel          llama-3.3-70b           │
+│     (Shirley's phone)                                  │
 └─────────────────────────────────────────────────────┘
-               │
-               │ Telegram Bot API (HTTP POST — one-way)
-               ▼
-        Telegram Channel (Shirley's phone)
+               ▲
+               │ POST /telegram/webhook (buyer messages)
+        Telegram Bot API
 ```
 
-**Key design constraint:** No external services except Telegram. No Redis, no queues, no CDN — keeps operational cost at zero beyond the server.
+**Key design constraints:**
+- No payment gateway — Shirley coordinates manually via WhatsApp.
+- Single bot (`TELEGRAM_BOT_TOKEN`) serves both order notifications and the buyer assistant.
+- Groq free tier — no infra cost for the AI layer.
+- No Redis, no queues — keeps operational complexity at zero.
 
 ---
 
@@ -70,50 +79,67 @@ Nénufar is a **monolithic full-stack application** running Next.js and Payload 
 | `Header` (global) | Navigation links |
 | `Footer` (global) | Footer links |
 
-### 2.3 Telegram Bots — Two-Bot Strategy
+### 2.3 Telegram — Single Bot, Dual Role
 
-The system uses **two separate Telegram bots** with distinct responsibilities:
+The system uses **one bot** (`TELEGRAM_BOT_TOKEN`) for two distinct functions:
 
-| Bot | Username | Audience | Direction |
-|-----|----------|----------|-----------|
-| **Pedidos** | `@NenufarPedidosBot` | Shirley (reads) | One-way: system → Shirley |
-| **Admin** | `@NenufarAdminBot` | Shirley (writes) | Two-way: Shirley ↔ system |
+| Function | Direction | Who receives |
+|----------|-----------|-------------|
+| **Order notifications** | System → Shirley's channel | Shirley reads the order in `TELEGRAM_CHANNEL_ID` |
+| **Buyer assistant** | Buyer → bot → buyer | Compradoras write to the bot; the multi-agent system replies |
 
-#### @NenufarPedidosBot — Order Inbox
+#### Order Notifications — One-Way Inbox
 
-Shirley's inbox for new orders. Every time a buyer submits their cart, the full order arrives here as a structured message:
+When a buyer submits their cart, the order arrives in Shirley's channel as a structured HTML message. Shirley reads it and contacts the buyer via WhatsApp. No commands, no replies — read-only.
+
+#### Buyer Assistant — Multi-Agent System (v3.2)
+
+When a buyer writes to the bot, `POST /telegram/webhook` is called:
 
 ```
-🌸 Nuevo Pedido #1042
-
-👤 María García
-📱 +57 300 123 4567
-
-🛒 Items:
-  • Anillo Esmeralda × 1 — $485.000
-    ↳ Talla 7 / Plata
-    ↳ Nota: Con grabado "MG"
-  • Aretes Coral × 2 — $290.000
-    ↳ Sin variante
-
-💰 Total: $775.000 COP
-📝 Nota general: Para regalo, incluir tarjeta
+Compradora escribe al bot
+         │
+POST /telegram/webhook
+         │
+  ┌──────▼───────┐
+  │ routeAndRun()│  orchestrator.ts
+  └──────┬───────┘
+         │ Groq: clasifica intención (1 llamada, temp=0)
+         │
+   ┌─────┴──────┐
+   │            │
+'catalogo'  'conversacion'
+   │            │
+┌──▼──────┐ ┌──▼────────────┐
+│ Agente  │ │    Agente     │
+│Catálogo │ │ Conversación  │
+│         │ │               │
+│ skill:  │ │ skill:        │
+│buscarPr.│ │derivarShirley │
+└──┬──────┘ └──┬────────────┘
+   │           │
+payload.find  sendTelegramMessage
+(products)    (Shirley's channel)
+   │           │
+   └─────┬─────┘
+         │
+ sendTelegramReply()
+ (al chat_id de la compradora)
 ```
 
-Shirley reads the message, sees exactly what the buyer wants including all cart items, variants, and personalization notes, then **contacts the buyer directly on WhatsApp** using the number in the message. No reply needed in Telegram — it's a read-only inbox.
+**Guardarraíl:** the agents never close a sale or confirm an order. `derivarAShirley` sends a handoff notification to Shirley's channel and tells the buyer that Shirley will contact them.
 
-#### @NenufarAdminBot — Management Tool
-
-Shirley's private tool for managing the store from her phone. Two-way: she sends commands and the bot responds.
-
-| Action | How | Result |
-|--------|-----|--------|
-| Upload photo | Send as **file** (not photo) | Saved to Payload Media with WebP variants |
-| Create product | File → name → price | Draft product created in Payload |
-| View pending orders | `/pendientes` | List of unconfirmed orders |
-| Mark order confirmed | `/confirmar 1042` | Order status → `confirmed` in Payload |
-
-Security: the webhook only accepts messages from Shirley's personal `chatId` — any other sender is silently ignored.
+| File | Responsibility |
+|------|---------------|
+| `src/lib/groq.ts` | Groq client singleton (reads `GROQ_API_KEY`) |
+| `src/lib/agents/types.ts` | `AgentContext`, `Skill`, `Agent` interfaces |
+| `src/lib/agents/runtime.ts` | Tool-calling loop (max 4 rounds) |
+| `src/lib/agents/orchestrator.ts` | `routeAndRun()` — classifies and delegates |
+| `src/lib/agents/catalogo.ts` | Catalog agent with `buscarProductos` skill |
+| `src/lib/agents/conversacion.ts` | Conversation agent with `derivarAShirley` skill |
+| `src/lib/agents/skills/buscarProductos.ts` | `payload.find(products)` → returns real pieces with COP prices |
+| `src/lib/agents/skills/derivarAShirley.ts` | Notifies Shirley's channel + tells buyer to expect contact |
+| `src/app/(app)/telegram/webhook/route.ts` | POST handler — validates secret, deduplicates by `update_id` |
 
 ### 2.4 Order Flow (`src/app/(app)/pedidos/`)
 
@@ -122,11 +148,11 @@ OrderForm.tsx (client component)
   → submitOrderAction.ts (server action)
       → idempotency.ts (in-memory dedup by cartHash+email)
       → payload.create('orders', {...}) 
-      → telegram.ts → order-formatter.ts → @NenufarPedidosBot
+      → telegram.ts → order-formatter.ts → TELEGRAM_CHANNEL_ID
   → redirect to /pedidos/enviar/confirmacion
 ```
 
-### 2.4 Blocks (`src/blocks/`)
+### 2.5 Blocks (`src/blocks/`)
 
 Page builder blocks available in the CMS editor:
 
@@ -204,7 +230,7 @@ Payload exposes a full REST API automatically at `/api/[collection]`.
 
 > Prefer the **Payload local API** (`payload.find(...)`, `payload.create(...)`) inside server components and server actions — it bypasses HTTP overhead. Use the REST API only from client components or external integrations.
 
-### Telegram notification
+### Telegram notification (outbound)
 
 ```
 POST https://api.telegram.org/bot{TOKEN}/sendMessage
@@ -212,6 +238,16 @@ Body: { chat_id, parse_mode: "HTML", text: formattedOrder }
 ```
 
 One-way, fire-and-forget. If Telegram fails, the order is already saved in Payload — the catch block logs but does not block the user.
+
+### Webhook — buyer assistant (inbound, v3.2)
+
+```
+POST /telegram/webhook
+Headers: X-Telegram-Bot-Api-Secret-Token: {TELEGRAM_WEBHOOK_SECRET}
+Body: Telegram Update object (JSON)
+```
+
+Validates the secret header, deduplicates by `update_id` (in-memory Set, max 1000 entries), extracts `message.text` + `chat.id`, calls `routeAndRun()`, and replies to the buyer via `sendTelegramReply()`.
 
 ---
 
@@ -226,6 +262,8 @@ One-way, fire-and-forget. If Telegram fails, the order is already saved in Paylo
 | Colombian Law 1581 | Explicit consent checkbox on order form — stored as `consentGiven: true` on the order |
 | SQL injection | Drizzle ORM with parameterized queries — no raw SQL |
 | XSS | Lexical rich text renders via Payload's `RichText` component — no `dangerouslySetInnerHTML` with user input |
+| Webhook authentication | `POST /telegram/webhook` validates `X-Telegram-Bot-Api-Secret-Token` against `TELEGRAM_WEBHOOK_SECRET`; requests without the header return 401 |
+| Webhook deduplication | `update_id` tracked in an in-memory Set (max 1000 entries); duplicate POSTs return 200 without reprocessing |
 
 ---
 

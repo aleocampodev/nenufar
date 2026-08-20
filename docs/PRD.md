@@ -1,6 +1,6 @@
 # PRD — Product Requirement Document
 **Proyecto:** Nénufar — Joyería Artesanal
-**Versión:** 3.1 (Payload CMS + Next.js)
+**Versión:** 3.2 (Payload CMS + Next.js + Bot multiagente)
 **Fecha:** Agosto 2026
 **Supersede:** v3.0 (Shopify headless — archivado en `docs/archive/v3.0/PRD.md`)
 
@@ -31,6 +31,7 @@
 | `/find-order` | Buscar pedido por ID + email | ✅ Funcional |
 | `/(account)/` | Cuenta, pedidos, direcciones | ✅ Funcional |
 | `/admin` | Admin de Payload (Shirley) | ✅ Funcional |
+| `/telegram/webhook` | Webhook del bot asistente (POST) | ✅ Funcional (v3.2) |
 
 ---
 
@@ -61,6 +62,14 @@
 |---------|-----------|---------|
 | Comprador registrado | ver mi historial de pedidos | hacer seguimiento |
 | Comprador invitado | buscar mi pedido por ID + email | ver el estado sin cuenta |
+
+### Comprador — Bot asistente (v3.2)
+
+| Como... | Quiero... | Para... |
+|---------|-----------|---------|
+| Comprador en Telegram | preguntarle al bot "¿tienen aretes de plata?" | ver piezas reales con precio sin entrar al sitio |
+| Comprador en Telegram | decirle al bot que quiero comprar | que Shirley me contacte directamente |
+| Comprador en Telegram | recibir una respuesta inmediata | no esperar a que Shirley esté disponible |
 
 ### Shirley — Gestión
 
@@ -231,6 +240,14 @@ Ver en admin → nenufar.co/admin/collections/orders/42
 - **AC-06.1** Dado `/privacidad`, cuando carga, describe: datos recopilados, finalidad, quién los ve, y retención.
 - **AC-06.2** Dado el formulario de pedido, el checkbox de consentimiento está sin marcar por defecto.
 
+### Bot asistente (v3.2)
+
+- **AC-08.1** Dado un mensaje "¿tienen aretes?", el bot responde con piezas reales del catálogo (nombre, precio en COP).
+- **AC-08.2** Dado un mensaje "quiero comprar", el bot notifica a Shirley en su canal y le responde al comprador que Shirley la va a contactar.
+- **AC-08.3** Dado un mensaje duplicado (mismo `update_id`), el bot no responde dos veces.
+- **AC-08.4** Dado un mensaje sin secreto válido en el header, el webhook responde 401 y no procesa nada.
+- **AC-08.5** Los agentes **nunca** confirman precios finales ni cierran una venta.
+
 ### Imágenes (Cap 07)
 
 - **AC-07.1** Dado una imagen subida al admin, cuando guarda, se generan variantes WebP en `public/media/` (thumbnail, card, hero, og).
@@ -246,8 +263,9 @@ Ver en admin → nenufar.co/admin/collections/orders/42
 | Dependencia | Estado | Notas |
 |-------------|--------|-------|
 | PostgreSQL corriendo | ✅ Local (docker-compose) | Pendiente servidor en producción |
-| Variables de entorno | ⚠️ Pendiente | `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHANNEL_ID` sin configurar |
-| Bot de Telegram | ⚠️ Pendiente | Crear con `@BotFather`, agregar al canal |
+| Variables de entorno (core) | ⚠️ Pendiente | `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHANNEL_ID` sin configurar |
+| Variables de entorno (v3.2) | ⚠️ Pendiente | `GROQ_API_KEY` + `TELEGRAM_WEBHOOK_SECRET` sin configurar |
+| Bot de Telegram | ⚠️ Pendiente | Crear con `@BotFather`, agregar al canal, registrar webhook |
 | Fotos reales de Shirley | ⚠️ Pendiente | Recibir vía Google Drive |
 | Dominio `nenufar.co` | ⚠️ Pendiente | Para deploy en producción |
 
@@ -264,21 +282,24 @@ Ver en admin → nenufar.co/admin/collections/orders/42
 | Cuenta de usuario | ✅ Completo |
 | Admin de Payload (Shirley) | ✅ Completo |
 | Conversión de imágenes a WebP | ✅ Completo |
+| Bot asistente multiagente (v3.2) | ✅ Implementado — pendiente configurar GROQ_API_KEY + webhook |
 | Home page con fotos reales | ⚠️ Pendiente — crear desde admin |
 | Fotos reales de productos | ⚠️ Pendiente — subir desde Drive |
 | Bot de Telegram activo | ⚠️ Pendiente — configurar |
 | Analytics | ❌ No implementado |
 | Deploy en producción | ❌ No implementado |
-| Rate limiting en formulario | ❌ No implementado |
+| Rate limiting | ❌ No implementado |
 
 ---
 
-## 8. Roadmap futuro (fuera de scope v3.1)
+## 8. Roadmap futuro (fuera de scope v3.2)
 
 | Fase | Funcionalidad | Descripción |
 |------|---------------|-------------|
-| v3.2 | Analytics | Google Analytics o Plausible para medir tráfico al catálogo. |
-| v3.2 | Formulario en /contacto | Conectar el bloque de formulario existente con envío a email o Telegram. |
-| v3.3 | Rate limiting | Evitar spam en el formulario de pedidos. |
-| v3.3 | Wompi / PSE | Pasarela de pago colombiana si el volumen de pedidos lo justifica. |
-| v4.0 | Asistente agéntico | Un asistente que ayude a cerrar ventas en WhatsApp (hipótesis de largo plazo). |
+| v3.3 | RAG del catálogo | `buscarProductos` pasa de búsqueda por título a búsqueda semántica con embeddings locales (Transformers.js) y pgvector. |
+| v3.3 | Formulario en /contacto | Conectar el bloque de formulario existente con envío a email o Telegram. |
+| v3.3 | Analytics | Umami o Plausible (self-hosted, privacy-first) para medir tráfico al catálogo. |
+| v3.4 | MCP para el CMS | Exponer Payload como herramientas MCP para que los agentes consulten y actualicen el catálogo de forma estructurada. |
+| v4.0 | Memoria de conversación | El bot recuerda el contexto entre mensajes (PostgreSQL o Redis). |
+| v4.0 | Rate limiting | Evitar spam en formulario de pedidos y en el webhook del bot. |
+| v5.0 | Wompi / PSE | Pasarela de pago colombiana si el volumen lo justifica. |

@@ -11,15 +11,15 @@
   body{margin:0;background:var(--paper);color:var(--ink);
     font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased;
     padding:2.5rem 1.5rem 3rem;}
-  .wrap{max-width:1200px;margin:0 auto;}
+  .wrap{max-width:1160px;margin:0 auto;}
   .eyebrow{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.18em;
     text-transform:uppercase;color:var(--violet);margin:0 0 0.4rem;}
   h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:2.1rem;
     line-height:1.1;margin:0 0 0.4rem;}
-  .sub{color:var(--muted);font-size:0.95rem;margin:0 0 1.6rem;max-width:72ch;}
+  .sub{color:var(--muted);font-size:0.95rem;margin:0 0 1.6rem;max-width:62ch;}
   .figure{overflow-x:auto;}
-  svg{display:block;width:100%;height:auto;min-width:980px;}
-  .cards{display:grid;grid-template-columns:1.1fr 1fr 0.9fr;gap:1rem;margin-top:1.8rem;}
+  svg{display:block;width:100%;height:auto;min-width:920px;}
+  .cards{display:grid;grid-template-columns:1.1fr 1fr 0.95fr;gap:1rem;margin-top:1.8rem;}
   @media(max-width:760px){.cards{grid-template-columns:1fr}}
   .card{background:var(--paper-2);border:1px solid rgba(31,36,48,0.12);
     border-radius:8px;padding:1.15rem 1.25rem;}
@@ -29,363 +29,213 @@
   .card .eyebrow{margin-bottom:0.6rem;}
   .card-head{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.55rem;}
   .dot{width:9px;height:9px;border-radius:50%;flex:none;}
-  .dot.violet{background:var(--violet)}
-  .dot.indigo{background:var(--indigo)}
+  .dot.violet{background:var(--violet)} .dot.indigo{background:var(--indigo)}
   .dot.teal{background:var(--teal)}
   .card h3{margin:0;font-size:0.98rem;font-weight:600;}
-  .card ul{margin:0;padding-left:1.05rem;color:var(--muted);font-size:0.86rem;line-height:1.6;}
-  .card li{margin:0.12rem 0;}
-  .card code{font-family:'Geist Mono',monospace;font-size:0.82em;
-    background:rgba(31,36,48,0.06);border-radius:3px;padding:1px 4px;}
-  .tag{font-family:'Geist Mono',monospace;font-size:10px;color:#fff;
+  .card ul{margin:0;padding-left:1.05rem;color:var(--muted);font-size:0.86rem;line-height:1.5;}
+  .card li{margin:0.15rem 0;}
+  .tag-free{font-family:'Geist Mono',monospace;font-size:10px;color:#fff;background:var(--teal);
     border-radius:3px;padding:1px 6px;margin-left:0.4rem;}
-  .tag.done{background:var(--teal)}
-  .tag.wip{background:#b45309}
-  .tag.next{background:var(--violet)}
   footer{margin-top:2rem;padding-top:0.9rem;border-top:1px solid var(--rule);
     font-family:'Geist Mono',monospace;font-size:10px;color:var(--soft);
     letter-spacing:0.08em;}
 </style>
 
 <div class="wrap">
-  <p class="eyebrow">Nénufar · Arquitectura v3.2</p>
-  <h1>Ecommerce + Bot multiagente de Telegram</h1>
-  <p class="sub">Estado actual: tienda (Payload CMS v3 + Next.js) funcionando. Bot asistente multiagente
-    implementado en slice 1 — orquestador + 2 agentes (Groq / Llama 3.3) con skills. Los agentes asisten
-    y derivan a Shirley; nunca cierran ventas. RAG del catálogo con pgvector es la siguiente fase.</p>
+  <p class="eyebrow">Nénufar · Arquitectura objetivo</p>
+  <h1>Landing + Ecommerce + mini-RAG de productos</h1>
+  <p class="sub">Estado deseado sobre el template actual (Payload CMS v3 + Next.js). Sin blog. El
+    Asistente RAG y el índice vectorial en Supabase son piezas <em>nuevas</em> (violeta). Generación con
+    Groq, embeddings locales — todo corre en local con capas gratuitas.</p>
 
   <div class="figure">
-  <svg viewBox="0 0 1200 720" role="img" aria-labelledby="arch-title arch-desc"
+  <svg viewBox="0 0 1120 700" role="img" aria-labelledby="nen-arch-title nen-arch-desc"
        xmlns="http://www.w3.org/2000/svg">
-    <title id="arch-title">Arquitectura Nénufar v3.2</title>
-    <desc id="arch-desc">Diagrama: canales web y Telegram compradoras → app (Payload+Next.js, webhook) →
-      agentes IA (orquestador + catálogo + conversación) → PostgreSQL, Groq, bots de Telegram.
-      Futuro: RAG con Supabase pgvector y embeddings locales.</desc>
+    <title id="nen-arch-title">Arquitectura objetivo de Nénufar</title>
+    <desc id="nen-arch-desc">Diagrama de arquitectura que muestra los canales web y de mensajería
+      consumiendo la aplicación Next.js con Payload y un asistente RAG; el asistente y un job de
+      ingesta con embeddings locales usan un índice vectorial en Supabase, mientras Payload persiste
+      en PostgreSQL, notifica pedidos a Telegram y el asistente genera respuestas con Groq.</desc>
 
     <defs>
-      <marker id="a-teal" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-        <polygon points="0 0,8 3,0 6" fill="#0D9488"/></marker>
-      <marker id="a-ind" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-        <polygon points="0 0,8 3,0 6" fill="#4F46E5"/></marker>
-      <marker id="a-vio" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-        <polygon points="0 0,8 3,0 6" fill="#7C1FA8"/></marker>
-      <marker id="a-tg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-        <polygon points="0 0,8 3,0 6" fill="#2AABEE"/></marker>
-      <marker id="a-groq" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-        <polygon points="0 0,8 3,0 6" fill="#F55036"/></marker>
-      <marker id="a-amb" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-        <polygon points="0 0,8 3,0 6" fill="#D97706"/></marker>
+      <marker id="arrow-teal" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#0D9488"/></marker>
+      <marker id="arrow-indigo" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#4F46E5"/></marker>
+      <marker id="arrow-violet" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#7C1FA8"/></marker>
+      <marker id="arrow-tg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#2AABEE"/></marker>
+      <marker id="arrow-groq" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#F55036"/></marker>
     </defs>
 
-    <rect width="1200" height="720" fill="#f7f6f9"/>
+    <rect width="1120" height="700" fill="#f7f6f9"/>
 
     <!-- ===== ZONES ===== -->
+    <!-- Canales (teal) -->
+    <rect x="32" y="108" width="192" height="344" rx="10" fill="rgba(13,148,136,0.06)" stroke="rgba(13,148,136,0.38)" stroke-width="1"/>
+    <rect x="100" y="112" width="56" height="12" rx="2" fill="#f7f6f9"/>
+    <text x="128" y="121" fill="#0D9488" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.14em">CANALES</text>
+    <!-- Aplicación (indigo) -->
+    <rect x="320" y="68" width="192" height="464" rx="10" fill="rgba(79,70,229,0.05)" stroke="rgba(79,70,229,0.34)" stroke-width="1"/>
+    <rect x="336" y="72" width="160" height="12" rx="2" fill="#f7f6f9"/>
+    <text x="416" y="81" fill="#4F46E5" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.14em">APLICACIÓN · NEXT.JS + PAYLOAD</text>
+    <!-- Datos (amber) -->
+    <rect x="608" y="108" width="192" height="324" rx="10" fill="rgba(217,119,6,0.06)" stroke="rgba(217,119,6,0.38)" stroke-width="1"/>
+    <rect x="680" y="112" width="48" height="12" rx="2" fill="#f7f6f9"/>
+    <text x="704" y="121" fill="#D97706" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.14em">DATOS</text>
 
-    <!-- CANALES -->
-    <rect x="24" y="100" width="176" height="450" rx="10"
-          fill="rgba(13,148,136,0.05)" stroke="rgba(13,148,136,0.35)" stroke-width="1"/>
-    <rect x="76" y="104" width="72" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="112" y="113" fill="#0D9488" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.14em">CANALES</text>
-
-    <!-- APLICACIÓN -->
-    <rect x="248" y="80" width="180" height="490" rx="10"
-          fill="rgba(79,70,229,0.05)" stroke="rgba(79,70,229,0.30)" stroke-width="1"/>
-    <rect x="275" y="84" width="126" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="338" y="93" fill="#4F46E5" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.14em">APLICACIÓN · PAYLOAD + NEXT.JS</text>
-
-    <!-- AGENTES IA (new, violet) -->
-    <rect x="476" y="180" width="260" height="380" rx="10"
-          fill="rgba(124,31,168,0.05)" stroke="rgba(124,31,168,0.42)" stroke-width="1.5"/>
-    <rect x="559" y="184" width="94" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="606" y="193" fill="#7C1FA8" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.14em">AGENTES IA · GROQ · SLICE 1</text>
-
-    <!-- DATOS -->
-    <rect x="788" y="100" width="160" height="200" rx="10"
-          fill="rgba(217,119,6,0.05)" stroke="rgba(217,119,6,0.35)" stroke-width="1"/>
-    <rect x="844" y="104" width="48" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="868" y="113" fill="#D97706" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.14em">DATOS</text>
-
-    <!-- FUTURO (dashed) -->
-    <rect x="476" y="580" width="472" height="72" rx="8"
-          fill="rgba(124,31,168,0.04)" stroke="rgba(124,31,168,0.32)" stroke-width="1"
-          stroke-dasharray="6,4"/>
-    <text x="712" y="600" fill="#7C1FA8" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.14em">FUTURO · FASE 3.3</text>
-    <text x="712" y="622" fill="#5a3070" font-size="11" font-family="'Geist',sans-serif"
-          text-anchor="middle" font-weight="500">RAG: Supabase pgvector + embeddings locales (Transformers.js)</text>
-    <text x="712" y="640" fill="#9d4dc0" font-size="9" font-family="'Geist Mono',monospace"
-          text-anchor="middle">skill buscarProductos → búsqueda semántica sobre el catálogo</text>
-
-    <!-- ===== ARROWS (behind nodes) ===== -->
-
-    <!-- 1. Web → Payload: PEDIDO (teal) -->
-    <path d="M184,158 H222 V130 H264" fill="none" stroke="#0D9488" stroke-width="1.4"
-          marker-end="url(#a-teal)"/>
-    <rect x="199" y="132" width="36" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="217" y="141" fill="#0D9488" font-size="8" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.06em">PEDIDO</text>
-
-    <!-- 2. Payload → PostgreSQL: CRUD (indigo) — over top at y=48 -->
-    <path d="M360,104 V48 H868 V132" fill="none" stroke="#4F46E5" stroke-width="1.4"
-          marker-end="url(#a-ind)"/>
-    <rect x="596" y="36" width="36" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="614" y="45" fill="#4F46E5" font-size="8" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.06em">CRUD</text>
-
-    <!-- 3. Payload → @PedidosBot canal: NOTIF PEDIDO (tg) — over top at y=20 -->
-    <path d="M326,104 V20 H1096 V132" fill="none" stroke="#2AABEE" stroke-width="1.4"
-          marker-end="url(#a-tg)"/>
-    <rect x="688" y="8" width="96" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="736" y="17" fill="#2AABEE" font-size="8" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.06em">NOTIF. PEDIDO</text>
-
-    <!-- 4. TG compradoras → Webhook: POST (teal) -->
-    <path d="M184,448 H222 V426 H264" fill="none" stroke="#0D9488" stroke-width="1.4"
-          marker-end="url(#a-teal)"/>
-    <rect x="196" y="414" width="24" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="208" y="423" fill="#0D9488" font-size="8" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.06em">POST</text>
-
-    <!-- 5. Webhook → Orchestrator: ROUTE (violet) -->
-    <path d="M428,426 H460 V248 H492" fill="none" stroke="#7C1FA8" stroke-width="1.5"
-          marker-end="url(#a-vio)"/>
-    <rect x="434" y="322" width="36" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="452" y="331" fill="#7C1FA8" font-size="8" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.06em">ROUTE</text>
-
-    <!-- 6. Orchestrator → Catálogo agent (down, left half) -->
-    <path d="M596,274 V352" fill="none" stroke="#7C1FA8" stroke-width="1.4"
-          marker-end="url(#a-vio)"/>
-
-    <!-- 7. Orchestrator → Conversación agent (right bypass) -->
-    <path d="M644,274 H752 V508 H736" fill="none" stroke="#7C1FA8" stroke-width="1.4"
-          marker-end="url(#a-vio)"/>
-
-    <!-- 8. Catálogo → PostgreSQL: buscarProductos (amber dashed) -->
-    <path d="M736,378 H770 V158 H804" fill="none" stroke="#D97706" stroke-width="1.4"
-          stroke-dasharray="5,3" marker-end="url(#a-amb)"/>
-    <rect x="744" y="256" width="56" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="772" y="265" fill="#D97706" font-size="8" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.06em">BUSCAR</text>
-
-    <!-- 9. Conversación → @PedidosBot canal: derivarAShirley (tg) -->
-    <path d="M736,512 H972 V158 H1016" fill="none" stroke="#2AABEE" stroke-width="1.4"
-          marker-end="url(#a-tg)"/>
-    <rect x="844" y="322" width="56" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="872" y="331" fill="#2AABEE" font-size="8" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.06em">DERIVAR</text>
-
-    <!-- 10. Agents zone → Groq: INFERENCIA (groq) -->
-    <path d="M736,320 H772 V448 H804" fill="none" stroke="#F55036" stroke-width="1.6"
-          marker-end="url(#a-groq)"/>
-    <rect x="742" y="374" width="62" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="773" y="383" fill="#F55036" font-size="8" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.06em">INFERENCIA</text>
-
-    <!-- 11. Webhook → @AsistenteBot: REPLY (tg dashed) -->
-    <path d="M428,452 H452 V554 H1016 V478" fill="none" stroke="#2AABEE" stroke-width="1.3"
-          stroke-dasharray="5,3" marker-end="url(#a-tg)"/>
-    <rect x="710" y="542" width="36" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="728" y="551" fill="#2AABEE" font-size="8" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.06em">REPLY</text>
+    <!-- ===== ARROWS ===== -->
+    <!-- Web -> NP (teal) PEDIDO -->
+    <path d="M208,160 H264 Q272,160 272,152 V136 Q272,128 280,128 H336" fill="none" stroke="#0D9488" stroke-width="1.4" marker-end="url(#arrow-teal)"/>
+    <rect x="216" y="140" width="42" height="12" rx="2" fill="#f7f6f9"/>
+    <text x="237" y="149" fill="#0D9488" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">PEDIDO</text>
+    <!-- Web -> RAG (teal) CHAT -->
+    <path d="M208,176 H264 Q272,176 272,184 V472 Q272,480 280,480 H336" fill="none" stroke="#0D9488" stroke-width="1.4" marker-end="url(#arrow-teal)"/>
+    <rect x="228" y="322" width="34" height="12" rx="2" fill="#f7f6f9"/>
+    <text x="245" y="331" fill="#0D9488" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">CHAT</text>
+    <!-- Bot -> RAG (teal) QUERY -->
+    <path d="M208,408 H264 Q272,408 272,416 V488 Q272,496 280,496 H336" fill="none" stroke="#0D9488" stroke-width="1.4" marker-end="url(#arrow-teal)"/>
+    <rect x="216" y="388" width="40" height="12" rx="2" fill="#f7f6f9"/>
+    <text x="236" y="397" fill="#0D9488" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">QUERY</text>
+    <!-- NP -> PG (indigo) CRUD -->
+    <path d="M496,136 H552 Q560,136 560,144 V160 Q560,168 568,168 H624" fill="none" stroke="#4F46E5" stroke-width="1.4" marker-end="url(#arrow-indigo)"/>
+    <rect x="506" y="116" width="36" height="12" rx="2" fill="#f7f6f9"/>
+    <text x="524" y="125" fill="#4F46E5" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">CRUD</text>
+    <!-- NP -> Telegram (tg) NOTIF PEDIDO -->
+    <path d="M496,120 H520 Q528,120 528,112 V64 Q528,56 536,56 H984 Q992,56 992,64 V100" fill="none" stroke="#2AABEE" stroke-width="1.4" marker-end="url(#arrow-tg)"/>
+    <rect x="720" y="36" width="80" height="12" rx="2" fill="#f7f6f9"/>
+    <text x="760" y="45" fill="#2AABEE" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">NOTIF. PEDIDO</text>
+    <!-- NP -> ING (indigo) afterChange -->
+    <path d="M416,156 V280" fill="none" stroke="#4F46E5" stroke-width="1.4" marker-end="url(#arrow-indigo)"/>
+    <rect x="340" y="212" width="70" height="12" rx="2" fill="#f7f6f9"/>
+    <text x="406" y="221" fill="#4F46E5" font-size="8" font-family="'Geist Mono',monospace" text-anchor="end" letter-spacing="0.06em">afterChange</text>
+    <!-- ING -> SB (violet) UPSERT -->
+    <path d="M496,300 H552 Q560,300 560,308 V372 Q560,380 568,380 H624" fill="none" stroke="#7C1FA8" stroke-width="1.6" marker-end="url(#arrow-violet)"/>
+    <rect x="576" y="360" width="44" height="12" rx="2" fill="#f7f6f9"/>
+    <text x="598" y="369" fill="#7C1FA8" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">UPSERT</text>
+    <!-- RAG -> SB (violet) VECTOR SEARCH -->
+    <path d="M496,480 H552 Q560,480 560,472 V404 Q560,396 568,396 H624" fill="none" stroke="#7C1FA8" stroke-width="1.6" marker-end="url(#arrow-violet)"/>
+    <rect x="470" y="430" width="80" height="12" rx="2" fill="#f7f6f9"/>
+    <text x="510" y="439" fill="#7C1FA8" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">VECTOR SEARCH</text>
+    <!-- RAG -> Groq (groq) GENERA -->
+    <path d="M496,496 H984 Q992,496 992,488 V436" fill="none" stroke="#F55036" stroke-width="1.6" marker-end="url(#arrow-groq)"/>
+    <rect x="732" y="476" width="56" height="12" rx="2" fill="#f7f6f9"/>
+    <text x="760" y="485" fill="#F55036" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">GENERA</text>
 
     <!-- ===== NODES ===== -->
-
-    <!-- Web / Tienda -->
-    <rect x="40" y="132" width="144" height="52" rx="8"
-          fill="rgba(13,148,136,0.10)" stroke="#0D9488" stroke-width="1.4"/>
-    <rect x="48" y="138" width="22" height="12" rx="2"
-          fill="transparent" stroke="rgba(13,148,136,0.5)" stroke-width="0.8"/>
-    <text x="59" y="147" fill="#0D9488" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.08em">WEB</text>
-    <text x="112" y="165" fill="#1f2430" font-size="12" font-weight="600"
-          font-family="'Geist',sans-serif" text-anchor="middle">Tienda / Landing</text>
-    <text x="112" y="179" fill="#0f766e" font-size="9" font-family="'Geist Mono',monospace"
-          text-anchor="middle">/shop · /products · carrito</text>
-
-    <!-- Telegram compradoras -->
-    <rect x="40" y="422" width="144" height="52" rx="8"
-          fill="rgba(13,148,136,0.10)" stroke="#0D9488" stroke-width="1.4"/>
-    <rect x="48" y="428" width="46" height="12" rx="2"
-          fill="transparent" stroke="rgba(13,148,136,0.5)" stroke-width="0.8"/>
-    <text x="71" y="437" fill="#0D9488" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.08em">TELEGRAM</text>
-    <text x="112" y="455" fill="#1f2430" font-size="12" font-weight="600"
-          font-family="'Geist',sans-serif" text-anchor="middle">Compradoras</text>
-    <text x="112" y="469" fill="#0f766e" font-size="9" font-family="'Geist Mono',monospace"
-          text-anchor="middle">mensajes al bot asistente</text>
-
-    <!-- Next.js + Payload (focal indigo) -->
-    <rect x="264" y="104" width="160" height="52" rx="8"
-          fill="rgba(79,70,229,0.12)" stroke="#4F46E5" stroke-width="1.8"/>
-    <rect x="272" y="110" width="24" height="12" rx="2"
-          fill="transparent" stroke="rgba(79,70,229,0.6)" stroke-width="0.8"/>
-    <text x="284" y="119" fill="#4F46E5" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.08em">APP</text>
-    <text x="344" y="137" fill="#1f2430" font-size="12" font-weight="600"
-          font-family="'Geist',sans-serif" text-anchor="middle">Next.js + Payload</text>
-    <text x="344" y="151" fill="#4338ca" font-size="9" font-family="'Geist Mono',monospace"
-          text-anchor="middle">server actions · admin</text>
-
-    <!-- Webhook handler -->
-    <rect x="264" y="400" width="160" height="52" rx="8"
-          fill="rgba(79,70,229,0.07)" stroke="#6366F1" stroke-width="1.4"/>
-    <rect x="272" y="406" width="54" height="12" rx="2"
-          fill="transparent" stroke="rgba(99,102,241,0.5)" stroke-width="0.8"/>
-    <text x="299" y="415" fill="#6366F1" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.08em">WEBHOOK</text>
-    <text x="344" y="433" fill="#1f2430" font-size="12" font-weight="600"
-          font-family="'Geist',sans-serif" text-anchor="middle">/telegram/webhook</text>
-    <text x="344" y="447" fill="#4338ca" font-size="9" font-family="'Geist Mono',monospace"
-          text-anchor="middle">secret · dedup · routeAndRun</text>
-
-    <!-- Orchestrator (focal violet) -->
-    <rect x="492" y="222" width="240" height="52" rx="8"
-          fill="rgba(124,31,168,0.14)" stroke="#7C1FA8" stroke-width="2"/>
-    <rect x="500" y="228" width="64" height="12" rx="2"
-          fill="transparent" stroke="rgba(124,31,168,0.6)" stroke-width="0.8"/>
-    <text x="532" y="237" fill="#7C1FA8" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.08em">ORQUESTADOR</text>
-    <text x="612" y="255" fill="#1f2430" font-size="12" font-weight="600"
-          font-family="'Geist',sans-serif" text-anchor="middle">Orquestador</text>
-    <text x="612" y="269" fill="#7C1FA8" font-size="9" font-family="'Geist Mono',monospace"
-          text-anchor="middle">clasifica → catalogo | conversacion</text>
-
-    <!-- Catálogo agent -->
-    <rect x="492" y="352" width="240" height="52" rx="8"
-          fill="rgba(124,31,168,0.08)" stroke="#7C1FA8" stroke-width="1.5"/>
-    <rect x="500" y="358" width="44" height="12" rx="2"
-          fill="transparent" stroke="rgba(124,31,168,0.5)" stroke-width="0.8"/>
-    <text x="522" y="367" fill="#7C1FA8" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.08em">AGENTE</text>
-    <text x="612" y="385" fill="#1f2430" font-size="12" font-weight="600"
-          font-family="'Geist',sans-serif" text-anchor="middle">Agente Catálogo</text>
-    <text x="612" y="399" fill="#7C1FA8" font-size="9" font-family="'Geist Mono',monospace"
-          text-anchor="middle">skill: buscarProductos → payload.find</text>
-
-    <!-- Conversación agent -->
-    <rect x="492" y="482" width="240" height="52" rx="8"
-          fill="rgba(124,31,168,0.08)" stroke="#7C1FA8" stroke-width="1.5"/>
-    <rect x="500" y="488" width="44" height="12" rx="2"
-          fill="transparent" stroke="rgba(124,31,168,0.5)" stroke-width="0.8"/>
-    <text x="522" y="497" fill="#7C1FA8" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.08em">AGENTE</text>
-    <text x="612" y="515" fill="#1f2430" font-size="12" font-weight="600"
-          font-family="'Geist',sans-serif" text-anchor="middle">Agente Conversación</text>
-    <text x="612" y="529" fill="#7C1FA8" font-size="9" font-family="'Geist Mono',monospace"
-          text-anchor="middle">skill: derivarAShirley → canal</text>
-
-    <!-- PostgreSQL -->
-    <rect x="804" y="132" width="128" height="52" rx="8"
-          fill="rgba(217,119,6,0.10)" stroke="#D97706" stroke-width="1.4"/>
-    <rect x="812" y="138" width="20" height="12" rx="2"
-          fill="transparent" stroke="rgba(217,119,6,0.5)" stroke-width="0.8"/>
-    <text x="822" y="147" fill="#D97706" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.08em">DB</text>
-    <text x="868" y="165" fill="#1f2430" font-size="12" font-weight="600"
-          font-family="'Geist',sans-serif" text-anchor="middle">PostgreSQL</text>
-    <text x="868" y="179" fill="#b45309" font-size="9" font-family="'Geist Mono',monospace"
-          text-anchor="middle">products · orders</text>
-
-    <!-- Groq API -->
-    <rect x="804" y="422" width="128" height="52" rx="8"
-          fill="rgba(245,80,54,0.12)" stroke="#F55036" stroke-width="1.4"/>
-    <rect x="812" y="428" width="24" height="12" rx="2"
-          fill="transparent" stroke="rgba(245,80,54,0.5)" stroke-width="0.8"/>
-    <text x="824" y="437" fill="#d63a22" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.08em">LLM</text>
-    <text x="868" y="455" fill="#1f2430" font-size="12" font-weight="600"
-          font-family="'Geist',sans-serif" text-anchor="middle">Groq API</text>
-    <text x="868" y="469" fill="#d63a22" font-size="9" font-family="'Geist Mono',monospace"
-          text-anchor="middle">llama-3.3-70b · free tier</text>
-
-    <!-- @PedidosBot — canal Shirley -->
-    <rect x="1016" y="132" width="160" height="52" rx="8"
-          fill="rgba(42,171,238,0.13)" stroke="#2AABEE" stroke-width="1.4"/>
-    <rect x="1024" y="138" width="46" height="12" rx="2"
-          fill="transparent" stroke="rgba(42,171,238,0.5)" stroke-width="0.8"/>
-    <text x="1047" y="147" fill="#1d8fc9" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.08em">PEDIDOS</text>
-    <text x="1096" y="165" fill="#1f2430" font-size="12" font-weight="600"
-          font-family="'Geist',sans-serif" text-anchor="middle">Canal de pedidos</text>
-    <text x="1096" y="179" fill="#1d8fc9" font-size="9" font-family="'Geist Mono',monospace"
-          text-anchor="middle">Shirley lee desde su celular</text>
-
-    <!-- @AsistenteBot — responde compradoras -->
-    <rect x="1016" y="452" width="160" height="52" rx="8"
-          fill="rgba(42,171,238,0.13)" stroke="#2AABEE" stroke-width="1.4"/>
-    <rect x="1024" y="458" width="52" height="12" rx="2"
-          fill="transparent" stroke="rgba(42,171,238,0.5)" stroke-width="0.8"/>
-    <text x="1050" y="467" fill="#1d8fc9" font-size="7" font-family="'Geist Mono',monospace"
-          text-anchor="middle" letter-spacing="0.08em">ASISTENTE</text>
-    <text x="1096" y="485" fill="#1f2430" font-size="12" font-weight="600"
-          font-family="'Geist',sans-serif" text-anchor="middle">Bot Asistente</text>
-    <text x="1096" y="499" fill="#1d8fc9" font-size="9" font-family="'Geist Mono',monospace"
-          text-anchor="middle">responde a compradoras</text>
+    <!-- Web -->
+    <rect x="48" y="140" width="160" height="56" rx="8" fill="#f7f6f9"/>
+    <rect x="48" y="140" width="160" height="56" rx="8" fill="rgba(13,148,136,0.12)" stroke="#0D9488" stroke-width="1.4"/>
+    <rect x="56" y="146" width="30" height="12" rx="2" fill="transparent" stroke="rgba(13,148,136,0.6)" stroke-width="0.8"/>
+    <text x="71" y="155" fill="#0D9488" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">WEB</text>
+    <text x="128" y="173" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Landing + Tienda</text>
+    <text x="128" y="188" fill="#0f766e" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">next · /shop · carrito</text>
+    <!-- Bot -->
+    <rect x="48" y="380" width="160" height="56" rx="8" fill="#f7f6f9"/>
+    <rect x="48" y="380" width="160" height="56" rx="8" fill="rgba(13,148,136,0.12)" stroke="#0D9488" stroke-width="1.4"/>
+    <rect x="56" y="386" width="34" height="12" rx="2" fill="transparent" stroke="rgba(13,148,136,0.6)" stroke-width="0.8"/>
+    <text x="73" y="395" fill="#0D9488" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">CHAT</text>
+    <text x="128" y="413" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Bot de mensajería</text>
+    <text x="128" y="428" fill="#0f766e" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">whatsapp · telegram</text>
+    <!-- NP -->
+    <rect x="336" y="100" width="160" height="56" rx="8" fill="#f7f6f9"/>
+    <rect x="336" y="100" width="160" height="56" rx="8" fill="rgba(79,70,229,0.10)" stroke="#4F46E5" stroke-width="1.4"/>
+    <rect x="344" y="106" width="30" height="12" rx="2" fill="transparent" stroke="rgba(79,70,229,0.6)" stroke-width="0.8"/>
+    <text x="359" y="115" fill="#4F46E5" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
+    <text x="416" y="133" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Next.js + Payload</text>
+    <text x="416" y="148" fill="#4338ca" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">server actions · api</text>
+    <!-- ING -->
+    <rect x="336" y="280" width="160" height="56" rx="8" fill="#f7f6f9"/>
+    <rect x="336" y="280" width="160" height="56" rx="8" fill="rgba(79,70,229,0.07)" stroke="#6366F1" stroke-width="1.4"/>
+    <rect x="344" y="286" width="26" height="12" rx="2" fill="transparent" stroke="rgba(99,102,241,0.6)" stroke-width="0.8"/>
+    <text x="357" y="295" fill="#6366F1" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">JOB</text>
+    <text x="416" y="313" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Ingesta de chunks</text>
+    <text x="416" y="328" fill="#4338ca" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">split · embed local · upsert</text>
+    <!-- RAG (focal violet) -->
+    <rect x="336" y="460" width="160" height="56" rx="8" fill="#f7f6f9"/>
+    <rect x="336" y="460" width="160" height="56" rx="8" fill="rgba(124,31,168,0.14)" stroke="#7C1FA8" stroke-width="2"/>
+    <rect x="344" y="466" width="30" height="12" rx="2" fill="transparent" stroke="rgba(124,31,168,0.7)" stroke-width="0.9"/>
+    <text x="359" y="475" fill="#7C1FA8" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">RAG</text>
+    <text x="416" y="493" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Asistente RAG</text>
+    <text x="416" y="508" fill="#7C1FA8" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">retrieve + generate</text>
+    <!-- PG -->
+    <rect x="624" y="140" width="160" height="56" rx="8" fill="#f7f6f9"/>
+    <rect x="624" y="140" width="160" height="56" rx="8" fill="rgba(217,119,6,0.10)" stroke="#D97706" stroke-width="1.4"/>
+    <rect x="632" y="146" width="22" height="12" rx="2" fill="transparent" stroke="rgba(217,119,6,0.6)" stroke-width="0.8"/>
+    <text x="643" y="155" fill="#D97706" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">DB</text>
+    <text x="704" y="173" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">PostgreSQL</text>
+    <text x="704" y="188" fill="#b45309" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">products · orders</text>
+    <!-- SB (focal violet) -->
+    <rect x="624" y="360" width="160" height="56" rx="8" fill="#f7f6f9"/>
+    <rect x="624" y="360" width="160" height="56" rx="8" fill="rgba(124,31,168,0.14)" stroke="#7C1FA8" stroke-width="2"/>
+    <rect x="632" y="366" width="28" height="12" rx="2" fill="transparent" stroke="rgba(124,31,168,0.7)" stroke-width="0.9"/>
+    <text x="646" y="375" fill="#7C1FA8" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">VDB</text>
+    <text x="704" y="393" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Supabase pgvector</text>
+    <text x="704" y="408" fill="#7C1FA8" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">chunks de productos</text>
+    <!-- Telegram -->
+    <rect x="912" y="100" width="160" height="56" rx="8" fill="#f7f6f9"/>
+    <rect x="912" y="100" width="160" height="56" rx="8" fill="rgba(42,171,238,0.14)" stroke="#2AABEE" stroke-width="1.4"/>
+    <rect x="920" y="106" width="26" height="12" rx="2" fill="transparent" stroke="rgba(42,171,238,0.6)" stroke-width="0.8"/>
+    <text x="933" y="115" fill="#1d8fc9" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+    <text x="992" y="133" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Telegram</text>
+    <text x="992" y="148" fill="#1d8fc9" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">canal de pedidos</text>
+    <!-- Groq -->
+    <rect x="912" y="380" width="160" height="56" rx="8" fill="#f7f6f9"/>
+    <rect x="912" y="380" width="160" height="56" rx="8" fill="rgba(245,80,54,0.13)" stroke="#F55036" stroke-width="1.4"/>
+    <rect x="920" y="386" width="26" height="12" rx="2" fill="transparent" stroke="rgba(245,80,54,0.6)" stroke-width="0.8"/>
+    <text x="933" y="395" fill="#d63a22" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+    <text x="992" y="413" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Groq API</text>
+    <text x="992" y="428" fill="#d63a22" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">llama · free tier</text>
 
     <!-- ===== LEGEND ===== -->
-    <line x1="24" y1="670" x2="1176" y2="670" stroke="rgba(31,36,48,0.12)" stroke-width="0.8"/>
-    <text x="24" y="686" fill="#5a6072" font-size="8" font-family="'Geist Mono',monospace"
-          letter-spacing="0.14em">LEYENDA</text>
-    <rect x="108" y="678" width="12" height="10" rx="3"
-          fill="rgba(124,31,168,0.14)" stroke="#7C1FA8" stroke-width="1.6"/>
-    <text x="126" y="686" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">agentes IA (nuevo)</text>
-    <rect x="284" y="678" width="12" height="10" rx="3"
-          fill="rgba(13,148,136,0.10)" stroke="#0D9488" stroke-width="1.4"/>
-    <text x="302" y="686" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">canales</text>
-    <rect x="392" y="678" width="12" height="10" rx="3"
-          fill="rgba(79,70,229,0.10)" stroke="#4F46E5" stroke-width="1.4"/>
-    <text x="410" y="686" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">aplicación</text>
-    <rect x="520" y="678" width="12" height="10" rx="3"
-          fill="rgba(217,119,6,0.10)" stroke="#D97706" stroke-width="1.4"/>
-    <text x="538" y="686" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">datos</text>
-    <rect x="624" y="678" width="12" height="10" rx="3"
-          fill="rgba(42,171,238,0.13)" stroke="#2AABEE" stroke-width="1.4"/>
-    <text x="642" y="686" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">Telegram</text>
-    <rect x="748" y="678" width="12" height="10" rx="3"
-          fill="rgba(245,80,54,0.12)" stroke="#F55036" stroke-width="1.4"/>
-    <text x="766" y="686" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">Groq / LLM</text>
-    <line x1="892" y1="682" x2="916" y2="682" stroke="#7C1FA8" stroke-width="1.2"
-          stroke-dasharray="5,3"/>
-    <text x="922" y="686" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">futuro (fase 3.3)</text>
+    <line x1="32" y1="600" x2="1088" y2="600" stroke="rgba(31,36,48,0.12)" stroke-width="0.8"/>
+    <text x="32" y="620" fill="#5a6072" font-size="8" font-family="'Geist Mono',monospace" letter-spacing="0.14em">LEYENDA</text>
+    <rect x="120" y="612" width="14" height="10" rx="3" fill="rgba(124,31,168,0.14)" stroke="#7C1FA8" stroke-width="1.6"/>
+    <text x="140" y="620" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">pieza nueva (RAG)</text>
+    <rect x="304" y="612" width="14" height="10" rx="3" fill="rgba(13,148,136,0.12)" stroke="#0D9488" stroke-width="1.4"/>
+    <text x="324" y="620" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">canales</text>
+    <rect x="428" y="612" width="14" height="10" rx="3" fill="rgba(79,70,229,0.10)" stroke="#4F46E5" stroke-width="1.4"/>
+    <text x="448" y="620" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">aplicación</text>
+    <rect x="564" y="612" width="14" height="10" rx="3" fill="rgba(217,119,6,0.10)" stroke="#D97706" stroke-width="1.4"/>
+    <text x="584" y="620" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">datos</text>
+    <rect x="672" y="612" width="14" height="10" rx="3" fill="rgba(42,171,238,0.14)" stroke="#2AABEE" stroke-width="1.4"/>
+    <text x="692" y="620" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">Telegram</text>
+    <rect x="808" y="612" width="14" height="10" rx="3" fill="rgba(245,80,54,0.13)" stroke="#F55036" stroke-width="1.4"/>
+    <text x="828" y="620" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">Groq (generación)</text>
   </svg>
   </div>
 
   <div class="cards">
     <div class="card a">
-      <p class="eyebrow">YA EXISTE · v3.1<span class="tag done" style="margin-left:.5rem;">✅ LISTO</span></p>
-      <div class="card-head"><span class="dot indigo"></span><h3>Ecommerce + Admin</h3></div>
+      <p class="eyebrow">YA EXISTE · TEMPLATE</p>
+      <div class="card-head"><span class="dot indigo"></span><h3>Ecommerce + Landing</h3></div>
       <ul>
-        <li>Catálogo, producto, carrito, pedido → Telegram de Shirley: funcionando.</li>
-        <li>Payload CMS: admin de productos, blog, órdenes.</li>
-        <li>Formulario → PostgreSQL + notificación al canal de Shirley.</li>
+        <li>Catálogo, producto, carrito y pedido → Telegram: <strong>funcionando</strong>.</li>
+        <li>Landing = home del page-builder de Payload.</li>
+        <li>Blog descartado por decisión de producto.</li>
       </ul>
     </div>
     <div class="card b">
-      <p class="eyebrow">NUEVO · v3.2 — SLICE 1<span class="tag wip" style="margin-left:.5rem;">🔨 EN DESARROLLO</span></p>
-      <div class="card-head"><span class="dot violet"></span><h3>Bot multiagente</h3></div>
+      <p class="eyebrow">POR CONSTRUIR · NUEVO</p>
+      <div class="card-head"><span class="dot violet"></span><h3>mini-RAG de productos</h3></div>
       <ul>
-        <li>Orquestador (Groq / Llama 3.3) clasifica → Catálogo o Conversación.</li>
-        <li>Skill <code>buscarProductos</code>: consulta Payload, devuelve piezas reales con precios COP.</li>
-        <li>Skill <code>derivarAShirley</code>: handoff al canal — el bot nunca cierra la venta.</li>
-        <li>Webhook seguro en <code>/telegram/webhook</code> (fuera de <code>/api</code>).</li>
-        <li>4 tests de integración con Groq y Telegram mockeados — todos pasan.</li>
+        <li>Ingesta: producto → chunks → embeddings <strong>locales</strong> → Supabase.</li>
+        <li>Asistente: recupera chunks y responde con <strong>Groq</strong>.</li>
+        <li>Servicio compartido: web y bot lo consultan.</li>
       </ul>
     </div>
     <div class="card c">
-      <p class="eyebrow">SIGUIENTE · v3.3<span class="tag next" style="margin-left:.5rem;">🔜 PRÓXIMO</span></p>
-      <div class="card-head"><span class="dot teal"></span><h3>RAG del catálogo</h3></div>
+      <p class="eyebrow">RESTRICCIÓN</p>
+      <div class="card-head"><span class="dot teal"></span><h3>Todo gratis / local<span class="tag-free">FREE</span></h3></div>
       <ul>
-        <li>Embeddings locales (Transformers.js, sin key) → Supabase pgvector (free tier).</li>
-        <li><code>buscarProductos</code> pasa de query por título a búsqueda semántica.</li>
-        <li>Luego: MCP para Payload CMS · memoria de conversación persistente.</li>
+        <li>Supabase local + pgvector (sin costo).</li>
+        <li>Embeddings locales (sin key) · Groq free.</li>
+        <li>Sin deploy: corre en tu máquina.</li>
       </ul>
     </div>
   </div>
 
-  <footer>NÉNUFAR · ARQUITECTURA v3.2 · docs/arquitectura.html · Agosto 2026</footer>
+  <footer>NÉNUFAR · ARQUITECTURA OBJETIVO · v2 · docs/arquitectura.html</footer>
 </div>

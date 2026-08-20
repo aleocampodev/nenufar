@@ -38,25 +38,24 @@
 1. **Groq API key** — obtener en https://console.groq.com (gratis)  
    Variable: `GROQ_API_KEY`
 
-2. **Bot asistente de Telegram** — crear con @BotFather (bot NUEVO, separado del de pedidos)  
-   Variable: `TELEGRAM_ASSISTANT_BOT_TOKEN`
-
-3. **Secreto del webhook** — string aleatorio  
+2. **Secreto del webhook** — string aleatorio  
    `openssl rand -hex 24`  
    Variable: `TELEGRAM_WEBHOOK_SECRET`
 
-4. **Túnel HTTPS** — para exponer el webhook localmente  
+3. **Túnel HTTPS** — para exponer el webhook localmente  
    `cloudflared tunnel --url http://localhost:3002`
 
-5. **Registrar el webhook**  
+4. **Registrar el webhook** (mismo bot que ya tiene para pedidos)  
    `pnpm tsx scripts/set-telegram-webhook.ts <url-del-tunel>`
+
+> **No se necesita un bot adicional.** El mismo `TELEGRAM_BOT_TOKEN` del flujo de pedidos hace las dos cosas: envía notificaciones al canal de Shirley y recibe mensajes de compradoras vía webhook.
 
 ---
 
 ## Arquitectura del sistema de agentes
 
 ```
-Compradora escribe → Bot Asistente (@NenufarAsistenteBot)
+Compradora escribe → Bot (@NenufarPedidosBot — mismo TELEGRAM_BOT_TOKEN)
                               │
                      POST /telegram/webhook
                               │
@@ -93,7 +92,7 @@ Compradora escribe → Bot Asistente (@NenufarAsistenteBot)
 
 - **Webhook en `/telegram/webhook`**, NO en `/api/...` — el catch-all de Payload en `src/app/(payload)/api/[...slug]/route.ts` capturaría cualquier ruta bajo `/api`.
 
-- **Dos bots separados:** `TELEGRAM_BOT_TOKEN` (canal pedidos, one-way, sin cambios) y `TELEGRAM_ASSISTANT_BOT_TOKEN` (conversacional, nuevo). El flujo de pedidos existente no se toca.
+- **Un solo bot:** `TELEGRAM_BOT_TOKEN` hace las dos cosas — envía pedidos al canal de Shirley (función original, sin cambios) y recibe mensajes de compradoras vía webhook (función nueva). No se necesita un bot adicional.
 
 - **Runtime: max 4 rondas** de tool-calling por request para evitar loops infinitos.
 
@@ -187,9 +186,8 @@ Si eres un agente que entra en frío, lee estos archivos en orden:
 | Variable | Dónde obtener | Para qué |
 |----------|--------------|----------|
 | `GROQ_API_KEY` | console.groq.com | LLM de los agentes |
-| `TELEGRAM_ASSISTANT_BOT_TOKEN` | @BotFather en Telegram | Bot conversacional |
 | `TELEGRAM_WEBHOOK_SECRET` | `openssl rand -hex 24` | Autenticar el webhook |
-| `TELEGRAM_BOT_TOKEN` | ya configurado | Bot de pedidos (no tocar) |
+| `TELEGRAM_BOT_TOKEN` | ya configurado | Bot (pedidos + asistente — no crear uno nuevo) |
 | `TELEGRAM_CHANNEL_ID` | ya configurado | Canal de Shirley (no tocar) |
 
-El bot de pedidos y el bot asistente son **completamente independientes**. Modificar el asistente no afecta el flujo de pedidos existente.
+El webhook del bot asistente usa el mismo bot que el flujo de pedidos. El flujo de pedidos existente no se toca — solo se agrega el webhook como canal de entrada nuevo.

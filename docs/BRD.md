@@ -1,6 +1,6 @@
 # BRD — Business Requirement Document
 **Proyecto:** Nénufar — Joyería Artesanal
-**Versión:** 3.1 (Payload CMS + Next.js — stack actual)
+**Versión:** 3.2 (Payload CMS + Next.js + Bot multiagente)
 **Fecha:** Agosto 2026
 **Supersede:** v3.0 (Shopify headless — archivado en `docs/archive/v3.0/BRD.md`)
 
@@ -59,10 +59,18 @@ El problema central: los compradores no pueden armar un pedido solos. Le escribe
 | 08 | Admin Payload | Shirley gestiona productos, pedidos, blog y medios desde `/admin`. |
 | 09 | Imágenes WebP | Fotos de cámara profesional se convierten automáticamente a WebP (calidad 92) en 4 tamaños al subir. |
 
-### 3.2 Explícitamente fuera de alcance (v3.1)
+### 3.2 Incluido en v3.2 (bot multiagente)
+
+| # | Capacidad | Descripción de negocio |
+|---|-----------|------------------------|
+| 10 | Bot asistente conversacional | El mismo bot de pedidos recibe mensajes de compradoras vía webhook. Responde preguntas sobre el catálogo y deriva a Shirley cuando quieren comprar. |
+| 11 | Orquestador + 2 agentes IA | Groq (Llama 3.3, free tier) clasifica la intención y delega: Agente Catálogo (busca productos reales) o Agente Conversación (handoff a Shirley). |
+| 12 | Guardarraíl de negocio | Los agentes **nunca cierran una venta ni confirman un pedido**. Shirley siempre tiene la última palabra. |
+
+### 3.3 Explícitamente fuera de alcance (v3.2)
 
 - **Pago online.** Sin pasarela de pago (Stripe, Wompi, etc.). El pago se coordina externamente por Nequi, transferencia o efectivo.
-- **Bot de Telegram con comandos.** Telegram es notificación de una sola vía — solo llegan los pedidos.
+- **Bot de gestión de inventario.** El bot asistente no puede crear ni actualizar productos — eso sigue siendo responsabilidad de Shirley en el admin de Payload.
 - **Resumen diario automatizado.** No hay digest automático de pedidos ni reportes.
 - **Analytics.** No hay Google Analytics ni similar todavía — gap conocido.
 - **App móvil.** El sitio es responsive; no hay app nativa.
@@ -116,6 +124,12 @@ La hipótesis agéntica (un asistente que reemplaza a Shirley en el cierre de ve
 ---
 
 ## 7. ChangeLog
+
+### v3.1 → v3.2 (bot multiagente)
+- **Bot asistente:** el mismo bot de pedidos (`TELEGRAM_BOT_TOKEN`) ahora también recibe mensajes de compradoras vía webhook y responde con el sistema multiagente.
+- **Sistema de agentes:** orquestador (Groq) + Agente Catálogo (`buscarProductos`) + Agente Conversación (`derivarAShirley`).
+- **Sin bot adicional:** se simplificó la arquitectura — un solo bot hace las dos cosas (notificaciones de pedidos + asistencia conversacional).
+- **Nuevas variables de entorno:** `GROQ_API_KEY`, `TELEGRAM_WEBHOOK_SECRET`.
 
 ### v3.0 → v3.1 (Payload CMS pivot)
 - **Stack:** Shopify headless → Payload CMS v3 + Next.js App Router autopropelido. Sin costo de plataforma recurrente.

@@ -21,7 +21,7 @@ Nénufar es la tienda online de Shirley, joyera artesanal de Cartagena. La plata
 
 El flujo es intencionalmente simple: la compradora explora el catálogo, elige su pieza, agrega notas de personalización (talla, grabado, instrucciones especiales), y llena sus datos de contacto. Shirley recibe el pedido en Telegram y cierra la venta por WhatsApp, tal como siempre lo ha hecho. La plataforma no reemplaza su forma de trabajar: la amplifica.
 
-A partir de la v3.2 se suma un **bot asistente de Telegram con agentes IA**: la compradora puede escribirle al bot para consultar el catálogo o pedir que Shirley la contacte — todo con Groq (free tier), sin costo de infraestructura.
+A partir de la v3.2 el mismo bot de Telegram incorpora un **sistema multiagente**: la compradora escribe al bot, el orquestador clasifica la intención y delega a agentes especializados con skills. Todo con Groq (free tier), sin costo de infraestructura, sin bots adicionales.
 
 ---
 
@@ -93,7 +93,7 @@ A partir de la v3.2 se suma un **bot asistente de Telegram con agentes IA**: la 
 | Tipografía | Playfair Display · Inter · Geist Mono | |
 | Imágenes | Sharp | WebP automático en 4 tamaños al subir |
 | Agentes IA | Groq SDK (`groq-sdk`) | Llama 3.3 70B, free tier, tool-calling |
-| Bot Telegram | Telegram Bot API | Dos bots: pedidos (one-way) + asistente (two-way) |
+| Bot Telegram | Telegram Bot API | Un solo bot: notificaciones de pedidos (one-way) + asistente conversacional vía webhook (two-way) |
 | Tests | Vitest + Playwright | Int + E2E |
 
 ---
@@ -285,7 +285,7 @@ Al subir una foto al admin, Payload genera automáticamente variantes WebP (cali
 
 **Sin pasarela de pago** — intencional. Los pagos se coordinan manualmente por WhatsApp (Nequi, transferencia, efectivo). Agregar Stripe introduciría fricción y comisiones que no tienen sentido para el volumen actual.
 
-**Dos bots de Telegram separados** — el bot de pedidos (`TELEGRAM_BOT_TOKEN`) es de solo lectura para Shirley. El bot asistente (`TELEGRAM_ASSISTANT_BOT_TOKEN`) recibe mensajes de compradoras vía webhook. Mantenerlos separados asegura que el flujo de pedidos nunca se interrumpa.
+**Un solo bot de Telegram** — el mismo `TELEGRAM_BOT_TOKEN` hace dos cosas: envía notificaciones de pedidos al canal de Shirley (`TELEGRAM_CHANNEL_ID`) y recibe mensajes de compradoras vía webhook respondiendo con el sistema multiagente. No se necesita un bot adicional.
 
 **Agentes que asisten, no que venden** — los agentes IA están diseñados para responder preguntas y hacer handoff a Shirley. Nunca confirman precios, cierran ventas ni procesan pagos. La autonomía la tiene Shirley.
 

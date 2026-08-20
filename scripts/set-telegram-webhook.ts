@@ -12,12 +12,12 @@
  */
 import 'dotenv/config'
 
-const token = process.env.TELEGRAM_ASSISTANT_BOT_TOKEN
+const token = process.env.TELEGRAM_BOT_TOKEN
 const secret = process.env.TELEGRAM_WEBHOOK_SECRET
 
 async function main(): Promise<void> {
   if (!token) {
-    console.error('❌ Falta TELEGRAM_ASSISTANT_BOT_TOKEN en .env')
+    console.error('❌ Falta TELEGRAM_BOT_TOKEN en .env')
     process.exit(1)
   }
 

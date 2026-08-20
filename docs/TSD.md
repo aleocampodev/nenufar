@@ -19,7 +19,8 @@
 | Styling | TailwindCSS | v4 | CSS-first config, OKLCH tokens |
 | Package manager | pnpm | 9 | Workspace-friendly, fast installs |
 | Image processing | Sharp | — | WebP conversion on upload, server-side |
-| Notifications | Telegram Bot API | — | One-way HTTP POST, no library needed |
+| Notifications | Telegram Bot API | — | HTTP POST — order notifications (one-way) + buyer assistant webhook (two-way) |
+| AI agents | Groq SDK (`groq-sdk`) | — | Llama 3.3 70B, free tier, tool-calling — orchestrator + 2 agents |
 | Testing (unit/int) | Vitest | — | Fast, ESM-native |
 | Testing (E2E) | Playwright | — | Cross-browser, headless |
 | Linting | ESLint + Prettier | — | Enforced on commit via Husky |
@@ -62,7 +63,7 @@ nenufar/
 │   ├── globals/          # Header + Footer globals
 │   ├── heros/            # Hero block variants
 │   ├── hooks/            # Payload lifecycle hooks
-│   ├── lib/              # Business logic (telegram, order-formatter, idempotency)
+│   ├── lib/              # Business logic (telegram, order-formatter, idempotency, groq, agents/)
 │   ├── migrations/       # Drizzle migration files
 │   ├── plugins/          # Payload plugin config
 │   ├── providers/        # React context providers
@@ -88,8 +89,11 @@ nenufar/
 | `PAYLOAD_SECRET` | ✅ | JWT signing secret — min 32 chars random string |
 | `DATABASE_URL` | ✅ | PostgreSQL connection string |
 | `NEXT_PUBLIC_SERVER_URL` | ✅ | Public base URL (used for og images, redirects) |
-| `TELEGRAM_BOT_TOKEN` | ✅ | Bot token from @BotFather |
-| `TELEGRAM_CHANNEL_ID` | ✅ | Target chat ID for order notifications |
+| `TELEGRAM_BOT_TOKEN` | ✅ | Bot token from @BotFather — used for both order notifications and the buyer assistant |
+| `TELEGRAM_CHANNEL_ID` | ✅ | Target chat ID for order notifications (Shirley's channel) |
+| `GROQ_API_KEY` | ✅ (v3.2) | Groq API key — free at console.groq.com. Powers the orchestrator + agents. |
+| `TELEGRAM_WEBHOOK_SECRET` | ✅ (v3.2) | Random string validating the webhook header `X-Telegram-Bot-Api-Secret-Token`. Generate: `openssl rand -hex 24` |
+| `GROQ_MODEL` | ⬜ | Overrides the default Groq model (`llama-3.3-70b-versatile`). Groq model IDs rotate; check console.groq.com for current names. |
 | `PREVIEW_SECRET` | ⬜ | Enables draft preview mode |
 | `CRON_SECRET` | ⬜ | Secures cron job endpoints |
 
@@ -186,8 +190,13 @@ HTML sent to Telegram via `order-formatter.ts`:
 ### Telegram client: `src/lib/telegram.ts`
 
 ```typescript
-sendTelegramMessage(text: string): Promise<void>
-// Throws on HTTP error. Caller (submitOrderAction) catches and logs.
+// Send to Shirley's channel (order notifications)
+sendTelegramMessage(args: SendTelegramMessageArgs): Promise<SendTelegramMessageResult>
+
+// Reply to a buyer's chat (bot assistant — v3.2)
+sendTelegramReply(args: SendTelegramReplyArgs): Promise<SendTelegramMessageResult>
+
+// Both return { ok, messageId?, error? } — never throw
 ```
 
 ---
@@ -219,6 +228,7 @@ Config: `vitest.config.mts`, env: `.env.test`
 | Test | What it verifies |
 |------|-----------------|
 | `api.int.spec.ts` | Payload REST endpoints return correct status and shape |
+| `agents.int.spec.ts` | Orchestrator routes correctly; agents call the right skills; Groq and Telegram are mocked at the boundary |
 
 Run: `pnpm test:int`
 
@@ -279,7 +289,7 @@ pnpm build
 # 4. Start
 pnpm start             # or PM2 / systemd
 
-# 5. Reverse proxy: Nginx → localhost:3000
+# 5. Reverse proxy: Nginx → localhost:3002
 # 6. SSL: Let's Encrypt (certbot)
 ```
 

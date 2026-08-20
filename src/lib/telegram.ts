@@ -170,15 +170,15 @@ export interface SendTelegramReplyArgs {
   chatId: number | string
   text: string
   parseMode?: 'HTML' | 'MarkdownV2'
-  /** Token del bot a usar. Por defecto el bot asistente (conversacional). */
+  /** Token del bot a usar. Por defecto usa el mismo TELEGRAM_BOT_TOKEN del sistema. */
   botToken?: string
 }
 
 /**
- * Responde a un chat concreto (la clienta) — usado por el bot ASISTENTE.
+ * Responde a un chat concreto (la clienta) — mismo bot, chat_id diferente al canal.
  *
- * A diferencia de sendTelegramMessage (que apunta al canal de pedidos), esto
- * envía a un chat_id arbitrario con el bot conversacional. Nunca lanza.
+ * sendTelegramMessage envía al TELEGRAM_CHANNEL_ID de Shirley.
+ * sendTelegramReply envía al chat_id de quien escribió al bot. Nunca lanza.
  */
 export async function sendTelegramReply({
   chatId,
@@ -186,8 +186,7 @@ export async function sendTelegramReply({
   parseMode = 'HTML',
   botToken,
 }: SendTelegramReplyArgs): Promise<SendTelegramMessageResult> {
-  const token =
-    botToken ?? process.env.TELEGRAM_ASSISTANT_BOT_TOKEN ?? process.env.TELEGRAM_BOT_TOKEN
+  const token = botToken ?? process.env.TELEGRAM_BOT_TOKEN
 
   if (!token) {
     return { ok: false, error: 'No hay token de bot asistente configurado' }
