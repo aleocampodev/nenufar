@@ -25,6 +25,7 @@ un producto útil para la tienda **y** un vehículo de aprendizaje (Claude API, 
 | [08](./08-glosario.md) | **Glosario** | Lenguaje ubicuo (dominio + técnico) |
 | [09](./09-estructura-proyecto.md) | **Estructura del Proyecto** | Monorepo, acceso a Payload desde el bot, runtime del edge, migración |
 | [10](./10-operacion-y-costos.md) | **Operación, Costos y Release** | Presupuesto de tokens, observabilidad, Definición de Done, rollback |
+| [11](./11-patrones-multiagent-anthropic.md) | **Patrones Multi-Agente** | Patrones del artículo de Anthropic aplicados al bot (norma de referencia de diseño) |
 
 ### Frontend / Storefront (track aparte)
 
