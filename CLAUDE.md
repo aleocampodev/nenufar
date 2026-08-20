@@ -23,16 +23,33 @@ Based on the `@payloadcms/plugin-ecommerce` template. The purchase flow has **no
 - `src/lib/telegram.ts` — Telegram client (real, not a stub)
 - `src/lib/order-formatter.ts` — formats the HTML message for Telegram. Includes a prominent PERSONALIZATION block when custom mode is used.
 
+## Shirley's management bot (v3.2 — Shirley only)
+
+The same `TELEGRAM_BOT_TOKEN` also receives messages via webhook, but **only from Shirley** (authenticated by `TELEGRAM_ADMIN_CHAT_ID`). It's her tool to manage the store from Telegram — view orders, confirm, update stock — without opening the admin. **Buyers never write to the bot**; their journey is 100% web (catalog + cart + form → notification). There is no buyer chat and no web chat widget (no Chat SDK / Vercel AI SDK — intentional).
+
+```
+Shirley → POST /telegram/webhook → chat_id==ADMIN? → routeAndRun() (Groq) → skill over Payload → reply to Shirley
+```
+
+- `src/lib/groq.ts` — Groq client (singleton)
+- `src/lib/agents/*` — orchestrator + skills (tool-calling loop, max 4 rounds)
+- `src/app/(app)/telegram/webhook/route.ts` — webhook (validates secret, checks chat_id, dedups by `update_id`)
+- Route lives at `/telegram/webhook`, NOT `/api/...` (Payload's catch-all owns `/api`).
+- Full detail: `docs/SDD.md §2.3`, `.claude/HANDOFF-agents.md`.
+
 ## Required configuration
 
 Minimum environment variables (see `.env.example`):
 
 ```
-PAYLOAD_SECRET=         # Payload secret
-DATABASE_URL=           # PostgreSQL (docker-compose runs postgres on :5433)
-NEXT_PUBLIC_SERVER_URL= # Public URL (e.g. http://localhost:3002)
-TELEGRAM_BOT_TOKEN=     # Telegram bot token (from BotFather)
-TELEGRAM_CHANNEL_ID=    # Telegram channel ID (@name or -100xxxxxxxx)
+PAYLOAD_SECRET=          # Payload secret
+DATABASE_URL=            # PostgreSQL (docker-compose runs postgres on :5433)
+NEXT_PUBLIC_SERVER_URL=  # Public URL (e.g. http://localhost:3002)
+TELEGRAM_BOT_TOKEN=      # Telegram bot token (from BotFather) — orders + Shirley's bot
+TELEGRAM_CHANNEL_ID=     # Telegram channel ID (@name or -100xxxxxxxx)
+GROQ_API_KEY=            # Groq API key (free — console.groq.com) — v3.2 bot
+TELEGRAM_WEBHOOK_SECRET= # Random string authenticating the webhook — v3.2 bot
+TELEGRAM_ADMIN_CHAT_ID=  # Shirley's chat_id (@userinfobot) — only sender the bot processes
 ```
 
 ## Key commands
@@ -63,6 +80,7 @@ To seed test data: go to `/admin` → "Seed database" on the dashboard.
 /eventos             → upcoming events
 /find-order          → look up order by ID + email (guests)
 /(account)/          → user account, orders, addresses
+/telegram/webhook    → Shirley's management bot webhook (POST — Shirley's chat_id only)
 ```
 
 ## Brand color
