@@ -2,6 +2,7 @@
 
 ## Working Rules
 
+- **ZERO-COST RULE (hard constraint): free themes and free resources only.** No paid APIs (no Anthropic, no OpenAI, no metered services). Allowed stack: Telegram Bot API (free), self-hosting (local Docker, Oracle Cloud Always Free for a VPS if needed). If a feature seems to require a paid resource, propose a free alternative to the user BEFORE implementing.
 - **Never make changes directly on `main`.** Always create a feature branch (`feature/...`) and work from a separate worktree.
 - Development worktree: `/home/ale/Work/nenufar-dev`
 - For each feature: `git worktree add ../nenufar-dev feature/<name>` before editing.

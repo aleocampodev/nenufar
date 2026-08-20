@@ -27,6 +27,7 @@ pnpm payload migrate    # migraciones en producción
 ```
 
 ## Reglas para agentes
+- **REGLA DE COSTO CERO: solo temas y recursos free/gratuitos.** Nada de APIs pagas (no Anthropic, no OpenAI, no servicios con tarifa). Stack permitido: Telegram Bot API (gratis), self-hosting (Docker local, Oracle Cloud Always Free si se requiere VPS). Si una feature parece requerir un recurso pago, proponer alternativa gratuita al usuario ANTES de implementar.
 - El dev server es el puerto **3002**, no 3000.
 - **Errores TS pre-existentes** (no son regresiones): `slug` en tipos generados, `paymentMethod` en seed. No tocar sin entender el sistema de tipos del plugin.
 - Sin Stripe: `payments.paymentMethods: []` es intencional.
