@@ -58,6 +58,8 @@ export const plugins: Plugin[] = [
       },
       admin: {
         group: 'Contenido',
+        // Fuera del storefront actual (landing + ecommerce) — oculto, no eliminado
+        hidden: true,
       },
     },
     formOverrides: {
@@ -69,6 +71,8 @@ export const plugins: Plugin[] = [
       },
       admin: {
         group: 'Contenido',
+        // Fuera del storefront actual (landing + ecommerce) — oculto, no eliminado
+        hidden: true,
       },
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
@@ -194,15 +198,17 @@ export const plugins: Plugin[] = [
       paymentMethods: [],
     },
     transactions: {
+      // Sin pasarela de pago: la colección siempre queda vacía.
+      // Se oculta del admin (no se elimina — el plugin la requiere internamente).
       transactionsCollectionOverride: ({ defaultCollection }) => ({
         ...defaultCollection,
         admin: {
           ...defaultCollection.admin,
           group: 'Comercio',
+          hidden: true,
         },
       }),
-    },
-    products: {
+    },    products: {
       productsCollectionOverride: ({ defaultCollection }) => {
         const overridden = ProductsCollection({ defaultCollection })
         return {

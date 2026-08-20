@@ -18,6 +18,8 @@ import {
 export const Posts: CollectionConfig = {
   slug: 'posts',
   admin: {
+    // Fuera del storefront actual (landing + ecommerce) — oculto, no eliminado
+    hidden: true,
     defaultColumns: ['title', 'author', 'publishedAt', '_status'],
     livePreview: {
       url: ({ data, req }) => {
