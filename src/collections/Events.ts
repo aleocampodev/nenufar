@@ -7,8 +7,6 @@ export const Events: CollectionConfig = {
   slug: 'events',
   admin: {
     group: 'Contenido',
-    // Fuera del storefront actual (landing + ecommerce) — oculto, no eliminado
-    hidden: true,
     useAsTitle: 'title',
     defaultColumns: ['title', 'date', 'location', '_status'],
   },
