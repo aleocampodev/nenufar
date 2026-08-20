@@ -1,198 +1,320 @@
-# 🌸 Nénufar — Handcrafted Jewelry from Colombia
+# Nénufar — Joyería Artesanal de Colombia
 
 <div align="center">
 
-*Every piece tells a story. Handmade in Cartagena.*
+*Cada pieza cuenta una historia. Hecha a mano en Cartagena.*
 
-[![Status](https://img.shields.io/badge/status-in%20development-yellow?style=flat-square)](https://github.com/aleocampodev/nenufar)
+[![Status](https://img.shields.io/badge/estado-en%20desarrollo-yellow?style=flat-square)](https://github.com/aleocampodev/nenufar)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org)
 [![Payload CMS](https://img.shields.io/badge/Payload-v3-7C3AED?style=flat-square)](https://payloadcms.com)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql&logoColor=white)](https://postgresql.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)](https://typescriptlang.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql)](https://postgresql.org)
+[![Groq](https://img.shields.io/badge/Groq-Llama%203.3-F55036?style=flat-square)](https://console.groq.com)
 
 </div>
 
 ---
 
-## What is Nénufar?
+## Qué es Nénufar
 
-Nénufar is the online store for Shirley, an artisan jeweler based in Cartagena, Colombia. The platform lets her showcase her catalog of handmade pieces — rings, earrings, necklaces — and receive orders directly on Telegram, without payment gateways, without commissions, without middlemen.
+Nénufar es la tienda online de Shirley, joyera artesanal de Cartagena. La plataforma le permite mostrar su catálogo de piezas únicas y recibir pedidos estructurados en Telegram — sin pasarela de pago, sin comisiones, sin intermediarios.
 
-**The flow is intentionally simple:** buyers browse the catalog, pick their pieces, add personalization notes (engraving, size, special instructions), and fill in their contact details. Shirley receives a structured order summary on Telegram and closes the sale over WhatsApp — exactly the way she's always worked. The platform doesn't replace her workflow; it amplifies it.
+El flujo es intencionalmente simple: la compradora explora el catálogo, elige su pieza, agrega notas de personalización (talla, grabado, instrucciones especiales), y llena sus datos de contacto. Shirley recibe el pedido en Telegram y cierra la venta por WhatsApp, tal como siempre lo ha hecho. La plataforma no reemplaza su forma de trabajar: la amplifica.
 
-## How an Order Works
+A partir de la v3.2 se suma un **bot asistente de Telegram con agentes IA**: la compradora puede escribirle al bot para consultar el catálogo o pedir que Shirley la contacte — todo con Groq (free tier), sin costo de infraestructura.
+
+---
+
+## Arquitectura
 
 ```
-Catalog → Product → Cart → Order Form → Shirley's Telegram → WhatsApp
+┌─────────────────────────────────────────────────────────────────────────┐
+│  CANALES          APLICACIÓN             AGENTES IA         EXTERNOS    │
+│                                                                         │
+│  ┌───────────┐    ┌──────────────┐   ┌──────────────────┐              │
+│  │  Web /    │───▶│ Next.js +    │──▶│   Orquestador    │──▶ Groq      │
+│  │  Tienda   │    │ Payload CMS  │   │ (clasifica req.) │              │
+│  └───────────┘    │              │   └──────┬─────┬─────┘              │
+│                   │  /pedidos    │          │     │                    │
+│                   │  /shop       │   ┌──────▼─┐ ┌─▼──────────┐        │
+│  ┌───────────┐    │  /admin      │   │ Catálogo│ │Conversación│        │
+│  │ Telegram  │    └──────────────┘   │ Agent  │ │  Agent     │        │
+│  │ comprad.  │          │            │buscarPr.│ │derivarShir.│        │
+│  └─────┬─────┘          │            └────┬───┘ └────┬───────┘        │
+│        │                │                 │           │               │
+│        │    ┌───────────▼──────┐    ┌─────▼──────┐   │               │
+│        └───▶│ /telegram/webhook│    │ PostgreSQL │   ▼               │
+│             │ POST · secret     │    │ products   │  Canal pedidos    │
+│             │ dedup · routeAnd  │    │ orders     │  (Shirley lee)    │
+│             └──────────────────┘    └────────────┘                   │
+│                      │                                                 │
+│                      └─────────────────────────────▶ Bot Asistente    │
+│                                    REPLY (dashed)    (responde a comp.)│
+└─────────────────────────────────────────────────────────────────────────┘
+
+  FUTURO (Fase 3.3): Supabase pgvector + embeddings locales (Transformers.js)
+  buscarProductos → búsqueda semántica sobre el catálogo
 ```
 
-| Step | Who | What happens |
-|------|-----|--------------|
-| 1 | Buyer | Browses catalog, selects variants (material, size) |
-| 2 | Buyer | Adds personalization notes to the cart |
-| 3 | Buyer | Fills in name + WhatsApp/email, accepts data policy (Law 1581) |
-| 4 | System | Saves the order in Payload + sends a formatted message to Telegram |
-| 5 | Shirley | Receives the order, confirms price, and coordinates shipping via WhatsApp |
+**Diagrama interactivo:** [`docs/arquitectura.html`](docs/arquitectura.html) — ver en browser para los colores.
 
-No gateway. No complex checkout. No friction.
+### Flujo de pedido (core del negocio)
+
+| Paso | Actor | Qué pasa |
+|------|-------|----------|
+| 1 | Compradora | Explora el catálogo, elige variantes (material, talla) |
+| 2 | Compradora | Agrega notas de personalización al carrito |
+| 3 | Compradora | Llena nombre + WhatsApp/email, acepta política Ley 1581 |
+| 4 | Sistema | Guarda el pedido en Payload + envía mensaje estructurado a Telegram |
+| 5 | Shirley | Lee el pedido, confirma precio y coordina envío por WhatsApp |
+
+### Flujo del bot asistente (v3.2)
+
+| Paso | Actor | Qué pasa |
+|------|-------|----------|
+| 1 | Compradora | Escribe al bot: "¿tienen aretes de plata?" |
+| 2 | Webhook | Recibe POST, valida secreto, deduplica por `update_id` |
+| 3 | Orquestador | Llama a Groq con temperatura=0, clasifica → `catalogo` |
+| 4 | Agente Catálogo | Ejecuta skill `buscarProductos` → `payload.find(products)` |
+| 5 | Bot Asistente | Responde a la compradora con piezas reales y precios COP |
+
+**Guardarraíl:** si la compradora quiere comprar o personalizar, el Agente Conversación ejecuta `derivarAShirley` — notifica al canal de Shirley y le dice a la compradora que Shirley la va a contactar. El bot **nunca cobra, nunca cierra la venta**.
+
+---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Framework | [Next.js 15](https://nextjs.org) App Router + TypeScript |
-| CMS & API | [Payload CMS v3](https://payloadcms.com) |
-| Database | PostgreSQL 16 |
-| UI | TailwindCSS v4 + [shadcn/ui](https://ui.shadcn.com) |
-| Typography | Playfair Display · Inter · Geist Mono |
-| Images | Sharp — automatic WebP at quality 92, original preserved |
-| Notifications | Telegram Bot API (one-way order delivery to Shirley) |
-| E-commerce | `@payloadcms/plugin-ecommerce` (adapted — no Stripe) |
+| Capa | Tecnología | Detalles |
+|------|------------|----------|
+| Framework | Next.js 15 | App Router, RSC, Server Actions |
+| CMS | Payload CMS v3 | Self-hosted, admin UI, Local API |
+| Base de datos | PostgreSQL 16 | Drizzle ORM (vía Payload) |
+| UI | TailwindCSS v4 + shadcn/ui | Tokens OKLCH, color de marca `--brand` |
+| Tipografía | Playfair Display · Inter · Geist Mono | |
+| Imágenes | Sharp | WebP automático en 4 tamaños al subir |
+| Agentes IA | Groq SDK (`groq-sdk`) | Llama 3.3 70B, free tier, tool-calling |
+| Bot Telegram | Telegram Bot API | Dos bots: pedidos (one-way) + asistente (two-way) |
+| Tests | Vitest + Playwright | Int + E2E |
 
-## Local Setup
+---
 
-### Requirements
+## Inicio rápido
+
+### Requisitos previos
 
 - Node.js 20+
 - pnpm 9+
-- Docker (for PostgreSQL)
+- Docker (para PostgreSQL local)
+- Cuenta en [console.groq.com](https://console.groq.com) (gratis) para el bot asistente
 
-### Steps
+### Paso a paso
 
 ```bash
-# 1. Clone the repo
+# 1. Clonar
 git clone https://github.com/aleocampodev/nenufar.git
 cd nenufar
 
-# 2. Set up environment variables
+# 2. Variables de entorno
 cp .env.example .env
-# Fill in your values (see table below)
+# Editar .env con tus valores (ver sección abajo)
 
-# 3. Start the database
-docker-compose up -d
+# 3. Base de datos
+docker-compose up -d       # PostgreSQL en puerto 5433
 
-# 4. Install dependencies
+# 4. Dependencias
 pnpm install
 
-# 5. Start the dev server
-pnpm dev
+# 5. Dev server
+pnpm dev                   # → http://localhost:3002
 ```
 
-**Frontend** → http://localhost:3002  
-**Admin** → http://localhost:3002/admin
+Abrir **http://localhost:3002/admin** → Dashboard → **"Seed database"** para cargar productos y páginas de muestra.
 
-> In the admin, go to Dashboard → **"Seed database"** to load sample products and pages.
-
-### Environment Variables
+### Variables de entorno
 
 ```env
-# Payload
-PAYLOAD_SECRET=long-random-string-min-32-chars
+# ── Core ────────────────────────────────────────────────
+PAYLOAD_SECRET=un-string-largo-y-aleatorio-min-32-chars
 DATABASE_URL=postgres://postgres:postgres@localhost:5433/nenufar
-
-# Public URL
 NEXT_PUBLIC_SERVER_URL=http://localhost:3002
 
-# Telegram (orders are delivered here)
-TELEGRAM_BOT_TOKEN=       # Create with @BotFather on Telegram
-TELEGRAM_CHANNEL_ID=      # Shirley's chat ID
+# ── Bot de pedidos (notificaciones a Shirley) ────────────
+# Crear con @BotFather en Telegram
+TELEGRAM_BOT_TOKEN=123456:ABC-tu-token
+TELEGRAM_CHANNEL_ID=@tucanal   # o -100xxxxxxxx si es privado
 
-# Draft preview
-PREVIEW_SECRET=another-random-string
+# ── Bot asistente (agentes IA, v3.2) ─────────────────────
+# Otro bot diferente, también de @BotFather
+TELEGRAM_ASSISTANT_BOT_TOKEN=123456:ABC-otro-token
+# String aleatorio: openssl rand -hex 24
+TELEGRAM_WEBHOOK_SECRET=tu-secreto-largo
+# Gratis en console.groq.com
+GROQ_API_KEY=gsk_tu_api_key
+# GROQ_MODEL=llama-3.3-70b-versatile   # opcional
+
+# ── Otros ───────────────────────────────────────────────
+PREVIEW_SECRET=otro-string-aleatorio
 ```
 
-## Commands
+### Activar el bot asistente
+
+Una vez que tengas las variables configuradas y el servidor corriendo:
 
 ```bash
-pnpm dev                  # Dev server → localhost:3002
-pnpm build                # Production build
-pnpm start                # Production server
-pnpm payload migrate      # Run DB migrations (production)
-pnpm generate:types       # Regenerate Payload types
+# 1. Exponer el servidor localmente con un túnel HTTPS gratuito
+cloudflared tunnel --url http://localhost:3002
+# → te da una URL como https://xxxxx.trycloudflare.com
+
+# 2. Registrar el webhook con esa URL
+pnpm tsx scripts/set-telegram-webhook.ts https://xxxxx.trycloudflare.com
+
+# 3. Verificar que quedó registrado
+pnpm tsx scripts/set-telegram-webhook.ts info
 ```
 
-## Site Routes
+Ahora escríbele al bot asistente en Telegram y el sistema responderá.
 
-| Route | Description |
-|-------|-------------|
-| `/` | Home with hero and CMS page builder blocks |
-| `/shop` | Product catalog with search and filters |
-| `/products/[slug]` | Product detail with variants |
-| `/blog` | Shirley's blog |
-| `/blog/[slug]` | Article with Lexical rich text and photos |
-| `/eventos` | Upcoming fairs and events |
-| `/pedidos/enviar` | Order confirmation form |
-| `/pedidos/enviar/confirmacion` | Post-order success screen |
-| `/sobre-nenufar` | Brand story |
-| `/contacto` | Contact information |
-| `/privacidad` | Privacy policy (Colombian Law 1581/2012) |
-| `/terminos` | Terms and conditions |
-| `/(account)/` | User account, orders, addresses |
-| `/admin` | Payload CMS admin panel |
+---
 
-## Image Pipeline
+## Comandos
 
-When a photo is uploaded to the admin, Payload automatically generates WebP variants (quality 92) **without modifying the original**:
+```bash
+pnpm dev                   # Dev server → localhost:3002
+pnpm build                 # Build de producción
+pnpm start                 # Servidor de producción
+pnpm test:int              # Tests de integración (Vitest)
+pnpm test:e2e              # Tests E2E (Playwright)
+pnpm payload migrate       # Migraciones de DB (producción)
+pnpm generate:types        # Regenerar tipos de Payload
 
-| Variant | Dimensions | Usage |
-|---------|------------|-------|
-| `thumbnail` | 400 × 500 | Cart, thumbnails |
-| `card` | 800 × 1000 | Product grid |
-| `hero` | 1920 × 1080 | Page backgrounds |
-| `og` | 1200 × 630 | Social media / SEO |
+# Webhook del bot asistente
+pnpm tsx scripts/set-telegram-webhook.ts <url>   # registrar
+pnpm tsx scripts/set-telegram-webhook.ts info    # consultar
+pnpm tsx scripts/set-telegram-webhook.ts delete  # eliminar
+```
 
-## Project Structure
+---
+
+## Rutas del sitio
+
+| Ruta | Descripción |
+|------|-------------|
+| `/` | Home con hero y bloques del page-builder |
+| `/shop` | Catálogo con búsqueda y filtros |
+| `/products/[slug]` | Detalle de producto con variantes |
+| `/blog` | Blog de Shirley |
+| `/blog/[slug]` | Artículo con rich text y fotos |
+| `/eventos` | Próximas ferias y eventos |
+| `/pedidos/enviar` | Formulario de pedido (standard o personalizado) |
+| `/pedidos/enviar/confirmacion` | Pantalla de éxito post-pedido |
+| `/sobre-nenufar` | Historia de la marca |
+| `/contacto` | Información de contacto |
+| `/privacidad` | Política de privacidad (Ley 1581 de 2012) |
+| `/terminos` | Términos y condiciones |
+| `/(account)/` | Cuenta de compradora, pedidos, direcciones |
+| `/admin` | Panel de Payload CMS (Shirley) |
+| `/telegram/webhook` | Webhook del bot asistente (POST) |
+
+---
+
+## Estructura del proyecto
 
 ```
 src/
 ├── app/
-│   ├── (app)/              # Public frontend (Next.js App Router)
-│   │   ├── shop/           # Product catalog
-│   │   ├── products/       # Product detail
-│   │   ├── blog/           # Blog
-│   │   ├── eventos/        # Events and fairs
-│   │   ├── pedidos/        # Order flow → Telegram
-│   │   └── (account)/      # User account
-│   └── (payload)/          # Payload admin
+│   ├── (app)/
+│   │   ├── shop/                   # Catálogo de productos
+│   │   ├── products/[slug]/        # Detalle de producto
+│   │   ├── blog/                   # Blog
+│   │   ├── eventos/                # Eventos y ferias
+│   │   ├── pedidos/enviar/         # Formulario de pedido → Telegram
+│   │   ├── telegram/webhook/       # Webhook del bot asistente ← NUEVO
+│   │   └── (account)/             # Cuenta de compradora
+│   └── (payload)/                  # Admin de Payload
 ├── collections/
-│   ├── Events.ts           # Events and fairs
-│   ├── Media.ts            # Media with automatic WebP
-│   ├── Posts.ts            # Blog posts
-│   └── Products/           # Jewelry catalog
-├── blocks/
-│   └── UpcomingEvents/     # Upcoming events block (home page)
-└── lib/
-    ├── telegram.ts         # Telegram order delivery
-    ├── order-formatter.ts  # HTML message formatter
-    └── idempotency.ts      # Order deduplication
+│   ├── Products/                   # Catálogo de joyería
+│   ├── Media.ts                    # Imágenes con WebP automático
+│   ├── Posts.ts                    # Blog posts
+│   └── Events.ts                   # Eventos y ferias
+├── lib/
+│   ├── telegram.ts                 # Cliente Telegram (pedidos + reply)
+│   ├── order-formatter.ts          # Formatea el mensaje HTML de pedido
+│   ├── idempotency.ts              # Deduplicación de pedidos
+│   ├── groq.ts                     # Cliente Groq (singleton) ← NUEVO
+│   └── agents/                     # Sistema multiagente ← NUEVO
+│       ├── types.ts                # AgentContext, Skill, Agent
+│       ├── runtime.ts              # Loop de tool-calling (max 4 rondas)
+│       ├── orchestrator.ts         # routeAndRun() — clasifica y delega
+│       ├── catalogo.ts             # Agente Catálogo
+│       ├── conversacion.ts         # Agente Conversación
+│       └── skills/
+│           ├── buscarProductos.ts  # payload.find → devuelve piezas reales
+│           └── derivarAShirley.ts  # Handoff al canal de pedidos de Shirley
+├── blocks/                         # Bloques del page-builder
+└── scripts/
+    └── set-telegram-webhook.ts     # CLI para gestionar el webhook ← NUEVO
+tests/
+├── e2e/                            # Playwright (frontend + admin)
+└── int/
+    ├── api.int.spec.ts             # Endpoints REST de Payload
+    └── agents.int.spec.ts          # Tests del sistema multiagente ← NUEVO
+docs/
+├── arquitectura.html               # Diagrama de arquitectura interactivo
+├── BRD.md                          # Requerimientos de negocio
+├── PRD.md                          # Requerimientos de producto
+├── SDD.md                          # Diseño de software
+└── TSD.md                          # Especificación técnica
 ```
 
-## Documentation
+---
 
-| Document | Description |
-|----------|-------------|
-| [`docs/BRD.md`](docs/BRD.md) | Business requirements — goals, KPIs, scope |
-| [`docs/PRD.md`](docs/PRD.md) | Product requirements — user stories, acceptance criteria |
-| [`docs/SDD.md`](docs/SDD.md) | Software design — architecture, modules, data flow |
-| [`docs/TSD.md`](docs/TSD.md) | Technical spec — stack, data models, API, deployment |
-| [`CLAUDE.md`](CLAUDE.md) | Technical context for AI-assisted development |
+## Pipeline de imágenes
 
-## Design Decisions
+Al subir una foto al admin, Payload genera automáticamente variantes WebP (calidad 92) **sin modificar el original**:
 
-**No payment gateway** — intentional. Payments are handled manually by WhatsApp, as Shirley has always done. Adding Stripe would introduce friction and fees that don't make sense for her current volume.
+| Variante | Dimensiones | Uso |
+|----------|-------------|-----|
+| `thumbnail` | 400 × 500 | Carrito, miniaturas |
+| `card` | 800 × 1000 | Grid de productos |
+| `hero` | 1920 × 1080 | Fondos de página |
+| `og` | 1200 × 630 | Redes sociales / SEO |
 
-**Telegram as notification only** — not an interactive bot. The system sends a structured order summary; Shirley replies on WhatsApp where her customers already are.
+---
 
-**COP without decimals** — `Intl.NumberFormat('es-CO', { currency: 'COP' })`. Colombian pesos don't use cents.
+## Decisiones de diseño
 
-**WebP on upload** — Sharp converts images on the server when uploaded. The original is never touched; the right variant is served depending on context.
+**Sin pasarela de pago** — intencional. Los pagos se coordinan manualmente por WhatsApp (Nequi, transferencia, efectivo). Agregar Stripe introduciría fricción y comisiones que no tienen sentido para el volumen actual.
 
-**Single-instance idempotency** — order deduplication uses an in-memory Map. For multi-instance deployments (e.g., Vercel), replace with Vercel KV.
+**Dos bots de Telegram separados** — el bot de pedidos (`TELEGRAM_BOT_TOKEN`) es de solo lectura para Shirley. El bot asistente (`TELEGRAM_ASSISTANT_BOT_TOKEN`) recibe mensajes de compradoras vía webhook. Mantenerlos separados asegura que el flujo de pedidos nunca se interrumpa.
+
+**Agentes que asisten, no que venden** — los agentes IA están diseñados para responder preguntas y hacer handoff a Shirley. Nunca confirman precios, cierran ventas ni procesan pagos. La autonomía la tiene Shirley.
+
+**COP sin decimales** — `Intl.NumberFormat('es-CO', { currency: 'COP' })`. Los pesos colombianos no usan centavos.
+
+**WebP al subir** — Sharp convierte las imágenes en el servidor. El original siempre se preserva.
+
+**Idempotencia en memoria** — la deduplicación de pedidos usa un Map en memoria. Para deploys multi-instancia (Vercel), reemplazar con Vercel KV o un campo en PostgreSQL.
+
+**Webhook fuera de `/api`** — el webhook del bot vive en `/telegram/webhook` (no `/api/telegram/webhook`) para no chocar con el catch-all de Payload en `src/app/(payload)/api/[...slug]/route.ts`.
+
+---
+
+## Documentación
+
+| Documento | Descripción |
+|-----------|-------------|
+| [`docs/BRD.md`](docs/BRD.md) | Requerimientos de negocio — objetivos, KPIs, alcance |
+| [`docs/PRD.md`](docs/PRD.md) | Requerimientos de producto — user stories, criterios de aceptación |
+| [`docs/SDD.md`](docs/SDD.md) | Diseño de software — arquitectura, módulos, flujos |
+| [`docs/TSD.md`](docs/TSD.md) | Especificación técnica — stack, modelos de datos, API, deploy |
+| [`docs/arquitectura.html`](docs/arquitectura.html) | Diagrama de arquitectura interactivo |
+| [`CLAUDE.md`](CLAUDE.md) | Contexto técnico para agentes de IA |
+| [`.claude/HANDOFF-agents.md`](.claude/HANDOFF-agents.md) | Handoff de estado para agentes — qué está hecho y qué sigue |
 
 ---
 
 <div align="center">
 
-Private — © 2026 Nénufar · Built with care for Shirley 🌸
+Privado — © 2026 Nénufar · Hecho con cariño para Shirley 🌸
 
 </div>
