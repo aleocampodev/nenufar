@@ -1,241 +1,669 @@
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<title>Arquitectura Nénufar</title>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nénufar Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+
 <style>
-  :root{
-    --paper:#f7f6f9; --paper-2:#ffffff; --ink:#1f2430; --muted:#5a6072;
-    --soft:#8a90a2; --rule:rgba(31,36,48,0.12);
-    --teal:#0D9488; --indigo:#4F46E5; --amber:#D97706;
-    --violet:#7C1FA8; --tg:#2AABEE; --groq:#F55036;
+  :root {
+    --paper:      #F6F4FA;
+    --paper-2:    #FFFFFF;
+    --ink:        #241C2E;
+    --muted:      #6C6478;
+    --faint:      #928AA0;
+    --rule:       #E4DEEC;
+    --brand:      #6A1B9A;
+    --brand-dark: #4A148C;
+    --brand-tint: #EEE6F6;
+    --gold:       #8F6F1E;
+    --gold-tint:  #F1EAD7;
+    --shadow:     0 1px 2px rgba(36,28,46,.05);
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);
-    font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased;
-    padding:2.5rem 1.5rem 3rem;}
-  .wrap{max-width:1160px;margin:0 auto;}
-  .eyebrow{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.18em;
-    text-transform:uppercase;color:var(--violet);margin:0 0 0.4rem;}
-  h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:2.1rem;
-    line-height:1.1;margin:0 0 0.4rem;}
-  .sub{color:var(--muted);font-size:0.95rem;margin:0 0 1.6rem;max-width:62ch;}
-  .figure{overflow-x:auto;}
-  svg{display:block;width:100%;height:auto;min-width:920px;}
-  .cards{display:grid;grid-template-columns:1.1fr 1fr 0.95fr;gap:1rem;margin-top:1.8rem;}
-  @media(max-width:760px){.cards{grid-template-columns:1fr}}
-  .card{background:var(--paper-2);border:1px solid rgba(31,36,48,0.12);
-    border-radius:8px;padding:1.15rem 1.25rem;}
-  .card.a{border-top:3px solid var(--indigo)}
-  .card.b{border-top:3px solid var(--violet)}
-  .card.c{border-top:3px solid var(--teal)}
-  .card .eyebrow{margin-bottom:0.6rem;}
-  .card-head{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.55rem;}
-  .dot{width:9px;height:9px;border-radius:50%;flex:none;}
-  .dot.violet{background:var(--violet)} .dot.indigo{background:var(--indigo)}
-  .dot.teal{background:var(--teal)}
-  .card h3{margin:0;font-size:0.98rem;font-weight:600;}
-  .card ul{margin:0;padding-left:1.05rem;color:var(--muted);font-size:0.86rem;line-height:1.5;}
-  .card li{margin:0.15rem 0;}
-  .tag-free{font-family:'Geist Mono',monospace;font-size:10px;color:#fff;background:var(--teal);
-    border-radius:3px;padding:1px 6px;margin-left:0.4rem;}
-  footer{margin-top:2rem;padding-top:0.9rem;border-top:1px solid var(--rule);
-    font-family:'Geist Mono',monospace;font-size:10px;color:var(--soft);
-    letter-spacing:0.08em;}
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #16121C;
+      --paper-2:    #1E1826;
+      --ink:        #ECE6F2;
+      --muted:      #A99FB6;
+      --faint:      #7C7388;
+      --rule:       #322A3C;
+      --brand:      #B98BE0;
+      --brand-dark: #CBA6EA;
+      --brand-tint: #291E35;
+      --gold:       #CBAA57;
+      --gold-tint:  #2A2417;
+      --shadow:     0 1px 2px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:      #16121C;
+    --paper-2:    #1E1826;
+    --ink:        #ECE6F2;
+    --muted:      #A99FB6;
+    --faint:      #7C7388;
+    --rule:       #322A3C;
+    --brand:      #B98BE0;
+    --brand-dark: #CBA6EA;
+    --brand-tint: #291E35;
+    --gold:       #CBAA57;
+    --gold-tint:  #2A2417;
+    --shadow:     0 1px 2px rgba(0,0,0,.3);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: clamp(2rem, 5vw, 4.5rem) clamp(1.1rem, 4vw, 2.5rem) 4rem;
+  }
+
+  /* ---- Header ---- */
+  .masthead { margin-bottom: 2.75rem; }
+  .eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: .72rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin: 0 0 .9rem;
+  }
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(2.3rem, 6vw, 3.6rem);
+    line-height: 1.02;
+    letter-spacing: -.01em;
+    margin: 0 0 .7rem;
+    text-wrap: balance;
+  }
+  h1 em { font-style: italic; color: var(--brand); }
+  .lede {
+    font-size: 1.06rem;
+    color: var(--muted);
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  /* ---- Legend ---- */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem 1.6rem;
+    margin-top: 1.7rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--rule);
+    font-size: .82rem;
+    color: var(--muted);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: .5rem; }
+  .swatch { width: 26px; height: 14px; border-radius: 3px; flex: none; }
+  .sw-built   { background: var(--brand-tint); border: 1.5px solid var(--brand); }
+  .sw-plan    { background: transparent; border: 1.5px dashed var(--faint); }
+  .sw-shirley { background: var(--gold-tint); border: 1.5px solid var(--gold); }
+  .sw-ext     { background: var(--paper-2); border: 1.5px solid var(--rule); }
+
+  /* ---- Diagram scaffold ---- */
+  .diagram { display: flex; flex-direction: column; gap: 0; }
+
+  .band { position: relative; }
+  .band-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: .68rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0 0 .7rem;
+  }
+  .row { display: grid; gap: .9rem; }
+  .row-2 { grid-template-columns: repeat(2, 1fr); }
+  .row-3 { grid-template-columns: repeat(3, 1fr); }
+
+  @media (max-width: 640px) {
+    .row-2, .row-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ---- Cards ---- */
+  .node {
+    background: var(--paper-2);
+    border: 1.5px solid var(--rule);
+    border-radius: 9px;
+    padding: 1rem 1.1rem;
+    box-shadow: var(--shadow);
+  }
+  .node h3 {
+    margin: 0 0 .3rem;
+    font-size: .98rem;
+    font-weight: 600;
+    letter-spacing: -.005em;
+  }
+  .node p { margin: 0; font-size: .85rem; color: var(--muted); }
+  .node code, .mono {
+    font-family: 'Geist Mono', monospace;
+    font-size: .78rem;
+  }
+  .node .paths {
+    margin: .55rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+  }
+  .paths code {
+    background: var(--brand-tint);
+    color: var(--brand-dark);
+    padding: .12rem .42rem;
+    border-radius: 4px;
+    font-size: .74rem;
+  }
+  .tag {
+    display: inline-block;
+    font-family: 'Geist Mono', monospace;
+    font-size: .62rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: .16rem .45rem;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-left: .5rem;
+  }
+  .tag-shirley { background: var(--gold-tint); color: var(--gold); border: 1px solid var(--gold); }
+  .tag-buyer   { background: var(--brand-tint); color: var(--brand-dark); border: 1px solid var(--brand); }
+
+  .node.shirley { border-color: var(--gold); }
+  .node.shirley::before {
+    content: "";
+    display: block;
+    width: 30px; height: 3px;
+    background: var(--gold);
+    border-radius: 3px;
+    margin-bottom: .7rem;
+  }
+  .node.core {
+    border-color: var(--brand);
+    background: var(--brand-tint);
+  }
+
+  /* ---- Connector between bands ---- */
+  .flowdown {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+    padding: .5rem 0;
+    color: var(--faint);
+  }
+  .flowdown .lbl {
+    font-family: 'Geist Mono', monospace;
+    font-size: .7rem;
+    color: var(--muted);
+    background: var(--paper);
+    padding: 0 .5rem;
+  }
+  .flowdown .arw { font-size: 1rem; line-height: 1; color: var(--brand); }
+
+  /* ---- Core layout with external rail ---- */
+  .core-grid {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: .9rem;
+    align-items: start;
+  }
+  @media (max-width: 820px) { .core-grid { grid-template-columns: 1fr; } }
+
+  .core-inner { display: grid; gap: .9rem; }
+  .rail { display: grid; gap: .9rem; }
+  .ext {
+    background: var(--paper-2);
+    border: 1.5px solid var(--rule);
+    border-radius: 9px;
+    padding: .9rem 1rem;
+  }
+  .ext h4 {
+    margin: 0 0 .2rem;
+    font-size: .8rem;
+    font-family: 'Geist Mono', monospace;
+    letter-spacing: .04em;
+    color: var(--ink);
+  }
+  .ext p { margin: 0; font-size: .78rem; color: var(--muted); }
+  .ext .badge {
+    font-size: .64rem;
+    font-family: 'Geist Mono', monospace;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  /* ---- Planned band ---- */
+  .planned .node {
+    background: repeating-linear-gradient(
+      -45deg, transparent, transparent 9px,
+      color-mix(in srgb, var(--faint) 6%, transparent) 9px,
+      color-mix(in srgb, var(--faint) 6%, transparent) 10px);
+    border: 1.5px dashed var(--faint);
+    box-shadow: none;
+  }
+  .planned-head {
+    display: flex; align-items: baseline; gap: .7rem;
+    margin: 0 0 .7rem;
+  }
+  .planned-head .tag-plan {
+    font-family: 'Geist Mono', monospace;
+    font-size: .62rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--faint); border: 1px dashed var(--faint);
+    padding: .16rem .5rem; border-radius: 4px;
+  }
+
+  /* ---- Skills sub-block ---- */
+  .skills-block {
+    margin-top: .9rem;
+    border: 1.5px solid var(--brand);
+    background: var(--brand-tint);
+    border-radius: 9px;
+    padding: 1rem 1.1rem;
+  }
+  .skills-block h3 { margin: 0 0 .2rem; font-size: .98rem; }
+  .skills-block > p { margin: 0 0 .8rem; font-size: .85rem; color: var(--muted); }
+  .skill-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .5rem;
+  }
+  @media (max-width: 640px) { .skill-grid { grid-template-columns: 1fr; } }
+  .skill {
+    display: flex; align-items: baseline; gap: .5rem;
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: .5rem .6rem;
+  }
+  .skill .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; transform: translateY(1px); }
+  .skill.built .dot   { background: var(--brand); }
+  .skill.plan .dot    { background: transparent; border: 1.5px dashed var(--faint); }
+  .skill .nm { font-family: 'Geist Mono', monospace; font-size: .76rem; color: var(--ink); line-height: 1.3; }
+  .skill .nm small { display: block; font-family: 'Inter', sans-serif; font-size: .68rem; color: var(--muted); }
+
+  /* ---- Claude Agent SDK band ---- */
+  .sdk {
+    border: 1.5px solid var(--brand);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--paper-2);
+  }
+  .sdk-layer {
+    display: grid;
+    grid-template-columns: 132px 1fr;
+    gap: 1rem;
+    padding: .95rem 1.1rem;
+    border-top: 1px solid var(--rule);
+  }
+  .sdk-layer:first-child { border-top: none; }
+  @media (max-width: 560px) { .sdk-layer { grid-template-columns: 1fr; gap: .4rem; } }
+  .sdk-tag {
+    font-family: 'Geist Mono', monospace;
+    font-size: .66rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--brand-dark);
+    background: var(--brand-tint);
+    border: 1px solid var(--brand);
+    border-radius: 5px;
+    padding: .28rem .5rem;
+    height: fit-content;
+    text-align: center;
+  }
+  .sdk-body { font-size: .86rem; color: var(--muted); }
+  .sdk-body b { color: var(--ink); font-weight: 600; }
+  .sdk-body .skill-grid { margin-top: .7rem; }
+  .sdk-note {
+    margin: .9rem 0 0;
+    font-size: .8rem;
+    color: var(--muted);
+    padding-left: .9rem;
+    border-left: 2px solid var(--gold);
+  }
+
+  /* ---- Flows ---- */
+  .flows {
+    margin-top: 3.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.1rem;
+  }
+  @media (max-width: 820px) { .flows { grid-template-columns: 1fr; } }
+  .flow {
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 1.2rem 1.25rem;
+  }
+  .flow .n {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--brand);
+    line-height: 1;
+  }
+  .flow h3 { margin: .5rem 0 .8rem; font-size: .96rem; }
+  .flow ol { margin: 0; padding-left: 0; list-style: none; counter-reset: step; }
+  .flow li {
+    position: relative;
+    padding: 0 0 .55rem 1.2rem;
+    font-size: .82rem;
+    color: var(--muted);
+  }
+  .flow li::before {
+    content: "→";
+    position: absolute; left: 0; top: 0;
+    color: var(--brand);
+    font-size: .8rem;
+  }
+  .flow li:last-child { padding-bottom: 0; }
+  .flow li code { font-family: 'Geist Mono', monospace; font-size: .76rem; color: var(--ink); }
+
+  /* ---- Stack strip ---- */
+  .stack {
+    margin-top: 3.2rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--rule);
+  }
+  .stack h2 {
+    font-family: 'Geist Mono', monospace;
+    font-size: .72rem; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--faint); font-weight: 500;
+    margin: 0 0 1rem;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .chip {
+    font-size: .8rem;
+    padding: .35rem .7rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--ink);
+    background: var(--paper-2);
+  }
+  .chip b { color: var(--brand); font-weight: 600; }
+
+  .foot {
+    margin-top: 3rem;
+    font-size: .78rem;
+    color: var(--faint);
+    text-align: center;
+  }
 </style>
+</head>
+<body>
 
 <div class="wrap">
-  <p class="eyebrow">Nénufar · Arquitectura objetivo</p>
-  <h1>Landing + Ecommerce + mini-RAG de productos</h1>
-  <p class="sub">Estado deseado sobre el template actual (Payload CMS v3 + Next.js). Sin blog. El
-    Asistente RAG y el índice vectorial en Supabase son piezas <em>nuevas</em> (violeta). Generación con
-    Groq, embeddings locales — todo corre en local con capas gratuitas.</p>
 
-  <div class="figure">
-  <svg viewBox="0 0 1120 700" role="img" aria-labelledby="nen-arch-title nen-arch-desc"
-       xmlns="http://www.w3.org/2000/svg">
-    <title id="nen-arch-title">Arquitectura objetivo de Nénufar</title>
-    <desc id="nen-arch-desc">Diagrama de arquitectura que muestra los canales web y de mensajería
-      consumiendo la aplicación Next.js con Payload y un asistente RAG; el asistente y un job de
-      ingesta con embeddings locales usan un índice vectorial en Supabase, mientras Payload persiste
-      en PostgreSQL, notifica pedidos a Telegram y el asistente genera respuestas con Groq.</desc>
+  <header class="masthead">
+    <p class="eyebrow">System Map · v3.2</p>
+    <h1>Nénufar <em>Architecture</em></h1>
+    <p class="lede">A one-person artisan jewelry store, running as a single Next.js + Payload process. Buyers stay on the web; Shirley manages everything — from the admin, or by talking to her Telegram bot, whose brain is the <strong>Claude Agent SDK</strong>, running free on Groq via a LiteLLM bridge.</p>
 
-    <defs>
-      <marker id="arrow-teal" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-        <polygon points="0 0, 8 3, 0 6" fill="#0D9488"/></marker>
-      <marker id="arrow-indigo" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-        <polygon points="0 0, 8 3, 0 6" fill="#4F46E5"/></marker>
-      <marker id="arrow-violet" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-        <polygon points="0 0, 8 3, 0 6" fill="#7C1FA8"/></marker>
-      <marker id="arrow-tg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-        <polygon points="0 0, 8 3, 0 6" fill="#2AABEE"/></marker>
-      <marker id="arrow-groq" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-        <polygon points="0 0, 8 3, 0 6" fill="#F55036"/></marker>
-    </defs>
+    <div class="legend">
+      <span><span class="swatch sw-built"></span> Built (v3.2)</span>
+      <span><span class="swatch sw-shirley"></span> Shirley&nbsp;only</span>
+      <span><span class="swatch sw-ext"></span> External service</span>
+      <span><span class="swatch sw-plan"></span> Planned (3.3 / 4.0)</span>
+    </div>
+  </header>
 
-    <rect width="1120" height="700" fill="#f7f6f9"/>
+  <div class="diagram">
 
-    <!-- ===== ZONES ===== -->
-    <!-- Canales (teal) -->
-    <rect x="32" y="108" width="192" height="344" rx="10" fill="rgba(13,148,136,0.06)" stroke="rgba(13,148,136,0.38)" stroke-width="1"/>
-    <rect x="100" y="112" width="56" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="128" y="121" fill="#0D9488" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.14em">CANALES</text>
-    <!-- Aplicación (indigo) -->
-    <rect x="320" y="68" width="192" height="464" rx="10" fill="rgba(79,70,229,0.05)" stroke="rgba(79,70,229,0.34)" stroke-width="1"/>
-    <rect x="336" y="72" width="160" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="416" y="81" fill="#4F46E5" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.14em">APLICACIÓN · NEXT.JS + PAYLOAD</text>
-    <!-- Datos (amber) -->
-    <rect x="608" y="108" width="192" height="324" rx="10" fill="rgba(217,119,6,0.06)" stroke="rgba(217,119,6,0.38)" stroke-width="1"/>
-    <rect x="680" y="112" width="48" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="704" y="121" fill="#D97706" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.14em">DATOS</text>
+    <!-- PEOPLE -->
+    <section class="band">
+      <p class="band-label">People</p>
+      <div class="row row-2">
+        <div class="node">
+          <h3>Compradora <span class="tag tag-buyer">Web only</span></h3>
+          <p>Browses the catalog, builds her order, leaves a WhatsApp number. Never talks to the bot.</p>
+        </div>
+        <div class="node shirley">
+          <h3>Shirley <span class="tag tag-shirley">Owner</span></h3>
+          <p>Designs, makes, sells, ships. Runs the store from her phone — admin panel or Telegram bot.</p>
+        </div>
+      </div>
+    </section>
 
-    <!-- ===== ARROWS ===== -->
-    <!-- Web -> NP (teal) PEDIDO -->
-    <path d="M208,160 H264 Q272,160 272,152 V136 Q272,128 280,128 H336" fill="none" stroke="#0D9488" stroke-width="1.4" marker-end="url(#arrow-teal)"/>
-    <rect x="216" y="140" width="42" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="237" y="149" fill="#0D9488" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">PEDIDO</text>
-    <!-- Web -> RAG (teal) CHAT -->
-    <path d="M208,176 H264 Q272,176 272,184 V472 Q272,480 280,480 H336" fill="none" stroke="#0D9488" stroke-width="1.4" marker-end="url(#arrow-teal)"/>
-    <rect x="228" y="322" width="34" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="245" y="331" fill="#0D9488" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">CHAT</text>
-    <!-- Bot -> RAG (teal) QUERY -->
-    <path d="M208,408 H264 Q272,408 272,416 V488 Q272,496 280,496 H336" fill="none" stroke="#0D9488" stroke-width="1.4" marker-end="url(#arrow-teal)"/>
-    <rect x="216" y="388" width="40" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="236" y="397" fill="#0D9488" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">QUERY</text>
-    <!-- NP -> PG (indigo) CRUD -->
-    <path d="M496,136 H552 Q560,136 560,144 V160 Q560,168 568,168 H624" fill="none" stroke="#4F46E5" stroke-width="1.4" marker-end="url(#arrow-indigo)"/>
-    <rect x="506" y="116" width="36" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="524" y="125" fill="#4F46E5" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">CRUD</text>
-    <!-- NP -> Telegram (tg) NOTIF PEDIDO -->
-    <path d="M496,120 H520 Q528,120 528,112 V64 Q528,56 536,56 H984 Q992,56 992,64 V100" fill="none" stroke="#2AABEE" stroke-width="1.4" marker-end="url(#arrow-tg)"/>
-    <rect x="720" y="36" width="80" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="760" y="45" fill="#2AABEE" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">NOTIF. PEDIDO</text>
-    <!-- NP -> ING (indigo) afterChange -->
-    <path d="M416,156 V280" fill="none" stroke="#4F46E5" stroke-width="1.4" marker-end="url(#arrow-indigo)"/>
-    <rect x="340" y="212" width="70" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="406" y="221" fill="#4F46E5" font-size="8" font-family="'Geist Mono',monospace" text-anchor="end" letter-spacing="0.06em">afterChange</text>
-    <!-- ING -> SB (violet) UPSERT -->
-    <path d="M496,300 H552 Q560,300 560,308 V372 Q560,380 568,380 H624" fill="none" stroke="#7C1FA8" stroke-width="1.6" marker-end="url(#arrow-violet)"/>
-    <rect x="576" y="360" width="44" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="598" y="369" fill="#7C1FA8" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">UPSERT</text>
-    <!-- RAG -> SB (violet) VECTOR SEARCH -->
-    <path d="M496,480 H552 Q560,480 560,472 V404 Q560,396 568,396 H624" fill="none" stroke="#7C1FA8" stroke-width="1.6" marker-end="url(#arrow-violet)"/>
-    <rect x="470" y="430" width="80" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="510" y="439" fill="#7C1FA8" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">VECTOR SEARCH</text>
-    <!-- RAG -> Groq (groq) GENERA -->
-    <path d="M496,496 H984 Q992,496 992,488 V436" fill="none" stroke="#F55036" stroke-width="1.6" marker-end="url(#arrow-groq)"/>
-    <rect x="732" y="476" width="56" height="12" rx="2" fill="#f7f6f9"/>
-    <text x="760" y="485" fill="#F55036" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.06em">GENERA</text>
+    <div class="flowdown"><span class="arw">↓</span><span class="lbl">enters through</span><span class="arw">↓</span></div>
 
-    <!-- ===== NODES ===== -->
-    <!-- Web -->
-    <rect x="48" y="140" width="160" height="56" rx="8" fill="#f7f6f9"/>
-    <rect x="48" y="140" width="160" height="56" rx="8" fill="rgba(13,148,136,0.12)" stroke="#0D9488" stroke-width="1.4"/>
-    <rect x="56" y="146" width="30" height="12" rx="2" fill="transparent" stroke="rgba(13,148,136,0.6)" stroke-width="0.8"/>
-    <text x="71" y="155" fill="#0D9488" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">WEB</text>
-    <text x="128" y="173" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Landing + Tienda</text>
-    <text x="128" y="188" fill="#0f766e" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">next · /shop · carrito</text>
-    <!-- Bot -->
-    <rect x="48" y="380" width="160" height="56" rx="8" fill="#f7f6f9"/>
-    <rect x="48" y="380" width="160" height="56" rx="8" fill="rgba(13,148,136,0.12)" stroke="#0D9488" stroke-width="1.4"/>
-    <rect x="56" y="386" width="34" height="12" rx="2" fill="transparent" stroke="rgba(13,148,136,0.6)" stroke-width="0.8"/>
-    <text x="73" y="395" fill="#0D9488" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">CHAT</text>
-    <text x="128" y="413" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Bot de mensajería</text>
-    <text x="128" y="428" fill="#0f766e" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">whatsapp · telegram</text>
-    <!-- NP -->
-    <rect x="336" y="100" width="160" height="56" rx="8" fill="#f7f6f9"/>
-    <rect x="336" y="100" width="160" height="56" rx="8" fill="rgba(79,70,229,0.10)" stroke="#4F46E5" stroke-width="1.4"/>
-    <rect x="344" y="106" width="30" height="12" rx="2" fill="transparent" stroke="rgba(79,70,229,0.6)" stroke-width="0.8"/>
-    <text x="359" y="115" fill="#4F46E5" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
-    <text x="416" y="133" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Next.js + Payload</text>
-    <text x="416" y="148" fill="#4338ca" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">server actions · api</text>
-    <!-- ING -->
-    <rect x="336" y="280" width="160" height="56" rx="8" fill="#f7f6f9"/>
-    <rect x="336" y="280" width="160" height="56" rx="8" fill="rgba(79,70,229,0.07)" stroke="#6366F1" stroke-width="1.4"/>
-    <rect x="344" y="286" width="26" height="12" rx="2" fill="transparent" stroke="rgba(99,102,241,0.6)" stroke-width="0.8"/>
-    <text x="357" y="295" fill="#6366F1" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">JOB</text>
-    <text x="416" y="313" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Ingesta de chunks</text>
-    <text x="416" y="328" fill="#4338ca" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">split · embed local · upsert</text>
-    <!-- RAG (focal violet) -->
-    <rect x="336" y="460" width="160" height="56" rx="8" fill="#f7f6f9"/>
-    <rect x="336" y="460" width="160" height="56" rx="8" fill="rgba(124,31,168,0.14)" stroke="#7C1FA8" stroke-width="2"/>
-    <rect x="344" y="466" width="30" height="12" rx="2" fill="transparent" stroke="rgba(124,31,168,0.7)" stroke-width="0.9"/>
-    <text x="359" y="475" fill="#7C1FA8" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">RAG</text>
-    <text x="416" y="493" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Asistente RAG</text>
-    <text x="416" y="508" fill="#7C1FA8" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">retrieve + generate</text>
-    <!-- PG -->
-    <rect x="624" y="140" width="160" height="56" rx="8" fill="#f7f6f9"/>
-    <rect x="624" y="140" width="160" height="56" rx="8" fill="rgba(217,119,6,0.10)" stroke="#D97706" stroke-width="1.4"/>
-    <rect x="632" y="146" width="22" height="12" rx="2" fill="transparent" stroke="rgba(217,119,6,0.6)" stroke-width="0.8"/>
-    <text x="643" y="155" fill="#D97706" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">DB</text>
-    <text x="704" y="173" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">PostgreSQL</text>
-    <text x="704" y="188" fill="#b45309" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">products · orders</text>
-    <!-- SB (focal violet) -->
-    <rect x="624" y="360" width="160" height="56" rx="8" fill="#f7f6f9"/>
-    <rect x="624" y="360" width="160" height="56" rx="8" fill="rgba(124,31,168,0.14)" stroke="#7C1FA8" stroke-width="2"/>
-    <rect x="632" y="366" width="28" height="12" rx="2" fill="transparent" stroke="rgba(124,31,168,0.7)" stroke-width="0.9"/>
-    <text x="646" y="375" fill="#7C1FA8" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">VDB</text>
-    <text x="704" y="393" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Supabase pgvector</text>
-    <text x="704" y="408" fill="#7C1FA8" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">chunks de productos</text>
-    <!-- Telegram -->
-    <rect x="912" y="100" width="160" height="56" rx="8" fill="#f7f6f9"/>
-    <rect x="912" y="100" width="160" height="56" rx="8" fill="rgba(42,171,238,0.14)" stroke="#2AABEE" stroke-width="1.4"/>
-    <rect x="920" y="106" width="26" height="12" rx="2" fill="transparent" stroke="rgba(42,171,238,0.6)" stroke-width="0.8"/>
-    <text x="933" y="115" fill="#1d8fc9" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
-    <text x="992" y="133" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Telegram</text>
-    <text x="992" y="148" fill="#1d8fc9" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">canal de pedidos</text>
-    <!-- Groq -->
-    <rect x="912" y="380" width="160" height="56" rx="8" fill="#f7f6f9"/>
-    <rect x="912" y="380" width="160" height="56" rx="8" fill="rgba(245,80,54,0.13)" stroke="#F55036" stroke-width="1.4"/>
-    <rect x="920" y="386" width="26" height="12" rx="2" fill="transparent" stroke="rgba(245,80,54,0.6)" stroke-width="0.8"/>
-    <text x="933" y="395" fill="#d63a22" font-size="7" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
-    <text x="992" y="413" fill="#1f2430" font-size="12" font-weight="600" font-family="'Geist',sans-serif" text-anchor="middle">Groq API</text>
-    <text x="992" y="428" fill="#d63a22" font-size="9" font-family="'Geist Mono',monospace" text-anchor="middle">llama · free tier</text>
+    <!-- INTERFACES -->
+    <section class="band">
+      <p class="band-label">Interfaces</p>
+      <div class="row row-3">
+        <div class="node">
+          <h3>Storefront</h3>
+          <p>Catalog, cart, order form — Spanish, COP prices.</p>
+          <div class="paths"><code>/shop</code><code>/products/[slug]</code><code>/pedidos/enviar</code></div>
+        </div>
+        <div class="node shirley">
+          <h3>Admin panel</h3>
+          <p>Payload CMS — products, orders, blog, media.</p>
+          <div class="paths"><code>/admin</code></div>
+        </div>
+        <div class="node shirley">
+          <h3>Management bot</h3>
+          <p>Telegram webhook, authenticated by Shirley's chat&nbsp;id.</p>
+          <div class="paths"><code>/telegram/webhook</code></div>
+        </div>
+      </div>
+    </section>
 
-    <!-- ===== LEGEND ===== -->
-    <line x1="32" y1="600" x2="1088" y2="600" stroke="rgba(31,36,48,0.12)" stroke-width="0.8"/>
-    <text x="32" y="620" fill="#5a6072" font-size="8" font-family="'Geist Mono',monospace" letter-spacing="0.14em">LEYENDA</text>
-    <rect x="120" y="612" width="14" height="10" rx="3" fill="rgba(124,31,168,0.14)" stroke="#7C1FA8" stroke-width="1.6"/>
-    <text x="140" y="620" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">pieza nueva (RAG)</text>
-    <rect x="304" y="612" width="14" height="10" rx="3" fill="rgba(13,148,136,0.12)" stroke="#0D9488" stroke-width="1.4"/>
-    <text x="324" y="620" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">canales</text>
-    <rect x="428" y="612" width="14" height="10" rx="3" fill="rgba(79,70,229,0.10)" stroke="#4F46E5" stroke-width="1.4"/>
-    <text x="448" y="620" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">aplicación</text>
-    <rect x="564" y="612" width="14" height="10" rx="3" fill="rgba(217,119,6,0.10)" stroke="#D97706" stroke-width="1.4"/>
-    <text x="584" y="620" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">datos</text>
-    <rect x="672" y="612" width="14" height="10" rx="3" fill="rgba(42,171,238,0.14)" stroke="#2AABEE" stroke-width="1.4"/>
-    <text x="692" y="620" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">Telegram</text>
-    <rect x="808" y="612" width="14" height="10" rx="3" fill="rgba(245,80,54,0.13)" stroke="#F55036" stroke-width="1.4"/>
-    <text x="828" y="620" fill="#5a6072" font-size="9" font-family="'Geist Mono',monospace">Groq (generación)</text>
-  </svg>
+    <div class="flowdown"><span class="arw">↓</span><span class="lbl">handled by one Node process</span><span class="arw">↓</span></div>
+
+    <!-- APPLICATION CORE + external rail -->
+    <section class="band">
+      <p class="band-label">Application core — Next.js 15 + Payload CMS (monolith)</p>
+      <div class="core-grid">
+        <div class="core-inner">
+          <div class="row row-2">
+            <div class="node">
+              <h3>Order action</h3>
+              <p>Validates consent, dedupes, writes the Order, notifies Telegram.</p>
+              <div class="paths"><code>submitOrderAction</code></div>
+            </div>
+            <div class="node">
+              <h3>Webhook handler</h3>
+              <p>Checks secret + <span class="mono">chat_id</span>, dedupes by <span class="mono">update_id</span>.</p>
+              <div class="paths"><code>webhook/route.ts</code></div>
+            </div>
+          </div>
+          <div class="node core">
+            <h3>Bot brain · Claude Agent SDK</h3>
+            <p>The Agent SDK runs the execution loop and manages the skills — it supersedes the hand-rolled orchestrator + runtime from slice 1. Detailed below.</p>
+            <div class="paths"><code>@anthropic-ai/claude-agent-sdk</code></div>
+          </div>
+        </div>
+
+        <aside class="rail">
+          <div class="ext">
+            <span class="badge">External</span>
+            <h4>Telegram Bot API</h4>
+            <p>One bot: order notifications out to Shirley's channel, and her admin messages in.</p>
+          </div>
+          <div class="ext">
+            <span class="badge">Bridge</span>
+            <h4>LiteLLM proxy</h4>
+            <p>Translates the SDK's Anthropic API calls into Groq's OpenAI format. <span class="mono">ANTHROPIC_BASE_URL</span> → proxy.</p>
+          </div>
+          <div class="ext">
+            <span class="badge">External · free</span>
+            <h4>Groq · Llama</h4>
+            <p>The model behind the Agent SDK, reached through LiteLLM. Stays on the free tier.</p>
+          </div>
+        </aside>
+      </div>
+
+    </section>
+
+    <div class="flowdown"><span class="arw">↓</span><span class="lbl">the bot runs on</span><span class="arw">↓</span></div>
+
+    <!-- CLAUDE AGENT SDK -->
+    <section class="band">
+      <div class="planned-head">
+        <p class="band-label" style="margin:0">Bot brain — Claude Agent SDK (TypeScript · it manages the skills)</p>
+        <span class="tag-plan">Migration target</span>
+      </div>
+      <div class="sdk">
+        <div class="sdk-layer">
+          <span class="sdk-tag">Programming</span>
+          <div class="sdk-body">
+            <b>Agent execution loop.</b> Receives Shirley's message, decides, calls tools, processes results, repeats until done — built in, not hand-rolled. <b>Supersedes</b> the slice-1 <span class="mono">orchestrator</span> + <span class="mono">runtime</span> + <span class="mono">groq.ts</span>.
+          </div>
+        </div>
+        <div class="sdk-layer">
+          <span class="sdk-tag">Model</span>
+          <div class="sdk-body">
+            <b>Groq (Llama), free</b> — reached via a <b>LiteLLM proxy</b> that bridges the SDK's Anthropic API to Groq's OpenAI format (<span class="mono">ANTHROPIC_BASE_URL</span> → proxy). No Claude, no per-token bill.
+          </div>
+        </div>
+        <div class="sdk-layer">
+          <span class="sdk-tag">Extension</span>
+          <div class="sdk-body">
+            <b>Skills</b> (semantic trigger) · <b>Subagents</b> (task delegation) · <b>Hooks</b> (event trigger). The skills are Shirley's actions — the SDK is what runs them:
+            <div class="skill-grid">
+              <div class="skill built"><span class="dot"></span><span class="nm">buscarProducto<small>Find a piece</small></span></div>
+              <div class="skill plan"><span class="dot"></span><span class="nm">pedidosPendientes<small>List open orders</small></span></div>
+              <div class="skill plan"><span class="dot"></span><span class="nm">confirmarPedido<small>Confirm an order</small></span></div>
+              <div class="skill plan"><span class="dot"></span><span class="nm">actualizarInventario<small>Update stock</small></span></div>
+              <div class="skill plan"><span class="dot"></span><span class="nm">generarCaption<small>Brand-voice copy</small></span></div>
+              <div class="skill plan"><span class="dot"></span><span class="nm">crearProductoDraft<small>Photo → draft</small></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="sdk-layer">
+          <span class="sdk-tag">Integration</span>
+          <div class="sdk-body">
+            <b>MCP → Payload</b> (official <span class="mono">@payloadcms/plugin-mcp</span>) so skills call typed CMS tools · local tools (embeddings, Telegram reply) · headless mode for scripts.
+          </div>
+        </div>
+        <div class="sdk-layer">
+          <span class="sdk-tag">Memory</span>
+          <div class="sdk-body">
+            <b>CLAUDE.md</b> multi-level (Enterprise → User → Project → Rules → Local) for durable rules · <b>Supabase</b> conversation memory for the multi-turn thread.
+          </div>
+        </div>
+      </div>
+      <p class="sdk-note"><b>How it stays free:</b> the SDK speaks the Anthropic API, so a <b>LiteLLM proxy</b> bridges it to <b>Groq</b> (free Llama). Trade-offs: an extra proxy to run, Groq is less tuned for the SDK than Claude, and it's an unofficial path (mitigate the param issue with <span class="mono">drop_params</span>). The core order flow doesn't depend on the bot.</p>
+    </section>
+
+    <div class="flowdown"><span class="arw">↓</span><span class="lbl">skills act on · persists to</span><span class="arw">↓</span></div>
+
+    <!-- DATA -->
+    <section class="band">
+      <p class="band-label">Data — source of truth</p>
+      <div class="row">
+        <div class="node">
+          <h3>PostgreSQL <span class="mono" style="color:var(--muted);font-weight:400">via Drizzle</span></h3>
+          <p>Everything canonical: products, orders, users, media, pages, blog. Managed by Payload.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="flowdown"><span class="arw">⇣</span><span class="lbl">next phases — derived from the data above</span><span class="arw">⇣</span></div>
+
+    <!-- PLANNED -->
+    <section class="band planned">
+      <div class="planned-head">
+        <p class="band-label" style="margin:0">Knowledge &amp; memory on Supabase</p>
+        <span class="tag-plan">Planned · 3.3 / 4.0</span>
+      </div>
+      <div class="row row-3">
+        <div class="node">
+          <h3>Curated knowledge</h3>
+          <p>Brand essence, policies, care, FAQ — authored in git, the source of truth.</p>
+          <div class="paths"><code>knowledge/*.md</code></div>
+        </div>
+        <div class="node">
+          <h3>Vector index</h3>
+          <p>Products + knowledge, chunked &amp; embedded locally. A derived index — regenerable, never the source.</p>
+          <div class="paths"><code>rag.chunks</code><code>pgvector</code></div>
+        </div>
+        <div class="node">
+          <h3>Conversation memory</h3>
+          <p>Short window + rolling summary per chat — feeds the Agent SDK's memory layer for the multi-turn thread.</p>
+          <div class="paths"><code>rag.conversation_messages</code></div>
+        </div>
+      </div>
+
+      <div class="planned-head" style="margin-top:1.3rem">
+        <p class="band-label" style="margin:0">Payload as MCP tools — the SDK's Integration layer</p>
+        <span class="tag-plan">Planned · 3.4</span>
+      </div>
+      <div class="row">
+        <div class="node">
+          <h3>CMS over MCP</h3>
+          <p>Payload's <b>official</b> <span class="mono">@payloadcms/plugin-mcp</span> exposes the CMS as typed MCP tools (<span class="mono">listProducts</span>, <span class="mono">updateStock</span>…). The Agent SDK consumes them, so skills call safe typed tools instead of raw <span class="mono">payload.find / update</span> — no MCP to build from scratch.</p>
+        </div>
+      </div>
+    </section>
+
   </div>
 
-  <div class="cards">
-    <div class="card a">
-      <p class="eyebrow">YA EXISTE · TEMPLATE</p>
-      <div class="card-head"><span class="dot indigo"></span><h3>Ecommerce + Landing</h3></div>
-      <ul>
-        <li>Catálogo, producto, carrito y pedido → Telegram: <strong>funcionando</strong>.</li>
-        <li>Landing = home del page-builder de Payload.</li>
-        <li>Blog descartado por decisión de producto.</li>
-      </ul>
-    </div>
-    <div class="card b">
-      <p class="eyebrow">POR CONSTRUIR · NUEVO</p>
-      <div class="card-head"><span class="dot violet"></span><h3>mini-RAG de productos</h3></div>
-      <ul>
-        <li>Ingesta: producto → chunks → embeddings <strong>locales</strong> → Supabase.</li>
-        <li>Asistente: recupera chunks y responde con <strong>Groq</strong>.</li>
-        <li>Servicio compartido: web y bot lo consultan.</li>
-      </ul>
-    </div>
-    <div class="card c">
-      <p class="eyebrow">RESTRICCIÓN</p>
-      <div class="card-head"><span class="dot teal"></span><h3>Todo gratis / local<span class="tag-free">FREE</span></h3></div>
-      <ul>
-        <li>Supabase local + pgvector (sin costo).</li>
-        <li>Embeddings locales (sin key) · Groq free.</li>
-        <li>Sin deploy: corre en tu máquina.</li>
-      </ul>
-    </div>
-  </div>
+  <!-- FLOWS -->
+  <section class="flows">
+    <article class="flow">
+      <div class="n">01</div>
+      <h3>An order comes in</h3>
+      <ol>
+        <li>Compradora submits the cart on the <code>web</code></li>
+        <li><code>submitOrderAction</code> saves the Order in Payload</li>
+        <li>A structured message is sent to Telegram</li>
+        <li>Shirley reads it, closes the sale on WhatsApp</li>
+      </ol>
+    </article>
+    <article class="flow">
+      <div class="n">02</div>
+      <h3>Shirley manages in the admin</h3>
+      <ol>
+        <li>Opens <code>/admin</code> in the browser</li>
+        <li>Edits products, media, blog, orders</li>
+        <li>Payload writes straight to PostgreSQL</li>
+      </ol>
+    </article>
+    <article class="flow">
+      <div class="n">03</div>
+      <h3>Shirley manages by bot</h3>
+      <ol>
+        <li>Messages the bot: <code>"confirm order 42"</code></li>
+        <li>Webhook checks her <code>chat_id</code></li>
+        <li>The Claude Agent SDK picks the skill</li>
+        <li>Skill updates Payload (via MCP), bot replies</li>
+      </ol>
+    </article>
+  </section>
 
-  <footer>NÉNUFAR · ARQUITECTURA OBJETIVO · v2 · docs/arquitectura.html</footer>
+  <!-- STACK -->
+  <section class="stack">
+    <h2>Stack</h2>
+    <div class="chips">
+      <span class="chip"><b>Next.js 15</b> · App Router</span>
+      <span class="chip"><b>Payload CMS v3</b></span>
+      <span class="chip"><b>PostgreSQL 16</b> · Drizzle</span>
+      <span class="chip"><b>Claude Agent SDK</b> · TypeScript</span>
+      <span class="chip"><b>LiteLLM</b> · proxy bridge</span>
+      <span class="chip"><b>Groq</b> · Llama (free)</span>
+      <span class="chip"><b>Telegram</b> Bot API</span>
+      <span class="chip">TailwindCSS v4 · shadcn/ui</span>
+      <span class="chip">Transformers.js <span style="color:var(--faint)">· planned</span></span>
+      <span class="chip">Supabase pgvector <span style="color:var(--faint)">· planned</span></span>
+    </div>
+  </section>
+
+  <p class="foot">No payment gateway · No web chat widget · The bot is Shirley's, never the buyer's.</p>
+
 </div>
+
+</body>
+</html>

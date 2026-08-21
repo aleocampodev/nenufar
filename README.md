@@ -312,7 +312,8 @@ Al subir una foto al admin, Payload genera automáticamente variantes WebP (cali
 | [`docs/TSD.md`](docs/TSD.md) | Especificación técnica — stack, modelos de datos, API, deploy |
 | [`docs/RAG-MEMORY-design.md`](docs/RAG-MEMORY-design.md) | Diseño de RAG (conocimiento en `knowledge/*.md` + catálogo) y memoria de conversación sobre Supabase; principio: Supabase es índice derivado, no la fuente (fases 3.3 / 4.0) |
 | [`docs/SKILLS.md`](docs/SKILLS.md) | Catálogo de skills del bot de Shirley — actualizar catálogo, pedidos, landing/contenido; orden de construcción; ruta directa → MCP oficial de Payload |
-| [`docs/arquitectura.html`](docs/arquitectura.html) | Diagrama de arquitectura interactivo |
+| [`docs/HANDOFF-agent-sdk-migration.md`](docs/HANDOFF-agent-sdk-migration.md) | Handoff (para OpenCode) — migrar el bot al Claude Agent SDK corriendo free sobre Groq vía LiteLLM: arquitectura objetivo, archivos, fases, caveats |
+| [`docs/arquitectura.html`](docs/arquitectura.html) | Diagrama de arquitectura (mapa del sistema) — incluye el Agent SDK sobre Groq como objetivo de migración |
 | [`CLAUDE.md`](CLAUDE.md) | Contexto técnico para agentes de IA |
 | [`.claude/HANDOFF-agents.md`](.claude/HANDOFF-agents.md) | Handoff de estado para agentes — qué está hecho y qué sigue |
 
