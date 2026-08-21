@@ -23,6 +23,8 @@ Shirley escribe → POST /telegram/webhook → chat_id==ADMIN? → orquestador (
 ```
 Archivos: `src/lib/groq.ts`, `src/lib/agents/*`, `src/app/(app)/telegram/webhook/route.ts`. Ver `docs/SDD.md §2.3` y `.claude/HANDOFF-agents.md`.
 
+> **Migración en curso (leer antes de tocar el bot):** el orquestador hecho a mano se va a reemplazar por el **Claude Agent SDK** corriendo free sobre **Groq vía LiteLLM**. Plan completo y accionable en [`docs/HANDOFF-agent-sdk-migration.md`](docs/HANDOFF-agent-sdk-migration.md).
+
 ## Comandos
 ```bash
 docker-compose up -d    # PostgreSQL en :5433

@@ -2,6 +2,11 @@
 
 > For AI agents continuing this work. State as of 20 August 2026.
 
+> **Direction change (read this first):** the hand-rolled Groq orchestrator described below is
+> being replaced by the **Claude Agent SDK** running free on **Groq via a LiteLLM proxy**. The
+> actionable migration plan is in [`docs/HANDOFF-agent-sdk-migration.md`](../docs/HANDOFF-agent-sdk-migration.md).
+> Sections below still describe the slice-1 (Groq hand-rolled) implementation until that migration lands.
+
 ---
 
 ## Business context
