@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premortem — Nénufar · Informe</title>
+<style>
+  :root{
+    --bg:#0a0e1a; --bg2:#111726; --card:#141b2d; --ink:#e8ecf5; --muted:#8a93a8;
+    --faint:#5c6579; --rule:#232c42;
+    --red:#ff5d6c; --orange:#ffa14e; --yellow:#ffd166; --green:#4ade80; --violet:#a78bfa; --cyan:#38bdf8; --pink:#f472b6; --teal:#2dd4bf;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1060px;margin:0 auto;padding:clamp(1.5rem,4vw,3rem) clamp(1rem,3vw,2rem)}
+  header{text-align:center;padding:2.5rem 0 1.5rem}
+  .kicker{font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);margin-bottom:.6rem}
+  h1{margin:0;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800}
+  .sub{color:var(--muted);max-width:720px;margin:.8rem auto 0;font-size:.95rem}
+  .agents{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin:1.6rem 0 .4rem}
+  .agent{background:var(--card);border:1px solid var(--rule);border-radius:999px;padding:.35rem .95rem;font-size:.78rem;color:var(--muted)}
+  .agent b{color:var(--ink)}
+  section{margin-top:2.5rem}
+  h2{font-size:1.05rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--rule);padding-bottom:.55rem;margin:0 0 1.2rem}
+  /* synthesis */
+  .syn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}
+  .syn-card{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:1.25rem 1.35rem}
+  .syn-card.hot{border-color:rgba(255,93,108,.45);box-shadow:0 0 40px rgba(255,93,108,.07)}
+  .syn-card.cold{border-color:rgba(56,189,248,.4)}
+  .syn-label{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:.5rem}
+  .l-red{color:var(--red)} .l-blue{color:var(--cyan)} .l-violet{color:var(--violet)}
+  .syn-card p{margin:0;color:var(--ink);font-size:.92rem}
+  .syn-card p+p{margin-top:.6rem}
+  .hidden-assumption{grid-column:1/-1;border-color:rgba(167,139,250,.45);background:linear-gradient(180deg,rgba(167,139,250,.08),var(--card))}
+  .hidden-assumption p{font-size:1.02rem;font-weight:600}
+  /* tables */
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  th{ text-align:left;color:var(--faint);font-weight:600;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;padding:.55rem .7rem;border-bottom:1px solid var(--rule)}
+  td{padding:.7rem;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink)}
+  td:first-child{color:var(--yellow);font-weight:700;white-space:nowrap}
+  td small{display:block;color:var(--muted)}
+  .pill{display:inline-block;font-size:.68rem;padding:.15rem .55rem;border-radius:999px;border:1px solid var(--rule);color:var(--muted);white-space:nowrap}
+  /* failure cards */
+  .fcards{display:flex;flex-direction:column;gap:1.25rem}
+  .fcard{background:var(--card);border:1px solid var(--rule);border-left-width:4px;border-radius:14px;padding:1.4rem 1.5rem}
+  .fhead{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:.8rem}
+  .fnum{font-family:ui-monospace,Menlo,monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;margin-bottom:.3rem}
+  .fcard h3{margin:0;font-size:1.08rem;line-height:1.35}
+  .badges{display:flex;flex-direction:column;gap:.35rem;min-width:150px}
+  .badge{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;padding:.22rem .6rem;border-radius:999px;text-align:center}
+  .sev-crit{background:rgba(255,93,108,.14);color:var(--red);border:1px solid rgba(255,93,108,.4)}
+  .sev-high{background:rgba(255,161,78,.13);color:var(--orange);border:1px solid rgba(255,161,78,.4)}
+  .sev-med{background:rgba(255,209,102,.12);color:var(--yellow);border:1px solid rgba(255,209,102,.35)}
+  .prob-vh{background:rgba(255,93,108,.14);color:var(--red);border:1px solid rgba(255,93,108,.4)}
+  .prob-h{background:rgba(255,161,78,.13);color:var(--orange);border:1px solid rgba(255,161,78,.4)}
+  .prob-m{background:rgba(56,189,248,.12);color:var(--cyan);border:1px solid rgba(56,189,248,.35)}
+  .fb{color:var(--muted);font-size:.85rem}
+  .fb h4{margin:.9rem 0 .3rem;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+  .fb p{margin:0 0 .4rem}
+  ul.warn{margin:.3rem 0 0;padding-left:1.1rem}
+  ul.warn li{margin-bottom:.3rem;color:var(--ink)}
+  footer{margin-top:3.5rem;padding-top:1.2rem;border-top:1px solid var(--rule);color:var(--faint);font-size:.78rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  @media print{ body{background:#fff;color:#000} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="kicker">Premortem · Retrospectiva prospectiva · Gary Klein</p>
+  <h1>Nénufar ha fallado.</h1>
+  <p class="sub">Han pasado 6 meses del lanzamiento de <strong>nenufar.co</strong> — joyería artesanal de Shirley, sin pasarela de pago, pedidos vía formulario → Telegram → cierre manual por WhatsApp, stack 100% free (política #253). Este informe explica cómo murió.</p>
+  <div class="agents">
+    <span class="agent"><b>7 agentes</b> ejecutados en paralelo</span>
+    <span class="agent"><b>7 modos de fallo</b> analizados</span>
+    <span class="agent"><b>2026-08-22</b></span>
+  </div>
+</header>
+
+<section id="sintesis">
+  <h2>Síntesis — lee esto primero</h2>
+  <div class="syn-grid">
+    <div class="syn-card hot">
+      <p class="syn-label l-red">⚠ Fallo más probable</p>
+      <p><strong>Cero demanda:</strong> se construyó la tienda antes que la audiencia. 13 meses de trabajo técnico y cero horas de adquisición. Este fallo ocurre incluso si todo lo demás sale bien.</p>
+    </div>
+    <div class="syn-card cold">
+      <p class="syn-label l-blue">☠ Fallo más peligroso</p>
+      <p><strong>Pedidos perdidos en silencio:</strong> invisible en los logs, mata exactamente las ventas que sí consigues, y cada pedido ignorado alimenta un escándalo público para una marca sin reputación que defender.</p>
+    </div>
+    <div class="syn-card hidden-assumption">
+      <p class="syn-label l-violet">🔑 El supuesto oculto</p>
+      <p>"Construir la tienda ERA el proyecto" — se asumió que la demanda, la operación diaria y la distribución aparecerían solas cuando el software estuviera listo. Explica por qué 13 meses produjeron arquitectura impecable y cero pesos.</p>
+    </div>
+  </div>
+</section>
+
+<section id="plan-revisado">
+  <h2>Plan revisado — concreto, para esta semana</h2>
+  <table>
+    <tr><th style="width:44px">#</th><th>Acción</th><th>Mitiga</th></tr>
+    <tr><td>R1</td><td><strong>Deploy en 14 días, imperfecto.</strong> Regla escrita: nada de arquitectura nueva hasta las primeras 10 órdenes reales. Cerrar la contradicción AGENTS.md vs política #253 (marcar migración SDK como DESCARTADA).</td><td><span class="pill">F6 nunca se lanza</span></td></tr>
+    <tr><td>R2</td><td><strong>Capturar la lista ANTES de lanzar:</strong> QR en la mesa de Shirley en cada feria → lista/broadcast de WhatsApp. Meta: 50 contactos antes del deploy. Esa es la demanda inicial.</td><td><span class="pill">F4 cero demanda</span></td></tr>
+    <tr><td>R3</td><td><strong>Red de seguridad de pedidos esta semana:</strong> cron diario gratis que lista Orders <code>pending</code> &gt;24h al canal + email de respaldo si falla el sendMessage + ritual de pedido de prueba tras cada deploy.</td><td><span class="pill">F2 pérdida silenciosa</span></td></tr>
+    <tr><td>R4</td><td><strong>Sesión medida con Shirley:</strong> sube 5 productos sola, con cronómetro. Si promedia &gt;15 min/producto, el flujo móvil-simple pasa al frente de la cola. Revertir YA la colección Events oculta.</td><td><span class="pill">F3 Shirley no opera</span></td></tr>
+    <tr><td>R5</td><td><strong>Reinterpretar #253 con precisión:</strong> ¿Wompi/PayU ($0 fijo, solo % por transacción) cuentan como "free"? Si sí → activar pasarela y matar F1+F7 de raíz. Si no → garantías, devoluciones y reviews visibles en la home + guía de pago paso a paso.</td><td><span class="pill">F1 cierre WhatsApp</span> <span class="pill">F7 confianza</span></td></tr>
+    <tr><td>R6</td><td><strong>Vercel free + Neon free en vez de Oracle self-hosted:</strong> ambos $0, gestionados, sin reclamo por idle ni disco lleno. Probar UNA restauración de backup y documentarla.</td><td><span class="pill">F5 infra frágil</span></td></tr>
+  </table>
+</section>
+
+<section id="checklist">
+  <h2>Checklist pre-lanzamiento</h2>
+  <table>
+    <tr><th style="width:44px">☐</th><th>Verificación</th><th>Fallos</th></tr>
+    <tr><td>☐</td><td><strong>Deploy a producción con dominio + HTTPS</strong>, validado con pedido end-to-end desde el teléfono de alguien ajeno al proyecto (la orden aparece en admin Y llega a @pedidos_nenufar).</td><td><span class="pill">F2</span> <span class="pill">F6</span></td></tr>
+    <tr><td>☐</td><td><strong>Ritual post-deploy documentado:</strong> pedido de prueba → verificar mensaje en Telegram → verificar orden en admin.</td><td><span class="pill">F2</span></td></tr>
+    <tr><td>☐</td><td><strong>Cron diario de pedidos huérfanos</strong> (<code>pending</code> &gt;24h → mensaje al canal) + fallback email si sendMessage falla.</td><td><span class="pill">F2</span></td></tr>
+    <tr><td>☐</td><td><strong>≥50 contactos capturados</strong> en lista de WhatsApp antes del lanzamiento + compromiso de 3 posts/semana.</td><td><span class="pill">F4</span></td></tr>
+    <tr><td>☐</td><td><strong>Shirley publica 5 productos sola en &lt;15 min c/u</strong> + una restauración de backup probada y documentada.</td><td><span class="pill">F3</span> <span class="pill">F5</span></td></tr>
+  </table>
+</section>
+
+<section id="fallos">
+  <h2>Los 7 modos de fallo — análisis profundo</h2>
+  <div class="fcards">
+
+    <article class="fcard" style="border-left-color:var(--orange)">
+      <div class="fhead">
+        <div>
+          <p class="fnum" style="color:var(--orange)">Fallo 01</p>
+          <h3>El cierre manual por WhatsApp mata la conversión — y no escala ni pagando</h3>
+        </div>
+        <div class="badges"><span class="badge sev-high">Gravedad alta</span><span class="badge prob-h">Probabilidad alta</span></div>
+      </div>
+      <div class="fb">
+        <h4>La historia del fallo</h4>
+        <p>Abril: primera feria en Cartagena, Shirley 8 horas fuera de línea. Llegan 6 pedidos calientes; al abrir WhatsApp a las 10 p.m., 4 compradoras no contestan — dos ya preguntaron precio a la competencia mientras esperaban. Nadie lo registra como dato.</p>
+        <p>Mayo: patrón invisible — pedidos guardados sin venta asociada. Las compradoras jóvenes ignoran o bloquean el primer mensaje de un número desconocido. La hipótesis "el cierre humano genera confianza" se invierte: un mensaje tardío de un desconocido genera desconfianza, no confianza.</p>
+        <p>Junio: un arete se hace viral en TikTok. 40 pedidos en una semana. Shirley cierra 9 y pierde 31 escribiendo mensajes uno por uno. La política #253 convierte el éxito en castigo: sin API paga, no hay recordatorios automáticos ni estados de pedido. En agosto, agotada, deja de responder. La tienda sigue online pero funcionalmente muerta.</p>
+        <h4>Supuesto subyacente</h4>
+        <p>Que Shirley estaría disponible para responder dentro de la ventana crítica (minutos) cada vez que una compradora tuviera intención caliente.</p>
+        <h4>Señales tempranas</h4>
+        <ul class="warn">
+          <li>Tasa de pedidos huérfanos (formulario → sin transferencia) sostenida &gt;30%.</li>
+          <li>Mediana de tiempo hasta primer contacto &gt;30 minutos tras la notificación de Telegram.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="fcard" style="border-left-color:var(--red)">
+      <div class="fhead">
+        <div>
+          <p class="fnum" style="color:var(--red)">Fallo 02</p>
+          <h3>Pedidos perdidos en silencio: dependencia absoluta de un canal frágil (Telegram)</h3>
+        </div>
+        <div class="badges"><span class="badge sev-crit">Gravedad crítica</span><span class="badge prob-m">Probabilidad media-alta</span></div>
+      </div>
+      <div class="fb">
+        <h4>La historia del fallo</h4>
+        <p>Semana 3: un cambio de teléfono revoca el token del bot sin que nadie lo note. El pedido entra igual: Order guardado en Postgres como <code>pending</code>, el <code>sendMessage</code> falla en un try/catch que solo hace console.log. Compradora espera 24h y pregunta por Instagram "¿y mi pedido?". Shirley revisa Telegram: nada.</p>
+        <p>Mes 2: un redeploy desregistra el webhook de /telegram/webhook. Los pedidos siguen guardándose — la BD hace exactamente lo que le pidieron — pero el canal hacia los ojos de Shirley está muerto. Cuatro órdenes pending se acumulan; una compradora paga sin confirmación, otra compra en la competencia. Shirley las descubre seis días después abriendo pgAdmin por casualidad.</p>
+        <p>Meses 4–6: el patrón se normaliza. Sin health-check ni alerta de "pedido &gt;24h sin respuesta", cada fallo repite la secuencia invisible: orden creada → notificación perdida → nadie mira la BD. Todos los dashboards dicen que funciona. Solo falló lo único que importaba: que Shirley se enterara.</p>
+        <h4>Supuesto subyacente</h4>
+        <p>Que Telegram siempre funcionará y que Shirley lo revisará constantemente, sin ningún mecanismo que verifique o garantice ninguna de las dos cosas.</p>
+        <h4>Señales tempranas</h4>
+        <ul class="warn">
+          <li>Contador de Orders <code>pending</code> con más de X horas desde createdAt — cualquier valor &gt;0 recurrente = fallo activo.</li>
+          <li>Tras cada deploy: pedido de prueba y verificación observable de llegada al canal.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="fcard" style="border-left-color:var(--yellow)">
+      <div class="fhead">
+        <div>
+          <p class="fnum" style="color:var(--yellow)">Fallo 03</p>
+          <h3>Shirley no puede operar el sistema — Ale se vuelve operador</h3>
+        </div>
+        <div class="badges"><span class="badge sev-high">Gravedad alta</span><span class="badge prob-h">Probabilidad alta</span></div>
+      </div>
+      <div class="fb">
+        <h4>La historia del fallo</h4>
+        <p>Semana 2: Shirley publica su primer producto sola. Tarda 34 minutos: el admin colapsa al subir fotos desde su teléfono, la optimización WebP se traba con la conexión de Cartagena, el page builder no responde al scroll táctil. Le dice a Ale "esto es muy difícil". Él lo escucha como anécdota, no como dato.</p>
+        <p>Mes 1: el bug de Events — colección oculta del admin. Para Shirley es una pared: no puede cargar la feria de San Diego ni el bazar de Getsemaní. El bot v3.2, la promesa móvil, falla tres veces seguidas con timeouts de Groq desde una feria con mala señal. Ella deja de usarlo.</p>
+        <p>Meses 2–6: catálogo congelado en lo que Ale subió durante el desarrollo; precios COP desactualizados frente al costo de materiales. Cada viernes: "¿puedes subir estas fotos?". Ale, que construyó el sistema para NO ser operador, pasa 3 horas semanales subiendo fotos. La autonomía — el punto del proyecto — muere por la herramienta que debía garantizarla.</p>
+        <h4>Supuesto subyacente</h4>
+        <p>Que Shirley podría operar una interfaz diseñada para desarrolladores en escritorio usando solo un teléfono.</p>
+        <h4>Señales tempranas</h4>
+        <ul class="warn">
+          <li>Primer intento solo de Shirley toma &gt;15 min por producto.</li>
+          <li>Mensajes "¿puedes…?" a ritmo &gt;1/semana después del mes 1; Eventos creados por Shirley = 0.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="fcard" style="border-left-color:var(--pink)">
+      <div class="fhead">
+        <div>
+          <p class="fnum" style="color:var(--pink)">Fallo 04</p>
+          <h3>Cero demanda: se construyó la tienda antes que la audiencia</h3>
+        </div>
+        <div class="badges"><span class="badge sev-crit">Gravedad crítica</span><span class="badge prob-vh">Probabilidad muy alta</span></div>
+      </div>
+      <div class="fb">
+        <h4>La historia del fallo</h4>
+        <p>Mes 1: el primer entregable fue un ADR formal sobre la elección de Payload CMS. Nadie preguntó "¿quién va a comprar aquí?". Esa pregunta nunca entró al BRD: el documento que debía definir clientas definió arquitectura.</p>
+        <p>Meses 2–8: specs de 40 páginas, el tema violeta del admin, diagramas HTML a Netlify, el bot v1 → v2 → v3.2. Cada entrega visible, medible, gratificante. Mientras tanto, las clientas de las ferias se iban con una joya y un número de WhatsApp que nadie registró. Cero correos capturados. La lista más valiosa del negocio existía solo en el teléfono personal de Shirley.</p>
+        <p>Mes 13, analytics: tráfico casi exclusivo de Shirley, su familia y los developers mirando sus propios deploys. nenufar.co, dominio nuevo sin backlinks, invisible frente a competidoras publicando Reels diarios. "Si lo construyes, vendrán" resultó ser el letrero en el sótano.</p>
+        <h4>Supuesto subyacente</h4>
+        <p>Que el producto digital generaría su propia demanda — que la calidad técnica sustituiría a la distribución.</p>
+        <h4>Señales tempranas</h4>
+        <ul class="warn">
+          <li>Backlog a las 8 semanas: 0 tareas de adquisición/contenido, 3+ ADRs técnicos.</li>
+          <li>Feria donde Shirley vende y ninguna compradora queda en una lista verificable.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="fcard" style="border-left-color:var(--cyan)">
+      <div class="fhead">
+        <div>
+          <p class="fnum" style="color:var(--cyan)">Fallo 05</p>
+          <h3>La infraestructura $0/mes cae en el peor momento</h3>
+        </div>
+        <div class="badges"><span class="badge sev-high">Gravedad crítica en temporada</span><span class="badge prob-m">Probabilidad media</span></div>
+      </div>
+      <div class="fb">
+        <h4>La historia del fallo</h4>
+        <p>Octubre: Oracle reclama la instancia A1 por inactividad — CPU bajo umbral porque la tienda apenas tenía tráfico. Cuatro días de recuperación manual (Docker, Postgres, webhook reconfigurados desde notas; procedimiento sin documentar).</p>
+        <p>Noviembre: un reel de Shirley se vuelve viral. El tráfico llega. Next.js + Postgres + imágenes compitiendo por recursos que ahora sí se usan → OOM killer mata Postgres un viernes en pleno pico. Reinicio manual; pgdata quedó parcialmente corrupto y empieza a fallar la escritura de pedidos.</p>
+        <p>Diciembre: logs sin rotación + imágenes sin límite llenan el disco. Caída total, 502 en toda la tienda. Sin backups fuera de la instancia (el script existía; la restauración nunca se probó), el historial de pedidos de Navidad — el 60% del año — es irrecuperable. Groq llevaba semanas devolviendo 429 intermitentes. Shirley descubre la caída por un DM de una clienta, dos días después.</p>
+        <h4>Supuesto subyacente</h4>
+        <p>Que "gratis e ilimitado" significa confiable: que Oracle no reclamaría SU instancia idle, y que sistemas sin redundancia aguantarían justo cuando dejaron de ser idle.</p>
+        <h4>Señales tempranas</h4>
+        <ul class="warn">
+          <li>Requests &gt;10s sostenidos o errores 429/503 del bot &gt;3 veces por semana.</li>
+          <li>Disco &gt;70%, o backups cuya restauración nunca se probó con éxito documentado.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="fcard" style="border-left-color:var(--violet)">
+      <div class="fhead">
+        <div>
+          <p class="fnum" style="color:var(--violet)">Fallo 06</p>
+          <h3>Nunca se lanza: pivotes perpetuos y dependencia del fundador</h3>
+        </div>
+        <div class="badges"><span class="badge sev-crit">Gravedad crítica</span><span class="badge prob-h">Probabilidad alta</span></div>
+      </div>
+      <div class="fb">
+        <h4>La historia del fallo</h4>
+        <p>Mayo 2026: Shirley tiene joyas y clientas potenciales; Ale tiene un monorepo llamado Agento. Primera decisión fatal, de encuadre: el proyecto se trató como ejercicio de arquitectura, no como una tienda que debía cobrar. V2 murió ante la promesa de Shopify Hydrogen ("menos código propio"). Hydrogen murió en semanas.</p>
+        <p>La reversión a Payload trajo el momento revelador: servidor a 5–120 segundos por request, Playwright en timeout. Ese era el punto de preguntar "¿estoy construyendo lo correcto?". La respuesta fue otro pivote: v3.2 con orquestador propio sobre Groq, luego plan de migración al Claude Agent SDK vía LiteLLM, luego la política #253 que descartó APIs pagas y el SDK — dejando AGENTS.md afirmando que una migración "en curso" ya estaba muerta. Nadie cerró el ciclo.</p>
+        <p>A los 13 meses: BRD, PRD, SDD, TRD, tres ADRs, specs y diagramas HTML — cero pesos ganados, cero deploys completados, todo en localhost:3002. No fue un colapso: fue una acumulación de decisiones localmente racionales, cada una documentada, ninguna desplegada.</p>
+        <h4>Supuesto subyacente</h4>
+        <p>Que Ale siempre tendrá tiempo libre y motivación suficiente para terminar él solo el deploy.</p>
+        <h4>Señales tempranas</h4>
+        <ul class="warn">
+          <li>Ratio docs/código: más documentos que commits que acercan un checkout funcional, en cualquier semana.</li>
+          <li>Deploys cancelados/pospuestos ≥3 veces seguidas (Netlify ya suma 1).</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="fcard" style="border-left-color:var(--green)">
+      <div class="fhead">
+        <div>
+          <p class="fnum" style="color:var(--green)">Fallo 07</p>
+          <h3>Confianza y compliance: la marca desconocida cobrando por transferencia</h3>
+        </div>
+        <div class="badges"><span class="badge sev-crit">Gravedad crítica</span><span class="badge prob-m">Probabilidad media</span></div>
+      </div>
+      <div class="fb">
+        <h4>La historia del fallo</h4>
+        <p>Tres semanas post-lanzamiento: 47 visitas al checkout, 9 formularios, 3 transferencias. El 80% de las abandonadoras escribieron lo mismo antes de desaparecer: "¿no hay otra forma de pagar?". Capturas circularon en un grupo de Facebook de Cartagena con el título "cuidado con esta tienda".</p>
+        <p>Daniela, compradora #12, envió nombre completo, celular y dirección. Su transferencia se cruzó con un fin de semana largo; Shirley, sola desde el celular, no registró el envío. Dos semanas después Daniela publicó en stories: "Llevan 15 días con mi plata y mi paquete aparece perdido". Sus seguidoras — el público exacto de Nénufar — compartieron.</p>
+        <p>En un mes, tres stories virales e hicieron más ruido que todo el marketing de Shirley en seis meses. Una marca sin reviews, sin garantías visibles y sin devoluciones definidas no tenía nada que oponer. Ventas a cero. Los datos de 31 compradoras quedaron sin respaldo ni responsable declarado, esperando el siguiente incidente: una filtración.</p>
+        <h4>Supuesto subyacente</h4>
+        <p>Que desconocidas confiarían su dinero —y después sus datos— a una cuenta Nequi personal basándose solo en la buena fe percibida de una marca sin historial.</p>
+        <h4>Señales tempranas</h4>
+        <ul class="warn">
+          <li>&lt;40% de formularios enviados terminan en transferencia dentro de 48h.</li>
+          <li>&gt;30% de conversaciones incluyen "¿esto es estafa?" o "¿tienes página verificada?".</li>
+        </ul>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<footer>
+  <span>Premortem skill · método Gary Klein · 7 agentes en paralelo</span>
+  <span>2026-08-22 13:26 · Sujeto: lanzamiento de Nénufar (nenufar.co)</span>
+</footer>
+
+</div>
+</body>
+</html>
