@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nénufar — SDLC, 100% Free Stack & System Diagrams</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<style>
+  :root {
+    --paper:      #F6F4FA;
+    --paper-2:    #FFFFFF;
+    --ink:        #241C2E;
+    --muted:      #6C6478;
+    --faint:      #928AA0;
+    --rule:       #E4DEEC;
+    --brand:      #6A1B9A;
+    --brand-dark: #4A148C;
+    --brand-tint: #EEE6F6;
+    --gold:       #8F6F1E;
+    --gold-tint:  #F1EAD7;
+    --green:      #15803D;
+    --green-tint: #DCFCE7;
+    --shadow:     0 1px 3px rgba(36,28,46,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:      #16121C;
+      --paper-2:    #1E1826;
+      --ink:        #ECE6F2;
+      --muted:      #A99FB6;
+      --faint:      #7C7388;
+      --rule:       #322A3C;
+      --brand:      #B98BE0;
+      --brand-dark: #CBA6EA;
+      --brand-tint: #291E35;
+      --gold:       #CBAA57;
+      --gold-tint:  #2A2417;
+      --green:      #4ADE80;
+      --green-tint: #143520;
+      --shadow:     0 1px 3px rgba(0,0,0,.4);
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(2rem, 5vw, 4rem) clamp(1.1rem, 4vw, 2.5rem) 5rem;
+  }
+
+  /* Header */
+  .masthead { margin-bottom: 2.2rem; }
+  .eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: .75rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin: 0 0 .8rem;
+  }
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(2.2rem, 5.5vw, 3.4rem);
+    line-height: 1.05;
+    letter-spacing: -.01em;
+    margin: 0 0 .8rem;
+  }
+  h1 em { font-style: italic; color: var(--brand); }
+  .lede {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 75ch;
+    margin: 0 0 1.2rem;
+  }
+
+  .badge-free {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    font-family: 'Geist Mono', monospace;
+    font-size: .75rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    background: var(--green-tint);
+    color: var(--green);
+    border: 1px solid var(--green);
+    padding: .25rem .7rem;
+    border-radius: 999px;
+    margin-bottom: 1.2rem;
+  }
+  .badge-free .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .free-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: .8rem;
+    margin: 1rem 0 2rem;
+  }
+  @media (max-width: 768px) {
+    .free-strip { grid-template-columns: 1fr 1fr; }
+  }
+  .free-item {
+    background: var(--paper-2);
+    border: 1.5px solid var(--rule);
+    border-radius: 10px;
+    padding: .8rem 1rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .free-item b { color: var(--brand); font-size: .9rem; display: block; }
+  .free-item p { margin: .2rem 0 0; font-size: .78rem; color: var(--muted); }
+
+  /* Navigation Tabs */
+  .nav-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+    border-bottom: 1.5px solid var(--rule);
+    padding-bottom: 1rem;
+    margin-bottom: 2.2rem;
+  }
+  .tab-btn {
+    background: var(--paper-2);
+    border: 1.5px solid var(--rule);
+    color: var(--muted);
+    padding: .55rem 1.1rem;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: .88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+  }
+  .tab-btn:hover {
+    border-color: var(--brand);
+    color: var(--ink);
+  }
+  .tab-btn.active {
+    background: var(--brand);
+    color: #fff;
+    border-color: var(--brand);
+    box-shadow: 0 2px 6px rgba(106, 27, 154, .25);
+  }
+
+  /* Tab Panes */
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; animation: fadeIn .2s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Cards & Mermaid Containers */
+  .card {
+    background: var(--paper-2);
+    border: 1.5px solid var(--rule);
+    border-radius: 12px;
+    padding: 1.3rem 1.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.6rem;
+  }
+  .card.highlight {
+    border-color: var(--brand);
+    background: var(--brand-tint);
+  }
+
+  .mermaid-box {
+    background: var(--paper-2);
+    border: 1.5px solid var(--rule);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.4rem 0 2rem;
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+  }
+  .mermaid-box h3 {
+    margin: 0 0 .3rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+  .mermaid-box p.desc {
+    margin: 0 0 1.2rem;
+    font-size: .88rem;
+    color: var(--muted);
+  }
+
+  .note {
+    margin-top: 1rem;
+    font-size: .85rem;
+    color: var(--muted);
+    border-left: 3px solid var(--gold);
+    padding: .6rem .9rem;
+    background: var(--gold-tint);
+    border-radius: 0 8px 8px 0;
+  }
+  .note strong { color: var(--ink); }
+
+  /* SDLC Phase Item */
+  .sdlc-phase {
+    background: var(--paper-2);
+    border: 1.5px solid var(--rule);
+    border-radius: 12px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.3rem;
+    box-shadow: var(--shadow);
+  }
+  .phase-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: .7rem;
+    margin-bottom: 1rem;
+  }
+  .phase-title { display: flex; align-items: center; gap: .7rem; }
+  .phase-num {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.6rem;
+    color: var(--brand);
+    font-weight: 600;
+    line-height: 1;
+  }
+  .phase-name { font-size: 1.15rem; font-weight: 600; }
+  .phase-deliverables { font-family: 'Geist Mono', monospace; font-size: .75rem; color: var(--muted); }
+
+  .skills-pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .45rem;
+    margin-top: .8rem;
+  }
+  .skill-pill {
+    background: var(--brand-tint);
+    color: var(--brand-dark);
+    border: 1px solid var(--brand);
+    font-family: 'Geist Mono', monospace;
+    font-size: .72rem;
+    padding: .18rem .55rem;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Geist Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: .18rem .5rem;
+    border-radius: 4px;
+  }
+  .tag-brand { background: var(--brand-tint); color: var(--brand); border: 1px solid var(--brand); }
+  .tag-gold { background: var(--gold-tint); color: var(--gold); border: 1px solid var(--gold); }
+  .tag-green { background: var(--green-tint); color: var(--green); border: 1px solid var(--green); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  @media (max-width: 880px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .foot {
+    margin-top: 4rem;
+    padding-top: 1.8rem;
+    border-top: 1px solid var(--rule);
+    font-size: .8rem;
+    color: var(--faint);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Canonical Architecture &amp; SDLC · 100% Free Stack</p>
+    <h1>Nénufar <em>Architecture, SDLC &amp; Diagrams</em></h1>
+    <p class="lede">Complete visual specifications for Nénufar: <strong>No Stripe</strong>, <strong>No paid LLMs ($0 cost via Groq)</strong>, single VPS deployment with <strong>Next.js 15 + Payload CMS v3 + LiteLLM + PostgreSQL</strong>, and the 7 SDLC engineering phases with Addy Osmani skills.</p>
+    
+    <div>
+      <span class="badge-free"><span class="dot"></span> 100% Free Ingestion &amp; Infrastructure ($0 LLM Bill)</span>
+    </div>
+
+    <div class="free-strip">
+      <div class="free-item"><b>Next.js 15 + Payload CMS</b><p>Embedded monolith in Node.js (:3002)</p></div>
+      <div class="free-item"><b>PostgreSQL 16</b><p>Docker container (:5433) + Drizzle</p></div>
+      <div class="free-item"><b>LiteLLM Proxy</b><p>Self-hosted container (:4000) ~50MB</p></div>
+      <div class="free-item"><b>Groq Cloud (Llama 3.3)</b><p>Free tier (70B parameters versatile)</p></div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" id="tabNav">
+      <button class="tab-btn active" onclick="showTab('tab-sdlc')">🗺️ 01 SDLC &amp; Skills</button>
+      <button class="tab-btn" onclick="showTab('tab-usecase')">👥 02 Use Cases (UML)</button>
+      <button class="tab-btn" onclick="showTab('tab-states')">🔄 03 State Machines</button>
+      <button class="tab-btn" onclick="showTab('tab-seq')">⚡ 04 Sequence Diagrams</button>
+      <button class="tab-btn" onclick="showTab('tab-deploy')">🚀 05 Deployment ($0 Stack)</button>
+    </nav>
+  </header>
+
+  <!-- ==================== TAB 1: SDLC & SKILLS ==================== -->
+  <section id="tab-sdlc" class="tab-pane active">
+    
+    <div class="card highlight">
+      <h3 style="margin:0 0 .4rem">🗺️ 7-Phase SDLC Methodology &amp; 24 Addy Osmani Skills</h3>
+      <p style="margin:0;font-size:.9rem">Grounded engineering workflow governing Nénufar from requirements to long-term operations.</p>
+    </div>
+
+    <!-- Phase 1 -->
+    <div class="sdlc-phase">
+      <div class="phase-header">
+        <div class="phase-title">
+          <span class="phase-num">01</span>
+          <div>
+            <span class="phase-name">Planning &amp; Business Scope</span>
+            <span class="tag tag-green" style="margin-left:.6rem">Completed</span>
+          </div>
+        </div>
+        <span class="phase-deliverables">Deliverables: BRD.md, arquitectura.html</span>
+      </div>
+      <p style="font-size:.9rem; color:var(--muted); margin:0 0 .6rem">
+        Establishes Shirley's artisan jewelry business in Cartagena: zero automated payment gateway, direct human closing on WhatsApp, and Telegram as notification + management interface.
+      </p>
+      <div class="skills-pill-group">
+        <span class="skill-pill">interview-me</span>
+        <span class="skill-pill">idea-refine</span>
+        <span class="skill-pill">planning-and-task-breakdown</span>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="sdlc-phase">
+      <div class="phase-header">
+        <div class="phase-title">
+          <span class="phase-num">02</span>
+          <div>
+            <span class="phase-name">Analysis &amp; Requirements</span>
+            <span class="tag tag-green" style="margin-left:.6rem">Completed</span>
+          </div>
+        </div>
+        <span class="phase-deliverables">Deliverables: PRD.md, SKILLS.md, Ley 1581 Consent</span>
+      </div>
+      <p style="font-size:.9rem; color:var(--muted); margin:0 0 .6rem">
+        Defines user stories, Colombian data privacy compliance (Ley 1581), checkout form structure, and the operational skill catalog for Shirley's bot.
+      </p>
+      <div class="skills-pill-group">
+        <span class="skill-pill">spec-driven-development</span>
+        <span class="skill-pill">context-engineering</span>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="sdlc-phase">
+      <div class="phase-header">
+        <div class="phase-title">
+          <span class="phase-num">03</span>
+          <div>
+            <span class="phase-name">Design &amp; Architecture</span>
+            <span class="tag tag-brand" style="margin-left:.6rem">Consolidated</span>
+          </div>
+        </div>
+        <span class="phase-deliverables">Deliverables: SDD.md, TSD.md, diagrams.html, ADRs</span>
+      </div>
+      <p style="font-size:.9rem; color:var(--muted); margin:0 0 .6rem">
+        Monolith design (Next.js 15 + Payload v3), LiteLLM (:4000) bridge to Groq, Claude Agent SDK integration, and PostgreSQL data persistence.
+      </p>
+      <div class="skills-pill-group">
+        <span class="skill-pill">api-and-interface-design</span>
+        <span class="skill-pill">documentation-and-adrs</span>
+        <span class="skill-pill">security-and-hardening</span>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="sdlc-phase">
+      <div class="phase-header">
+        <div class="phase-title">
+          <span class="phase-num">04</span>
+          <div>
+            <span class="phase-name">Coding &amp; Implementation</span>
+            <span class="tag tag-gold" style="margin-left:.6rem">In Progress</span>
+          </div>
+        </div>
+        <span class="phase-deliverables">Deliverables: Storefront Masonry, Claude SDK Bridge, Local API</span>
+      </div>
+      <p style="font-size:.9rem; color:var(--muted); margin:0 0 .6rem">
+        Building in thin vertical slices in dedicated git worktrees. Storefront UI, ProductCard, and Claude Agent SDK migration.
+      </p>
+      <div class="skills-pill-group">
+        <span class="skill-pill">incremental-implementation</span>
+        <span class="skill-pill">frontend-ui-engineering</span>
+        <span class="skill-pill">source-driven-development</span>
+        <span class="skill-pill">code-simplification</span>
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="sdlc-phase">
+      <div class="phase-header">
+        <div class="phase-title">
+          <span class="phase-num">05</span>
+          <div>
+            <span class="phase-name">Testing &amp; QA</span>
+            <span class="tag tag-gold" style="margin-left:.6rem">Continuous</span>
+          </div>
+        </div>
+        <span class="phase-deliverables">Deliverables: Vitest integration tests, Playwright E2E</span>
+      </div>
+      <p style="font-size:.9rem; color:var(--muted); margin:0 0 .6rem">
+        Integration testing with mocked LLM and Telegram boundaries, chat_id security validation, and cross-browser responsiveness testing.
+      </p>
+      <div class="skills-pill-group">
+        <span class="skill-pill">test-driven-development</span>
+        <span class="skill-pill">browser-testing-with-devtools</span>
+        <span class="skill-pill">code-review-and-quality</span>
+        <span class="skill-pill">doubt-driven-development</span>
+        <span class="skill-pill">debugging-and-error-recovery</span>
+      </div>
+    </div>
+
+    <!-- Phase 6 & 7 -->
+    <div class="sdlc-phase">
+      <div class="phase-header">
+        <div class="phase-title">
+          <span class="phase-num">06 &amp; 07</span>
+          <div>
+            <span class="phase-name">Shipping &amp; Maintenance</span>
+            <span class="tag tag-brand" style="margin-left:.6rem">Production Ready</span>
+          </div>
+        </div>
+        <span class="phase-deliverables">Deliverables: Docker deploy, Web Vitals, Migrations</span>
+      </div>
+      <p style="font-size:.9rem; color:var(--muted); margin:0 0 .6rem">
+        Automated CI pipelines, production deployment, query indexing on PostgreSQL, and zero-downtime Payload migrations.
+      </p>
+      <div class="skills-pill-group">
+        <span class="skill-pill">shipping-and-launch</span>
+        <span class="skill-pill">ci-cd-and-automation</span>
+        <span class="skill-pill">performance-optimization</span>
+        <span class="skill-pill">observability-and-instrumentation</span>
+        <span class="skill-pill">git-workflow-and-versioning</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ==================== TAB 2: USE CASES ==================== -->
+  <section id="tab-usecase" class="tab-pane">
+
+    <div class="card highlight">
+      <h3 style="margin:0 0 .4rem">👥 Actors &amp; Operational Boundaries</h3>
+      <p style="margin:0;font-size:.9rem"><strong>Buyers</strong> operate 100% on the web (no AI/bot contact). <strong>Shirley</strong> operates the store via the <code>/admin</code> panel, the private Telegram Bot, and WhatsApp.</p>
+    </div>
+
+    <div class="mermaid-box">
+      <h3>System Use Case Diagram</h3>
+      <p class="desc">Mapping actors against application modules and backend services.</p>
+      <pre class="mermaid">
+flowchart LR
+    subgraph Actors
+        Buyer([🛍 Buyer - Web Only])
+        Shirley([👑 Shirley - Store Owner])
+    end
+
+    subgraph "Nénufar E-Commerce System ($0 Cost)"
+        UC1([Browse catalog /shop])
+        UC2([View product /products/slug])
+        UC3([Add to cart + personalize])
+        UC4([Submit order /pedidos/enviar])
+        UC5([Find own orders /find-order])
+        UC6([Manage catalog in /admin])
+        UC7([Natural language bot in Telegram])
+        UC8([List open orders - pedidosPendientes])
+        UC9([Confirm order - confirmarPedido])
+        UC10([Update stock - actualizarInventario])
+        UC11([Search jewelry - buscarProducto])
+        UC12([Generate copy - generarCaption])
+    end
+
+    Buyer --> UC1
+    Buyer --> UC2
+    Buyer --> UC3
+    Buyer --> UC4
+    Buyer --> UC5
+    
+    Shirley --> UC6
+    Shirley --> UC7
+    UC7 -. includes .-> UC8
+    UC7 -. includes .-> UC9
+    UC7 -. includes .-> UC10
+    UC7 -. includes .-> UC11
+    UC7 -. includes .-> UC12
+
+    UC4 --> TG[(Telegram Channel)]
+    UC6 --> DB[(PostgreSQL)]
+    UC8 --> DB
+    UC9 --> DB
+    UC10 --> DB
+    UC11 --> DB
+
+    style Buyer fill:#DBEAFE,stroke:#1D4ED8,stroke-width:2px
+    style Shirley fill:#FCE7F3,stroke:#BE185D,stroke-width:2px
+    style TG fill:#ECFDF5,stroke:#065F46
+    style DB fill:#EFF6FF,stroke:#1E40AF
+      </pre>
+    </div>
+
+    <div class="note">
+      <strong>Core rule:</strong> No direct "Buyer → Bot" arrow. The buyer journey is 100% web; the Telegram push is a one-way notification to Shirley. The bot webhook strictly rejects any <code>chat_id != TELEGRAM_ADMIN_CHAT_ID</code>.
+    </div>
+
+  </section>
+
+  <!-- ==================== TAB 3: STATE MACHINES ==================== -->
+  <section id="tab-states" class="tab-pane">
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <h3 style="margin:0 0 .3rem">Order Lifecycle State Machine</h3>
+          <p style="margin:0 0 1rem;font-size:.85rem;color:var(--muted)">Matches exact Payload TypeScript enum: <code>processing</code>, <code>completed</code>, <code>cancelled</code>, <code>refunded</code>.</p>
+          <pre class="mermaid">
+stateDiagram-v2
+  [*] --> Cart: item added
+  Cart --> Processing: submitOrderAction()\n(payload.create)
+  Processing --> Processing: Telegram send fails\n(order safely saved)
+  Processing --> Completed: Shirley verifies payment\n(payload.update)
+  Processing --> Cancelled: Customer cancels / out of stock
+  Completed --> Refunded: Warranty / return
+  Completed --> [*]
+  Cancelled --> [*]
+  Refunded --> [*]
+
+  note right of Processing
+    status: 'processing'
+    Telegram HTML sent
+    Idempotent: sha256
+  end note
+          </pre>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3 style="margin:0 0 .3rem">Bot Conversation State (Claude Agent SDK)</h3>
+          <p style="margin:0 0 1rem;font-size:.85rem;color:var(--muted)">Resilient execution loop at <code>/telegram/webhook</code> with turn bounds and fallback error handling.</p>
+          <pre class="mermaid">
+stateDiagram-v2
+  [*] --> Idle: Telegram webhook idle
+  Idle --> Auth: POST /telegram/webhook
+  Auth --> Rejected: chat_id != ADMIN\n-> 200 ignore
+  Rejected --> [*]
+  Auth --> Dedup: chat_id == ADMIN
+  Dedup --> Ignored: update_id seen\n-> 200 OK
+  Ignored --> [*]
+  Dedup --> Thinking: Agent SDK query()
+  Thinking --> ToolCall: LLM chooses tool
+  ToolCall --> ToolResult: payload.find/update\n(Local API)
+  ToolResult --> Thinking: feed result to LLM\n(max 4 rounds)
+  Thinking --> Reply: final text response
+  Reply --> Sent: sendTelegramReply()
+  Sent --> [*]
+  Thinking --> Error: Groq timeout / 429
+  Error --> Sent: fallback reply\n"try again 💜"
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Why two decoupled state machines?</strong> Order state is persistent and business-critical in PostgreSQL. Bot conversation state is ephemeral (in-memory LRU Set for deduplication) — if the bot encounters a transient error, the order remains completely safe in the database.
+    </div>
+
+  </section>
+
+  <!-- ==================== TAB 4: SEQUENCE DIAGRAMS ==================== -->
+  <section id="tab-seq" class="tab-pane">
+
+    <div class="mermaid-box">
+      <h3>⚡ 1. Sequence Diagram · Buyer Order ($0 Transaction Cost)</h3>
+      <p class="desc">Buyer never touches Telegram or LLMs. Form submission is validated and idempotent.</p>
+      <pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor Buyer as 🛍 Buyer (browser)
+  participant Next as Next.js App Router
+  participant Action as submitOrderAction
+  participant DB as PostgreSQL (Payload Local API)
+  participant TG as Telegram Bot API (Channel)
+
+  Buyer->>Next: POST /pedidos/enviar {name, phone, cart, consent}
+  Next->>Action: server action (validate Ley 1581)
+  Action->>Action: idempotency check sha256(cart+phone)
+  alt duplicate submission
+    Action-->>Buyer: 409 already submitted
+  else new order
+    Action->>DB: payload.create('orders', {items, amount, status:'processing'})
+    DB-->>Action: order #1042 created
+    Action->>TG: POST sendMessage {chat_id: CHANNEL_ID, parse_mode:HTML}
+    alt TG send ok
+      TG-->>Action: {ok:true, message_id}
+    else TG send fail
+      TG-->>Action: {ok:false}
+      Action->>Action: log error, continue (order already saved in DB)
+    end
+    Action-->>Buyer: redirect /pedidos/enviar/confirmacion?id=1042
+    TG-->>Buyer: no direct contact (Shirley reads channel -> WhatsApp)
+  end
+      </pre>
+    </div>
+
+    <div class="mermaid-box">
+      <h3>⚡ 2. Sequence Diagram · Shirley's Bot (Claude Agent SDK via LiteLLM → Groq)</h3>
+      <p class="desc">End-to-end execution for Shirley's message: <code>"set the moon necklace stock to 3"</code>.</p>
+      <pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor Shirley as 👑 Shirley (Telegram)
+  participant TG as Telegram Bot API
+  participant WH as POST /telegram/webhook (Next.js)
+  participant SDK as Claude Agent SDK (query + tools)
+  participant Lite as LiteLLM Proxy :4000 (self-hosted)
+  participant Groq as Groq API Cloud (llama-3.3-70b free)
+  participant DB as PostgreSQL (Payload Local API)
+
+  Shirley->>TG: "set the moon necklace stock to 3"
+  TG->>WH: POST /telegram/webhook {update_id, chat_id, text}
+  WH->>WH: verify secret -> check chat_id==ADMIN? -> dedup update_id
+  alt not Shirley
+    WH-->>TG: 200 OK (ignored)
+  else is Shirley
+    WH->>SDK: runShirleyAgent(text, {payload, chatId})
+    SDK->>Lite: POST /v1/messages (Anthropic API format)<br/>ANTHROPIC_BASE_URL=http://litellm:4000<br/>tools: [actualizarInventario, buscarProducto...]
+    Lite->>Lite: translate Anthropic -> OpenAI (drop_params: true)
+    Lite->>Groq: POST /openai/v1/chat/completions {model: llama-3.3, tools}
+    Groq-->>Lite: {tool_calls:[{name:actualizarInventario, args:{slug:collar-luna, stock:3}}]}
+    Lite-->>SDK: {content:[{type:tool_use, name:actualizarInventario}]}
+    SDK->>DB: payload.update({collection:products, where:{slug:collar-luna}, data:{stock:3}})
+    DB-->>SDK: {ok:true, stock:3}
+    SDK->>Lite: tool_result -> Groq (round 2)
+    Lite->>Groq: POST /openai/v1/chat/completions (with result)
+    Groq-->>Lite: {content: "Done Shirley, Moon Necklace stock is now 3 💜"}
+    Lite-->>SDK: final text
+    SDK-->>WH: reply string
+    WH->>TG: sendTelegramReply({chatId: Shirley, text: reply})
+    TG-->>Shirley: "Done Shirley, Moon Necklace stock is now 3 💜"
+  end
+      </pre>
+    </div>
+
+  </section>
+
+  <!-- ==================== TAB 5: DEPLOYMENT ==================== -->
+  <section id="tab-deploy" class="tab-pane">
+
+    <div class="mermaid-box">
+      <h3>🚀 Option A Free Deployment (Single VPS, $5-10/mo)</h3>
+      <p class="desc">Everything runs in a single <code>docker-compose.yml</code>. Zero external per-token bill.</p>
+      <pre class="mermaid">
+flowchart TB
+  subgraph Internet
+    Buyer2([🛍 Buyer browser])
+    Shirley2([👑 Shirley Telegram])
+    TGExt([Telegram Bot API<br/>api.telegram.org])
+  end
+
+  subgraph VPS["VPS — docker-compose.yml (Single Host)"]
+    direction TB
+    App[Next.js 15 + Payload CMS<br/>:3002<br/>/shop /admin /telegram/webhook]
+    LiteLLM[LiteLLM Proxy<br/>:4000<br/>nenufar-bot -> groq/llama-3.3-70b]
+    PG[(PostgreSQL 16<br/>:5433<br/>products, orders, media)]
+    App --- LiteLLM
+    App --- PG
+    LiteLLM --- PG
+  end
+
+  subgraph GroqCloud["Groq Cloud (Free Tier)"]
+    Groq2[Groq API<br/>llama-3.3-70b-versatile<br/>console.groq.com]
+  end
+
+  Buyer2 -->|HTTPS| App
+  Shirley2 <-->|Telegram| TGExt
+  TGExt -->|POST /telegram/webhook<br/>secret + chat_id guard| App
+  App -->|sendTelegramMessage<br/>fire-and-forget| TGExt
+  LiteLLM -->|OpenAI format<br/>GROQ_API_KEY| Groq2
+  App -.->|ANTHROPIC_BASE_URL<br/>http://litellm:4000| LiteLLM
+
+  style App fill:#EEE6F6,stroke:#6A1B9A,stroke-width:2px
+  style LiteLLM fill:#DCFCE7,stroke:#15803D,stroke-width:2px
+  style PG fill:#EFF6FF,stroke:#1E40AF,stroke-width:2px
+  style Groq2 fill:#FEF3C7,stroke:#D97706,stroke-width:2px
+  style TGExt fill:#ECFDF5,stroke:#065F46,stroke-width:2px
+      </pre>
+    </div>
+
+    <div class="grid-2" style="margin-top:1.5rem">
+      <div style="background:var(--paper-2);border:1.5px solid var(--rule);border-radius:10px;padding:1rem 1.2rem">
+        <b style="font-family:'Geist Mono',monospace;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)">docker-compose.yml (Free Stack)</b>
+        <pre style="font-family:'Geist Mono',monospace;font-size:.74rem;overflow-x:auto;margin:.6rem 0 0;white-space:pre">services:
+  app:
+    build: .
+    ports: ["3002:3002"]
+    env_file: .env
+    depends_on: [postgres, litellm]
+  postgres:
+    image: postgres:16
+    ports: ["5433:5432"]
+    volumes: [postgres_data:/var/lib/postgresql/data]
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    ports: ["4000:4000"]
+    volumes: ["./litellm/config.yaml:/app/config.yaml"]
+    command: ["--config","/app/config.yaml"]
+    env_file: .env
+</pre>
+      </div>
+
+      <div style="background:var(--paper-2);border:1.5px solid var(--rule);border-radius:10px;padding:1rem 1.2rem">
+        <b style="font-family:'Geist Mono',monospace;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)">.env Configuration ($0 LLM)</b>
+        <pre style="font-family:'Geist Mono',monospace;font-size:.74rem;overflow-x:auto;margin:.6rem 0 0;white-space:pre">DATABASE_URL=postgres://...
+ANTHROPIC_BASE_URL=http://localhost:4000
+ANTHROPIC_AUTH_TOKEN=sk-litellm-key
+ANTHROPIC_MODEL=nenufar-bot
+GROQ_API_KEY=gsk_... # Free Tier
+TELEGRAM_BOT_TOKEN=...
+TELEGRAM_WEBHOOK_SECRET=...
+TELEGRAM_ADMIN_CHAT_ID=...
+</pre>
+      </div>
+    </div>
+
+  </section>
+
+  <footer class="foot">
+    <p>Nénufar — System Architecture, SDLC &amp; Diagrams · Next.js 15 + Payload CMS v3 + LiteLLM + Groq · $0 LLM Cost · No Stripe</p>
+  </footer>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'neutral',
+    securityLevel: 'loose',
+    themeVariables: {
+      primaryColor: '#6A1B9A',
+      primaryTextColor: '#fff',
+      primaryBorderColor: '#4A148C',
+      lineColor: '#6A1B9A',
+      secondaryColor: '#EEE6F6',
+      tertiaryColor: '#F1EAD7'
+    }
+  });
+
+  function showTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    
+    const targetPane = document.getElementById(tabId);
+    if (targetPane) targetPane.classList.add('active');
+    
+    event.currentTarget.classList.add('active');
+    mermaid.run();
+  }
+</script>
+
+</body>
+</html>
