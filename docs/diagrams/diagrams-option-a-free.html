@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nénufar — Option A Free · Diagrams</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { primaryColor: '#EEE6F6', primaryTextColor: '#241C2E', primaryBorderColor: '#6A1B9A', lineColor: '#6A1B9A', tertiaryColor: '#F6F4FA' }, flowchart: { htmlLabels: true, curve: 'basis' }, sequence: { mirrorActors: false } })</script>
+<style>
+  :root { --paper:#F6F4FA; --paper2:#fff; --ink:#241C2E; --muted:#6C6478; --faint:#928AA0; --rule:#E4DEEC; --brand:#6A1B9A; --brand-dark:#4A148C; --brand-tint:#EEE6F6; --gold:#8F6F1E; --gold-tint:#F1EAD7; --green:#15803D; --green-tint:#DCFCE7; --ok:#065F46; }
+  *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1140px;margin:0 auto;padding:clamp(1.5rem,4vw,3rem) clamp(1rem,3vw,2rem) 3rem}
+  .eyebrow{font-family:'Geist Mono',monospace;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--brand);margin:0 0 .6rem}
+  h1{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;margin:0 0 .6rem} h1 em{font-style:italic;color:var(--brand)}
+  .lede{color:var(--muted);max-width:68ch;margin:0 0 1.2rem;font-size:1.02rem}
+  .badge-free{display:inline-flex;align-items:center;gap:.4rem;font-family:'Geist Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;background:var(--green-tint);color:var(--green);border:1px solid var(--green);padding:.25rem .6rem;border-radius:999px}
+  .badge-free .dot{width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1} 50%{opacity:.5}}
+  .toc{display:flex;flex-wrap:wrap;gap:.6rem;margin:1.4rem 0 2rem} .toc a{font-family:'Geist Mono',monospace;font-size:.75rem;color:var(--brand);text-decoration:none;border:1px solid var(--rule);padding:.35rem .7rem;border-radius:999px;background:var(--paper2)} .toc a:hover{border-color:var(--brand);background:var(--brand-tint)}
+  .card{background:var(--paper2);border:1.5px solid var(--rule);border-radius:12px;padding:1.4rem 1.5rem;margin-bottom:1.6rem;box-shadow:0 1px 2px rgba(36,28,46,.06)}
+  .card h2{font-family:'Playfair Display',serif;font-size:1.35rem;margin:0 0 .2rem} .card h2 span{font-family:'Geist Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-left:.6rem;vertical-align:middle}
+  .card .desc{color:var(--muted);font-size:.9rem;margin:0 0 1rem;max-width:70ch}
+  .diagram-box{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:1rem;overflow-x:auto}
+  .diagram-box .mermaid{display:flex;justify-content:center}
+  .note{margin-top:.9rem;font-size:.82rem;color:var(--muted);border-left:3px solid var(--gold);padding:.6rem .9rem;background:var(--gold-tint);border-radius:0 8px 8px 0}
+  .note strong{color:var(--ink)}
+  .legend{display:flex;flex-wrap:wrap;gap:1rem 1.4rem;margin:.8rem 0 0;font-size:.78rem;color:var(--muted)} .legend span{display:inline-flex;align-items:center;gap:.4rem} .sw{width:18px;height:12px;border-radius:3px;display:inline-block;border:1px solid var(--rule)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem} @media(max-width:900px){.grid2{grid-template-columns:1fr}}
+  .foot{margin-top:2.5rem;text-align:center;font-family:'Geist Mono',monospace;font-size:.75rem;color:var(--faint)}
+  .free-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem;margin:.8rem 0} @media(max-width:700px){.free-strip{grid-template-columns:1fr 1fr}}
+  .free-item{background:var(--green-tint);border:1px solid var(--green);border-radius:8px;padding:.7rem .8rem;text-align:center} .free-item b{color:var(--green);font-size:.85rem} .free-item p{margin:.15rem 0 0;font-size:.75rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Nénufar · Option A — 100% Free</p>
+  <h1>Diagrams <em>for the free stack</em></h1>
+  <p class="lede">No Stripe. No paid LLM. One VPS, one <code>docker-compose.yml</code> — <strong>Next.js + Payload + Postgres + LiteLLM proxy + Groq (Llama 3.3 free)</strong>. Shirley manages from Telegram, buyers stay on the web.</p>
+  <span class="badge-free"><span class="dot"></span> $0 LLM cost · Groq free tier · LiteLLM self-hosted</span>
+  <div class="free-strip">
+    <div class="free-item"><b>Next.js + Payload</b><p>Self-hosted, same process</p></div>
+    <div class="free-item"><b>PostgreSQL 16</b><p>Docker, local volume</p></div>
+    <div class="free-item"><b>LiteLLM :4000</b><p>Self-hosted proxy ~50MB</p></div>
+    <div class="free-item"><b>Groq · Llama 3.3</b><p>Free tier, no bill</p></div>
+  </div>
+  <nav class="toc">
+    <a href="#usecase">01 Use Case</a>
+    <a href="#state">02 State</a>
+    <a href="#sequence">03 Sequence (Buyer)</a>
+    <a href="#sequence-bot">04 Sequence (Shirley Bot)</a>
+    <a href="#deploy">05 Deploy — Option A</a>
+  </nav>
+  <p style="font-size:.85rem;color:var(--muted)">Existing repo had only <a href="./arquitectura.html" style="color:var(--brand)">architecture.html</a> + <code>architecture.excalidraw</code> (high-level). No UML state / use-case / interaction diagrams — these are new and canonical for Option A free.</p>
+</header>
+
+<!-- 01 USE CASE -->
+<section id="usecase" class="card">
+  <h2>01 — Use Case Diagram <span>who can do what</span></h2>
+  <p class="desc">Two human actors. The bot is <strong>Shirley's only</strong> — buyers never touch it. All LLM calls stay free via Groq.</p>
+  <div class="diagram-box">
+<pre class="mermaid">
+flowchart LR
+  subgraph Actors
+    Buyer([🛍 Buyer])
+    Shirley([💜 Shirley - Owner])
+  end
+
+  subgraph "Nénufar System (Free)"
+    UC1([Browse catalog /shop])
+    UC2([View product /products/slug])
+    UC3([Add to cart + personalize])
+    UC4([Submit order /pedidos/enviar])
+    UC5([View own orders /find-order])
+    UC6([Manage in /admin])
+    UC7([Ask bot in Telegram])
+    UC8([List pending orders])
+    UC9([Confirm order])
+    UC10([Update stock])
+    UC11([Search products via bot])
+  end
+
+  Buyer --> UC1
+  Buyer --> UC2
+  Buyer --> UC3
+  Buyer --> UC4
+  Buyer --> UC5
+  Shirley --> UC6
+  Shirley --> UC7
+  UC7 -. includes .-> UC8
+  UC7 -. includes .-> UC9
+  UC7 -. includes .-> UC10
+  UC7 -. includes .-> UC11
+
+  UC4 --> TG[(Telegram Channel)]
+  UC6 --> DB[(PostgreSQL)]
+  UC8 --> DB
+  UC9 --> DB
+  UC10 --> DB
+  UC11 --> DB
+
+  style Buyer fill:#DBEAFE,stroke:#1D4ED8,stroke-width:2px
+  style Shirley fill:#FCE7F3,stroke:#BE185D,stroke-width:2px
+  style TG fill:#ECFDF5,stroke:#065F46
+  style DB fill:#EFF6FF,stroke:#1E40AF
+</pre>
+  </div>
+  <div class="note"><strong>Key rule:</strong> No "Buyer → Bot" arrow — intentional. Buyer journey is 100% web → Telegram notification is one-way to Shirley. Bot webhook rejects any <code>chat_id != TELEGRAM_ADMIN_CHAT_ID</code>.</div>
+  <div class="legend"><span><span class="sw" style="background:#DBEAFE;border-color:#1D4ED8"></span> Buyer (web only)</span><span><span class="sw" style="background:#FCE7F3;border-color:#BE185D"></span> Shirley (admin + bot)</span><span><span class="sw" style="background:#ECFDF5;border-color:#065F46"></span> Telegram (external)</span></div>
+</section>
+
+<!-- 02 STATE -->
+<section id="state" class="card">
+  <h2>02 — State Diagrams <span>lifecycles</span></h2>
+  <p class="desc">Left: Order lifecycle (the money). Right: Bot conversation lifecycle (the free LLM loop). Both persist in Postgres; neither costs per-token beyond Groq free tier.</p>
+  <div class="grid2">
+    <div>
+      <h3 style="font-family:'Geist Mono',monospace;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 .5rem">Order State</h3>
+      <div class="diagram-box">
+<pre class="mermaid">
+stateDiagram-v2
+  [*] --> Draft: cart created
+  Draft --> Pending: submitOrderAction()\n(payload.create)
+  Pending --> Pending: Telegram send fails\n(order still saved)
+  Pending --> Confirmed: Shirley /confirmar\n(payload.update)
+  Pending --> Cancelled: Shirley cancels
+  Confirmed --> Shipped: Shirley ships\n(WhatsApp coord)
+  Confirmed --> Cancelled: buyer no-show
+  Shipped --> [*]
+  Cancelled --> [*]
+
+  note right of Pending
+    Telegram HTML sent
+    to TELEGRAM_CHANNEL_ID
+    Idempotent: sha256(cart+phone)
+  end note
+  note right of Confirmed
+    Only Shirley via
+    /admin or bot
+    (never buyer)
+  end note
+</pre>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-family:'Geist Mono',monospace;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 .5rem">Bot Conversation State (Claude Agent SDK loop)</h3>
+      <div class="diagram-box">
+<pre class="mermaid">
+stateDiagram-v2
+  [*] --> Idle: Telegram webhook idle
+  Idle --> Auth: POST /telegram/webhook
+  Auth --> Rejected: chat_id != ADMIN\n→ 200 ignore
+  Rejected --> [*]
+  Auth --> Dedup: chat_id == ADMIN
+  Dedup --> Ignored: update_id seen\n→ 200
+  Ignored --> [*]
+  Dedup --> Thinking: route to Agent SDK
+  Thinking --> ToolCall: LLM chooses tool
+  ToolCall --> ToolResult: payload.find/update\n(Postgres)
+  ToolResult --> Thinking: feed result to LLM\n(max 4 rounds)
+  Thinking --> Reply: LLM final text
+  Reply --> Sent: sendTelegramReply(chatId)
+  Sent --> [*]
+  Thinking --> Error: Groq timeout
+  Error --> Sent: fallback reply\n\"try again 💜\"
+
+  note right of ToolCall
+    Free: SDK → LiteLLM :4000
+    → Groq Llama 3.3
+    ANTHROPIC_BASE_URL trick
+  end note
+</pre>
+      </div>
+    </div>
+  </div>
+  <div class="note"><strong>Why two states?</strong> Order state is business-critical and survives bot failures. Bot state is ephemeral (in-memory Set for dedup, max 1000 <code>update_id</code>) — safe to lose, order is already in Postgres.</div>
+</section>
+
+<!-- 03 SEQUENCE BUYER -->
+<section id="sequence" class="card">
+  <h2>03 — Sequence Diagram · Buyer Order <span>interaction — $0</span></h2>
+  <p class="desc">Buyer never sees Telegram or LLM. Idempotency prevents double-submit. Telegram failure does not block buyer.</p>
+  <div class="diagram-box">
+<pre class="mermaid">
+sequenceDiagram
+  actor Buyer as 🛍 Buyer (browser)
+  participant Next as Next.js App Router
+  participant Action as submitOrderAction
+  participant DB as PostgreSQL<br/>(Payload Local API)
+  participant TG as Telegram Bot API<br/>(Channel)
+
+  Buyer->>Next: POST /pedidos/enviar<br/>{name, phone, cart, consent}
+  Next->>Action: server action (validate Ley 1581)
+  Action->>Action: idempotency check<br/>sha256(cart+phone) 5min window
+  alt duplicate
+    Action-->>Buyer: 409 already submitted
+  else new
+    Action->>DB: payload.create('orders', {items, total COP, status:'pending'})
+    DB-->>Action: order #1042 created
+    Action->>TG: POST sendMessage<br/>{chat_id: CHANNEL_ID, parse_mode:HTML, text: formatted}
+    alt TG ok
+      TG-->>Action: {ok:true, message_id}
+    else TG fail
+      TG-->>Action: {ok:false}
+      Action->>Action: log error, continue<br/>(order already saved)
+    end
+    Action-->>Buyer: redirect /pedidos/enviar/confirmacion?orderId=1042
+    TG-->>Buyer: no direct contact (Shirley reads channel → WhatsApp)
+  end
+
+  Note over Action,TG: $0 cost — no LLM, no Stripe<br/>Single bot token, fire-and-forget
+</pre>
+  </div>
+</section>
+
+<!-- 04 SEQUENCE BOT -->
+<section id="sequence-bot" class="card">
+  <h2>04 — Sequence Diagram · Shirley Bot (Option A Free) <span>interaction via LiteLLM → Groq</span></h2>
+  <p class="desc">End-to-end for Shirley's message <code>"pon el collar luna en 3"</code>. Every LLM hop is free: SDK thinks it talks to Anthropic, LiteLLM translates to Groq.</p>
+  <div class="diagram-box">
+<pre class="mermaid">
+sequenceDiagram
+  actor Shirley as 💜 Shirley (Telegram)
+  participant TG as Telegram Bot API
+  participant WH as POST /telegram/webhook<br/>Next.js
+  participant SDK as Claude Agent SDK<br/>query() + tools
+  participant Lite as LiteLLM Proxy :4000<br/>(self-hosted, free)
+  participant Groq as Groq API<br/>llama-3.3-70b (free tier)
+  participant DB as PostgreSQL<br/>Payload Local API
+
+  Shirley->>TG: "pon el collar luna en 3"
+  TG->>WH: POST /telegram/webhook<br/>X-Telegram-Bot-Api-Secret-Token + Update{update_id, chat_id, text}
+  WH->>WH: verify secret → check chat_id==ADMIN?<br/>→ dedup update_id
+  alt not Shirley
+    WH-->>TG: 200 ignored
+  else is Shirley
+    WH->>SDK: runShirleyAgent(text, {payload, chatId})
+    SDK->>Lite: POST /v1/messages (Anthropic format)<br/>ANTHROPIC_BASE_URL=http://litellm:4000<br/>tools: [buscarProducto, actualizarInventario...]
+    Lite->>Lite: translate Anthropic → OpenAI<br/>drop_params (strip output_config)
+    Lite->>Groq: POST /openai/v1/chat/completions<br/>{model: llama-3.3, tools, messages}
+    Groq-->>Lite: {tool_calls:[{name:actualizarInventario, args:{slug: collar-luna, stock:3}}]}
+    Lite-->>SDK: {content:[{type:tool_use, name:actualizarInventario}]}
+    SDK->>DB: payload.update({collection:products, where:{slug:collar-luna}, data:{stock:3}})
+    DB-->>SDK: {ok, stock:3}
+    SDK->>Lite: tool_result → Groq (round 2)
+    Lite->>Groq: POST /openai/v1/chat/completions (with result)
+    Groq-->>Lite: {content: "Listo Shirley, collar Luna en 3 💜"}
+    Lite-->>SDK: final text
+    SDK-->>WH: reply string
+    WH->>TG: sendTelegramReply({chatId: Shirley, text: reply})
+    TG-->>Shirley: "Listo Shirley, collar Luna en 3 💜"
+  end
+
+  Note over SDK,Groq: $0 — Groq free tier, LiteLLM ~50MB self-hosted<br/>Drop-in replacement: change config.yaml → paid Claude if you scale
+</pre>
+  </div>
+  <div class="note"><strong>Free guarantee:</strong> <code>GROQ_API_KEY</code> is consumed by LiteLLM, not by Anthropic. Set <code>ANTHROPIC_BASE_URL=http://litellm:4000</code> (inside Docker: <code>http://litellm:4000</code>) and <code>ANTHROPIC_MODEL=nenufar-bot</code>. No <code>sk-ant-*</code> needed.</div>
+</section>
+
+<!-- 05 DEPLOY -->
+<section id="deploy" class="card">
+  <h2>05 — Deployment · Option A Free (single VPS) <span>architecture — $0 LLM</span></h2>
+  <p class="desc">Same <code>docker-compose.yml</code> you run locally. No Vercel sidecar, no LiteLLM Cloud, no per-token bill.</p>
+  <div class="diagram-box">
+<pre class="mermaid">
+flowchart TB
+  subgraph Internet
+    Buyer2([🛍 Buyer browser])
+    Shirley2([💜 Shirley Telegram])
+    TGExt([Telegram Bot API<br/>api.telegram.org])
+  end
+
+  subgraph "VPS — docker-compose.yml (single host, $5-10/mo)"
+    direction TB
+    App[Next.js 15 + Payload CMS<br/>:3000<br/>/shop /admin /telegram/webhook]
+    LiteLLM[LiteLLM Proxy<br/>:4000<br/>config.yaml: nenufar-bot → groq/llama-3.3]
+    PG[(PostgreSQL 16<br/>:5433<br/>products/orders/media)]
+    App --- LiteLLM
+    App --- PG
+    LiteLLM --- PG
+  end
+
+  subgraph "Groq Cloud (free tier)"
+    Groq2[Groq API<br/>llama-3.3-70b-versatile<br/>console.groq.com]
+  end
+
+  Buyer2 -->|HTTPS| App
+  Shirley2 <-->|Telegram| TGExt
+  TGExt -->|POST /telegram/webhook<br/>secret + chat_id check| App
+  App -->|fire-and-forget<br/>sendMessage| TGExt
+  LiteLLM -->|OpenAI format<br/>GROQ_API_KEY| Groq2
+  App -.->|ANTHROPIC_BASE_URL<br/>http://litellm:4000| LiteLLM
+
+  style App fill:#EEE6F6,stroke:#6A1B9A,stroke-width:2px
+  style LiteLLM fill:#DCFCE7,stroke:#15803D,stroke-width:2px
+  style PG fill:#EFF6FF,stroke:#1E40AF,stroke-width:2px
+  style Groq2 fill:#FEF3C7,stroke:#D97706,stroke-width:2px
+  style TGExt fill:#ECFDF5,stroke:#065F46,stroke-width:2px
+</pre>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+    <div style="background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:.8rem 1rem">
+      <b style="font-family:'Geist Mono',monospace;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)">docker-compose.yml (free)</b>
+<pre style="font-family:'Geist Mono',monospace;font-size:.72rem;overflow-x:auto;margin:.5rem 0 0;white-space:pre">services:
+  app:
+    build: .
+    ports: ["3000:3000"]
+    env_file: .env
+    depends_on: [postgres, litellm]
+  postgres:
+    image: postgres:16
+    volumes: [postgres_data:/var/lib/postgresql/data]
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    volumes: ["./litellm/config.yaml:/app/config.yaml"]
+    command: ["--config","/app/config.yaml"]
+    env_file: .env
+</pre>
+    </div>
+    <div style="background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:.8rem 1rem">
+      <b style="font-family:'Geist Mono',monospace;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)">.env (free — no sk-ant-*)</b>
+<pre style="font-family:'Geist Mono',monospace;font-size:.72rem;overflow-x:auto;margin:.5rem 0 0;white-space:pre">DATABASE_URL=postgres://...
+ANTHROPIC_BASE_URL=http://litellm:4000
+ANTHROPIC_AUTH_TOKEN=sk-litellm-key
+ANTHROPIC_MODEL=nenufar-bot
+GROQ_API_KEY=gsk_...  # free tier
+TELEGRAM_BOT_TOKEN=...
+TELEGRAM_WEBHOOK_SECRET=...
+TELEGRAM_ADMIN_CHAT_ID=...
+</pre>
+      <p style="font-size:.75rem;color:var(--muted);margin:.6rem 0 0">Verify: <code>pnpm tsx scripts/set-telegram-webhook.ts https://your-domain/telegram/webhook</code> → Shirley: "¿qué pendientes tengo?" → LiteLLM logs show <code>Anthropic → Groq OK</code></p>
+    </div>
+  </div>
+</section>
+
+<p class="foot">Nénufar — Option A free · diagrams are canonical for the LiteLLM + Groq path · See also <a href="./arquitectura.html" style="color:var(--brand)">arquitectura.html</a>, <a href="./GLOSSARY.md" style="color:var(--brand)">GLOSSARY.md</a>, <a href="./HANDOFF-agent-sdk-migration.md" style="color:var(--brand)">HANDOFF-agent-sdk-migration.md</a> · $0 LLM · No Stripe · Buyer web only, bot is Shirley's</p>
+
+</div>
+</body>
+</html>
