@@ -11,9 +11,10 @@ Worktree: `/home/ale/Work/nenufar-bot-sdk`
 Branch: `feature/bot/claude-agent-sdk-migration`  
 
 ### Fase 1: Infraestructura y Gateway LiteLLM
-- [ ] **1.1** Configurar `litellm` en `docker-compose.yml` y crear `litellm/config.yaml` (`drop_params: true`, modelo `nenufar-bot` -> `groq/llama-3.3-70b-versatile`).
-- [ ] **1.2** Actualizar `.env.example`, `.env` y dependencias en `package.json` (`pnpm remove groq-sdk`, `pnpm add @anthropic-ai/claude-agent-sdk zod`).
-- [ ] **Checkpoint 1:** `docker-compose up -d litellm` levanta y `curl http://localhost:4000/health` responde status OK.
+- [x] **1.1** Configurar `litellm` en `docker-compose.yml` y crear `litellm/config.yaml` (`drop_params: true`, modelo `nenufar-bot` -> `groq/llama-3.3-70b-versatile`).
+  - Nota: NO se usa `env_file: .env` — el `DATABASE_URL` de la app hacía que LiteLLM corriera sus migraciones Prisma contra una DB ajena y muriera en el arranque. Se pasan solo `GROQ_API_KEY` y `LITELLM_MASTER_KEY` vía `environment`.
+- [x] **1.2** Actualizar `.env.example`, `.env` y dependencias en `package.json` (`pnpm remove groq-sdk`, `pnpm add @anthropic-ai/claude-agent-sdk zod`). SDK v0.3.240 + zod v4.4.3. También `serverExternalPackages` en `next.config.ts`.
+- [x] **Checkpoint 1:** `docker compose up -d litellm` levanta y `curl http://localhost:4000/health/liveliness` responde 200 "I'm alive!". `/v1/messages` responde JSON válido ruteando a Groq (verificado hasta Groq: falla únicamente por `GROQ_API_KEY` vacía — ⚠️ **pendiente que Ale cargue su key free en `.env`** para inferencia real).
 
 ### Fase 2: Tools Tipadas Zod
 - [ ] **2.1** Implementar `src/lib/agent/tools.ts` con las 7 tools de Shirley (`buscarProducto`, `destacarProducto`, `actualizarInventario`, `pedidosPendientes`, `confirmarPedido`, `publicarEvento`, `crearProductoDraft`) conectadas a Payload Local API.

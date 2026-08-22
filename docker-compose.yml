@@ -11,5 +11,20 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: nenufar-litellm
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm/config.yaml:/app/config.yaml:ro
+    # Solo las vars del gateway — NO pasar el .env completo: el DATABASE_URL
+    # de la app hace que LiteLLM intente correr sus migraciones Prisma contra
+    # una DB que no es suya y muera en el arranque.
+    environment:
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-nenufar-local}
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+
 volumes:
   postgres_data:

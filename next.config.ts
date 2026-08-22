@@ -27,6 +27,8 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   redirects,
+  // El Agent SDK spawn-ea un subprocess (CLI); no debe ser transpilado/bundleado.
+  serverExternalPackages: ['@anthropic-ai/claude-agent-sdk'],
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],
