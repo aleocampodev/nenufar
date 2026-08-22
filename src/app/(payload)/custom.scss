@@ -1,3 +1,116 @@
+/* ─────────────────────────────────────────────────────────────
+   Nénufar Admin — tema violeta artesanal
+   Estrategia (upgrade-safe):
+   1. Payload mapea --theme-elevation-* desde --color-base-*.
+      Redefinimos esa escala con neutros CÁLIDOS VIOLÁCEOS
+      (misma luminancia que los grises default) → todo el panel
+      (fondos, cards, sidebar, bordes, texto) se entibia solo,
+      y el modo oscuro de Payload invierte el mapeo por sí mismo.
+   2. El botón primario usa --bg-color: var(--theme-elevation-800).
+      Lo sobreescribimos con tokens propios para que sea violeta
+      marca, sin tocar el texto (que también usa elevation-800).
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* Tokens de marca Nénufar */
+  --nenufar-brand: #6a1b9a;
+  --nenufar-brand-dark: #57147d;
+  --nenufar-brand-light: #8e34c4;
+
+  /* Escala base: gris puro → neutro cálido violáceo */
+  --color-base-0: #ffffff;
+  --color-base-50: #f7f4fa;
+  --color-base-100: #efe9f5;
+  --color-base-150: #e4dcec;
+  --color-base-200: #d7cde2;
+  --color-base-250: #c9bcda;
+  --color-base-300: #bbaad1;
+  --color-base-350: #ac9cc7;
+  --color-base-400: #9d8dbc;
+  --color-base-450: #8f7fb1;
+  --color-base-500: #7f6ba3;
+  --color-base-550: #6f5c94;
+  --color-base-600: #5f4d83;
+  --color-base-650: #4f3e6f;
+  --color-base-700: #40305b;
+  --color-base-750: #322348;
+  --color-base-800: #261a37;
+  --color-base-850: #1a1127;
+  --color-base-900: #0f0916;
+  --color-base-950: #070410;
+  --color-base-1000: #000000;
+
+  /* Success/warning/error: tonos algo más cálidos */
+  --color-success-500: rgb(58, 125, 68);
+  --color-error-500: rgb(179, 38, 30);
+  --color-warning-500: rgb(176, 124, 31);
+}
+
+html[data-theme='dark'] {
+  /* Fondo oscuro con sesgo violáceo profundo */
+  --color-base-50: #1d1526;
+  --color-base-100: #251b30;
+  --color-base-150: #2e2239;
+  --color-base-900: #0f0916;
+}
+
+/* ── Botón primario: violeta marca ─────────────────────────── */
+.btn--style-primary {
+  --bg-color: var(--nenufar-brand);
+  --hover-bg: var(--nenufar-brand-dark);
+  --color: #ffffff;
+  --hover-color: #ffffff;
+}
+
+.btn--style-primary:hover,
+.btn--style-primary:focus-visible {
+  background-color: var(--nenufar-brand-dark);
+}
+
+/* ── Detalles ──────────────────────────────────────────────── */
+
+/* CTA "Crear" de las listas: violeta suave para destacarlo */
+.list-create-new-doc__create-new-button {
+  background-color: var(--nenufar-brand);
+  color: #ffffff;
+  transition: background-color 0.2s ease;
+}
+
+.list-create-new-doc__create-new-button:hover {
+  background-color: var(--nenufar-brand-dark);
+  color: #ffffff;
+}
+
+/* Foco visible accesible en violeta */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--nenufar-brand);
+  outline-offset: 2px;
+}
+
+/* Hover de filas/listados con calidez */
+a[class*='card']:hover,
+.row:hover {
+  background-color: var(--color-base-50);
+}
+
+/* Scrollbar discreta acorde al tema */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-base-200);
+  border-radius: 8px;
+  border: 2px solid var(--color-base-50);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-base-300);
+}
+
+/* ── Utilidad (existente) ──────────────────────────────────── */
 .visually-hidden {
   position: absolute;
   width: 1px;

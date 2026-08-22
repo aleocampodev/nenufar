@@ -18,6 +18,18 @@ export const Providers: React.FC<{
           <SonnerProvider />
           <EcommerceProvider
             enableVariants={true}
+            currenciesConfig={{
+              defaultCurrency: 'COP',
+              supportedCurrencies: [
+                {
+                  code: 'COP',
+                  decimals: 0,
+                  label: 'Peso Colombiano',
+                  symbol: '$',
+                  symbolDisplay: 'symbol',
+                },
+              ],
+            }}
             api={{
               cartsFetchQuery: {
                 depth: 2,

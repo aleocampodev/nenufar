@@ -12,7 +12,19 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/api', '/pedidos', '/find-order', '/account', '/orders'],
+        disallow: [
+          '/admin',
+          '/api',
+          '/pedidos',
+          '/find-order',
+          '/account',
+          '/orders',
+          // Fuera del storefront actual (landing + ecommerce)
+          '/blog',
+          '/eventos',
+          '/sobre-nenufar',
+          '/contacto',
+        ],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
