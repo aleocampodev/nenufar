@@ -324,6 +324,10 @@ export interface Product {
  */
 export interface Media {
   id: number;
+  /**
+   * Renombra el archivo físico. Sin espacios ni tildes (se normalizan solas).
+   */
+  fileName?: string | null;
   alt: string;
   caption?: {
     root: {
@@ -1487,6 +1491,7 @@ export interface CategoriesSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  fileName?: T;
   alt?: T;
   caption?: T;
   updatedAt?: T;
