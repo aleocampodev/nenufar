@@ -1,0 +1,11 @@
+# Nénufar — Cursor Rules
+
+Strictly adhere to the 7 Articles in `CONSTITUTION.md` at all times:
+
+1. **Never commit or push directly to `main`**: All work must be on a feature branch in an isolated git worktree.
+2. **$0/mo Fixed Cost**: Never introduce paid LLM dependencies. Inference runs via LiteLLM (`:4000`) -> Groq free tier (`llama-3.3-70b-versatile`).
+3. **Dev Server**: Port `3002`, NOT `3000`.
+4. **Architecture**: Next.js 15 + Payload CMS v3 embedded monolith. Internal calls must use `getPayload({ config })` (Payload Local API).
+5. **Pre-existing TS Errors**: Do NOT refactor `slug` in generated types or `paymentMethod` in seed (documented upstream exceptions).
+6. **Currency & Formatting**: COP with 0 decimals (`Intl.NumberFormat('es-CO')`). Brand violet token `--brand`.
+7. **Security**: Webhook lives at `/telegram/webhook` and only processes messages from `TELEGRAM_ADMIN_CHAT_ID`.

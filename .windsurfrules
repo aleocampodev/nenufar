@@ -1,0 +1,11 @@
+# Nénufar — Windsurf Rules
+
+Canonical Governance Document: `CONSTITUTION.md`
+
+- **Git Policy**: ZERO commits/pushes to `main`. Use dedicated feature branches in git worktrees.
+- **Cost Policy**: $0/mo fixed (#253). LLM inference runs via LiteLLM (`:4000`) -> Groq free tier.
+- **Dev Port**: 3002 (`-p 3002`).
+- **Monolith**: Payload CMS v3 embedded in Next.js 15. Use Payload Local API (`getPayload`).
+- **Telegram Bot**: Shirley's bot at `/telegram/webhook`. Strictly guarded by `TELEGRAM_ADMIN_CHAT_ID`.
+- **COP Currency**: Colombian Pesos formatted with 0 decimal places.
+- **DoD**: Run `pnpm lint` and `pnpm build` before submitting PRs.

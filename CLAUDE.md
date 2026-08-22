@@ -1,5 +1,7 @@
 # Nénufar — Claude Code Context
 
+> 🏛️ **CANONICAL GOVERNANCE & CONSTITUTION:** See [`CONSTITUTION.md`](./CONSTITUTION.md) for the supreme 7 Articles governing architecture, Git guardrails, $0/mo cost policy, and quality standards.
+
 ## Working Rules
 
 - **Never make changes directly on `main`.** Always create a feature branch (`feature/...`) and work from a separate worktree.

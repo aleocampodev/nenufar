@@ -1,10 +1,12 @@
 # Nénufar — Contexto para agentes
 
+> 🏛️ **CONSTITUCIÓN Y REGLAS CANÓNICAS:** Consulta [`CONSTITUTION.md`](./CONSTITUTION.md) para los 7 Artículos Fundamentales que rigen todo el desarrollo (Git, política $0/mes, seguridad, arquitectura y estándares).
+
 Tienda de joyería artesanal colombiana (Shirley, Cartagena).
 Stack: **Payload CMS v3 + Next.js App Router + PostgreSQL + TailwindCSS + shadcn/ui**.
 Basado en `@payloadcms/plugin-ecommerce`. **Sin pasarela de pago**: el comprador llena un formulario → se envía un mensaje a Telegram → Shirley coordina pago y envío manualmente.
 
-> La documentación completa está en `CLAUDE.md` (misma raíz). Este archivo es el índice para OpenCode.
+> La documentación completa de arquitectura está en `CLAUDE.md` y `docs/specs/`. Este archivo es el índice rápido para agentes.
 
 ## Flujo de pedido (core del negocio)
 ```
