@@ -34,6 +34,21 @@ export interface SubmitOrderState {
   orderId?: string
 }
 
+/**
+ * Validates Colombian/international WhatsApp contact numbers (E.164 compatible, min 10 digits).
+ */
+export function validateWhatsAppContact(phone: string): { ok: boolean; reason?: string } {
+  const cleaned = phone.replace(/[\s\-\(\)\.]/g, '')
+  const digitsOnly = cleaned.replace(/^\+/, '')
+  if (!/^\+?\d{10,15}$/.test(cleaned) || digitsOnly.length < 10) {
+    return {
+      ok: false,
+      reason: 'Por favor ingresá un número de WhatsApp válido (ej. +57 300 123 4567 o 10 dígitos).',
+    }
+  }
+  return { ok: true }
+}
+
 export async function submitOrderAction(
   _prevState: SubmitOrderState,
   formData: FormData,
@@ -50,12 +65,14 @@ export async function submitOrderAction(
 
   // 2. Basic field validation
   if (!buyerName || buyerName.length < 2) {
-    return { status: 'error', errorMessage: 'Por favor ingresá tu nombre.' }
+    return { status: 'error', errorMessage: 'Por favor ingresá tu nombre completo.' }
   }
-  if (!buyerContact || buyerContact.length < 6) {
+
+  const phoneValidation = validateWhatsAppContact(buyerContact)
+  if (!phoneValidation.ok) {
     return {
       status: 'error',
-      errorMessage: 'Por favor ingresá un número de WhatsApp válido.',
+      errorMessage: phoneValidation.reason || 'Por favor ingresá un número de WhatsApp válido.',
     }
   }
 
@@ -78,10 +95,10 @@ export async function submitOrderAction(
     return { status: 'error', errorMessage: consentResult.reason }
   }
 
-  // 4. Idempotency guard (no duplicate Telegram messages)
-  const idempotencyCheck = checkIdempotency(cartId)
+  // 4. Idempotency guard (SHA256 cartId + buyerContact, 5 min window)
+  const idempotencyCheck = checkIdempotency(cartId, buyerContact)
   if (!idempotencyCheck.allowed && idempotencyCheck.existingOrderId) {
-    // Duplicate click — return the original confirmation
+    // Duplicate click — redirect to original confirmation
     redirect(`/pedidos/enviar/confirmacion?id=${idempotencyCheck.existingOrderId}`)
   }
 
@@ -109,6 +126,52 @@ export async function submitOrderAction(
       errorMessage: 'Tu carrito está vacío. Agregá productos antes de enviar el pedido.',
     }
   }
+
+  // 5b. Real-time Inventory / Stock Verification
+  for (const item of cart.items ?? []) {
+    const product = typeof item?.product === 'object' && item.product !== null ? item.product : null
+    if (!product) continue
+    const title = (product as { title?: string }).title || 'Producto'
+    const reqQty = item.quantity ?? 1
+
+    // Check product-level inventory
+    const prodInventory = (product as { inventory?: number | null }).inventory
+    if (typeof prodInventory === 'number') {
+      if (prodInventory <= 0) {
+        return {
+          status: 'error',
+          errorMessage: `Lo sentimos, "${title}" se encuentra actualmente agotado.`,
+        }
+      }
+      if (reqQty > prodInventory) {
+        return {
+          status: 'error',
+          errorMessage: `Solo quedan ${prodInventory} unidades disponibles de "${title}". Por favor ajustá la cantidad en tu carrito.`,
+        }
+      }
+    }
+
+    // Check variant-level inventory
+    const variant = typeof item?.variant === 'object' && item.variant !== null ? item.variant : null
+    if (variant) {
+      const varInventory = (variant as { inventory?: number | null }).inventory
+      if (typeof varInventory === 'number') {
+        if (varInventory <= 0) {
+          return {
+            status: 'error',
+            errorMessage: `La variante seleccionada de "${title}" se encuentra agotada.`,
+          }
+        }
+        if (reqQty > varInventory) {
+          return {
+            status: 'error',
+            errorMessage: `Solo quedan ${varInventory} unidades disponibles de la variante de "${title}".`,
+          }
+        }
+      }
+    }
+  }
+
 
   // 5b. Update cart with note (personalization)
   if (note) {
@@ -172,7 +235,7 @@ export async function submitOrderAction(
     })
     // The Order exists in DB — Shirley can still see it in admin.
     // Tell the buyer it went through (don't leak Telegram internals) but log the issue.
-    markSeen(cartId, orderId)
+    markSeen(cartId, orderId, buyerContact)
     redirect(`/pedidos/enviar/confirmacion?id=${orderId}&warn=1`)
   }
 
@@ -213,7 +276,7 @@ export async function submitOrderAction(
   await Promise.allSettled(photoTasks)
 
   // 8. Mark idempotency (after Telegram succeeds + Order exists)
-  markSeen(cartId, orderId)
+  markSeen(cartId, orderId, buyerContact)
 
   // 9. Mark cart as purchased (optional, for analytics)
   try {

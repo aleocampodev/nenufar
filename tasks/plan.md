@@ -8,8 +8,8 @@ Documento índice de planes de implementación de la Fase 04 (Coding & Implement
 
 | IP ID | Módulo / Feature | Branch Designada | Worktree | Documento Detallado | Estado |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **IP-001** | **Migración Bot Shirley a Claude Agent SDK + LiteLLM** | `feature/bot/claude-agent-sdk-migration` | `../nenufar-bot-sdk` | [`tasks/IP-001-bot-claude-agent-sdk.md`](file:///home/ale/Work/nenufar/tasks/IP-001-bot-claude-agent-sdk.md) | 🟢 **Listo para ejecutar** |
-| **IP-002** | **Storefront & Checkout Hardening** | `feature/storefront/checkout-hardening` | `../nenufar-checkout` | *Pendiente redactar* | ⏳ Backlog |
+| **IP-001** | **Migración Bot Shirley a Claude Agent SDK + LiteLLM** | `feature/bot/claude-agent-sdk-migration` | `../nenufar-bot-sdk` | [`tasks/IP-001-bot-claude-agent-sdk.md`](file:///home/ale/Work/nenufar/tasks/IP-001-bot-claude-agent-sdk.md) | 🟢 **Completado (PR #14)** |
+| **IP-002** | **Storefront & Checkout Hardening** | `feature/storefront/checkout-hardening` | `../nenufar-checkout` | [`tasks/IP-002-storefront-checkout-hardening.md`](file:///home/ale/Work/nenufar/tasks/IP-002-storefront-checkout-hardening.md) | 🟢 **Completado** |
 | **IP-003** | **Bloques Modulares Landing y Catálogo** | `feature/catalog/modular-blocks` | `../nenufar-catalog` | *Pendiente redactar* | ⏳ Backlog |
 | **IP-004** | **Kit de Ferias & Captación QR** | `feature/marketing/fair-qr-kit` | `../nenufar-qr` | *Pendiente redactar* | ⏳ Backlog |
 

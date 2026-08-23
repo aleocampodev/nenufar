@@ -34,8 +34,28 @@ Branch: `feature/bot/claude-agent-sdk-migration`
 
 ---
 
+## 🛒 IP-002: Storefront & Checkout Hardening
+
+Reference: [`tasks/IP-002-storefront-checkout-hardening.md`](file:///home/ale/Work/nenufar/tasks/IP-002-storefront-checkout-hardening.md)  
+Worktree: `/home/ale/Work/nenufar-checkout`  
+Branch: `feature/storefront/checkout-hardening`  
+
+### Phase 1: SHA256 Idempotency Engine
+- [x] **1.1** Implement SHA256 hashing in `src/lib/idempotency.ts` (`generateIdempotencyKey(cartId, buyerContact)`) with 5-minute window (`5 * 60 * 1000`) per Constitution Art. V.3.
+- [x] **1.2** Add integration test suite `tests/int/idempotency.int.spec.ts`.
+
+### Phase 2: Checkout Server Action & Inventory Hardening
+- [x] **2.1** Update `src/app/(app)/pedidos/enviar/submitOrderAction.ts` with SHA256 idempotency check, Colombian WhatsApp regex validation, and real-time inventory availability verification against Payload Local API.
+- [x] **2.2** Enhance `src/app/(app)/pedidos/enviar/OrderForm.tsx` UX with phone placeholder, Colombian format helper, and accessible error banners.
+
+### Phase 3: Integration Tests & Quality Gates
+- [x] **3.1** Implement `tests/int/checkout.int.spec.ts` testing successful checkout, duplicate prevention, out-of-stock rejection, and consent verification.
+- [x] **3.2** Run `pnpm test:int` and verify quality gates (28/28 tests passed).
+
+---
+
 ## ⏳ Upcoming IPs on Hold
 
-- [ ] **IP-002:** Storefront & Checkout Hardening (SPEC-001)
 - [ ] **IP-003:** Landing Modular Blocks and Catalog (SPEC-003)
 - [ ] **IP-004:** Fair Kit & QR Capture (Business Strategy)
+
