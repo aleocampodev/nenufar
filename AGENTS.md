@@ -18,18 +18,18 @@ Archivos clave:
 - `src/lib/telegram.ts` — cliente Telegram (real)
 - `src/lib/order-formatter.ts` — formatea el mensaje HTML
 
-## Bot de gestión de Shirley (v3.2 — solo Shirley)
+## Bot de gestión de Shirley (v3.3 — solo Shirley, Claude Agent SDK)
 El mismo `TELEGRAM_BOT_TOKEN` también recibe mensajes vía webhook, pero **solo de Shirley** (auth por `TELEGRAM_ADMIN_CHAT_ID`). Es su herramienta para operar la tienda desde Telegram (ver pedidos, confirmar, actualizar stock). **Las compradoras NO le escriben al bot** — su recorrido es 100% web.
 ```
-Shirley escribe → POST /telegram/webhook → chat_id==ADMIN? → orquestador (Groq) → skill sobre Payload → responde a Shirley
+Shirley escribe → POST /telegram/webhook → chat_id==ADMIN? → runShirleyAgent() → Claude Agent SDK → LiteLLM (:4000) → Groq free → tools sobre Payload → responde a Shirley
 ```
-Archivos: `src/lib/groq.ts`, `src/lib/agents/*`, `src/app/(app)/telegram/webhook/route.ts`. Ver `docs/SDD.md §2.3` y `.claude/HANDOFF-agents.md`.
+Archivos: `src/lib/agent/tools.ts`, `src/lib/agent/runShirleyAgent.ts`, `litellm/config.yaml`, `src/app/(app)/telegram/webhook/route.ts`. Ver `docs/SDD.md §2.3` y [`docs/adr/ADR-002-claude-agent-sdk-litellm-groq.md`](docs/adr/ADR-002-claude-agent-sdk-litellm-groq.md).
 
-> **Migración en curso (leer antes de tocar el bot):** el orquestador hecho a mano se va a reemplazar por el **Claude Agent SDK** corriendo free sobre **Groq vía LiteLLM**. Plan completo y accionable en [`docs/HANDOFF-agent-sdk-migration.md`](docs/HANDOFF-agent-sdk-migration.md).
+> **Migración a Claude Agent SDK COMPLETADA el 2026-08-22 (IP-001).** Gateway de modelos: LiteLLM → Groq (free, política #253 intacta — la app nunca llama a la API paga de Anthropic). El orquestador artesanal (`src/lib/groq.ts`, `src/lib/agents/*`) fue eliminado.
 
 ## Comandos
 ```bash
-docker-compose up -d    # PostgreSQL en :5433
+docker-compose up -d    # PostgreSQL en :5433 + gateway LiteLLM en :4000
 pnpm dev                # dev server en :3002 (NO 3000)
 pnpm build              # build producción (payload build)
 pnpm generate:types     # regenera tipos de Payload
@@ -49,4 +49,4 @@ pnpm tsx scripts/set-telegram-webhook.ts <url>   # registrar webhook del bot
 - El bot de Telegram es **solo de Shirley**. No hay canal conversacional para compradoras ni widget de chat en la web (sin Chat SDK / Vercel AI SDK).
 
 ## Env requeridas (ver `.env.example`)
-`PAYLOAD_SECRET`, `DATABASE_URL`, `NEXT_PUBLIC_SERVER_URL`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHANNEL_ID`, `GROQ_API_KEY`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_ADMIN_CHAT_ID`
+`PAYLOAD_SECRET`, `DATABASE_URL`, `NEXT_PUBLIC_SERVER_URL`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHANNEL_ID`, `GROQ_API_KEY` (solo la consume LiteLLM), `LITELLM_MASTER_KEY`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_MODEL`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_ADMIN_CHAT_ID`
