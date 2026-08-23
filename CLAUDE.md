@@ -1,5 +1,7 @@
 # Nénufar — Claude Code Context
 
+> 🏛️ **CANONICAL GOVERNANCE & CONSTITUTION:** See [`CONSTITUTION.md`](./CONSTITUTION.md) for the supreme 7 Articles governing architecture, Git guardrails, $0/mo cost policy, and quality standards.
+
 ## Working Rules
 
 - **Never make changes directly on `main`.** Always create a feature branch (`feature/...`) and work from a separate worktree.
@@ -23,19 +25,24 @@ Based on the `@payloadcms/plugin-ecommerce` template. The purchase flow has **no
 - `src/lib/telegram.ts` — Telegram client (real, not a stub)
 - `src/lib/order-formatter.ts` — formats the HTML message for Telegram. Includes a prominent PERSONALIZATION block when custom mode is used.
 
-## Shirley's management bot (v3.2 — Shirley only)
+## Shirley's management bot (v3.3 — Shirley only, Claude Agent SDK)
 
 The same `TELEGRAM_BOT_TOKEN` also receives messages via webhook, but **only from Shirley** (authenticated by `TELEGRAM_ADMIN_CHAT_ID`). It's her tool to manage the store from Telegram — view orders, confirm, update stock — without opening the admin. **Buyers never write to the bot**; their journey is 100% web (catalog + cart + form → notification). There is no buyer chat and no web chat widget (no Chat SDK / Vercel AI SDK — intentional).
 
+> **Migración COMPLETADA el 2026-08-22 (IP-001 / ADR-002):** el orquestador hecho a mano sobre Groq fue reemplazado por el **Claude Agent SDK**. Gateway de modelos: **LiteLLM → Groq** (free tier — política #253 intacta: la app NUNCA llama a la API paga de Anthropic; `ANTHROPIC_BASE_URL` apunta al proxy local).
+
 ```
-Shirley → POST /telegram/webhook → chat_id==ADMIN? → routeAndRun() (Groq) → skill over Payload → reply to Shirley
+Shirley → POST /telegram/webhook → chat_id==ADMIN? → runShirleyAgent()
+        → Claude Agent SDK (loop agéntico) → LiteLLM :4000 → Groq free
+        → tools sobre Payload Local API → reply a Shirley
 ```
 
-- `src/lib/groq.ts` — Groq client (singleton)
-- `src/lib/agents/*` — orchestrator + skills (tool-calling loop, max 4 rounds)
+- `litellm/config.yaml` + servicio `litellm` en docker-compose (`:4000`) — gateway de modelos, modelo `nenufar-bot` → `groq/llama-3.3-70b-versatile`, `drop_params: true`
+- `src/lib/agent/tools.ts` — 7 tools Zod sobre Payload Local API (buscarProducto, destacarProducto, actualizarInventario, pedidosPendientes, confirmarPedido, publicarEvento, crearProductoDraft)
+- `src/lib/agent/runShirleyAgent.ts` — runtime del SDK (maxTurns 4, timeout 45s, fallback de cortesía ante caída del gateway)
 - `src/app/(app)/telegram/webhook/route.ts` — webhook (validates secret, checks chat_id, dedups by `update_id`)
 - Route lives at `/telegram/webhook`, NOT `/api/...` (Payload's catch-all owns `/api`).
-- Full detail: `docs/SDD.md §2.3`, `.claude/HANDOFF-agents.md`.
+- Full detail: `docs/SDD.md §2.3`, `docs/adr/ADR-002-claude-agent-sdk-litellm-groq.md`.
 
 ## Required configuration
 
@@ -47,15 +54,19 @@ DATABASE_URL=            # PostgreSQL (docker-compose runs postgres on :5433)
 NEXT_PUBLIC_SERVER_URL=  # Public URL (e.g. http://localhost:3002)
 TELEGRAM_BOT_TOKEN=      # Telegram bot token (from BotFather) — orders + Shirley's bot
 TELEGRAM_CHANNEL_ID=     # Telegram channel ID (@name or -100xxxxxxxx)
-GROQ_API_KEY=            # Groq API key (free — console.groq.com) — v3.2 bot
-TELEGRAM_WEBHOOK_SECRET= # Random string authenticating the webhook — v3.2 bot
+GROQ_API_KEY=            # Groq API key (free) — consumed ONLY by the LiteLLM proxy, not the app
+LITELLM_MASTER_KEY=      # Master key of the local LiteLLM gateway (:4000)
+ANTHROPIC_BASE_URL=      # http://localhost:4000 — Agent SDK talks to LiteLLM, never to Anthropic
+ANTHROPIC_AUTH_TOKEN=    # Same value as LITELLM_MASTER_KEY
+ANTHROPIC_MODEL=         # nenufar-bot (routed by litellm/config.yaml)
+TELEGRAM_WEBHOOK_SECRET= # Random string authenticating the webhook — Shirley's bot
 TELEGRAM_ADMIN_CHAT_ID=  # Shirley's chat_id (@userinfobot) — only sender the bot processes
 ```
 
 ## Key commands
 
 ```bash
-docker-compose up -d    # start PostgreSQL on port 5433
+docker-compose up -d    # start PostgreSQL on :5433 + LiteLLM gateway on :4000
 pnpm dev                # dev server on port 3002 (not 3000)
 pnpm build              # production build (includes payload build)
 pnpm payload migrate    # run migrations in production
@@ -93,7 +104,8 @@ Nénufar violet (`#6A1B9A`) is formalized as a CSS token:
 
 - **No Stripe**: intentionally commented out. `payments.paymentMethods: []` in the plugin.
 - **Idempotency**: in-memory Map (single-instance). For multi-instance deployments → Vercel KV.
-- **Currency**: COP, no decimals. `Intl.NumberFormat('es-CO', { currency: 'COP' })`.
+- **Currency & Formatting**: Colombian Pesos using symbol (`$`) with 0 decimals (`Intl.NumberFormat('es-CO')`, e.g. `$ 45.000`). Never display the raw `"COP"` string to end users.
+- **Language Separation**: User-Facing UI and Telegram messages strictly in Spanish (`es-CO`). Codebase, comments, commits, PRs, and documentation strictly in English.
 - **Buyer fields**: `buyerName` and `buyerContact` (WhatsApp) are stored in `order.shippingAddress.firstName` and `.phone` (temporary hack; Phase 6 adds proper fields via ordersCollectionOverride).
 - **Telegram splitting**: messages > 4000 chars are not split (documented gap).
 - **Personalization flow**: custom orders include a mandatory free-text field. The Telegram message header changes to "✦ Pedido PERSONALIZADO" and includes a highlighted PERSONALIZATION block.

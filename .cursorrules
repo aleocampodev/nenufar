@@ -1,0 +1,12 @@
+# Nénufar — Cursor Rules
+
+Strictly adhere to the 7 Articles in `CONSTITUTION.md` at all times:
+
+1. **Never commit or push directly to `main`**: All work must be on a feature branch in an isolated git worktree.
+2. **$0/mo Fixed Cost**: Never introduce paid LLM dependencies. Inference runs via LiteLLM (`:4000`) -> Groq free tier (`llama-3.3-70b-versatile`).
+3. **Language Separation**: User-Facing UI and Telegram messages strictly in Spanish (`es-CO`). Codebase, comments, commits, PRs, and documentation strictly in English.
+4. **Currency & Formatting**: Colombian Pesos formatted with symbol (`$`) and 0 decimals (`$ 45.000`). NEVER display the raw `"COP"` string to users. Brand violet token `--brand`.
+5. **Dev Server**: Port `3002`, NOT `3000`.
+6. **Architecture**: Next.js 15 + Payload CMS v3 embedded monolith. Internal calls must use `getPayload({ config })` (Payload Local API).
+7. **Pre-existing TS Errors**: Do NOT refactor `slug` in generated types or `paymentMethod` in seed (documented upstream exceptions).
+8. **Security**: Webhook lives at `/telegram/webhook` and only processes messages from `TELEGRAM_ADMIN_CHAT_ID`.
