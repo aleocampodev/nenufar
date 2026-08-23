@@ -68,14 +68,19 @@ We, the engineers, maintainers, and autonomous AI agents contributing to **Nénu
 
 ---
 
-## Article VI — Engineering Standards & Definition of Done (DoD)
+## Article VI — Engineering Standards, Localization & Definition of Done (DoD)
 
-1. **Currency Invariant:** Colombian Peso (COP) must always be formatted with zero decimal digits:
-   `new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })`.
-2. **Brand Tokenization:** All UI violet styling must utilize the CSS token `--brand: oklch(38% 0.2 307deg)` (`#6A1B9A`) via Tailwind classes `bg-brand`, `text-brand`, and `hover:bg-brand-dark`.
-3. **Pre-Existing TypeScript Exceptions:**
+1. **Language Separation Boundary (Bilingual Architecture):**
+   - **User-Facing Layer (Strictly Spanish `es-CO`):** All customer-facing storefront UI, product catalog details, cart, checkout form, confirmation screens, validation toasts, and Shirley's Telegram management bot messages must be written in Spanish.
+   - **Engineering & Project Layer (Strictly English):** All source code, variable/function identifiers, code comments, commit messages, PR descriptions, SDLC technical specifications, Architecture Decision Records (ADRs), and this Constitution must be written in English.
+2. **Colombian Currency & Symbol Invariant:**
+   - Prices must always be displayed formatted as Colombian Pesos using the currency symbol (`$`) with period thousands separators and **zero decimal places**:
+     `new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })` (renders as `$ 45.000`).
+   - **Prohibition of "COP" Suffix in UI:** Never render or append the literal string `"COP"` in user-facing text, storefront prices, or Telegram messages (e.g., render `$ 120.000`, never `120.000 COP` or `$120.000 COP`).
+3. **Brand Tokenization:** All UI violet styling must utilize the CSS token `--brand: oklch(38% 0.2 307deg)` (`#6A1B9A`) via Tailwind classes `bg-brand`, `text-brand`, and `hover:bg-brand-dark`.
+4. **Pre-Existing TypeScript Exceptions:**
    - Known pre-existing typing issues in Payload ecommerce generated types (`slug`, `paymentMethod` in seed) must be respected and preserved as documented. Agents must not waste cycles attempting to refactor upstream plugin types.
-4. **Quality Gates for Pull Requests:**
+5. **Quality Gates for Pull Requests:**
    - Clean `pnpm lint`.
    - Clean `pnpm build` (ignoring documented pre-existing TS plugin exceptions).
    - No sensitive `.env` secrets committed.

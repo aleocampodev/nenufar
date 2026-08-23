@@ -95,7 +95,8 @@ Nénufar violet (`#6A1B9A`) is formalized as a CSS token:
 
 - **No Stripe**: intentionally commented out. `payments.paymentMethods: []` in the plugin.
 - **Idempotency**: in-memory Map (single-instance). For multi-instance deployments → Vercel KV.
-- **Currency**: COP, no decimals. `Intl.NumberFormat('es-CO', { currency: 'COP' })`.
+- **Currency & Formatting**: Colombian Pesos using symbol (`$`) with 0 decimals (`Intl.NumberFormat('es-CO')`, e.g. `$ 45.000`). Never display the raw `"COP"` string to end users.
+- **Language Separation**: User-Facing UI and Telegram messages strictly in Spanish (`es-CO`). Codebase, comments, commits, PRs, and documentation strictly in English.
 - **Buyer fields**: `buyerName` and `buyerContact` (WhatsApp) are stored in `order.shippingAddress.firstName` and `.phone` (temporary hack; Phase 6 adds proper fields via ordersCollectionOverride).
 - **Telegram splitting**: messages > 4000 chars are not split (documented gap).
 - **Personalization flow**: custom orders include a mandatory free-text field. The Telegram message header changes to "✦ Pedido PERSONALIZADO" and includes a highlighted PERSONALIZATION block.

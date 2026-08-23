@@ -42,7 +42,8 @@ pnpm tsx scripts/set-telegram-webhook.ts <url>   # registrar webhook del bot
 - El dev server es el puerto **3002**, no 3000.
 - **Errores TS pre-existentes** (no son regresiones): `slug` en tipos generados, `paymentMethod` en seed. No tocar sin entender el sistema de tipos del plugin.
 - Sin Stripe: `payments.paymentMethods: []` es intencional.
-- Moneda COP sin decimales: `Intl.NumberFormat('es-CO', { currency: 'COP' })`.
+- Moneda en pesos colombianos con símbolo `$` y sin decimales: `Intl.NumberFormat('es-CO')` (ej. `$ 45.000`). **Prohibido mostrar el texto "COP" en la interfaz de usuario o mensajes de Telegram**.
+- **Separación de idiomas:** Todo texto para la usuaria (UI, catálogo, checkout, bot de Shirley) es en **Español (`es-CO`)**. Toda la documentación técnica, código, comentarios, commits y PRs son en **Inglés**.
 - Color de marca: violeta `#6A1B9A` = token `--brand`. Usar clases `bg-brand`, `text-brand`, `hover:bg-brand-dark`.
 - Subir contenido (productos, fotos, blog) se hace desde `/admin` (panel de Payload). El bot de gestión (v3.2) irá cubriendo tareas puntuales por Telegram (stock, confirmar pedidos), pero el admin sigue siendo la fuente principal.
 - El bot de Telegram es **solo de Shirley**. No hay canal conversacional para compradoras ni widget de chat en la web (sin Chat SDK / Vercel AI SDK).
