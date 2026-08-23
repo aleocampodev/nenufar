@@ -207,6 +207,16 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
       relationTo: 'categories',
     },
     {
+      name: 'featured',
+      type: 'checkbox',
+      label: 'Destacado',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Aparece en secciones destacadas del sitio.',
+      },
+    },
+    {
       name: 'slug',
       type: 'slug',
       useAsSlug: 'title',

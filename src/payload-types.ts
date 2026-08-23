@@ -313,6 +313,10 @@ export interface Product {
     description?: string | null;
   };
   categories?: (number | Category)[] | null;
+  /**
+   * Aparece en secciones destacadas del sitio.
+   */
+  featured?: boolean | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1834,6 +1838,7 @@ export interface ProductsSelect<T extends boolean = true> {
         description?: T;
       };
   categories?: T;
+  featured?: T;
   slug?: T;
   updatedAt?: T;
   createdAt?: T;

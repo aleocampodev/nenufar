@@ -17,8 +17,9 @@ Branch: `feature/bot/claude-agent-sdk-migration`
 - [x] **Checkpoint 1:** `docker compose up -d litellm` levanta y `curl http://localhost:4000/health/liveliness` responde 200 "I'm alive!". `/v1/messages` responde JSON válido ruteando a Groq (verificado hasta Groq: falla únicamente por `GROQ_API_KEY` vacía — ⚠️ **pendiente que Ale cargue su key free en `.env`** para inferencia real).
 
 ### Fase 2: Tools Tipadas Zod
-- [ ] **2.1** Implementar `src/lib/agent/tools.ts` con las 7 tools de Shirley (`buscarProducto`, `destacarProducto`, `actualizarInventario`, `pedidosPendientes`, `confirmarPedido`, `publicarEvento`, `crearProductoDraft`) conectadas a Payload Local API.
-- [ ] **Checkpoint 2:** `pnpm lint` pasa sin errores en `src/lib/agent/tools.ts`.
+- [x] **2.1** Implementar `src/lib/agent/tools.ts` con las 7 tools de Shirley (`buscarProducto`, `destacarProducto`, `actualizarInventario`, `pedidosPendientes`, `confirmarPedido`, `publicarEvento`, `crearProductoDraft`) conectadas a Payload Local API.
+  - Notas: `Product` usa `inventory` (no `stock`) y no tenía campo `featured` → se agregó checkbox al collection + `pnpm generate:types`. `Order.status` solo tiene `processing|completed|cancelled|refunded` (no existe `pending`). MCP server in-process vía `createSdkMcpServer`.
+- [x] **Checkpoint 2:** `tsc --noEmit` sin errores en `src/lib/agent/tools.ts`. ⚠️ `pnpm lint` está ROTO en el repo (también en main): TypeError circular en eslint-config — pre-existente, no es regresión. Se usa `tsc --noEmit` como compuerta.
 
 ### Fase 3: Runtime del Agente y Webhook
 - [ ] **3.1** Crear `src/lib/agent/runShirleyAgent.ts` usando `query` de `@anthropic-ai/claude-agent-sdk` con base URL `:4000`, maxTurns 4 y fallback resiliente.
