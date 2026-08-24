@@ -1,130 +1,58 @@
-import { ProductCard } from '@/components/ProductCard'
+import type { Metadata } from 'next'
+import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { RenderHero } from '@/heros/RenderHero'
+import { generateMeta } from '@/utilities/generateMeta'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import { draftMode } from 'next/headers'
+import { homeStaticData } from '@/endpoints/seed/home-static'
 import React from 'react'
+import type { Page } from '@/payload-types'
 
-export const metadata = {
-  description: 'Busca productos en la tienda.',
-  title: 'Tienda',
+export const dynamic = 'force-dynamic'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await queryHomePage()
+  return generateMeta({ doc: page })
 }
 
-const PAGE_SIZE = 24
-
-type SearchParams = { [key: string]: string | string[] | undefined }
-
-type Props = {
-  searchParams: Promise<SearchParams>
-}
-
-export default async function ShopPage({ searchParams }: Props) {
-  const { q: searchValue, sort, category, page: pageParam } = await searchParams
-  const page = Math.max(1, parseInt(String(pageParam ?? '1'), 10) || 1)
+async function queryHomePage(): Promise<Page | null> {
+  const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config: configPromise })
 
-  const products = await payload.find({
-    collection: 'products',
-    draft: false,
-    overrideAccess: false,
-    depth: 2,
-    limit: PAGE_SIZE,
-    page,
-    select: {
-      title: true,
-      slug: true,
-      gallery: true,
-      categories: true,
-      variants: true,
-      priceInCOP: true,
-    },
-    ...(sort ? { sort } : { sort: 'title' }),
-    where: {
-      and: [
-        { _status: { equals: 'published' } },
-        ...(searchValue
-          ? [{ or: [{ title: { like: searchValue } }, { description: { like: searchValue } }] }]
-          : []),
-        ...(category ? [{ categories: { contains: category } }] : []),
-      ],
-    },
-  })
+  try {
+    const result = await payload.find({
+      collection: 'pages',
+      draft,
+      limit: 1,
+      overrideAccess: draft,
+      pagination: false,
+      where: {
+        and: [
+          { slug: { equals: 'home' } },
+          ...(!draft ? [{ _status: { equals: 'published' } }] : []),
+        ],
+      },
+    })
 
-  const { docs, totalPages, hasPrevPage, hasNextPage } = products
-  const resultsText = docs.length > 1 ? 'resultados' : 'resultado'
-
-  const buildPageUrl = (p: number) => {
-    const params = new URLSearchParams()
-    if (searchValue) params.set('q', String(searchValue))
-    if (sort) params.set('sort', String(sort))
-    if (category) params.set('category', String(category))
-    if (p > 1) params.set('page', String(p))
-    const qs = params.toString()
-    return `/shop${qs ? `?${qs}` : ''}`
+    if (result.docs && result.docs.length > 0) {
+      return result.docs[0] as Page
+    }
+  } catch (err) {
+    payload.logger.warn({ msg: '[Home] Error querying home page from DB, falling back to static', err })
   }
 
+  return homeStaticData() as Page
+}
+
+export default async function HomePage() {
+  const page = await queryHomePage()
+  const { hero, layout } = page || (homeStaticData() as Page)
+
   return (
-    <div className="container py-16">
-      {searchValue ? (
-        <p className="mb-8 font-serif text-lg text-muted-foreground">
-          {docs.length === 0
-            ? 'No hay productos que coincidan con '
-            : `Mostrando ${docs.length} ${resultsText} para `}
-          <span className="text-foreground">&quot;{searchValue}&quot;</span>
-        </p>
-      ) : null}
-
-      {!searchValue && docs.length === 0 && (
-        <div className="text-center py-16">
-          <div className="text-6xl mb-4 opacity-30">✦</div>
-          <p className="font-serif text-xl text-muted-foreground">No se encontraron productos.</p>
-          <p className="text-sm text-muted-foreground/70 mt-2">
-            Por favor intenta con otros filtros.
-          </p>
-        </div>
-      )}
-
-      {docs.length > 0 ? (
-        /* Masonry estilo Krafti: CSS columns, altura natural de cada imagen */
-        <div className="columns-1 gap-8 sm:columns-2 lg:columns-3 xl:columns-4">
-          {docs.map((product, index) => (
-            <div
-              key={product.id}
-              className="mb-8 break-inside-avoid"
-              style={{
-                animationName: 'fadeInUp',
-                animationDuration: '0.6s',
-                animationDelay: `${index * 0.1}s`,
-                animationFillMode: 'forwards',
-              }}
-            >
-              <ProductCard product={product} />
-            </div>
-          ))}
-        </div>
-      ) : null}
-
-      {totalPages > 1 && (
-        <nav className="mt-12 flex items-center justify-center gap-3" aria-label="Paginación">
-          {hasPrevPage && (
-            <a
-              href={buildPageUrl(page - 1)}
-              className="px-4 py-2 border border-neutral-300 rounded-md text-sm hover:bg-neutral-50 transition"
-            >
-              ← Anterior
-            </a>
-          )}
-          <span className="text-sm text-muted-foreground">
-            Página {page} de {totalPages}
-          </span>
-          {hasNextPage && (
-            <a
-              href={buildPageUrl(page + 1)}
-              className="px-4 py-2 border border-neutral-300 rounded-md text-sm hover:bg-neutral-50 transition"
-            >
-              Siguiente →
-            </a>
-          )}
-        </nav>
-      )}
-    </div>
+    <article className="pt-8 pb-24 space-y-12">
+      <RenderHero {...hero} />
+      <RenderBlocks blocks={layout} />
+    </article>
   )
 }

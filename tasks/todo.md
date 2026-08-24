@@ -54,8 +54,22 @@ Branch: `feature/storefront/checkout-hardening`
 
 ---
 
-## ⏳ Upcoming IPs on Hold
+## 🎨 IP-003: Catalog & Landing Page Modular Blocks Subsystem
 
-- [ ] **IP-003:** Landing Modular Blocks and Catalog (SPEC-003)
-- [ ] **IP-004:** Fair Kit & QR Capture (Business Strategy)
+Reference: [`tasks/IP-003-catalog-landing-modular-blocks.md`](file:///home/ale/Work/nenufar/tasks/IP-003-catalog-landing-modular-blocks.md)  
+Worktree: `/home/ale/Work/nenufar-catalog`  
+Branch: `feature/catalog/modular-blocks`  
+
+### Phase 1: Landing Page Architecture Decoupling
+- [x] **1.1** Refactor `src/app/(app)/page.tsx` to render the modular Home page via `RenderHero` and `RenderBlocks` (with resilient fallback to `homeStaticData()`), allowing editors to visually customize the landing from `/admin`.
+- [x] **1.2** Verify `/shop` maintains the complete catalog search, filter, pagination, and Masonry grid.
+
+### Phase 2: Modular Block Components & Brand Styling
+- [x] **2.1** Polish `src/blocks/Carousel/Component.client.tsx`, `src/blocks/ThreeItemGrid/Component.tsx`, and `src/blocks/UpcomingEvents/Component.tsx` with proper brand tokens and COP price formatting.
+- [x] **2.2** Update `src/endpoints/seed/home-static.ts` with artisan jewelry content and Cartagena pop-up fairs.
+
+### Phase 3: Verification & Integration Tests
+- [x] **3.1** Create `tests/int/landing-blocks.int.spec.ts` to verify landing page block querying, COP currency formatting rules, and fallback stability.
+- [x] **3.2** Run `pnpm test:int` and verify quality gates (30/30 tests passed).
+
 
