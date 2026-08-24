@@ -6,7 +6,7 @@ Tienda de joyería artesanal colombiana (Shirley, Cartagena).
 Stack: **Payload CMS v3 + Next.js App Router + PostgreSQL + TailwindCSS + shadcn/ui**.
 Basado en `@payloadcms/plugin-ecommerce`. **Sin pasarela de pago**: el comprador llena un formulario → se envía un mensaje a Telegram → Shirley coordina pago y envío manualmente.
 
-> La documentación completa de arquitectura está en `CLAUDE.md` y `docs/specs/`. Este archivo es el índice rápido para agentes.
+> La documentación completa de arquitectura está en `CLAUDE.md`, `docs/specs/` y la guía de despliegue a producción en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md). Este archivo es el índice rápido para agentes.
 
 ## Flujo de pedido (core del negocio)
 ```
