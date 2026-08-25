@@ -6,9 +6,9 @@ export const SidebarHeader: React.FC = () => {
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '0.75rem',
+        gap: '0.85rem',
         padding: '1.25rem 1rem 1rem 1rem',
-        marginBottom: '0.5rem',
+        marginBottom: '0.75rem',
         borderBottom: '1px solid var(--color-base-150)',
       }}
     >
@@ -17,19 +17,19 @@ export const SidebarHeader: React.FC = () => {
         alt="Nénufar Logo"
         src="/nenufar-logo.png"
         style={{
-          height: '40px',
+          height: '42px',
           width: 'auto',
-          maxHeight: '40px',
+          maxHeight: '42px',
           objectFit: 'contain',
         }}
       />
       <span
         style={{
           fontFamily: 'Playfair Display, Georgia, serif',
-          fontSize: '1.4rem',
-          fontWeight: 700,
+          fontSize: '1.55rem',
+          fontWeight: 900,
           color: '#6A1B9A',
-          letterSpacing: '-0.01em',
+          letterSpacing: '-0.02em',
         }}
       >
         Nénufar
