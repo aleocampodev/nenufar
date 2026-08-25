@@ -2,40 +2,60 @@ import React from 'react'
 
 export const Logo = () => {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'center' }}>
-      <svg
-        width="40"
-        height="40"
-        viewBox="0 0 40 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-      >
-        <rect width="40" height="40" rx="10" fill="#6A1B9A" />
-        <text
-          x="50%"
-          y="54%"
-          dominantBaseline="middle"
-          textAnchor="middle"
-          fill="white"
-          fontSize="22"
-          fontFamily="Georgia, serif"
-          fontWeight="bold"
-        >
-          N
-        </text>
-      </svg>
+    /* eslint-disable @next/next/no-img-element */
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.75rem',
+        padding: '0.25rem 0',
+      }}
+    >
+      <img
+        alt="Nénufar Logo"
+        src="/nenufar-logo.png"
+        style={{
+          height: '42px',
+          width: 'auto',
+          maxHeight: '42px',
+          objectFit: 'contain',
+        }}
+      />
       <span
         style={{
-          fontSize: '1.4rem',
+          fontFamily: 'Playfair Display, Georgia, serif',
+          fontSize: '1.45rem',
           fontWeight: 700,
           color: '#6A1B9A',
-          fontFamily: 'Georgia, serif',
           letterSpacing: '-0.01em',
         }}
       >
         Nénufar
       </span>
+    </div>
+  )
+}
+
+export const Icon = () => {
+  return (
+    /* eslint-disable @next/next/no-img-element */
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0.25rem',
+      }}
+    >
+      <img
+        alt="Nénufar Icon"
+        src="/nenufar-icon.png"
+        style={{
+          height: '32px',
+          width: '32px',
+          objectFit: 'contain',
+        }}
+      />
     </div>
   )
 }
