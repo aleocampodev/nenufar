@@ -6,9 +6,14 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 import path from 'path'
+import fs from 'fs'
 import { fileURLToPath } from 'url'
 
 import { adminOnly } from '@/access/adminOnly'
+import {
+  uploadToSupabaseStorage,
+  deleteFromSupabaseStorage,
+} from '@/lib/supabaseStorage'
 
 const filePath = fileURLToPath(import.meta.url)
 const mediaDir = path.dirname(filePath)
@@ -158,8 +163,7 @@ export const Media: CollectionConfig = {
         if (newName && oldName && newName !== oldName) {
           try {
             const staticDir = path.resolve(mediaDir, '../../public/media')
-            const { promises: fs } = require('fs') as typeof import('fs')
-            void fs
+            void fs.promises
               .rename(path.join(staticDir, oldName), path.join(staticDir, newName))
               .catch((e) => req.payload.logger.error(`No se pudo renombrar ${oldName}: ${e}`))
           } catch (e) {
@@ -167,6 +171,60 @@ export const Media: CollectionConfig = {
           }
         }
         return result
+      },
+    ],
+    afterChange: [
+      async ({ doc, req }) => {
+        // Sync uploaded image and variants to Supabase Storage bucket in background
+        try {
+          const staticDir = path.resolve(mediaDir, '../../public/media')
+          if (doc.filename) {
+            const mainFilePath = path.join(staticDir, doc.filename)
+            if (fs.existsSync(mainFilePath)) {
+              const buffer = await fs.promises.readFile(mainFilePath)
+              await uploadToSupabaseStorage({
+                filename: doc.filename,
+                buffer,
+                mimeType: doc.mimeType || 'image/jpeg',
+              })
+            }
+          }
+          if (doc.sizes && typeof doc.sizes === 'object') {
+            for (const size of Object.values<any>(doc.sizes)) {
+              if (size?.filename) {
+                const sizeFilePath = path.join(staticDir, size.filename)
+                if (fs.existsSync(sizeFilePath)) {
+                  const sizeBuffer = await fs.promises.readFile(sizeFilePath)
+                  await uploadToSupabaseStorage({
+                    filename: size.filename,
+                    buffer: sizeBuffer,
+                    mimeType: size.mimeType || 'image/webp',
+                  })
+                }
+              }
+            }
+          }
+        } catch (err) {
+          req.payload.logger.warn({ msg: '[Supabase Storage] Hook sync error', err })
+        }
+      },
+    ],
+    afterDelete: [
+      async ({ doc, req }) => {
+        try {
+          if (doc.filename) {
+            await deleteFromSupabaseStorage(doc.filename)
+          }
+          if (doc.sizes && typeof doc.sizes === 'object') {
+            for (const size of Object.values<any>(doc.sizes)) {
+              if (size?.filename) {
+                await deleteFromSupabaseStorage(size.filename)
+              }
+            }
+          }
+        } catch (err) {
+          req.payload.logger.warn({ msg: '[Supabase Storage] Delete sync error', err })
+        }
       },
     ],
   },
