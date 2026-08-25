@@ -110,6 +110,24 @@ a[class*='card']:hover,
   background: var(--color-base-300);
 }
 
+/* ── Sidebar: Logo Oficial Nénufar en la cabecera del menú ─── */
+.nav,
+.template-default__nav,
+.nav__scroll,
+nav[class*='nav'] {
+  &::before {
+    content: '';
+    display: block;
+    width: 150px;
+    height: 70px;
+    margin: 1.25rem auto 1.25rem auto;
+    background-image: url('/nenufar-logo.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+}
+
 /* ── Sidebar Navigation: Píldora activa con borde violeta ─── */
 .nav__link,
 .nav a {
