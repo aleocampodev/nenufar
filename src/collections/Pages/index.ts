@@ -142,8 +142,29 @@ export const Pages: CollectionConfig = {
     },
     {
       name: 'slug',
-      type: 'slug',
-      useAsSlug: 'title',
+      type: 'text',
+      index: true,
+      unique: true,
+      admin: {
+        position: 'sidebar',
+      },
+      hooks: {
+        beforeValidate: [
+          ({ data, value, originalDoc }) => {
+            if (value) return value
+            const title = data?.title || originalDoc?.title
+            if (title) {
+              return title
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '')
+            }
+            return value
+          },
+        ],
+      },
     },
   ],
   hooks: {

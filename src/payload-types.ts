@@ -319,6 +319,7 @@ export interface Product {
    * Aparece en secciones destacadas del sitio.
    */
   featured?: boolean | null;
+  slug?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -577,6 +578,7 @@ export interface Page {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  slug?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
