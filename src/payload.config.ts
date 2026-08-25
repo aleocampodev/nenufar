@@ -53,6 +53,11 @@ export default buildConfig({
       max: 15,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
+      ssl:
+        process.env.DATABASE_URL?.includes('supabase') ||
+        process.env.DATABASE_URL?.includes('sslmode=require')
+          ? { rejectUnauthorized: false }
+          : undefined,
     },
     // push: true auto-mutates schema on every start — dangerous in production.
     // Use `pnpm payload migrate` for schema changes.
