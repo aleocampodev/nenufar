@@ -17,7 +17,7 @@ import Script from 'next/script'
 import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
 import { getServerSideURL } from '@/utilities/getURL'
 
-const SITE_NAME = 'Nénufar'
+const SITE_NAME = 'Nenúfar'
 
 /** Google exige URLs absolutas en JSON-LD. Prefija el dominio solo si es relativa. */
 const toAbsoluteUrl = (url?: string | null): string | undefined => {

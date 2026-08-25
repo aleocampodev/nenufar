@@ -6,14 +6,14 @@
 model_list:
   - model_name: nenufar-bot
     litellm_params:
-      model: groq/llama-3.3-70b-versatile # los ids de Groq rotan: verificar en console.groq.com
+      model: groq/openai/gpt-oss-20b
       api_key: os.environ/GROQ_API_KEY
+      max_tokens: 1024
 
 litellm_settings:
-  # CRÍTICO: el SDK envía params Anthropic (thinking, cache_control…) que Groq
-  # no soporta; LiteLLM los descarta en vez de fallar. Si la inferencia se
-  # comporta raro, revisar esto PRIMERO.
   drop_params: true
+  callbacks:
+    - custom_callbacks.custom_handler
 
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY

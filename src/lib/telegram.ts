@@ -218,3 +218,28 @@ export async function sendTelegramReply({
     return { ok: false, error: message }
   }
 }
+
+/**
+ * Envía una acción de chat (ej. "typing" / escribiendo...) para mejorar el feedback visual en Telegram.
+ */
+export async function sendTelegramChatAction(
+  chatId: number | string,
+  action: 'typing' | 'upload_photo' = 'typing'
+): Promise<void> {
+  const token = process.env.TELEGRAM_BOT_TOKEN
+  if (!token) return
+
+  try {
+    await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendChatAction`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        action,
+      }),
+      signal: AbortSignal.timeout(5_000),
+    })
+  } catch {
+    // Non-fatal: la falla de la acción no debe detener el flujo.
+  }
+}

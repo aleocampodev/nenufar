@@ -1,13 +1,21 @@
 import type { Footer } from '@/payload-types'
 
 import { FooterMenu } from '@/components/Footer/menu'
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React, { Suspense } from 'react'
 import { LogoIcon } from '@/components/icons/logo'
 
 const { COMPANY_NAME, SITE_NAME } = process.env
+
+/**
+ * Retorna el rango o año actual dinámicamente.
+ * Actualiza automáticamente al año vigente en producción.
+ */
+export function getCurrentCopyrightYear(startYear: number = 2024): string {
+  const currentYear = new Date().getFullYear()
+  return currentYear > startYear ? `${startYear}–${currentYear}` : `${currentYear}`
+}
 
 export async function Footer() {
   const footer: Footer = await getCachedGlobal('footer', 1)()
@@ -17,11 +25,10 @@ export async function Footer() {
     const url = item.link?.url
     return !url || ALLOWED_FOOTER_URLS.some((allowed) => url.startsWith(allowed))
   })
-  const currentYear = new Date().getFullYear()
-  const copyrightDate = 2023 + (currentYear > 2023 ? `-${currentYear}` : '')
+  
+  const copyrightDate = getCurrentCopyrightYear(2024)
   const skeleton = 'w-full h-6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700'
-
-  const copyrightName = COMPANY_NAME || SITE_NAME || 'Nénufar'
+  const copyrightName = COMPANY_NAME || SITE_NAME || 'Nenúfar'
 
   return (
     <footer className="border-t border-border bg-card/50 mt-auto">
@@ -30,11 +37,11 @@ export async function Footer() {
           {/* Brand Section */}
           <div className="flex flex-col gap-4 md:w-1/3">
             <Link className="flex items-center gap-3 hover:opacity-80 transition-opacity" href="/">
-              <LogoIcon className="w-8 h-8 text-primary" />
-              <span className="font-serif text-2xl text-foreground">Nénufar</span>
+              <LogoIcon className="w-8 h-8 text-brand" />
+              <span className="font-serif text-2xl text-foreground">Nenúfar</span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Joyería hecha a mano en Colombia. Cada pieza cuenta una historia.
+              Joyería y accesorios artesanales en mostacilla hechos a mano en Cartagena, Colombia.
             </p>
           </div>
 
@@ -51,9 +58,14 @@ export async function Footer() {
             </Suspense>
           </div>
 
-          {/* Actions */}
-          <div className="flex flex-col gap-4 items-start md:items-end">
-            <ThemeSelector />
+          {/* Slogan Artesanal */}
+          <div className="flex flex-col gap-2 items-start md:items-end justify-center">
+            <span className="text-xs uppercase tracking-[0.25em] text-brand font-serif font-semibold">
+              Artesanías en Mostacilla
+            </span>
+            <span className="text-[11px] text-muted-foreground font-light">
+              Cartagena de Indias
+            </span>
           </div>
         </div>
       </div>
@@ -69,7 +81,7 @@ export async function Footer() {
           <div className="hidden md:block mx-auto h-px w-16 bg-border/50" />
 
           <p className="text-sm text-muted-foreground">
-            Hecho con <span className="text-accent">❤</span> en Colombia
+            Hecho con <span className="text-brand font-bold">❤</span> en Colombia
           </p>
         </div>
       </div>

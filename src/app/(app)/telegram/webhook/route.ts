@@ -12,7 +12,7 @@ import config from '@payload-config'
 import { headers } from 'next/headers'
 import { getPayload } from 'payload'
 import { runShirleyAgent } from '@/lib/agent/runShirleyAgent'
-import { sendTelegramReply } from '@/lib/telegram'
+import { sendTelegramChatAction, sendTelegramReply } from '@/lib/telegram'
 
 export const maxDuration = 60
 
@@ -29,12 +29,22 @@ function alreadySeen(updateId: number): boolean {
   return false
 }
 
+interface TelegramPhotoSize {
+  file_id: string
+  file_unique_id: string
+  width: number
+  height: number
+  file_size?: number
+}
+
 interface TelegramUpdate {
   update_id: number
   message?: {
     chat: { id: number }
     from?: { first_name?: string; username?: string }
     text?: string
+    caption?: string
+    photo?: TelegramPhotoSize[]
   }
 }
 
@@ -63,10 +73,10 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const message = update.message
-  const text = message?.text?.trim()
+  const text = (message?.text ?? message?.caption ?? '')?.trim()
   const chatId = message?.chat?.id
 
-  // Updates sin texto (fotos, stickers, joins…) se aceptan sin procesar.
+  // Updates sin texto ni caption (stickers, joins…) se aceptan sin procesar.
   if (!text || chatId === undefined) {
     return Response.json({ ok: true })
   }
@@ -85,9 +95,65 @@ export async function POST(request: Request): Promise<Response> {
 
   const payload = await getPayload({ config })
 
+  // Feedback visual: mostrar "escribiendo..." en Telegram
+  void sendTelegramChatAction(chatId, 'typing')
+  const typingInterval = setInterval(() => {
+    void sendTelegramChatAction(chatId, 'typing')
+  }, 4000)
+
   try {
+    let uploadedMediaId: number | undefined
+
+    // Procesar foto adjunta de Telegram si existe
+    if (message?.photo && message.photo.length > 0 && process.env.TELEGRAM_BOT_TOKEN) {
+      try {
+        const bestPhoto = message.photo[message.photo.length - 1]
+        const fileRes = await fetch(
+          `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getFile?file_id=${bestPhoto.file_id}`,
+        )
+        const fileJson = (await fileRes.json()) as {
+          ok: boolean
+          result?: { file_path?: string }
+        }
+        if (fileJson.ok && fileJson.result?.file_path) {
+          const downloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${fileJson.result.file_path}`
+          const imgRes = await fetch(downloadUrl)
+          const arrayBuffer = await imgRes.arrayBuffer()
+          const buffer = Buffer.from(arrayBuffer)
+
+          const mediaDoc = await payload.create({
+            collection: 'media',
+            data: {
+              alt: text || 'Joya Nénufar',
+              fileName: `joya-${Date.now()}`,
+            },
+            file: {
+              data: buffer,
+              mimetype: 'image/jpeg',
+              name: `joya-${Date.now()}.jpg`,
+              size: buffer.length,
+            },
+            overrideAccess: true,
+          })
+          uploadedMediaId = mediaDoc.id
+          payload.logger.info({
+            msg: '[telegram] Foto descargada y guardada en Media',
+            mediaId: uploadedMediaId,
+          })
+        }
+      } catch (mediaErr) {
+        payload.logger.error({ msg: '[telegram] Error descargando foto de Telegram', err: mediaErr })
+      }
+    }
+
     const userName = message?.from?.first_name ?? message?.from?.username
-    const reply = await runShirleyAgent({ text, payload, chatId, userName })
+    const reply = await runShirleyAgent({
+      text,
+      payload,
+      chatId,
+      userName,
+      mediaId: uploadedMediaId,
+    })
     payload.logger.info({ msg: '[telegram] handled by shirley-agent', chatId })
     await sendTelegramReply({ chatId, text: reply })
   } catch (err) {
@@ -96,6 +162,8 @@ export async function POST(request: Request): Promise<Response> {
       chatId,
       text: 'Uy, tuve un problemita para responder. ¿Puedes intentar de nuevo en un momento? 💜',
     })
+  } finally {
+    clearInterval(typingInterval)
   }
 
   return Response.json({ ok: true })

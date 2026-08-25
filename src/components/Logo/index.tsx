@@ -12,7 +12,7 @@ export const Logo = () => {
       }}
     >
       <img
-        alt="Nénufar Logo"
+        alt="Nenúfar Logo"
         src="/nenufar-logo.png"
         style={{
           height: '42px',
@@ -30,7 +30,7 @@ export const Logo = () => {
           letterSpacing: '-0.01em',
         }}
       >
-        Nénufar
+        Nenúfar
       </span>
     </div>
   )

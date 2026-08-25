@@ -13,7 +13,7 @@ import Script from 'next/script'
 const organizationJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Nénufar',
+  name: 'Nenúfar',
   description: 'Joyería artesanal colombiana hecha a mano en Cartagena.',
   url: getServerSideURL(),
   logo: `${getServerSideURL()}/favicon.svg`,
@@ -41,11 +41,11 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   title: {
-    default: 'Nénufar — Joyería Artesanal Colombiana',
-    template: '%s | Nénufar',
+    default: 'Nenúfar — Joyería Artesanal Colombiana',
+    template: '%s | Nenúfar',
   },
   description:
-    'Joyería artesanal colombiana hecha a mano en Cartagena. Piezas únicas de Nénufar.',
+    'Joyería artesanal colombiana hecha a mano en Cartagena. Piezas únicas de Nenúfar.',
   robots: {
     follow: true,
     index: true,

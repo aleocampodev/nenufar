@@ -1,14 +1,16 @@
-import { ProductCard } from '@/components/ProductCard'
+import { KraftiProductTile } from '@/components/ProductCard/KraftiProductTile'
+import { NenufarPagination } from '@/components/Pagination/NenufarPagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
+import { ShopFilterBar } from './ShopFilterBar'
 
 export const metadata = {
-  description: 'Busca productos en la tienda.',
-  title: 'Tienda',
+  description: 'Catálogo de Joyería Artesanal en Cartagena — Nenúfar.',
+  title: 'Catálogo de Joyas | Nenúfar',
 }
 
-const PAGE_SIZE = 24
+const PAGE_SIZE = 20
 
 type SearchParams = { [key: string]: string | string[] | undefined }
 
@@ -17,17 +19,60 @@ type Props = {
 }
 
 export default async function ShopPage({ searchParams }: Props) {
-  const { q: searchValue, sort, category, page: pageParam } = await searchParams
+  const { q: searchValue, sort, category, featured, page: pageParam } = await searchParams
   const page = Math.max(1, parseInt(String(pageParam ?? '1'), 10) || 1)
   const payload = await getPayload({ config: configPromise })
+
+  // 1. Obtener todas las categorías para los filtros
+  const categoriesRes = await payload.find({
+    collection: 'categories',
+    sort: 'title',
+    limit: 50,
+    overrideAccess: true,
+  })
+
+  const categories = categoriesRes.docs.map((c) => ({
+    id: c.id,
+    title: c.title,
+    slug: (c as any).slug || String(c.id),
+  }))
+
+  // 2. Construir filtros de consulta
+  const whereConditions: any[] = [{ _status: { equals: 'published' } }]
+
+  if (searchValue && typeof searchValue === 'string') {
+    whereConditions.push({
+      or: [
+        { title: { like: searchValue.trim() } },
+        { description: { like: searchValue.trim() } },
+      ],
+    })
+  }
+
+  if (category && typeof category === 'string') {
+    const matchedCat = categoriesRes.docs.find(
+      (c) => (c as any).slug === category || String(c.id) === category,
+    )
+    if (matchedCat) {
+      whereConditions.push({ categories: { contains: matchedCat.id } })
+    }
+  }
+
+  if (featured === 'true') {
+    whereConditions.push({ featured: { equals: true } })
+  }
+
+  // 3. Consultar productos con Payload
+  const sortOption = typeof sort === 'string' ? sort : '-createdAt'
 
   const products = await payload.find({
     collection: 'products',
     draft: false,
-    overrideAccess: false,
+    overrideAccess: true,
     depth: 2,
     limit: PAGE_SIZE,
     page,
+    sort: sortOption,
     select: {
       title: true,
       slug: true,
@@ -35,96 +80,86 @@ export default async function ShopPage({ searchParams }: Props) {
       categories: true,
       variants: true,
       priceInCOP: true,
+      inventory: true,
+      featured: true,
     },
-    ...(sort ? { sort } : { sort: 'title' }),
     where: {
-      and: [
-        { _status: { equals: 'published' } },
-        ...(searchValue
-          ? [{ or: [{ title: { like: searchValue } }, { description: { like: searchValue } }] }]
-          : []),
-        ...(category ? [{ categories: { contains: category } }] : []),
-      ],
+      and: whereConditions,
     },
   })
 
-  const { docs, totalPages, hasPrevPage, hasNextPage } = products
-  const resultsText = docs.length > 1 ? 'resultados' : 'resultado'
+  const { docs, totalDocs, totalPages, hasPrevPage, hasNextPage } = products
 
   const buildPageUrl = (p: number) => {
     const params = new URLSearchParams()
     if (searchValue) params.set('q', String(searchValue))
     if (sort) params.set('sort', String(sort))
     if (category) params.set('category', String(category))
+    if (featured) params.set('featured', String(featured))
     if (p > 1) params.set('page', String(p))
     const qs = params.toString()
     return `/shop${qs ? `?${qs}` : ''}`
   }
 
   return (
-    <div className="container py-16">
-      {searchValue ? (
-        <p className="mb-8 font-serif text-lg text-muted-foreground">
-          {docs.length === 0
-            ? 'No hay productos que coincidan con '
-            : `Mostrando ${docs.length} ${resultsText} para `}
-          <span className="text-foreground">&quot;{searchValue}&quot;</span>
-        </p>
-      ) : null}
+    <div className="w-full pb-20">
+      {/* Barra de Filtros Minimalista en el Encabezado de Shop */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
+        <ShopFilterBar
+          categories={categories}
+          totalProducts={totalDocs}
+          activeCategory={typeof category === 'string' ? category : undefined}
+          activeSort={sortOption}
+          activeSearch={typeof searchValue === 'string' ? searchValue : undefined}
+          activeFeatured={featured === 'true'}
+        />
+      </div>
 
-      {!searchValue && docs.length === 0 && (
-        <div className="text-center py-16">
-          <div className="text-6xl mb-4 opacity-30">✦</div>
-          <p className="font-serif text-xl text-muted-foreground">No se encontraron productos.</p>
-          <p className="text-sm text-muted-foreground/70 mt-2">
-            Por favor intenta con otros filtros.
+      {/* Estado Vacío */}
+      {docs.length === 0 && (
+        <div className="text-center py-24 px-6 border border-dashed border-border/80 rounded-2xl max-w-md mx-auto my-12">
+          <div className="text-5xl mb-4 opacity-40 text-brand">✦</div>
+          <h3 className="font-serif text-xl text-foreground mb-2">No encontramos joyas</h3>
+          <p className="text-sm text-muted-foreground mb-6">
+            Prueba ajustando los filtros o buscando otra joya en mostacilla.
           </p>
+          <a
+            href="/shop"
+            className="inline-block px-6 py-2.5 bg-foreground text-background text-xs uppercase tracking-widest font-medium rounded-full hover:bg-brand transition-colors"
+          >
+            Ver todo el catálogo
+          </a>
         </div>
       )}
 
-      {docs.length > 0 ? (
-        /* Masonry estilo Krafti: CSS columns, altura natural de cada imagen */
-        <div className="columns-1 gap-8 sm:columns-2 lg:columns-3 xl:columns-4">
-          {docs.map((product, index) => (
-            <div
-              key={product.id}
-              className="mb-8 break-inside-avoid"
-              style={{
-                animationName: 'fadeInUp',
-                animationDuration: '0.6s',
-                animationDelay: `${index * 0.1}s`,
-                animationFillMode: 'forwards',
-              }}
-            >
-              <ProductCard product={product} />
-            </div>
-          ))}
+      {/* Grilla Full-Bleed Estilo Krafti Masonry (4 columnas con Hero 2x2) */}
+      {docs.length > 0 && (
+        <div className="w-full border-t border-l border-border/40">
+          <div className="grid grid-cols-1 md:grid-cols-4 grid-flow-dense gap-0">
+            {docs.map((product, index) => {
+              // El primer producto ocupa el slot Hero 2x2 como en Krafti
+              const isHero = index === 0
+              return (
+                <KraftiProductTile
+                  key={product.id}
+                  product={product}
+                  index={index}
+                  isHero={isHero}
+                />
+              )
+            })}
+          </div>
         </div>
-      ) : null}
-
-      {totalPages > 1 && (
-        <nav className="mt-12 flex items-center justify-center gap-3" aria-label="Paginación">
-          {hasPrevPage && (
-            <a
-              href={buildPageUrl(page - 1)}
-              className="px-4 py-2 border border-neutral-300 rounded-md text-sm hover:bg-neutral-50 transition"
-            >
-              ← Anterior
-            </a>
-          )}
-          <span className="text-sm text-muted-foreground">
-            Página {page} de {totalPages}
-          </span>
-          {hasNextPage && (
-            <a
-              href={buildPageUrl(page + 1)}
-              className="px-4 py-2 border border-neutral-300 rounded-md text-sm hover:bg-neutral-50 transition"
-            >
-              Siguiente →
-            </a>
-          )}
-        </nav>
       )}
+
+      {/* Paginación Innovadora de Nenúfar */}
+      <NenufarPagination
+        page={page}
+        totalPages={totalPages}
+        totalDocs={totalDocs}
+        limit={PAGE_SIZE}
+        buildPageUrl={buildPageUrl}
+      />
     </div>
   )
 }
