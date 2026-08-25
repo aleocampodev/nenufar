@@ -111,21 +111,15 @@ a[class*='card']:hover,
 }
 
 
-/* ── Sidebar: Logotipo Oficial Nénufar en la barra lateral ─── */
-.app-sidebar .nav,
-aside .nav,
-.template-default__nav {
-  & > :first-child::before {
-    content: '';
-    display: block;
-    width: 155px;
-    height: 56px;
-    margin: 1.25rem auto 1.5rem auto;
-    background-image: url('/nenufar-logo.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-  }
+/* ── Ocultar avatar gris nativo duplicado de Payload ────────── */
+.app-header__account,
+a[aria-label='Account'],
+a[aria-label='Cuenta'],
+.app-header a[href*='/account'],
+header a[href*='/account'],
+.app-header .avatar,
+header .avatar {
+  display: none !important;
 }
 
 /* ── Miniaturas de Productos y Archivos ────────────────────── */
@@ -143,16 +137,6 @@ aside .nav,
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
-}
-
-@media (max-width: 768px) {
-  .app-sidebar .nav > :first-child::before,
-  aside .nav > :first-child::before,
-  .template-default__nav > :first-child::before {
-    width: 130px;
-    height: 48px;
-    margin: 1rem auto;
-  }
 }
 
 /* ── Sidebar Navigation: Píldora activa con borde violeta ─── */
