@@ -35,6 +35,7 @@ export default buildConfig({
     components: {
       beforeLogin: ['@/components/BeforeLogin#BeforeLogin'],
       beforeDashboard: ['@/components/BeforeDashboard#BeforeDashboard'],
+      beforeNavLinks: ['@/components/Admin/SidebarHeader#SidebarHeader'],
       graphics: {
         Logo: '@/components/Logo#Logo',
         Icon: '@/components/Logo#Icon',

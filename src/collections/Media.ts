@@ -13,6 +13,7 @@ import { adminOnly } from '@/access/adminOnly'
 import {
   uploadToSupabaseStorage,
   deleteFromSupabaseStorage,
+  getSupabasePublicUrl,
 } from '@/lib/supabaseStorage'
 
 const filePath = fileURLToPath(import.meta.url)
@@ -108,7 +109,15 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     staticDir: path.resolve(mediaDir, '../../public/media'),
-    adminThumbnail: 'thumbnail',
+    adminThumbnail: ({ doc }) => {
+      const d = doc as any
+      return (
+        d?.thumbnailURL ||
+        d?.sizes?.thumbnail?.url ||
+        d?.url ||
+        getSupabasePublicUrl(d?.sizes?.thumbnail?.filename || d?.filename || '')
+      )
+    },
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif', 'image/svg+xml'],
     focalPoint: true,
     imageSizes: [
@@ -171,6 +180,18 @@ export const Media: CollectionConfig = {
           }
         }
         return result
+      },
+    ],
+    afterRead: [
+      ({ doc }) => {
+        if (!doc) return doc
+        if (doc.filename) {
+          doc.url = getSupabasePublicUrl(doc.filename)
+          doc.thumbnailURL = doc.sizes?.thumbnail?.filename
+            ? getSupabasePublicUrl(doc.sizes.thumbnail.filename)
+            : doc.url
+        }
+        return doc
       },
     ],
     afterChange: [
