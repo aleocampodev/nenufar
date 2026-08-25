@@ -78,6 +78,7 @@ export interface Config {
     media: Media;
     posts: Post;
     events: Event;
+    testimonials: Testimonial;
     forms: Form;
     'form-submissions': FormSubmission;
     addresses: Address;
@@ -113,6 +114,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     addresses: AddressesSelect<false> | AddressesSelect<true>;
@@ -329,7 +331,7 @@ export interface Product {
 export interface Media {
   id: number;
   /**
-   * Renombra el archivo físico. Sin espacios ni tildes (se normalizan solas).
+   * Nombre descriptivo del archivo físico (ej. aretes-filigrana).
    */
   fileName?: string | null;
   alt: string;
@@ -529,12 +531,42 @@ export interface Page {
     | {
         title?: string | null;
         /**
+         * Filtra qué tipo de eventos mostrar en la landing
+         */
+        filterByType?: ('todos' | 'feria' | 'taller' | 'pop-up') | null;
+        /**
          * Máximo 6 eventos en el home.
          */
         limit?: number | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'upcomingEvents';
+      }
+    | {
+        /**
+         * Texto pequeño en mayúsculas sobre el título
+         */
+        tagline?: string | null;
+        heading?: string | null;
+        items?:
+          | {
+              icon?: ('handmade' | 'shipping' | 'quality' | 'gift' | 'support') | null;
+              title: string;
+              description: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'features';
+      }
+    | {
+        tagline?: string | null;
+        heading?: string | null;
+        limit?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'testimonials';
       }
   )[];
   meta?: {
@@ -625,14 +657,20 @@ export interface ArchiveBlock {
     [k: string]: unknown;
   } | null;
   populateBy?: ('collection' | 'selection') | null;
-  relationTo?: 'products' | null;
+  relationTo?: ('products' | 'posts') | null;
   categories?: (number | Category)[] | null;
   limit?: number | null;
   selectedDocs?:
-    | {
-        relationTo: 'products';
-        value: number | Product;
-      }[]
+    | (
+        | {
+            relationTo: 'products';
+            value: number | Product;
+          }
+        | {
+            relationTo: 'posts';
+            value: number | Post;
+          }
+      )[]
     | null;
   id?: string | null;
   blockName?: string | null;
@@ -647,6 +685,43 @@ export interface Category {
   title: string;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  author: number | User;
+  publishedAt?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  relatedProducts?: (number | Product)[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1063,47 +1138,14 @@ export interface Address {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
- */
-export interface Post {
-  id: number;
-  title: string;
-  author: number | User;
-  publishedAt?: string | null;
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-    description?: string | null;
-  };
-  relatedProducts?: (number | Product)[] | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "events".
  */
 export interface Event {
   id: number;
+  /**
+   * Feria, taller artesanal o pop-up
+   */
+  type: 'feria' | 'taller' | 'pop-up';
   title: string;
   date: string;
   /**
@@ -1123,6 +1165,36 @@ export interface Event {
    * Si hay una página o registro externo del evento.
    */
   link?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Testimonios de compradoras con foto real para la landing
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  /**
+   * Cita textual de la compradora
+   */
+  quote: string;
+  authorName: string;
+  /**
+   * Ej: Diseñadora, Cartagena — Barranquilla
+   */
+  authorRole?: string | null;
+  /**
+   * Foto de la compradora o captura (opcional)
+   */
+  avatar?: (number | null) | Media;
+  /**
+   * Opcional — 1 a 5 estrellas
+   */
+  rating?: number | null;
+  featured?: boolean | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1191,6 +1263,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'events';
         value: number | Event;
+      } | null)
+    | ({
+        relationTo: 'testimonials';
+        value: number | Testimonial;
       } | null)
     | ({
         relationTo: 'forms';
@@ -1345,6 +1421,32 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               title?: T;
+              filterByType?: T;
+              limit?: T;
+              id?: T;
+              blockName?: T;
+            };
+        features?:
+          | T
+          | {
+              tagline?: T;
+              heading?: T;
+              items?:
+                | T
+                | {
+                    icon?: T;
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        testimonials?:
+          | T
+          | {
+              tagline?: T;
+              heading?: T;
               limit?: T;
               id?: T;
               blockName?: T;
@@ -1581,6 +1683,7 @@ export interface PostsSelect<T extends boolean = true> {
  * via the `definition` "events_select".
  */
 export interface EventsSelect<T extends boolean = true> {
+  type?: T;
   title?: T;
   date?: T;
   endDate?: T;
@@ -1588,6 +1691,21 @@ export interface EventsSelect<T extends boolean = true> {
   image?: T;
   description?: T;
   link?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  quote?: T;
+  authorName?: T;
+  authorRole?: T;
+  avatar?: T;
+  rating?: T;
+  featured?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

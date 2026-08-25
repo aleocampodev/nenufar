@@ -2,6 +2,8 @@ import type { CollectionConfig } from 'payload'
 
 import { Banner } from '@/blocks/Banner/config'
 import { Carousel } from '@/blocks/Carousel/config'
+import { FeaturesBlock as Features } from '@/blocks/Features/config'
+import { TestimonialsBlock } from '@/blocks/Testimonials/config'
 import { ThreeItemGrid } from '@/blocks/ThreeItemGrid/config'
 import { UpcomingEventsBlock } from '@/blocks/UpcomingEvents/config'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
@@ -101,6 +103,8 @@ export const Pages: CollectionConfig = {
                 Banner,
                 FormBlock,
                 UpcomingEventsBlock,
+                Features,
+                TestimonialsBlock,
               ],
               required: true,
             },

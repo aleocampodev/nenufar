@@ -25,6 +25,22 @@ export const Events: CollectionConfig = {
   },
   fields: [
     {
+      name: 'type',
+      type: 'select',
+      label: 'Tipo',
+      required: true,
+      defaultValue: 'feria',
+      options: [
+        { label: 'Feria', value: 'feria' },
+        { label: 'Taller', value: 'taller' },
+        { label: 'Pop-up', value: 'pop-up' },
+      ],
+      admin: {
+        description: 'Feria, taller artesanal o pop-up',
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'title',
       type: 'text',
       label: 'Nombre del evento',

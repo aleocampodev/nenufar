@@ -248,15 +248,19 @@ export function createShirleyTools(payload: Payload) {
 
   const publicarEvento = tool(
     'publicarEvento',
-    'Agenda un evento (feria, pop-up, mercado) dejándolo como borrador en el sitio. ' +
+    'Agenda un evento (feria, taller, pop-up) dejándolo como borrador en el sitio. ' +
       'Shirley lo publica desde /admin cuando revise la fecha y la foto.',
     {
       titulo: z.string().describe('Nombre del evento'),
       fecha: z.string().describe('Fecha y hora en formato ISO, ej. "2026-09-15T10:00:00-05:00"'),
       lugar: z.string().optional().describe('Lugar, ej. "Cartagena — Centro Histórico"'),
       descripcion: z.string().optional().describe('Descripción breve'),
+      tipo: z
+        .enum(['feria', 'taller', 'pop-up'])
+        .optional()
+        .describe('Tipo de evento: feria, taller o pop-up (por defecto feria)'),
     },
-    async ({ titulo, fecha, lugar, descripcion }) => {
+    async ({ titulo, fecha, lugar, descripcion, tipo }) => {
       try {
         const parsed = new Date(fecha)
         if (Number.isNaN(parsed.getTime())) {
@@ -267,6 +271,7 @@ export function createShirleyTools(payload: Payload) {
           data: {
             title: titulo,
             date: parsed.toISOString(),
+            type: tipo || 'feria',
             ...(lugar ? { location: lugar } : {}),
             ...(descripcion ? { description: descripcion } : {}),
           },
@@ -274,7 +279,7 @@ export function createShirleyTools(payload: Payload) {
           overrideAccess: false,
         })
         return text(
-          `Evento "${titulo}" guardado como borrador (#${event.id}). Revísalo y publícalo desde /admin.`,
+          `Evento "${titulo}" (${tipo || 'feria'}) guardado como borrador (#${event.id}). Revísalo y publícalo desde /admin.`,
         )
       } catch (err) {
         return toolError(
@@ -366,6 +371,69 @@ export function createShirleyTools(payload: Payload) {
     },
   )
 
+  const crearTestimonio = tool(
+    'crearTestimonio',
+    'Guarda un testimonio de compradora con foto real para la landing. Si Shirley envía una foto por Telegram, se vincula automáticamente.',
+    {
+      nombre: z.string().describe('Nombre de la compradora'),
+      testimonio: z.string().describe('Cita textual del testimonio'),
+      rol: z.string().optional().describe('Rol o ciudad, ej. "Cartagena"'),
+      calificacion: z.number().int().min(1).max(5).optional().describe('Calificación 1-5'),
+      mediaId: z.number().int().optional().describe('ID de Media ya subido (foto) — lo pasa el webhook si hay foto adjunta'),
+    },
+    async ({ nombre, testimonio, rol, calificacion, mediaId }) => {
+      try {
+        if (!mediaId) {
+          return text(
+            'Necesito una foto real de la compradora para el testimonio. Envíame la foto por Telegram junto con el testimonio, o súbela primero en /admin → Medios y pásame el ID.',
+          )
+        }
+        const doc = await payload.create({
+          collection: 'testimonials',
+          data: {
+            quote: testimonio,
+            authorName: nombre,
+            ...(rol ? { authorRole: rol } : {}),
+            avatar: mediaId,
+            ...(calificacion ? { rating: calificacion } : {}),
+            _status: 'published',
+          },
+          draft: false,
+          overrideAccess: false,
+        })
+        return text(`Testimonio de "${nombre}" guardado y publicado (#${doc.id}) ✨`)
+      } catch (err) {
+        return toolError(
+          `No pude guardar el testimonio: ${err instanceof Error ? err.message : 'error desconocido'}`,
+        )
+      }
+    },
+  )
+
+  const listarTestimonios = tool(
+    'listarTestimonios',
+    'Lista los testimonios publicados de la landing.',
+    {},
+    async () => {
+      try {
+        const res = await payload.find({
+          collection: 'testimonials',
+          limit: 10,
+          overrideAccess: false,
+          where: { _status: { equals: 'published' } },
+          sort: '-createdAt',
+        })
+        if (res.docs.length === 0) return text('Aún no hay testimonios publicados.')
+        const lines = res.docs.map((d: any) => `- #${d.id} — ${d.authorName}: “${d.quote.slice(0, 80)}…”`)
+        return text(`Testimonios (${res.docs.length}):\n${lines.join('\n')}`)
+      } catch (err) {
+        return toolError(
+          `No pude listar testimonios: ${err instanceof Error ? err.message : 'error desconocido'}`,
+        )
+      }
+    },
+  )
+
   return createSdkMcpServer({
     name: 'nenufar-tienda',
     version: '1.0.0',
@@ -378,6 +446,8 @@ export function createShirleyTools(payload: Payload) {
       confirmarPedido,
       publicarEvento,
       crearProductoDraft,
+      crearTestimonio,
+      listarTestimonios,
     ],
   })
 }

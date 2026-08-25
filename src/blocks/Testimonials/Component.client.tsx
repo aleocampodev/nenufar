@@ -1,0 +1,139 @@
+'use client'
+
+import type { Media } from '@/payload-types'
+import useEmblaCarousel from 'embla-carousel-react'
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react'
+import React, { useCallback, useEffect, useState } from 'react'
+
+import { Media as PayloadMedia } from '@/components/Media'
+
+type Testimonial = {
+  id: number
+  quote: string
+  authorName: string
+  authorRole?: string | null
+  avatar: number | Media
+  rating?: number | null
+}
+
+export const TestimonialsClient: React.FC<{
+  id?: string
+  title: string
+  testimonials: Testimonial[]
+  showRating: boolean
+}> = ({ id, title, testimonials, showRating }) => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'center' })
+  const [selectedIndex, setSelectedIndex] = useState(0)
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return
+    setSelectedIndex(emblaApi.selectedScrollSnap())
+  }, [emblaApi])
+
+  useEffect(() => {
+    if (!emblaApi) return
+    emblaApi.on('select', onSelect)
+    onSelect()
+  }, [emblaApi, onSelect])
+
+  if (!testimonials?.length) return null
+
+  return (
+    <section id={id} className="py-12 md:py-16 bg-muted/20 border-y border-border/40">
+      <div className="container">
+        <h2 className="text-2xl md:text-3xl font-serif text-center mb-8 md:mb-10 text-foreground">
+          {title}
+        </h2>
+
+        <div className="relative">
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex">
+              {testimonials.map((t) => {
+                const avatar = t.avatar as Media
+                return (
+                  <div
+                    key={t.id}
+                    className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] min-w-0 px-3"
+                  >
+                    <article className="h-full rounded-2xl border border-border bg-card p-6 md:p-7 flex flex-col items-center text-center space-y-4">
+                      {/* Avatar */}
+                      {avatar && typeof avatar === 'object' ? (
+                        <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-brand/20 shrink-0">
+                          <PayloadMedia
+                            resource={avatar}
+                            sizeName="thumbnail"
+                            fill
+                            imgClassName="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-20 h-20 rounded-full bg-brand/10 flex items-center justify-center text-brand text-xl font-serif">
+                          {t.authorName.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+
+                      {showRating && t.rating ? (
+                        <div className="flex gap-1">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${i < t.rating! ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`}
+                            />
+                          ))}
+                        </div>
+                      ) : null}
+
+                      <blockquote className="text-sm md:text-[15px] leading-relaxed text-muted-foreground italic">
+                        “{t.quote}”
+                      </blockquote>
+
+                      <div>
+                        <p className="font-medium text-foreground text-sm">{t.authorName}</p>
+                        {t.authorRole && (
+                          <p className="text-xs text-muted-foreground">{t.authorRole}</p>
+                        )}
+                      </div>
+                    </article>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {testimonials.length > 1 && (
+            <>
+              <button
+                aria-label="Anterior"
+                onClick={scrollPrev}
+                className="hidden md:flex absolute -left-3 lg:-left-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white border border-border shadow-sm hover:bg-muted items-center justify-center transition"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                aria-label="Siguiente"
+                onClick={scrollNext}
+                className="hidden md:flex absolute -right-3 lg:-right-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white border border-border shadow-sm hover:bg-muted items-center justify-center transition"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+
+              <div className="flex justify-center gap-2 mt-6">
+                {testimonials.map((_, i) => (
+                  <button
+                    key={i}
+                    aria-label={`Ir al testimonio ${i + 1}`}
+                    onClick={() => emblaApi?.scrollTo(i)}
+                    className={`h-2 rounded-full transition-all ${i === selectedIndex ? 'w-6 bg-brand' : 'w-2 bg-border hover:bg-brand/50'}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}

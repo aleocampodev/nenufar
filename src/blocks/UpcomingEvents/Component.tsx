@@ -7,6 +7,7 @@ import React from 'react'
 type Props = {
   title?: string
   limit?: number
+  filterByType?: 'todos' | 'feria' | 'taller' | 'pop-up'
   id?: string
 }
 
@@ -30,10 +31,23 @@ function formatEventTime(dateStr: string): string {
   })
 }
 
-export const UpcomingEventsBlock: React.FC<Props> = async ({ title = 'Próximos Eventos', limit = 3, id }) => {
+export const UpcomingEventsBlock: React.FC<Props> = async ({
+  title = 'Próximos Eventos',
+  limit = 3,
+  filterByType = 'todos',
+  id,
+}) => {
   const payload = await getPayload({ config: configPromise })
 
   const now = new Date().toISOString()
+
+  const whereAnd: any[] = [
+    { _status: { equals: 'published' } },
+    { date: { greater_than_equal: now } },
+  ]
+  if (filterByType && filterByType !== 'todos') {
+    whereAnd.push({ type: { equals: filterByType } })
+  }
 
   const result = await payload.find({
     collection: 'events',
@@ -41,12 +55,7 @@ export const UpcomingEventsBlock: React.FC<Props> = async ({ title = 'Próximos 
     limit,
     overrideAccess: false,
     sort: 'date',
-    where: {
-      and: [
-        { _status: { equals: 'published' } },
-        { date: { greater_than_equal: now } },
-      ],
-    },
+    where: { and: whereAnd },
   })
 
   const events = result.docs
@@ -84,6 +93,11 @@ export const UpcomingEventsBlock: React.FC<Props> = async ({ title = 'Próximos 
 
               {/* Info */}
               <div className="p-5 space-y-2">
+                {event.type && (
+                  <span className="inline-block text-[11px] tracking-widest uppercase px-2.5 py-1 rounded-full bg-brand/10 text-brand border border-brand/20">
+                    {event.type === 'taller' ? 'Taller' : event.type === 'pop-up' ? 'Pop-up' : 'Feria'}
+                  </span>
+                )}
                 <h3 className="font-serif text-lg leading-snug text-foreground group-hover:text-primary transition-colors">
                   {event.title}
                 </h3>

@@ -3,8 +3,10 @@ import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { CarouselBlock } from '@/blocks/Carousel/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
+import { FeaturesBlock } from '@/blocks/Features/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 import { ThreeItemGridBlock } from '@/blocks/ThreeItemGrid/Component'
 import { UpcomingEventsBlock } from '@/blocks/UpcomingEvents/Component'
 import { toKebabCase } from '@/utilities/toKebabCase'
@@ -18,8 +20,10 @@ const blockComponents = {
   carousel: CarouselBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
+  features: FeaturesBlock,
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
+  testimonials: TestimonialsBlock,
   threeItemGrid: ThreeItemGridBlock,
   upcomingEvents: UpcomingEventsBlock,
 }

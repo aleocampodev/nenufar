@@ -5,7 +5,8 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
     slug: 'home',
     _status: 'published',
     hero: {
-      type: 'lowImpact',
+      // @ts-ignore - slider type with slides is valid after migration, fallback to lowImpact if DB not yet migrated
+      type: 'slider' as any,
       richText: {
         root: {
           type: 'root',
@@ -65,11 +66,69 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
           },
         },
       ],
+      // Slider slides - placeholders (images added later by Shirley via /admin)
+      slides: [
+        {
+          heading: 'Mostacilla con Alma Caribeña',
+          subheading: 'Piezas únicas tejidas a mano en Cartagena, con la dedicación de Shirley.',
+          linkLabel: 'Explorar Catálogo',
+          linkUrl: '/shop',
+          image: null as any,
+        },
+        {
+          heading: 'Talleres que Tejen Comunidad',
+          subheading: 'Aprende la técnica ancestral de la mostacilla en nuestros talleres presenciales.',
+          linkLabel: 'Ver Talleres',
+          linkUrl: '/eventos',
+          image: null as any,
+        },
+        {
+          heading: 'Ferias y Pop-ups en Cartagena',
+          subheading: 'Encuéntranos en ferias artesanales y mercados locales. ¡Te esperamos!',
+          linkLabel: 'Próximas Ferias',
+          linkUrl: '/eventos',
+          image: null as any,
+        },
+      ] as any,
     },
     layout: [
       {
+        blockType: 'features',
+        tagline: 'Tradición y Delicadeza',
+        heading: 'Por qué elegir Nénufar Joyería',
+        items: [
+          {
+            icon: 'handmade',
+            title: '100% Hecho a Mano',
+            description: 'Cada pieza es tejida pacientemente por Shirley en Cartagena con mostacilla calibrada de alta calidad.',
+          },
+          {
+            icon: 'shipping',
+            title: 'Envíos a Toda Colombia',
+            description: 'Llegamos a tu ciudad con empaque seguro y seguimiento en tiempo real vía Telegram/WhatsApp.',
+          },
+          {
+            icon: 'quality',
+            title: 'Materiales Duraderos',
+            description: 'Hilos de alta resistencia e insumos hipoalergénicos diseñados para durar y mantener su brillo.',
+          },
+          {
+            icon: 'gift',
+            title: 'Lista para Regalar',
+            description: 'Todas nuestras joyas se envían en una presentación artesanal lista para sorprender a alguien especial.',
+          },
+        ],
+      },
+      {
+        blockType: 'testimonials',
+        tagline: 'Voces de Nuestra Comunidad',
+        heading: 'Lo que dicen quienes lucen Nénufar',
+        limit: 3,
+      },
+      {
         blockType: 'upcomingEvents',
-        title: 'Próximas Ferias y Pop-ups en Cartagena',
+        title: 'Próximas Ferias y Talleres en Cartagena',
+        filterByType: 'todos',
         limit: 3,
       },
       {

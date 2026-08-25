@@ -35,6 +35,10 @@ export const hero: Field = {
           label: 'Low Impact',
           value: 'lowImpact',
         },
+        {
+          label: 'Slider (Krafti)',
+          value: 'slider',
+        },
       ],
       required: true,
     },
@@ -66,6 +70,50 @@ export const hero: Field = {
       },
       relationTo: 'media',
       required: true,
+    },
+    {
+      name: 'slides',
+      type: 'array',
+      label: 'Slides del carrusel',
+      admin: {
+        condition: (_, { type } = {}) => type === 'slider',
+        description: 'Máximo 3 slides. Cada slide lleva imagen de fondo + título + subtítulo + botón.',
+      },
+      minRows: 1,
+      maxRows: 3,
+      fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          label: 'Imagen de fondo',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'heading',
+          type: 'text',
+          label: 'Título grande',
+          required: true,
+        },
+        {
+          name: 'subheading',
+          type: 'textarea',
+          label: 'Subtítulo',
+        },
+        {
+          name: 'linkLabel',
+          type: 'text',
+          label: 'Texto del botón',
+        },
+        {
+          name: 'linkUrl',
+          type: 'text',
+          label: 'URL del botón',
+          admin: {
+            description: 'Ej: /shop, /eventos',
+          },
+        },
+      ],
     },
   ],
   label: false,
