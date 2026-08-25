@@ -284,15 +284,57 @@ export function createShirleyTools(payload: Payload) {
     },
   )
 
+  const publicarProducto = tool(
+    'publicarProducto',
+    'Publica o cambia a borrador un producto existente por su slug o ID para que sea visible (o invisible) inmediatamente en la tienda web (/shop).',
+    {
+      slug: z.string().describe('Slug o nombre aproximado del producto a publicar o despublicar'),
+      publicar: z
+        .boolean()
+        .optional()
+        .describe('true para publicar en la tienda (por defecto), false para cambiar a borrador'),
+    },
+    async ({ slug, publicar }) => {
+      const state = publicar ?? true
+      try {
+        const product = await findProductBySlug(payload, slug)
+        if (!product) return text(`No encontré ningún producto con el slug "${slug}".`)
+        await payload.update({
+          collection: 'products',
+          id: product.id,
+          data: {
+            _status: state ? 'published' : 'draft',
+          },
+          draft: !state,
+          overrideAccess: false,
+        })
+        return text(
+          state
+            ? `¡Listo! "${product.title}" fue publicado exitosamente y ya está visible en la tienda web (/shop). ✨`
+            : `"${product.title}" ha sido cambiado a borrador y ya no es visible en la tienda web.`,
+        )
+      } catch (err) {
+        return toolError(
+          `No pude actualizar el estado de publicación: ${err instanceof Error ? err.message : 'error desconocido'}`,
+        )
+      }
+    },
+  )
+
   const crearProductoDraft = tool(
     'crearProductoDraft',
-    'Crea un producto nuevo en borrador con título y precio. Queda invisible al público hasta que ' +
-      'Shirley le agregue fotos y lo publique desde /admin.',
+    'Crea un producto nuevo. Puede guardarse como borrador o publicarse de inmediato en la tienda web (/shop) si Shirley lo solicita.',
     {
       titulo: z.string().describe('Nombre de la pieza, ej. "Aretes filigrana oro"'),
       precioCOP: z.number().int().optional().describe('Precio en pesos colombianos, sin decimales'),
+      inventario: z.number().int().optional().describe('Cantidad inicial de unidades disponibles'),
+      publicar: z
+        .boolean()
+        .optional()
+        .describe('true para publicarlo de inmediato en la tienda web, false para dejarlo en borrador'),
     },
-    async ({ titulo, precioCOP }) => {
+    async ({ titulo, precioCOP, inventario, publicar }) => {
+      const shouldPublish = publicar ?? false
       try {
         const product = await payload.create({
           collection: 'products',
@@ -301,14 +343,20 @@ export function createShirleyTools(payload: Payload) {
             ...(precioCOP !== undefined
               ? { priceInCOPEnabled: true, priceInCOP: precioCOP }
               : {}),
+            ...(inventario !== undefined ? { inventory: inventario } : {}),
+            _status: shouldPublish ? 'published' : 'draft',
           },
-          draft: true,
+          draft: !shouldPublish,
           overrideAccess: false,
         })
         return text(
-          `Producto "${titulo}" creado en borrador (#${product.id})` +
-            (precioCOP !== undefined ? ` con precio ${formatCOP(precioCOP)}` : '') +
-            '. Agrégale fotos y publícalo desde /admin.',
+          shouldPublish
+            ? `¡Listo! Producto "${titulo}" creado y publicado exitosamente (#${product.id})` +
+                (precioCOP !== undefined ? ` con precio ${formatCOP(precioCOP)}` : '') +
+                '. Ya está visible en la tienda web (/shop). ✨'
+            : `Producto "${titulo}" creado en borrador (#${product.id})` +
+                (precioCOP !== undefined ? ` con precio ${formatCOP(precioCOP)}` : '') +
+                '. Puedes revisarlo y publicarlo cuando quieras desde Telegram o desde /admin.',
         )
       } catch (err) {
         return toolError(
@@ -325,6 +373,7 @@ export function createShirleyTools(payload: Payload) {
       buscarProducto,
       destacarProducto,
       actualizarInventario,
+      publicarProducto,
       pedidosPendientes,
       confirmarPedido,
       publicarEvento,
