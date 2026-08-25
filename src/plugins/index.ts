@@ -118,9 +118,13 @@ export const plugins: Plugin[] = [
     carts: {
       cartsCollectionOverride: ({ defaultCollection }) => ({
         ...defaultCollection,
+        labels: {
+          singular: 'Carrito',
+          plural: 'Carritos Activos',
+        },
         admin: {
           ...defaultCollection.admin,
-          group: 'Comercio',
+          group: 'Gestión de Pedidos',
         },
         fields: [
           ...defaultCollection.fields,
@@ -163,9 +167,13 @@ export const plugins: Plugin[] = [
     orders: {
       ordersCollectionOverride: ({ defaultCollection }) => ({
         ...defaultCollection,
+        labels: {
+          singular: 'Pedido',
+          plural: 'Pedidos (Órdenes)',
+        },
         admin: {
           ...defaultCollection.admin,
-          group: 'Comercio',
+          group: 'Gestión de Pedidos',
         },
         fields: [
           ...defaultCollection.fields,
@@ -204,18 +212,23 @@ export const plugins: Plugin[] = [
         ...defaultCollection,
         admin: {
           ...defaultCollection.admin,
-          group: 'Comercio',
+          group: 'Gestión de Pedidos',
           hidden: true,
         },
       }),
-    },    products: {
+    },
+    products: {
       productsCollectionOverride: ({ defaultCollection }) => {
         const overridden = ProductsCollection({ defaultCollection })
         return {
           ...overridden,
+          labels: {
+            singular: 'Joya / Producto',
+            plural: 'Catálogo de Joyas',
+          },
           admin: {
             ...overridden.admin,
-            group: 'Comercio',
+            group: 'Catálogo de Joyas',
           },
         }
       },

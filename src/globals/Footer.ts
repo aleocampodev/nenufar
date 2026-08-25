@@ -5,6 +5,10 @@ import { link } from '@/fields/link'
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
+  label: 'Pie de Página (Footer)',
+  admin: {
+    group: 'Diseño y Navegación',
+  },
   access: {
     read: () => true,
     update: adminOnly,

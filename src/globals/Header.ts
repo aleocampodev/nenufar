@@ -5,6 +5,10 @@ import { link } from '@/fields/link'
 
 export const Header: GlobalConfig = {
   slug: 'header',
+  label: 'Cabecera (Header)',
+  admin: {
+    group: 'Diseño y Navegación',
+  },
   access: {
     read: () => true,
     update: adminOnly,

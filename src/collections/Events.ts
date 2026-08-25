@@ -5,8 +5,12 @@ import { adminOrPublishedStatus } from '@/access/adminOrPublishedStatus'
 
 export const Events: CollectionConfig = {
   slug: 'events',
+  labels: {
+    singular: 'Evento / Feria',
+    plural: 'Eventos y Ferias',
+  },
   admin: {
-    group: 'Contenido',
+    group: 'Contenido Web',
     useAsTitle: 'title',
     defaultColumns: ['title', 'date', 'location', '_status'],
   },
