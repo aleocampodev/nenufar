@@ -11,20 +11,27 @@ import { fileURLToPath } from 'url'
 import { adminOnly } from '@/access/adminOnly'
 
 const filePath = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filePath)
+const mediaDir = path.dirname(filePath)
 
 /**
  * Renombra el archivo físico cuando se edita `fileName` en el admin.
- * Payload usa `filename` (reservado) como identidad del archivo en disco;
- * este campo custom permite editarlo desde el panel sin romper nada:
- * ajusta `filename`, `url` y las variantes `sizes.*.filename/url`.
+ * Garantiza conservar la extensión correcta para que las imágenes se previsualicen y sirvan siempre.
  */
 const syncFileName = ({ data, originalDoc }: { data: any; originalDoc: any }) => {
   const newName: string | undefined = data?.fileName
-  if (!newName || typeof newName !== 'string') return data
+  if (!newName || typeof newName !== 'string' || !newName.trim()) return data
 
-  // Normaliza: sin espacios ni caracteres problemáticos, conserva la extensión
-  const ext = path.extname(originalDoc?.filename || '').toLowerCase()
+  const currentFilename = data?.filename || originalDoc?.filename || ''
+  let ext = path.extname(currentFilename).toLowerCase()
+  if (!ext && data?.mimeType) {
+    if (data.mimeType === 'image/jpeg') ext = '.jpg'
+    else if (data.mimeType === 'image/png') ext = '.png'
+    else if (data.mimeType === 'image/webp') ext = '.webp'
+    else if (data.mimeType === 'image/avif') ext = '.avif'
+    else if (data.mimeType === 'image/gif') ext = '.gif'
+    else if (data.mimeType === 'image/svg+xml') ext = '.svg'
+  }
+
   const base = newName
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '') // sin tildes
@@ -33,33 +40,26 @@ const syncFileName = ({ data, originalDoc }: { data: any; originalDoc: any }) =>
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
   if (!base) return data
-  const cleanName = base.endsWith(ext) ? base : `${base}${ext}`
-  if (cleanName === originalDoc?.filename) return data
+
+  const cleanName = base.endsWith(ext) ? base : `${base}${ext || '.jpg'}`
+  if (cleanName === currentFilename) return data
 
   data.filename = cleanName
   if (typeof data.url === 'string') {
     data.url = data.url.replace(/[^/]+$/, cleanName)
   }
-  if (data.sizes && typeof data.sizes === 'object') {
-    for (const size of Object.values<any>(data.sizes)) {
-      if (size?.filename) {
-        size.filename = cleanName
-        if (typeof size.url === 'string') {
-          size.url = size.url.replace(/[^/]+$/, cleanName)
-        }
-      }
-    }
-  }
   return data
 }
 
-const filename = fileURLToPath(import.meta.url)
-// dirname ya está declarado arriba junto a syncFileName
-const mediaDir = path.dirname(filename)
-
 export const Media: CollectionConfig = {
   admin: {
-    group: 'Contenido',
+    group: 'Contenido Web',
+    useAsTitle: 'alt',
+    defaultColumns: ['alt', 'filename', 'updatedAt'],
+  },
+  labels: {
+    singular: 'Medio / Imagen',
+    plural: 'Medios y Archivos',
   },
   slug: 'media',
   access: {
@@ -70,16 +70,14 @@ export const Media: CollectionConfig = {
   },
   fields: [
     {
-      // Nombre del archivo editable desde el admin (renombra el físico al guardar)
       name: 'fileName',
       type: 'text',
       label: 'Nombre del archivo',
       admin: {
-        description: 'Renombra el archivo físico. Sin espacios ni tildes (se normalizan solas).',
+        description: 'Nombre descriptivo del archivo físico (ej. aretes-filigrana).',
       },
       hooks: {
         beforeValidate: [({ value, originalDoc }) => {
-          // Si el usuario no lo tocó, no cambia nada
           if (typeof value !== 'string' || !value.trim()) return undefined
           if (originalDoc && value === originalDoc.fileName) return value
           return value
@@ -89,11 +87,13 @@ export const Media: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
+      label: 'Texto Alternativo (Alt)',
       required: true,
     },
     {
       name: 'caption',
       type: 'richText',
+      label: 'Descripción o Leyenda',
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
           return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
@@ -103,10 +103,9 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     staticDir: path.resolve(mediaDir, '../../public/media'),
+    adminThumbnail: 'thumbnail',
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif', 'image/svg+xml'],
     focalPoint: true,
-    // Sharp genera estas variantes WebP automáticamente al subir cada imagen.
-    // Payload guarda las URLs en resource.sizes.{name}.url
     imageSizes: [
       {
         name: 'thumbnail',
@@ -154,7 +153,6 @@ export const Media: CollectionConfig = {
     beforeChange: [
       ({ data, originalDoc, req }) => {
         const result = syncFileName({ data, originalDoc })
-        // Renombrar también el archivo físico en disco
         const newName = result?.filename
         const oldName = originalDoc?.filename
         if (newName && oldName && newName !== oldName) {
