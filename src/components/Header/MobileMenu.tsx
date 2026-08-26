@@ -18,8 +18,15 @@ import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
+interface CategoryItem {
+  id: number | string
+  title: string
+  slug: string
+}
+
 interface Props {
   menu: Header['navItems']
+  categories?: CategoryItem[]
 }
 
 export function MobileMenu({ menu }: Props) {

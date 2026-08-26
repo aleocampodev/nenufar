@@ -3,13 +3,14 @@ import { CMSLink } from '@/components/Link'
 import { Cart } from '@/components/Cart'
 import { OpenCartButton } from '@/components/Cart/OpenCart'
 import Link from 'next/link'
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect, useRef, useState } from 'react'
 
 import { MobileMenu } from './MobileMenu'
 import type { Header } from '@/payload-types'
 
 import { LogoIcon } from '@/components/icons/logo'
 import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
+import { ChevronDown, Sparkles } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/utilities/cn'
 
