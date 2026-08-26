@@ -13,54 +13,33 @@ import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/utilities/cn'
 
-type Props = {
-  header: Header
+interface CategoryItem {
+  id: number | string
+  title: string
+  slug: string
 }
 
-export function HeaderClient({ header }: Props) {
-  // Storefront: Inicio se omite (el logo ya lleva a /), y la tienda se etiqueta como "Tienda".
-  const ALLOWED_NAV_URLS = ['/shop']
-  const allMenu = header.navItems || []
-  const menu = allMenu
-    .filter((item) => {
-      const url = item.link?.url
-      return url && ALLOWED_NAV_URLS.includes(url)
-    })
-    .map((item) => {
-      // Renombrar "Colecciones" o similar a "Tienda"
-      if (item.link?.url === '/shop') {
-        return {
-          ...item,
-          link: {
-            ...item.link,
-            label: 'Tienda',
-          },
-        }
-      }
-      return item
-    })
-    // Evita duplicados
-    .filter((item, index, arr) => {
-      const url = item.link?.url
-      return arr.findIndex((o) => o.link?.url === url) === index
-    })
+type Props = {
+  header: Header
+  categories?: CategoryItem[]
+}
 
-  // Si no hay items en Payload, aseguramos el link directo a Tienda
-  const finalMenu =
-    menu.length > 0
-      ? menu
-      : [
-          {
-            id: 'shop-direct',
-            link: {
-              type: 'custom',
-              url: '/shop',
-              label: 'Tienda',
-            },
-          },
-        ]
-
+export function HeaderClient({ header, categories = [] }: Props) {
   const pathname = usePathname()
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const isCatalogActive = pathname.startsWith('/shop') || pathname.startsWith('/products')
 
   return (
     <header className="relative z-30 bg-background border-b border-border/40 transition-colors">
@@ -68,7 +47,7 @@ export function HeaderClient({ header }: Props) {
         {/* Menú Móvil */}
         <div className="block flex-none md:hidden">
           <Suspense fallback={null}>
-            <MobileMenu menu={finalMenu} />
+            <MobileMenu menu={header.navItems} categories={categories} />
           </Suspense>
         </div>
 
@@ -82,25 +61,76 @@ export function HeaderClient({ header }: Props) {
           </Link>
 
           <ul className="hidden md:flex items-center gap-6 text-xs uppercase tracking-[0.2em] font-medium font-sans">
-            {finalMenu.map((item) => {
-              const isActive = pathname === '/shop' || pathname.startsWith('/products')
-              return (
-                <li key={item.id}>
+            {/* Dropdown Catálogo */}
+            <li className="relative" ref={dropdownRef}>
+              <button
+                type="button"
+                aria-label="Catálogo"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                onMouseEnter={() => setDropdownOpen(true)}
+                className={cn(
+                  'flex items-center gap-1.5 py-1 transition-colors hover:text-brand relative cursor-pointer',
+                  isCatalogActive ? 'text-brand font-semibold' : 'text-muted-foreground',
+                )}
+                aria-expanded={dropdownOpen}
+                aria-haspopup="true"
+              >
+                <span>Catálogo</span>
+                <ChevronDown
+                  className={cn(
+                    'w-3.5 h-3.5 transition-transform duration-200 text-brand/80',
+                    dropdownOpen && 'rotate-180',
+                  )}
+                />
+                {isCatalogActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand rounded-full" />
+                )}
+              </button>
+
+              {/* Menú Desplegable de Categorías */}
+              {dropdownOpen && (
+                <div
+                  onMouseLeave={() => setDropdownOpen(false)}
+                  className="absolute left-0 top-full mt-2 w-56 rounded-2xl bg-card border border-brand/20 shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+                >
                   <Link
                     href="/shop"
-                    className={cn(
-                      'transition-colors hover:text-brand relative py-1',
-                      isActive ? 'text-brand font-semibold' : 'text-muted-foreground',
-                    )}
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center px-4 py-2 text-xs uppercase tracking-wider text-foreground hover:bg-brand/10 hover:text-brand transition-colors font-medium"
                   >
-                    {item.link?.label || 'Tienda'}
-                    {isActive && (
-                      <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand rounded-full" />
-                    )}
+                    <span>✦ Ver todo el catálogo</span>
                   </Link>
-                </li>
-              )
-            })}
+
+                  <Link
+                    href="/shop?featured=true"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-wider text-foreground hover:bg-brand/10 hover:text-brand transition-colors font-medium"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-brand" />
+                    <span>Joyas destacadas</span>
+                  </Link>
+
+                  {categories.length > 0 && (
+                    <>
+                      <div className="my-1.5 border-t border-border/40" />
+                      <div className="px-4 py-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 font-semibold">
+                        Categorías
+                      </div>
+                      {categories.map((cat) => (
+                        <Link
+                          key={cat.id}
+                          href={`/shop?category=${cat.slug}`}
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center px-4 py-1.5 text-xs uppercase tracking-wider text-muted-foreground hover:bg-brand/10 hover:text-brand transition-colors"
+                        >
+                          <span>{cat.title}</span>
+                        </Link>
+                      ))}
+                    </>
+                  )}
+                </div>
+              )}
+            </li>
           </ul>
         </div>
 

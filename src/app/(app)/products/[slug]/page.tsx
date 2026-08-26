@@ -13,7 +13,6 @@ import React, { Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import { ChevronLeftIcon } from 'lucide-react'
 import { Metadata } from 'next'
-import Script from 'next/script'
 import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
 import { getServerSideURL } from '@/utilities/getURL'
 
@@ -174,7 +173,7 @@ export default async function ProductPage({ params }: Args) {
 
   return (
     <React.Fragment>
-      <Script
+      <script
         id="product-jsonld"
         type="application/ld+json"
         dangerouslySetInnerHTML={{

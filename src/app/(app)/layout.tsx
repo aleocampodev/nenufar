@@ -8,7 +8,6 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { Providers } from '@/providers'
 import type { Metadata } from 'next'
-import Script from 'next/script'
 
 const organizationJsonLd = {
   '@context': 'https://schema.org',
@@ -69,7 +68,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
       <body>
-        <Script
+        <script
           id="organization-jsonld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
