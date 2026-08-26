@@ -72,8 +72,8 @@ export const SliderHeroClient: React.FC<{
                   )}
                   <div className="absolute inset-0 bg-black/30 md:bg-black/25" />
 
-                  {/* Content */}
-                  <div className="absolute inset-0 flex items-center">
+                  {/* Content - with top padding for absolute header */}
+                  <div className="absolute inset-0 flex items-center pt-[72px]">
                     <div className="container">
                       <div className="max-w-2xl text-white space-y-4">
                         <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight font-light">

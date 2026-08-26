@@ -43,66 +43,29 @@ export function HeaderClient({ header, categories = [] }: Props) {
   const isCatalogActive = pathname.startsWith('/shop') || pathname.startsWith('/products')
 
   return (
-    <header className="sticky top-0 z-30 bg-white">
+    <header className="absolute top-0 left-0 right-0 z-30 bg-transparent">
       <nav className="flex items-center justify-between max-w-[1300px] mx-auto px-6 lg:px-8 h-[72px]">
-        {/* Izquierda - HOME PAGES PORTFOLIO (Krafti) */}
-        <ul className="hidden md:flex items-center gap-8 text-[11px] tracking-[0.18em] font-medium">
-          <li>
-            <Link href="/" className={cn('hover:text-[#8B5A2B] transition-colors', pathname === '/' ? 'text-[#8B5A2B] border-b border-[#8B5A2B] pb-1' : 'text-neutral-500')}>
-              HOME
-            </Link>
-          </li>
-          <li>
-            <Link href="/sobre-nenufar" className="text-neutral-500 hover:text-[#8B5A2B] transition-colors">
-              PAGES
-            </Link>
-          </li>
-          <li>
-            <Link href="/shop" className={cn('hover:text-[#8B5A2B] transition-colors', isCatalogActive ? 'text-[#8B5A2B] border-b border-[#8B5A2B] pb-1' : 'text-neutral-500')}>
-              PORTFOLIO
-            </Link>
-          </li>
-        </ul>
-
-        {/* Centro - Logo Krafti */}
-        <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 group">
-          <span className="font-serif text-[28px] tracking-wide text-[#4A0D2A] group-hover:text-[#8B5A2B] transition-colors" style={{ fontFamily: 'Playfair Display, serif' }}>
-            Krafti
+        {/* Izquierda - Logo Nenúfar */}
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <LogoIcon className="w-7 h-7 text-white transition-transform duration-300 group-hover:scale-105" />
+          <span className="font-serif text-2xl tracking-wide text-white group-hover:text-white/80 transition-colors">
+            Nenúfar
           </span>
-          <span className="hidden lg:inline font-serif text-[28px] tracking-wide text-[#4A0D2A]">Nenúfar</span>
         </Link>
 
-        {/* Móvil */}
-        <div className="flex md:hidden">
-          <Suspense fallback={null}>
-            <MobileMenu menu={header.navItems} categories={categories} />
-          </Suspense>
-        </div>
+        {/* Centro - vacío para que no se vea menú al cargar */}
+        <div className="hidden md:flex flex-1" />
 
-        {/* Derecha - BLOG SHOP LANDING + Carrito */}
-        <div className="flex items-center gap-8">
-          <ul className="hidden md:flex items-center gap-8 text-[11px] tracking-[0.18em] font-medium">
-            <li>
-              <Link href="/blog" className="text-neutral-500 hover:text-[#8B5A2B] transition-colors">
-                BLOG
-              </Link>
-            </li>
-            <li>
-              <Link href="/shop" className="text-neutral-500 hover:text-[#8B5A2B] transition-colors">
-                SHOP
-              </Link>
-            </li>
-            <li>
-              <Link href="/eventos" className="text-neutral-500 hover:text-[#8B5A2B] transition-colors">
-                LANDING
-              </Link>
-            </li>
-          </ul>
-          <div className="flex items-center gap-3">
-            <Suspense fallback={<OpenCartButton />}>
-              <Cart />
+        {/* Derecha - Solo carrito y menú móvil (menú no visible al cargar) */}
+        <div className="flex items-center gap-3">
+          <div className="flex">
+            <Suspense fallback={null}>
+              <MobileMenu menu={header.navItems} categories={categories} />
             </Suspense>
           </div>
+          <Suspense fallback={<OpenCartButton />}>
+            <Cart />
+          </Suspense>
         </div>
       </nav>
     </header>
