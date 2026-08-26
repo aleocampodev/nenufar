@@ -100,13 +100,13 @@ export const hero: Field = {
           type: 'upload',
           label: 'Imagen de fondo',
           relationTo: 'media',
-          required: true,
+          required: false,
         },
         {
           name: 'heading',
           type: 'text',
           label: 'Título grande',
-          required: true,
+          required: false,
         },
         {
           name: 'subheading',

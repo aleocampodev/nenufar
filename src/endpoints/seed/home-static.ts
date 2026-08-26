@@ -120,6 +120,61 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
         ],
       },
       {
+        blockType: 'nenufarStory',
+        tagline: 'Hecho a mano en Cartagena',
+        heading: 'Nenúfar — Manos que tejen historias',
+        image: null as any,
+        linkLabel: 'Conocer la colección',
+        linkUrl: '/shop',
+        description: {
+          root: {
+            type: 'root',
+            children: [
+              {
+                type: 'paragraph',
+                children: [
+                  {
+                    type: 'text',
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'Nenúfar nace en Cartagena de Indias de las manos de Shirley, artesana que teje mostacilla con la paciencia y el color del Caribe. Cada collar, pulsera y arete es una historia hecha a mano, con hilos de alta resistencia y mostacilla calibrada que garantiza brillo y duración.',
+                    version: 1,
+                  },
+                ],
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                version: 1,
+              },
+              {
+                type: 'paragraph',
+                children: [
+                  {
+                    type: 'text',
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'Inspirada en la filigrana momposina y en los patios de Cartagena, Shirley crea piezas livianas, hipoalergénicas y llenas de significado — perfectas para regalar o para llevar un pedacito del Caribe contigo. En la mitad de esta historia estás tú, luciendo una pieza única.',
+                    version: 1,
+                  },
+                ],
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                version: 1,
+              },
+            ],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
+          },
+        },
+      },
+      {
         blockType: 'testimonials',
         tagline: 'Voces de Nuestra Comunidad',
         heading: 'Lo que dicen quienes lucen Nénufar',

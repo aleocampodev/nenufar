@@ -482,8 +482,14 @@ export interface Page {
   id: number;
   title: string;
   publishedOn?: string | null;
+  /**
+   * Aquí va el Carrusel de arriba de la landing. Déjalo en "Carrusel" y agrega las 3 fotos abajo.
+   */
   hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
+    /**
+     * Elige "Carrusel de 3 fotos" para la Inicio. Las otras opciones son solo texto y no las necesitas ahora.
+     */
+    type: 'slider' | 'lowImpact' | 'mediumImpact' | 'highImpact' | 'none';
     richText?: {
       root: {
         type: string;
@@ -519,6 +525,22 @@ export interface Page {
         }[]
       | null;
     media?: (number | null) | Media;
+    /**
+     * Agrega 3 fotos. Cada foto lleva su título y su botón. Si aún no tienes fotos, deja el degradado gris.
+     */
+    slides?:
+      | {
+          image?: (number | null) | Media;
+          heading?: string | null;
+          subheading?: string | null;
+          linkLabel?: string | null;
+          /**
+           * Ej: /shop, /eventos
+           */
+          linkUrl?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   layout: (
     | CallToActionBlock
@@ -561,6 +583,7 @@ export interface Page {
         blockName?: string | null;
         blockType: 'features';
       }
+    | NenufarStoryBlock
     | {
         tagline?: string | null;
         heading?: string | null;
@@ -578,6 +601,9 @@ export interface Page {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  /**
+   * Se genera automático desde el título. Ej: inicio → /inicio, home → /
+   */
   slug?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -982,6 +1008,44 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NenufarStoryBlock".
+ */
+export interface NenufarStoryBlock {
+  /**
+   * Foto vertical de Shirley trabajando. Recomendado 800x1000. Si aún no tienes, se ve placeholder.
+   */
+  image?: (number | null) | Media;
+  tagline?: string | null;
+  heading: string;
+  /**
+   * Habla de Nenúfar, de Shirley, de la mostacilla. Estilo Krafti: 2-3 párrafos cortos.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Ej: /shop, /sobre-nenufar
+   */
+  linkUrl?: string | null;
+  linkLabel?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'nenufarStory';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1407,6 +1471,16 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         media?: T;
+        slides?:
+          | T
+          | {
+              image?: T;
+              heading?: T;
+              subheading?: T;
+              linkLabel?: T;
+              linkUrl?: T;
+              id?: T;
+            };
       };
   layout?:
     | T
@@ -1444,6 +1518,7 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        nenufarStory?: T | NenufarStoryBlockSelect<T>;
         testimonials?:
           | T
           | {
@@ -1581,6 +1656,20 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NenufarStoryBlock_select".
+ */
+export interface NenufarStoryBlockSelect<T extends boolean = true> {
+  image?: T;
+  tagline?: T;
+  heading?: T;
+  description?: T;
+  linkUrl?: T;
+  linkLabel?: T;
   id?: T;
   blockName?: T;
 }

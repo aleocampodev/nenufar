@@ -6,6 +6,7 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { FeaturesBlock } from '@/blocks/Features/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { NenufarStoryBlock } from '@/blocks/NenufarStory/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 import { ThreeItemGridBlock } from '@/blocks/ThreeItemGrid/Component'
 import { UpcomingEventsBlock } from '@/blocks/UpcomingEvents/Component'
@@ -23,6 +24,7 @@ const blockComponents = {
   features: FeaturesBlock,
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
+  nenufarStory: NenufarStoryBlock,
   testimonials: TestimonialsBlock,
   threeItemGrid: ThreeItemGridBlock,
   upcomingEvents: UpcomingEventsBlock,

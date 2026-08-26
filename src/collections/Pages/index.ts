@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { Banner } from '@/blocks/Banner/config'
 import { Carousel } from '@/blocks/Carousel/config'
 import { FeaturesBlock as Features } from '@/blocks/Features/config'
+import { NenufarStory } from '@/blocks/NenufarStory/config'
 import { TestimonialsBlock } from '@/blocks/Testimonials/config'
 import { ThreeItemGrid } from '@/blocks/ThreeItemGrid/config'
 import { UpcomingEventsBlock } from '@/blocks/UpcomingEvents/config'
@@ -106,6 +107,7 @@ export const Pages: CollectionConfig = {
                 FormBlock,
                 UpcomingEventsBlock,
                 Features,
+                NenufarStory,
                 TestimonialsBlock,
               ],
               required: true,
