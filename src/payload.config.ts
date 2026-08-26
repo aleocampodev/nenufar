@@ -22,6 +22,7 @@ import { Events } from '@/collections/Events'
 import { Media } from '@/collections/Media'
 import { Pages } from '@/collections/Pages'
 import { Posts } from '@/collections/Posts'
+import { Testimonials } from '@/collections/Testimonials'
 import { Users } from '@/collections/Users'
 import { Footer } from '@/globals/Footer'
 import { Header } from '@/globals/Header'
@@ -43,12 +44,12 @@ export default buildConfig({
       },
     },
     meta: {
-      titleSuffix: '— Nénufar Admin',
-      description: 'Panel de administración de Nénufar Joyería Artesanal',
+      titleSuffix: '— Nenúfar Admin',
+      description: 'Panel de administración de Nenúfar Joyería Artesanal',
     },
     user: Users.slug,
   },
-  collections: [Users, Pages, Categories, Media, Posts, Events],
+  collections: [Users, Pages, Categories, Media, Posts, Events, Testimonials],
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL || '',

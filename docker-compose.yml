@@ -18,12 +18,11 @@ services:
       - "4000:4000"
     volumes:
       - ./litellm/config.yaml:/app/config.yaml:ro
-    # Solo las vars del gateway — NO pasar el .env completo: el DATABASE_URL
-    # de la app hace que LiteLLM intente correr sus migraciones Prisma contra
-    # una DB que no es suya y muera en el arranque.
+      - ./litellm/custom_callbacks.py:/app/custom_callbacks.py:ro
     environment:
       GROQ_API_KEY: ${GROQ_API_KEY:-}
       LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-nenufar-local}
+      PYTHONPATH: /app
     command: ["--config", "/app/config.yaml", "--port", "4000"]
 
 volumes:

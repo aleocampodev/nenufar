@@ -13,11 +13,10 @@ import React, { Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import { ChevronLeftIcon } from 'lucide-react'
 import { Metadata } from 'next'
-import Script from 'next/script'
 import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
 import { getServerSideURL } from '@/utilities/getURL'
 
-const SITE_NAME = 'Nénufar'
+const SITE_NAME = 'Nenúfar'
 
 /** Google exige URLs absolutas en JSON-LD. Prefija el dominio solo si es relativa. */
 const toAbsoluteUrl = (url?: string | null): string | undefined => {
@@ -61,7 +60,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
     plainDescription(product, 155) ||
     `${product.title} — joyería artesanal colombiana hecha a mano por Nénufar.`
   const title = product.meta?.title || `${product.title} | ${SITE_NAME} Joyería Artesanal`
-  const canonical = `${getServerSideURL()}/products/${product.slug}`
+  const canonical = `${getServerSideURL()}/products/${(product as any).slug || slug}`
 
   const images = seoImage?.url
     ? [
@@ -120,11 +119,13 @@ export default async function ProductPage({ params }: Args) {
 
   const metaImage = typeof product.meta?.image === 'object' ? product.meta?.image : undefined
   const hasStock = product.enableVariants
-    ? product?.variants?.docs?.some((variant) => {
-        if (typeof variant !== 'object') return false
-        return variant.inventory && variant?.inventory > 0
-      })
-    : product.inventory! > 0
+    ? Boolean(
+        product?.variants?.docs?.some((variant) => {
+          if (typeof variant !== 'object' || !variant) return false
+          return typeof variant.inventory === 'number' && variant.inventory > 0
+        }),
+      )
+    : typeof product.inventory === 'number' && product.inventory > 0
 
   let price = product.priceInCOP
 
@@ -137,7 +138,7 @@ export default async function ProductPage({ params }: Args) {
     }, price)
   }
 
-  const productUrl = `${getServerSideURL()}/products/${product.slug}`
+  const productUrl = `${getServerSideURL()}/products/${(product as any).slug || slug}`
   const jsonLdImages = [
     typeof metaImage === 'object' ? metaImage?.url : undefined,
     ...gallery.map((item) => item.image?.url),
@@ -172,7 +173,7 @@ export default async function ProductPage({ params }: Args) {
 
   return (
     <React.Fragment>
-      <Script
+      <script
         id="product-jsonld"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -228,7 +229,7 @@ function RelatedProducts({ products }: { products: Product[] }) {
             className="aspect-square w-full flex-none min-[475px]:w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
             key={product.id}
           >
-            <Link className="relative h-full w-full" href={`/products/${product.slug}`}>
+            <Link className="relative h-full w-full" href={`/products/${(product as any).slug}`}>
               <GridTileImage
                 label={{
                   amount: product.priceInCOP!,

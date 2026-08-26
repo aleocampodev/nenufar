@@ -14,6 +14,21 @@ export const UpcomingEventsBlock: Block = {
       defaultValue: 'Próximos Eventos',
     },
     {
+      name: 'filterByType',
+      type: 'select',
+      label: 'Filtrar por tipo',
+      defaultValue: 'todos',
+      options: [
+        { label: 'Todos', value: 'todos' },
+        { label: 'Solo Ferias', value: 'feria' },
+        { label: 'Solo Talleres', value: 'taller' },
+        { label: 'Solo Pop-ups', value: 'pop-up' },
+      ],
+      admin: {
+        description: 'Filtra qué tipo de eventos mostrar en la landing',
+      },
+    },
+    {
       name: 'limit',
       type: 'number',
       label: 'Cantidad de eventos a mostrar',

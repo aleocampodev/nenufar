@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 import { Banner } from '@/blocks/Banner/config'
 import { Carousel } from '@/blocks/Carousel/config'
+import { FeaturesBlock as Features } from '@/blocks/Features/config'
+import { ImageStrip } from '@/blocks/ImageStrip/config'
+import { NenufarStory } from '@/blocks/NenufarStory/config'
+import { TestimonialsBlock } from '@/blocks/Testimonials/config'
 import { ThreeItemGrid } from '@/blocks/ThreeItemGrid/config'
 import { UpcomingEventsBlock } from '@/blocks/UpcomingEvents/config'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
@@ -57,11 +61,13 @@ export const Pages: CollectionConfig = {
     {
       name: 'title',
       type: 'text',
+      label: 'Título de la página',
       required: true,
     },
     {
       name: 'publishedOn',
       type: 'date',
+      label: 'Fecha de publicación',
       admin: {
         date: {
           pickerAppearance: 'dayAndTime',
@@ -84,7 +90,7 @@ export const Pages: CollectionConfig = {
       tabs: [
         {
           fields: [hero],
-          label: 'Hero',
+          label: '1. Carrusel superior (fotos)',
         },
         {
           fields: [
@@ -101,11 +107,15 @@ export const Pages: CollectionConfig = {
                 Banner,
                 FormBlock,
                 UpcomingEventsBlock,
+                Features,
+                ImageStrip,
+                NenufarStory,
+                TestimonialsBlock,
               ],
               required: true,
             },
           ],
-          label: 'Content',
+          label: '2. Contenido de la página (abajo del carrusel)',
         },
         {
           name: 'meta',
@@ -138,8 +148,31 @@ export const Pages: CollectionConfig = {
     },
     {
       name: 'slug',
-      type: 'slug',
-      useAsSlug: 'title',
+      type: 'text',
+      label: 'URL amigable (slug)',
+      index: true,
+      unique: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Se genera automático desde el título. Ej: inicio → /inicio, home → /',
+      },
+      hooks: {
+        beforeValidate: [
+          ({ data, value, originalDoc }) => {
+            if (value) return value
+            const title = data?.title || originalDoc?.title
+            if (title) {
+              return title
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '')
+            }
+            return value
+          },
+        ],
+      },
     },
   ],
   hooks: {

@@ -60,9 +60,10 @@ export default async function Page({ params }: Args) {
   }
 
   const { hero, layout } = page
+  const isFullBleedHero = slug === 'home' || hero?.type === 'slider'
 
   return (
-    <article className="pt-16 pb-24">
+    <article className={isFullBleedHero ? 'pt-0 pb-0' : 'pt-16 pb-24'}>
       <RenderHero {...hero} />
       <RenderBlocks blocks={layout} />
     </article>
@@ -80,22 +81,27 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
 }
 
 const queryPageBySlug = async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
+  try {
+    const { isEnabled: draft } = await draftMode()
 
-  const payload = await getPayload({ config: configPromise })
+    const payload = await getPayload({ config: configPromise })
 
-  const result = await payload.find({
-    collection: 'pages',
-    draft,
-    limit: 100,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      and: [...(!draft ? [{ _status: { equals: 'published' } }] : [])],
-    },
-  })
+    const result = await payload.find({
+      collection: 'pages',
+      draft,
+      limit: 100,
+      overrideAccess: draft,
+      pagination: false,
+      where: {
+        and: [...(!draft ? [{ _status: { equals: 'published' } }] : [])],
+      },
+    })
 
-  const found = result.docs?.find((doc: any) => doc.slug === slug) || null
+    const found = result.docs?.find((doc: any) => doc.slug === slug) || null
 
-  return found
+    return found
+  } catch (err) {
+    console.error(`Error querying page by slug '${slug}':`, err)
+    return null
+  }
 }

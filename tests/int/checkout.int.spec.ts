@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { validateWhatsAppContact } from '@/app/(app)/pedidos/enviar/submitOrderAction'
+import { validateWhatsAppContact } from '@/lib/contact-validation'
 import { validateConsent } from '@/lib/consent'
 import {
   generateIdempotencyKey,

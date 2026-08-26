@@ -59,40 +59,43 @@ export function CartModal() {
         ) : (
           <div className="grow flex px-4">
             <div className="flex flex-col justify-between w-full">
-              <ul className="grow overflow-auto py-4">
+              <ul className="grow overflow-auto py-4 divide-y divide-border/40">
                 {cart?.items?.map((item, i) => {
-                  const product = item.product
+                  if (!item) return null
+
+                  const rawProduct = item.product
+                  const product = typeof rawProduct === 'object' && rawProduct !== null ? (rawProduct as Product) : null
+                  const productId = product?.id || (typeof rawProduct === 'number' || typeof rawProduct === 'string' ? rawProduct : i)
+                  const productTitle = product?.title || `Joya artesanal #${productId}`
+                  const productSlug = product?.slug || String(productId)
                   const variant = item.variant
 
-                  if (typeof product !== 'object' || !item || !product || !product.slug)
-                    return <React.Fragment key={i} />
-
                   const metaImage =
-                    product.meta?.image && typeof product.meta?.image === 'object'
+                    product?.meta?.image && typeof product.meta.image === 'object'
                       ? product.meta.image
                       : undefined
 
                   const firstGalleryImage =
-                    typeof product.gallery?.[0]?.image === 'object'
-                      ? product.gallery?.[0]?.image
+                    product?.gallery?.[0]?.image && typeof product.gallery[0].image === 'object'
+                      ? (product.gallery[0].image as any)
                       : undefined
 
-                  let image = firstGalleryImage || metaImage
-                  let price = product.priceInCOP
+                  let imageObj = firstGalleryImage || metaImage
+                  let price = product?.priceInCOP
 
                   const isVariant = Boolean(variant) && typeof variant === 'object'
 
                   if (isVariant) {
-                    price = variant?.priceInCOP
+                    price = (variant as any)?.priceInCOP
 
-                    const imageVariant = product.gallery?.find((item) => {
-                      if (!item.variantOption) return false
+                    const imageVariant = product?.gallery?.find((gItem) => {
+                      if (!gItem.variantOption) return false
                       const variantOptionID =
-                        typeof item.variantOption === 'object'
-                          ? item.variantOption.id
-                          : item.variantOption
+                        typeof gItem.variantOption === 'object'
+                          ? gItem.variantOption.id
+                          : gItem.variantOption
 
-                      const hasMatch = variant?.options?.some((option) => {
+                      const hasMatch = (variant as any)?.options?.some((option: any) => {
                         if (typeof option === 'object') return option.id === variantOptionID
                         else return option === variantOptionID
                       })
@@ -101,60 +104,78 @@ export function CartModal() {
                     })
 
                     if (imageVariant && typeof imageVariant.image === 'object') {
-                      image = imageVariant.image
+                      imageObj = imageVariant.image as any
                     }
                   }
 
-                  return (
-                    <li className="flex w-full flex-col" key={i}>
-                      <div className="relative flex w-full flex-row justify-between px-1 py-4">
-                        <div className="absolute z-40 -mt-2 ml-[55px]">
-                          <DeleteItemButton item={item} />
-                        </div>
-                        <Link
-                          className="z-30 flex flex-row space-x-4"
-                          href={`/products/${(item.product as Product)?.slug}`}
-                        >
-                          <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-800">
-                            {image?.url && (
-                              <Image
-                                alt={image?.alt || product?.title || ''}
-                                className="h-full w-full object-cover"
-                                height={94}
-                                src={image.url}
-                                width={94}
-                              />
-                            )}
-                          </div>
+                  const imageUrl = imageObj?.url || null
 
-                          <div className="flex flex-1 flex-col text-base">
-                            <span className="leading-tight">{product?.title}</span>
+                  return (
+                    <li className="flex w-full flex-col py-3" key={item.id || i}>
+                      <div className="relative flex w-full items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          {/* Miniatura de la Joya */}
+                          <Link
+                            className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-border/60 bg-muted/30"
+                            href={`/products/${productSlug}`}
+                          >
+                            {imageUrl ? (
+                              <Image
+                                alt={imageObj?.alt || productTitle}
+                                className="h-full w-full object-cover"
+                                height={80}
+                                src={imageUrl}
+                                width={80}
+                                unoptimized
+                              />
+                            ) : (
+                              <div className="h-full w-full flex items-center justify-center text-muted-foreground/50 text-xl font-serif">
+                                ✦
+                              </div>
+                            )}
+                          </Link>
+
+                          {/* Título y detalles */}
+                          <div className="flex flex-col min-w-0 flex-1">
+                            <Link
+                              href={`/products/${productSlug}`}
+                              className="font-serif text-sm font-medium leading-tight text-foreground hover:text-brand transition-colors truncate"
+                            >
+                              {productTitle}
+                            </Link>
+
                             {isVariant && variant ? (
-                              <p className="text-sm text-neutral-500 dark:text-neutral-400 capitalize">
-                                {variant.options
-                                  ?.map((option) => {
-                                    if (typeof option === 'object') return option.label
-                                    return null
-                                  })
+                              <p className="text-xs text-muted-foreground capitalize mt-0.5">
+                                {(variant as any).options
+                                  ?.map((option: any) => (typeof option === 'object' ? option.label : null))
+                                  .filter(Boolean)
                                   .join(', ')}
                               </p>
-                            ) : null}
+                            ) : (
+                              <span className="text-[10px] uppercase tracking-wider text-muted-foreground mt-0.5">
+                                Joya en mostacilla
+                              </span>
+                            )}
+
+                            {typeof price === 'number' && (
+                              <div className="mt-1 font-mono text-xs text-foreground/80 font-medium">
+                                <Price amount={price} currencyCode="COP" />
+                              </div>
+                            )}
                           </div>
-                        </Link>
-                        <div className="flex h-16 flex-col justify-between">
-                          {typeof price === 'number' && (
-                            <Price
-                              amount={price}
-                              className="flex justify-end space-y-2 text-right text-sm"
-                            />
-                          )}
-                          <div className="ml-auto flex h-9 flex-row items-center rounded-lg border">
+                        </div>
+
+                        {/* Controles de Cantidad y Eliminar */}
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <div className="flex h-8 items-center rounded-lg border border-border/80 bg-background">
                             <EditItemQuantityButton item={item} type="minus" />
-                            <p className="w-6 text-center">
-                              <span className="w-full text-sm">{item.quantity}</span>
-                            </p>
+                            <span className="w-6 text-center text-xs font-mono font-medium">
+                              {item.quantity}
+                            </span>
                             <EditItemQuantityButton item={item} type="plus" />
                           </div>
+
+                          <DeleteItemButton item={item} />
                         </div>
                       </div>
                     </li>

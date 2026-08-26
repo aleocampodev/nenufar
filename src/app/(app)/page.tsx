@@ -48,11 +48,12 @@ async function queryHomePage(): Promise<Page | null> {
 export default async function HomePage() {
   const page = await queryHomePage()
   const { hero, layout } = page || (homeStaticData() as Page)
+  const isSlider = (hero as any)?.type === 'slider'
 
   return (
-    <article className="pt-8 pb-24 space-y-12">
+    <article className={isSlider ? 'pb-24' : 'pt-8 pb-24 space-y-12'}>
       <RenderHero {...hero} />
-      <RenderBlocks blocks={layout} />
+      {isSlider ? <div className="space-y-12 pt-12"><RenderBlocks blocks={layout} /></div> : <RenderBlocks blocks={layout} />}
     </article>
   )
 }

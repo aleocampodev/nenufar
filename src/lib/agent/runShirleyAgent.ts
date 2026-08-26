@@ -1,14 +1,5 @@
-/**
- * Runtime del bot de Shirley sobre Claude Agent SDK (IP-001 / ADR-002).
- *
- * El SDK corre el loop agéntico completo (decidir → llamar tool → procesar
- * resultado → responder). La inferencia NUNCA va a Anthropic paga: el SDK
- * apunta a ANTHROPIC_BASE_URL (= LiteLLM :4000), que traduce a Groq free.
- * Política #253 ($0/mes) intacta.
- */
-import { query } from '@anthropic-ai/claude-agent-sdk'
 import type { Payload } from 'payload'
-import { createShirleyTools } from './tools'
+import { ANTHROPIC_SHIRLEY_TOOLS, executeShirleyTool } from './tools'
 
 export interface RunShirleyAgentArgs {
   /** Mensaje de texto de Shirley. */
@@ -18,49 +9,46 @@ export interface RunShirleyAgentArgs {
   /** chat_id de Telegram (contexto; ya validado como admin en el webhook). */
   chatId: number
   userName?: string
+  /** ID de medio cargado si el mensaje incluía foto */
+  mediaId?: number
 }
 
 /** Mensaje de cortesía ante caída del gateway/timeout — jamás un stack trace a Telegram. */
 export const AGENT_FALLBACK =
   'Shirley, tuve un inconveniente conectando con el servicio. Puedes revisar directamente en /admin mientras tanto 💜'
 
-/** Límite de rondas agénticas (equivalente al MAX_TOOL_ROUNDS = 4 del runtime viejo). */
+/** Límite de rondas agénticas. */
 const MAX_TURNS = 4
 
-/** Timeout total de la consulta (el webhook tiene maxDuration = 60). */
-const TIMEOUT_MS = 45_000
-
-const TOOL_NAMES = [
-  'buscarProducto',
-  'destacarProducto',
-  'actualizarInventario',
-  'publicarProducto',
-  'pedidosPendientes',
-  'confirmarPedido',
-  'publicarEvento',
-  'crearProductoDraft',
-] as const
-
-const MCP_SERVER_NAME = 'nenufar-tienda'
+/** Timeout total de la consulta. */
+const TIMEOUT_MS = 25_000
 
 function buildSystemPrompt(userName?: string): string {
-  const quien = userName ? ` (te escribe ${userName})` : ''
+  const nombre = userName ? userName : 'Shirley'
   return [
-    'Eres el asistente de gestión de Nénufar, la marca de joyería artesanal de Shirley en Cartagena, Colombia.',
-    `Tu única usuaria es Shirley, la dueña, escribiéndote desde Telegram${quien}.`,
+    'Eres el asistente de gestión de Nénufar, la marca de joyería artesanal en Cartagena, Colombia.',
+    `Tu interlocutora es ${nombre}, quien administra y opera la tienda, escribiéndote desde Telegram.`,
+    `Dirígete siempre a ella amablemente por su nombre (${nombre}).`,
     '',
     'Tono: cálido, cercano y cartagenero, pero eficiente. Respuestas cortas (es Telegram). Español.',
     '',
     'Reglas de negocio:',
     '- Precios siempre en pesos colombianos (COP) sin decimales.',
-    '- Nunca inventes datos: si necesitas información del catálogo o pedidos, usa las herramientas.',
-    '- Puedes crear productos en borrador o publicarlos de inmediato en la tienda web (/shop) si Shirley te lo pide.',
+    '- Nunca inventes datos: si necesitas información del catálogo, pedidos o la landing, usa las herramientas.',
+    '- Si te preguntan qué productos hay, qué joyas vendemos o piden ver el catálogo, USA SIEMPRE la herramienta buscarProducto (con consulta vacía o palabra clave) para obtener la lista real de la base de datos.',
+    '- Puedes crear productos en borrador o publicarlos de inmediato en la tienda web (/shop) si te lo pide.',
     '- Puedes publicar o despublicar cualquier producto existente con la herramienta publicarProducto.',
+    '- Si Shirley envía una foto y pide cambiar la foto de una sección de la landing (Tradición y Delicadeza o Nuestra Historia), usa actualizarFotoLanding.',
+    '- Si Shirley envía una foto y pide agregar un slide o banner al carrusel de inicio, usa agregarSlideHero.',
+    '- Si Shirley pide ver los slides del carrusel o eliminar uno, usa listarSlidesHero o eliminarSlideHero.',
     '- Si una herramienta falla, discúlpate brevemente y sugiere revisar /admin. No muestres errores técnicos.',
     '- Si el mensaje es una pregunta general o saludo, responde directo sin usar herramientas.',
-    '',
-    `Herramientas disponibles: ${TOOL_NAMES.join(', ')}.`,
   ].join('\n')
+}
+
+interface AnthropicMessage {
+  role: 'user' | 'assistant'
+  content: string | Array<Record<string, any>>
 }
 
 /**
@@ -72,48 +60,104 @@ export async function runShirleyAgent({
   payload,
   chatId,
   userName,
+  mediaId,
 }: RunShirleyAgentArgs): Promise<string> {
-  void chatId // contexto reservado (logs/auditoría futura); el guard vive en el webhook.
-  const abortController = new AbortController()
-  const timer = setTimeout(() => abortController.abort(), TIMEOUT_MS)
+  void chatId
+  const cleanPrompt = (() => {
+    const trimmed = text.trim()
+    const nombre = userName ? userName : 'Shirley'
+    if (trimmed === '/start' || trimmed === '/iniciar') {
+      return `Hola, soy ${nombre}. ¿Cómo estás y en qué me puedes ayudar hoy en la tienda?`
+    }
+    if (trimmed === '/help' || trimmed === '/ayuda') {
+      return '¿Qué herramientas y tareas puedes hacer por mí en la tienda?'
+    }
+    if (trimmed.startsWith('/')) {
+      return trimmed.replace(/^\/+/, '')
+    }
+    return trimmed
+  })()
+
+  const system = buildSystemPrompt(userName)
+  const baseUrl = (process.env.ANTHROPIC_BASE_URL || 'http://localhost:4000').replace(/\/$/, '')
+  const apiKey =
+    process.env.ANTHROPIC_AUTH_TOKEN || process.env.LITELLM_MASTER_KEY || 'sk-nenufar-local'
+  const model = process.env.ANTHROPIC_MODEL || 'nenufar-bot'
+
+  const messages: AnthropicMessage[] = [{ role: 'user', content: cleanPrompt }]
 
   try {
-    const mcpServers = { [MCP_SERVER_NAME]: createShirleyTools(payload) }
-
-    const conversation = query({
-      prompt: text,
-      options: {
-        model: process.env.ANTHROPIC_MODEL || 'nenufar-bot',
-        systemPrompt: buildSystemPrompt(userName),
-        maxTurns: MAX_TURNS,
-        mcpServers,
-        // Whitelist explícita: solo nuestras tools; los built-ins del CLI quedan fuera.
-        allowedTools: TOOL_NAMES.map((name) => `mcp__${MCP_SERVER_NAME}__${name}`),
-        abortController,
-      },
-    })
-
-    for await (const message of conversation) {
-      if (message.type !== 'result') continue
-      if (message.subtype === 'success' && !message.is_error && message.result.trim()) {
-        return message.result.trim()
-      }
-      payload.logger.warn({
-        msg: '[shirley-agent] consulta terminó sin resultado útil',
-        subtype: message.subtype,
-        errors: 'errors' in message ? message.errors : undefined,
+    for (let turn = 0; turn < MAX_TURNS; turn++) {
+      const response = await fetch(`${baseUrl}/v1/messages`, {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          max_tokens: 1024,
+          system,
+          messages,
+          tools: ANTHROPIC_SHIRLEY_TOOLS,
+        }),
+        signal: AbortSignal.timeout(TIMEOUT_MS),
       })
-      return AGENT_FALLBACK
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        payload.logger.error({
+          msg: '[shirley-agent] Error en llamada a Anthropic/LiteLLM',
+          status: response.status,
+          errorText,
+        })
+        return AGENT_FALLBACK
+      }
+
+      const data = await response.json()
+      const content = (data.content ?? []) as Array<Record<string, any>>
+
+      // 1. Detectar invocaciones de herramientas (tool_use)
+      const toolCalls = content.filter((item) => item.type === 'tool_use')
+      if (toolCalls.length > 0) {
+        messages.push({ role: 'assistant', content })
+
+        const toolResults: Array<Record<string, any>> = []
+        for (const toolCall of toolCalls) {
+          const toolArgs = {
+            ...(toolCall.input ?? {}),
+            ...(mediaId ? { mediaId } : {}),
+          }
+          const resultText = await executeShirleyTool(
+            toolCall.name,
+            toolArgs,
+            payload,
+          )
+          toolResults.push({
+            type: 'tool_result',
+            tool_use_id: toolCall.id,
+            content: resultText,
+          })
+        }
+
+        messages.push({ role: 'user', content: toolResults })
+        continue
+      }
+
+      // 2. Extraer texto de respuesta final
+      const textBlock = content.find((item) => item.type === 'text')
+      if (textBlock && typeof textBlock.text === 'string' && textBlock.text.trim()) {
+        return textBlock.text.trim()
+      }
     }
 
     return AGENT_FALLBACK
   } catch (err) {
     payload.logger.error({
-      msg: '[shirley-agent] error crítico del runtime',
+      msg: '[shirley-agent] Error crítico en el loop agéntico',
       err: err instanceof Error ? err.message : String(err),
     })
     return AGENT_FALLBACK
-  } finally {
-    clearTimeout(timer)
   }
 }

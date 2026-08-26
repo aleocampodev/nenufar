@@ -3,17 +3,17 @@ import type { ReactNode } from 'react'
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
+import { InitialLoader } from '@/components/Loading/InitialLoader'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { Providers } from '@/providers'
 import type { Metadata } from 'next'
-import Script from 'next/script'
 
 const organizationJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Nénufar',
+  name: 'Nenúfar',
   description: 'Joyería artesanal colombiana hecha a mano en Cartagena.',
   url: getServerSideURL(),
   logo: `${getServerSideURL()}/favicon.svg`,
@@ -41,11 +41,11 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   title: {
-    default: 'Nénufar — Joyería Artesanal Colombiana',
-    template: '%s | Nénufar',
+    default: 'Nenúfar — Joyería Artesanal Colombiana',
+    template: '%s | Nenúfar',
   },
   description:
-    'Joyería artesanal colombiana hecha a mano en Cartagena. Piezas únicas de Nénufar.',
+    'Joyería artesanal colombiana hecha a mano en Cartagena. Piezas únicas de Nenúfar.',
   robots: {
     follow: true,
     index: true,
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
-      className={[inter.variable, playfair.variable, GeistMono.variable].filter(Boolean).join(' ')}
+      className={['scroll-smooth', inter.variable, playfair.variable, GeistMono.variable].filter(Boolean).join(' ')}
       lang="es"
       suppressHydrationWarning
     >
@@ -69,12 +69,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
       <body>
-        <Script
+        <script
           id="organization-jsonld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
         <Providers>
+          <InitialLoader />
           <AdminBar />
           <LivePreviewListener />
 

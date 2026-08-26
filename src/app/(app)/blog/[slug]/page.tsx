@@ -8,7 +8,6 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
 import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
-import Script from 'next/script'
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>
@@ -78,7 +77,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <main className="container py-12 max-w-3xl mx-auto">
-      <Script
+      <script
         id="blog-jsonld"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
