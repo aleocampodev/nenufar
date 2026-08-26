@@ -102,22 +102,22 @@ export const SliderHeroClient: React.FC<{
         </div>
       </div>
 
-      {/* Arrows - hidden on mobile */}
+      {/* Arrows - Krafti diamond white with thin red arrow */}
       {slides.length > 1 && (
         <>
           <button
             aria-label="Anterior"
             onClick={scrollPrev}
-            className="hidden md:flex absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-foreground items-center justify-center shadow-md transition"
+            className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rotate-45 items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.15)] hover:bg-neutral-50 transition"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5 -rotate-45 text-[#8B5A2B]" />
           </button>
           <button
             aria-label="Siguiente"
             onClick={scrollNext}
-            className="hidden md:flex absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-foreground items-center justify-center shadow-md transition"
+            className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rotate-45 items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.15)] hover:bg-neutral-50 transition"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5 -rotate-45 text-[#8B5A2B]" />
           </button>
 
           {/* Dots */}
