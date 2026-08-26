@@ -87,33 +87,33 @@ const getIconComponent = (icon?: string | null) => {
   switch (icon) {
     case 'ancestral':
     case 'pattern':
-      return <AncestralPatternIcon className="w-6 h-6 text-[#1e3a5f]" />
+      return <AncestralPatternIcon className="w-5 h-5" />
     case 'colors':
     case 'bead':
-      return <HangingBeadIcon className="w-6 h-6 text-[#1e3a5f]" />
+      return <HangingBeadIcon className="w-5 h-5" />
     case 'unique':
     case 'star':
-      return <MinimalStarIcon className="w-6 h-6 text-[#1e3a5f]" />
+      return <MinimalStarIcon className="w-5 h-5" />
     case 'design':
     case 'gem':
-      return <Gem className="w-6 h-6 text-[#1e3a5f]" />
+      return <Gem className="w-5 h-5" />
     case 'quality':
     case 'materials':
-      return <ShieldCheck className="w-6 h-6 text-[#1e3a5f]" />
+      return <ShieldCheck className="w-5 h-5" />
     case 'gift':
-      return <Gift className="w-6 h-6 text-[#1e3a5f]" />
+      return <Gift className="w-5 h-5" />
     case 'shipping':
     case 'truck':
-      return <Truck className="w-6 h-6 text-[#1e3a5f]" />
+      return <Truck className="w-5 h-5" />
     case 'support':
     case 'heart':
-      return <HeartHandshake className="w-6 h-6 text-[#1e3a5f]" />
+      return <HeartHandshake className="w-5 h-5" />
     case 'sparkles':
-      return <Sparkles className="w-6 h-6 text-[#1e3a5f]" />
+      return <Sparkles className="w-5 h-5" />
     case 'handmade':
     case 'needle':
     default:
-      return <HookNeedleIcon className="w-6 h-6 text-[#1e3a5f]" />
+      return <HookNeedleIcon className="w-5 h-5" />
   }
 }
 
@@ -128,7 +128,7 @@ export const FeaturesBlock: React.FC<Props> = ({
     {
       icon: 'handmade',
       title: 'HECHO A MANO',
-      description: 'Cada pieza es elaborada a mano, hilo por hilo, siguiendo técnicas tradicionales de tejido en mostacilla.',
+      description: 'Cada pieza es tejida pacientemente por Shirley en Cartagena con mostacilla calibrada de alta calidad.',
     },
     {
       icon: 'ancestral',
@@ -143,7 +143,7 @@ export const FeaturesBlock: React.FC<Props> = ({
     {
       icon: 'unique',
       title: 'PIEZAS ÚNICAS',
-      description: 'Ninguna pieza es igual a otra: cada collar, arete o pulsera es una obra original, hecha para ti.',
+      description: 'Todas nuestras joyas se envían en una presentación artesanal lista para sorprender a alguien especial.',
     },
   ]
 
@@ -182,14 +182,14 @@ export const FeaturesBlock: React.FC<Props> = ({
         : 'items-center text-center'
 
     return (
-      <div className={`group flex flex-col ${alignmentClasses} max-w-[280px] mx-auto`}>
-        <div className="mb-3 text-[#1e3a5f] group-hover:scale-110 transition-transform duration-300">
+      <div className={`group flex flex-col ${alignmentClasses} max-w-[320px] mx-auto`}>
+        <div className="w-11 h-11 rounded-full bg-brand/10 text-brand flex items-center justify-center border border-brand/15 mb-3 group-hover:scale-110 transition-transform duration-300 shadow-sm">
           {getIconComponent(item.icon)}
         </div>
-        <h3 className="font-serif text-sm tracking-[0.25em] text-[#9A6038] font-semibold uppercase mb-2.5">
+        <h3 className="font-serif text-sm tracking-[0.25em] text-[#9A6038] font-semibold uppercase mb-2">
           {item.title}
         </h3>
-        <p className="text-xs leading-relaxed text-neutral-600 font-light">
+        <p className="text-xs sm:text-[13px] leading-relaxed text-neutral-600 font-light">
           {item.description}
         </p>
       </div>
@@ -198,7 +198,7 @@ export const FeaturesBlock: React.FC<Props> = ({
 
   return (
     <section id={id || 'tradicion'} className="py-20 md:py-28 bg-[#FAF8F5]/60 overflow-hidden scroll-mt-24">
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1060px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Encabezado Editorial Krafti */}
         {(tagline || heading) && (
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
@@ -212,14 +212,14 @@ export const FeaturesBlock: React.FC<Props> = ({
                 {heading}
               </h2>
             )}
-            <div className="w-10 h-0.5 bg-brand mx-auto mt-4 rounded-full opacity-60" />
+            <div className="w-12 h-0.5 bg-brand mx-auto mt-4 rounded-full opacity-60" />
           </div>
         )}
 
-        {/* Krafti Item Showcase: Feature cards around a featured jewelry piece */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-8 items-center">
+        {/* Krafti Item Showcase: Feature cards around a framed artisan jewelry piece */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-8 items-center">
           {/* Left Column - Features (Right-aligned on Desktop) */}
-          <div className="flex flex-col gap-10 lg:gap-16 order-2 lg:order-1">
+          <div className="flex flex-col gap-10 lg:gap-14 order-2 lg:order-1">
             {leftItems.map((item, idx) => (
               <div key={item.id || idx}>
                 <div className="hidden lg:block">
@@ -232,20 +232,28 @@ export const FeaturesBlock: React.FC<Props> = ({
             ))}
           </div>
 
-          {/* Center Column - Featured Artisan Piece Image */}
-          <div className="flex justify-center order-1 lg:order-2 py-2 lg:py-0">
-            <div className="relative w-[280px] h-[280px] sm:w-[340px] sm:h-[340px] lg:w-[380px] lg:h-[380px] flex items-center justify-center p-2">
-              <img
-                src={centerImgSrc}
-                alt={centerImgAlt}
-                className="w-full h-full object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-700"
-                loading="lazy"
-              />
+          {/* Center Column - Featured Artisan Piece in Luxury Arch Frame */}
+          <div className="flex justify-center order-1 lg:order-2 py-4 lg:py-0">
+            <div className="relative">
+              {/* Outer decorative ring border */}
+              <div className="absolute -inset-3 rounded-t-[154px] rounded-b-[2rem] border border-brand/15 pointer-events-none" />
+              
+              {/* Main arch framed image */}
+              <div className="relative w-[260px] h-[340px] sm:w-[300px] sm:h-[390px] lg:w-[320px] lg:h-[420px] rounded-t-[140px] rounded-b-3xl overflow-hidden border-2 border-[#EADCCF] shadow-[0_15px_35px_rgba(0,0,0,0.06)] bg-[#FAF5ED] p-1.5">
+                <div className="w-full h-full rounded-t-[132px] rounded-b-[1.25rem] overflow-hidden">
+                  <img
+                    src={centerImgSrc}
+                    alt={centerImgAlt}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Right Column - Features (Left-aligned on Desktop) */}
-          <div className="flex flex-col gap-10 lg:gap-16 order-3">
+          <div className="flex flex-col gap-10 lg:gap-14 order-3">
             {rightItems.map((item, idx) => (
               <div key={item.id || idx}>
                 <div className="hidden lg:block">
