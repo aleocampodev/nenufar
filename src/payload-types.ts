@@ -571,6 +571,10 @@ export interface Page {
          */
         tagline?: string | null;
         heading?: string | null;
+        /**
+         * Imagen del centro, estilo Krafti bowl de madera. Si está vacía se muestra placeholder.
+         */
+        centerImage?: (number | null) | Media;
         items?:
           | {
               icon?: ('handmade' | 'shipping' | 'quality' | 'gift' | 'support') | null;
@@ -583,6 +587,7 @@ export interface Page {
         blockName?: string | null;
         blockType: 'features';
       }
+    | ImageStripBlock
     | NenufarStoryBlock
     | {
         tagline?: string | null;
@@ -1008,6 +1013,29 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageStripBlock".
+ */
+export interface ImageStripBlock {
+  /**
+   * 4 fotos en fila completa, sin separación. Ideal para mostrar taller, proceso, piezas.
+   */
+  images?:
+    | {
+        image: number | Media;
+        alt?: string | null;
+        /**
+         * Ej: /shop, /sobre-nenufar
+         */
+        linkUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'imageStrip';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1507,6 +1535,7 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               tagline?: T;
               heading?: T;
+              centerImage?: T;
               items?:
                 | T
                 | {
@@ -1518,6 +1547,7 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        imageStrip?: T | ImageStripBlockSelect<T>;
         nenufarStory?: T | NenufarStoryBlockSelect<T>;
         testimonials?:
           | T
@@ -1656,6 +1686,22 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageStripBlock_select".
+ */
+export interface ImageStripBlockSelect<T extends boolean = true> {
+  images?:
+    | T
+    | {
+        image?: T;
+        alt?: T;
+        linkUrl?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

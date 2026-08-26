@@ -23,11 +23,20 @@ export const FeaturesBlock: Block = {
       defaultValue: 'Por qué elegir Nenúfar Joyería',
     },
     {
+      name: 'centerImage',
+      type: 'upload',
+      label: 'Imagen central (bowl / pieza destacada)',
+      relationTo: 'media',
+      admin: {
+        description: 'Imagen del centro, estilo Krafti bowl de madera. Si está vacía se muestra placeholder.',
+      },
+    },
+    {
       name: 'items',
       type: 'array',
-      label: 'Lista de Beneficios',
-      minRows: 1,
-      maxRows: 6,
+      label: 'Lista de Beneficios (4 alrededor de la imagen)',
+      minRows: 4,
+      maxRows: 4,
       defaultValue: [
         {
           icon: 'handmade',

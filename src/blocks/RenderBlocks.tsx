@@ -5,6 +5,7 @@ import { CarouselBlock } from '@/blocks/Carousel/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FeaturesBlock } from '@/blocks/Features/Component'
 import { FormBlock } from '@/blocks/Form/Component'
+import { ImageStripBlock } from '@/blocks/ImageStrip/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { NenufarStoryBlock } from '@/blocks/NenufarStory/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
@@ -23,6 +24,7 @@ const blockComponents = {
   cta: CallToActionBlock,
   features: FeaturesBlock,
   formBlock: FormBlock,
+  imageStrip: ImageStripBlock,
   mediaBlock: MediaBlock,
   nenufarStory: NenufarStoryBlock,
   testimonials: TestimonialsBlock,

@@ -120,6 +120,10 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
         ],
       },
       {
+        blockType: 'imageStrip',
+        images: [],
+      },
+      {
         blockType: 'nenufarStory',
         tagline: 'Hecho a mano en Cartagena',
         heading: 'Nenúfar — Manos que tejen historias',
