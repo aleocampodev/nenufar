@@ -12,39 +12,39 @@ import { linkGroup } from '@/fields/linkGroup'
 export const hero: Field = {
   name: 'hero',
   type: 'group',
-  label: 'Encabezado (Hero)',
+  label: 'Fotos principales de la página',
   admin: {
-    description: 'Elige cómo se ve la parte superior de la página. Para la landing usa "Carrusel".',
+    description: 'Aquí va el Carrusel de arriba de la landing. Déjalo en "Carrusel" y agrega las 3 fotos abajo.',
   },
   fields: [
     {
       name: 'type',
       type: 'select',
       defaultValue: 'slider',
-      label: 'Tipo de encabezado',
+      label: '¿Qué mostrar arriba?',
       admin: {
-        description: 'Carrusel = 3 imágenes deslizables (recomendado para la landing). Los demás son solo texto/imagen estática.',
+        description: 'Elige "Carrusel de 3 fotos" para la Inicio. Las otras opciones son solo texto y no las necesitas ahora.',
       },
       options: [
         {
-          label: 'Carrusel (Krafti) — Recomendado ⭐',
+          label: '✅ Carrusel de 3 fotos — (usa esto para la Inicio)',
           value: 'slider',
         },
         {
-          label: 'Ninguno (sin encabezado)',
-          value: 'none',
-        },
-        {
-          label: 'Impacto Bajo — Solo texto + botón',
+          label: '— Solo texto (sin fotos)',
           value: 'lowImpact',
         },
         {
-          label: 'Impacto Medio — Texto + imagen',
+          label: '— Texto + 1 foto',
           value: 'mediumImpact',
         },
         {
-          label: 'Impacto Alto — Pantalla completa',
+          label: '— Foto gigante a pantalla completa',
           value: 'highImpact',
+        },
+        {
+          label: '— Nada (vacío)',
+          value: 'none',
         },
       ],
       required: true,
@@ -65,7 +65,7 @@ export const hero: Field = {
           ]
         },
       }),
-      label: 'Texto del encabezado',
+      label: 'Texto (solo si NO usas carrusel)',
     },
     linkGroup({
       overrides: {
@@ -87,10 +87,10 @@ export const hero: Field = {
     {
       name: 'slides',
       type: 'array',
-      label: 'Slides del carrusel',
+      label: 'Fotos del carrusel (3 fotos que se deslizan)',
       admin: {
         condition: (_, { type } = {}) => type === 'slider',
-        description: 'Máximo 3 slides. Cada slide lleva imagen de fondo + título + subtítulo + botón.',
+        description: 'Agrega 3 fotos. Cada foto lleva su título y su botón. Si aún no tienes fotos, deja el degradado gris.',
       },
       minRows: 1,
       maxRows: 3,

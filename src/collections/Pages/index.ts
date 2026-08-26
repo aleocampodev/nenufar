@@ -88,7 +88,7 @@ export const Pages: CollectionConfig = {
       tabs: [
         {
           fields: [hero],
-          label: 'Portada — Carrusel / Encabezado',
+          label: '1. Carrusel superior (fotos)',
         },
         {
           fields: [
@@ -111,7 +111,7 @@ export const Pages: CollectionConfig = {
               required: true,
             },
           ],
-          label: 'Contenido (bloques de la página)',
+          label: '2. Contenido de la página (abajo del carrusel)',
         },
         {
           name: 'meta',
