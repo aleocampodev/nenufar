@@ -57,8 +57,8 @@ export const SliderHeroClient: React.FC<{
             const isFirst = i === 0
             return (
               <div key={i} className="flex-[0_0_100%] min-w-0 relative">
-                {/* Background image */}
-                <div className="relative h-[60vh] md:h-[78vh] min-h-[380px] w-full overflow-hidden bg-muted">
+                {/* Background image - Krafti full-bleed, no cut */}
+                <div className="relative h-[68vh] md:h-[78vh] lg:h-[82vh] min-h-[520px] w-full overflow-hidden bg-[#f5f1eb]">
                   {media && typeof media === 'object' ? (
                     <PayloadMedia
                       resource={media}
