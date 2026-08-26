@@ -120,9 +120,9 @@ export const FeaturesBlock: React.FC<Props> = ({
                   imgClassName="object-contain"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center">
+                <div className="w-full h-full flex items-center justify-center bg-white">
                   <img
-                    src="https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?w=500&auto=format&fit=crop&q=60"
+                    src="https://images.unsplash.com/photo-1610701596061-2ecf227e85b2?w=500&auto=format&fit=crop&q=60"
                     alt="Bowl de madera artesanal"
                     className="w-full h-full object-contain"
                   />
