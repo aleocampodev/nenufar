@@ -2,5 +2,9 @@ import { NenufarLoader } from '@/components/Loading/NenufarLoader'
 import React from 'react'
 
 export default function Loading() {
-  return <NenufarLoader message="Tejiendo el catálogo de joyas..." fullScreen />
+  return (
+    <div className="fixed inset-0 z-[100] bg-white flex items-center justify-center">
+      <NenufarLoader fullScreen />
+    </div>
+  )
 }
