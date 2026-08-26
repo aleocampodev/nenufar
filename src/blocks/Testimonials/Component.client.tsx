@@ -80,7 +80,7 @@ export const TestimonialsClient: React.FC<{
                           {Array.from({ length: 5 }).map((_, i) => (
                             <Star
                               key={i}
-                              className={`w-4 h-4 ${i < t.rating! ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`}
+                              className={`w-4 h-4 ${i < t.rating! ? 'fill-brand text-brand' : 'text-muted-foreground/30'}`}
                             />
                           ))}
                         </div>

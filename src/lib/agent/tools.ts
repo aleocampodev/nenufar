@@ -1,19 +1,25 @@
 /**
- * Tools del bot de Shirley (IP-001 / SPEC-002).
+ * Tools del bot de gestión de Shirley (IP-001 / SPEC-002).
  *
- * Cada tool es una función que el Claude Agent SDK puede invocar durante su
- * loop agéntico. Todas operan sobre la Payload Local API actuando en nombre
- * de Shirley (admin): `overrideAccess: false` es intencional — el bot SOLO
- * responde a TELEGRAM_ADMIN_CHAT_ID (ver webhook route).
+ * Cada tool es una función que el agente IA (Claude Agent SDK / LiteLLM) puede
+ * invocar durante su loop agéntico. Todas operan sobre la Payload Local API.
  *
  * Reglas:
  * - Los errores se capturan y devuelven como texto amigable: Shirley lee la
  *   respuesta en Telegram; jamás un stack trace.
  * - Moneda COP sin decimales.
  */
-import { createSdkMcpServer, tool } from '@anthropic-ai/claude-agent-sdk'
 import type { Payload } from 'payload'
-import { z } from 'zod'
+
+export interface ToolDefinition {
+  name: string
+  description: string
+  input_schema: {
+    type: 'object'
+    properties: Record<string, any>
+    required?: string[]
+  }
+}
 
 /** Producto con slug casteado — `slug` se perdió del tipo generado (bug pre-existente). */
 type ProductWithSlug = {
@@ -34,12 +40,6 @@ const formatCOP = (n: number | null | undefined): string =>
       }).format(n)
     : 'precio por confirmar'
 
-const text = (t: string) => ({ content: [{ type: 'text' as const, text: t }] })
-const toolError = (t: string) => ({
-  content: [{ type: 'text' as const, text: t }],
-  isError: true,
-})
-
 async function findProductBySlug(
   payload: Payload,
   slug: string,
@@ -48,406 +48,630 @@ async function findProductBySlug(
     collection: 'products',
     limit: 1,
     depth: 0,
-    overrideAccess: false,
+    overrideAccess: true,
     where: { slug: { equals: slug } },
   })
   return (result.docs[0] as ProductWithSlug | undefined) ?? null
 }
 
+async function getHomePage(payload: Payload) {
+  const result = await payload.find({
+    collection: 'pages',
+    limit: 1,
+    depth: 1,
+    overrideAccess: true,
+    where: {
+      or: [
+        { slug: { equals: 'home' } },
+        { slug: { equals: 'inicio' } },
+      ],
+    },
+  })
+  return result.docs[0] || null
+}
+
 /**
- * Crea el servidor MCP in-process con las 7 tools de gestión de Shirley.
- * Se pasa a `query()` vía `options.mcpServers`.
+ * Definiciones de herramientas para el API de Anthropic / LiteLLM.
  */
-export function createShirleyTools(payload: Payload) {
-  const buscarProducto = tool(
-    'buscarProducto',
-    'Busca piezas de joyería en el catálogo real de Nénufar por nombre o palabra clave. ' +
-      'Devuelve solo piezas que existen — nunca inventes productos.',
-    { consulta: z.string().describe('Palabra clave, ej. "aretes", "collar de plata"') },
-    async ({ consulta }) => {
-      try {
+export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
+  // ─── 1. CATÁLOGO & JOYAS ───────────────────────────────────────────────
+  {
+    name: 'buscarProducto',
+    description:
+      'Busca piezas de joyería en el catálogo real de Nenúfar por nombre o palabra clave. ' +
+      'Devuelve solo piezas que existen en la base de datos.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        consulta: {
+          type: 'string',
+          description: 'Palabra clave, ej. "aretes", "collar de mostacilla", "pulsera"',
+        },
+      },
+      required: ['consulta'],
+    },
+  },
+  {
+    name: 'crearProductoDraft',
+    description:
+      'Crea una joya nueva. Puede guardarse como borrador o publicarse de inmediato en la tienda web (/shop). ' +
+      'Si Shirley envía una foto por Telegram, se vincula automáticamente.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        titulo: {
+          type: 'string',
+          description: 'Nombre de la pieza, ej. "Collar Filigrana Atardecer"',
+        },
+        precioCOP: {
+          type: 'number',
+          description: 'Precio en pesos colombianos sin decimales (ej. 45000)',
+        },
+        inventario: {
+          type: 'number',
+          description: 'Cantidad de unidades disponibles (ej. 5)',
+        },
+        publicar: {
+          type: 'boolean',
+          description: 'true para publicarlo de inmediato en la tienda web, false para dejarlo en borrador',
+        },
+      },
+      required: ['titulo'],
+    },
+  },
+  {
+    name: 'publicarProducto',
+    description:
+      'Publica o cambia a borrador un producto existente para que sea visible (o invisible) en la tienda web (/shop).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        slug: {
+          type: 'string',
+          description: 'Slug o identificador del producto a publicar o despublicar',
+        },
+        publicar: {
+          type: 'boolean',
+          description: 'true para publicar (por defecto), false para cambiar a borrador',
+        },
+      },
+      required: ['slug'],
+    },
+  },
+  {
+    name: 'actualizarInventario',
+    description:
+      'Actualiza el inventario (unidades disponibles) y/o el precio en COP de una joya por su slug.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        slug: {
+          type: 'string',
+          description: 'Slug del producto',
+        },
+        inventario: {
+          type: 'number',
+          description: 'Nueva cantidad de unidades disponibles',
+        },
+        precioCOP: {
+          type: 'number',
+          description: 'Nuevo precio en pesos colombianos, sin decimales',
+        },
+      },
+      required: ['slug'],
+    },
+  },
+  {
+    name: 'destacarProducto',
+    description:
+      'Marca o desmarca un producto como destacado en la tienda web y la landing.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        slug: {
+          type: 'string',
+          description: 'Slug del producto',
+        },
+        destacado: {
+          type: 'boolean',
+          description: 'true para destacar, false para quitar destaque',
+        },
+      },
+      required: ['slug'],
+    },
+  },
+
+  // ─── 2. GESTIÓN DE LA LANDING PAGE & FOTOS ────────────────────────────
+  {
+    name: 'actualizarFotoLanding',
+    description:
+      'Cambia la foto de una sección de la landing page (ej. "tradicion" para la pieza central de Tradición y Delicadeza, o "historia" para la foto del taller en Nuestra Historia). ' +
+      'Requiere que Shirley envíe una foto por Telegram.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        seccion: {
+          type: 'string',
+          enum: ['tradicion', 'historia'],
+          description: 'Sección a actualizar: "tradicion" (beneficios) o "historia" (taller Shirley)',
+        },
+      },
+      required: ['seccion'],
+    },
+  },
+  {
+    name: 'agregarSlideHero',
+    description:
+      'Agrega una nueva diapositiva al carrusel principal superior (slider) de la landing page. ' +
+      'Usa la foto enviada por Telegram y los textos indicados.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        titulo: {
+          type: 'string',
+          description: 'Título grande del slide (ej. "Nueva Colección Caribeña")',
+        },
+        subtitulo: {
+          type: 'string',
+          description: 'Texto descriptivo secundario del slide',
+        },
+        botonTexto: {
+          type: 'string',
+          description: 'Texto del botón de acción (ej. "Explorar Colección", por defecto "Ver Catálogo")',
+        },
+        botonUrl: {
+          type: 'string',
+          description: 'Enlace del botón (por defecto "/shop")',
+        },
+      },
+      required: ['titulo'],
+    },
+  },
+  {
+    name: 'listarSlidesHero',
+    description:
+      'Lista todas las diapositivas activas en el carrusel superior de la landing page de inicio.',
+    input_schema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: 'eliminarSlideHero',
+    description:
+      'Elimina una diapositiva del carrusel superior de la landing page por su número de posición (1, 2, 3...).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        posicion: {
+          type: 'number',
+          description: 'Número de la diapositiva a eliminar (1 para la primera, 2 para la segunda, etc.)',
+        },
+      },
+      required: ['posicion'],
+    },
+  },
+
+  // ─── 3. PEDIDOS ───────────────────────────────────────────────────────
+  {
+    name: 'pedidosPendientes',
+    description:
+      'Lista los pedidos de la web pendientes de confirmación o pago (estado processing).',
+    input_schema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: 'confirmarPedido',
+    description:
+      'Marca un pedido como completado (completed) tras coordinar el pago y envío con la compradora.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        pedidoId: {
+          type: 'number',
+          description: 'Número (ID) del pedido a confirmar',
+        },
+      },
+      required: ['pedidoId'],
+    },
+  },
+
+  // ─── 4. TALLERES, FERIAS & TESTIMONIOS ────────────────────────────────
+  {
+    name: 'publicarEvento',
+    description:
+      'Agenda un taller, feria o pop-up en Cartagena para la sección "Próximos Talleres y Ferias" de la landing.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        titulo: {
+          type: 'string',
+          description: 'Nombre del taller o feria',
+        },
+        fecha: {
+          type: 'string',
+          description: 'Fecha y hora en formato ISO o texto claro (ej. "2026-09-15T10:00:00-05:00")',
+        },
+        lugar: {
+          type: 'string',
+          description: 'Lugar en Cartagena (ej. "Getsemaní, Taller Shirley")',
+        },
+        descripcion: {
+          type: 'string',
+          description: 'Descripción breve de la actividad',
+        },
+        tipo: {
+          type: 'string',
+          enum: ['taller', 'feria', 'pop-up'],
+          description: 'Tipo de evento: taller, feria o pop-up',
+        },
+      },
+      required: ['titulo', 'fecha'],
+    },
+  },
+  {
+    name: 'crearTestimonio',
+    description:
+      'Guarda un testimonio de compradora con su foto para la sección de testimonios de la landing.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        nombre: {
+          type: 'string',
+          description: 'Nombre de la clienta (ej. "María José")',
+        },
+        testimonio: {
+          type: 'string',
+          description: 'Cita textual u opinión sobre sus joyas',
+        },
+        rol: {
+          type: 'string',
+          description: 'Ciudad u origen (ej. "Cartagena" o "Bogotá")',
+        },
+        calificacion: {
+          type: 'number',
+          description: 'Calificación de 1 a 5 estrellas',
+        },
+      },
+      required: ['nombre', 'testimonio'],
+    },
+  },
+  {
+    name: 'listarTestimonios',
+    description: 'Lista los testimonios publicados en la landing.',
+    input_schema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+]
+
+/**
+ * Ejecutor central de herramientas para el bot de Shirley.
+ */
+export async function executeShirleyTool(
+  toolName: string,
+  args: Record<string, any>,
+  payload: Payload,
+): Promise<string> {
+  try {
+    switch (toolName) {
+      // ─── 1. CATÁLOGO & JOYAS ─────────────────────────────────────────────
+      case 'buscarProducto': {
+        const consulta = String(args.consulta || '').trim()
         const result = await payload.find({
           collection: 'products',
           draft: false,
           depth: 0,
-          limit: 5,
-          overrideAccess: false,
-          select: { title: true, priceInCOP: true, inventory: true },
-          where: { title: { like: consulta } },
+          limit: 8,
+          overrideAccess: true,
+          where: consulta ? { title: { like: consulta } } : {},
         })
         if (result.docs.length === 0) {
-          return text(`No encontré piezas para "${consulta}" en el catálogo.`)
+          return `No encontré piezas para "${consulta}" en el catálogo.`
         }
-        const base = process.env.NEXT_PUBLIC_SERVER_URL ?? ''
-        const lines = result.docs.map((p) => {
-          const prod = p as unknown as ProductWithSlug
-          const url = base ? `${base}/products/${prod.slug}` : `/products/${prod.slug}`
-          const stock =
-            typeof prod.inventory === 'number' && prod.inventory <= 0 ? ' — SIN stock' : ''
-          return `- ${prod.title} — ${formatCOP(prod.priceInCOP)}${stock} (${url})`
+        const lines = result.docs.map((p: any) => {
+          const stock = typeof p.inventory === 'number' && p.inventory <= 0 ? ' — (SIN stock)' : ` (${p.inventory ?? 0} disp.)`
+          return `• ${p.title} — ${formatCOP(p.priceInCOP)}${stock} [/products/${p.slug}]`
         })
-        return text(`Encontré ${result.docs.length} pieza(s):\n${lines.join('\n')}`)
-      } catch (err) {
-        return toolError(
-          `No pude consultar el catálogo: ${err instanceof Error ? err.message : 'error desconocido'}`,
-        )
+        return `Encontré ${result.docs.length} pieza(s) en el catálogo:\n${lines.join('\n')}`
       }
-    },
-  )
 
-  const destacarProducto = tool(
-    'destacarProducto',
-    'Marca o desmarca un producto como destacado en el sitio web. Identifica el producto por su slug.',
-    {
-      slug: z.string().describe('Slug del producto, ej. "aretes-perla-chica"'),
-      destacado: z
-        .boolean()
-        .optional()
-        .describe('true para destacar (por defecto), false para quitar el destaque'),
-    },
-    async ({ slug, destacado }) => {
-      const marcar = destacado ?? true
-      try {
+      case 'crearProductoDraft': {
+        const { titulo, precioCOP, inventario, publicar, mediaId } = args
+        const shouldPublish = Boolean(publicar)
+        const doc = await payload.create({
+          collection: 'products',
+          data: {
+            title: titulo,
+            ...(precioCOP !== undefined ? { priceInCOPEnabled: true, priceInCOP: Number(precioCOP) } : {}),
+            ...(inventario !== undefined ? { inventory: Number(inventario) } : {}),
+            ...(mediaId ? { images: [{ image: mediaId }] } : {}),
+            _status: shouldPublish ? 'published' : 'draft',
+          } as any,
+          draft: !shouldPublish,
+          overrideAccess: true,
+        })
+        return shouldPublish
+          ? `¡Listo Shirley! Joya "${titulo}" creada y publicada exitosamente en el catálogo (/shop) con precio ${formatCOP(precioCOP)} ✨`
+          : `Joya "${titulo}" guardada como borrador (#${doc.id}) con precio ${formatCOP(precioCOP)}. Puedes publicarla cuando quieras diciendo "publicar ${titulo}".`
+      }
+
+      case 'publicarProducto': {
+        const { slug, publicar = true } = args
+        const state = Boolean(publicar)
         const product = await findProductBySlug(payload, slug)
-        if (!product) return text(`No encontré ningún producto con el slug "${slug}".`)
+        if (!product) return `No encontré ningún producto con el slug o nombre "${slug}".`
         await payload.update({
           collection: 'products',
           id: product.id,
-          data: { featured: marcar },
-          overrideAccess: false,
+          data: { _status: state ? 'published' : 'draft' },
+          draft: !state,
+          overrideAccess: true,
         })
-        return text(
-          marcar
-            ? `Listo: "${product.title}" ahora está destacado en el sitio. ✨`
-            : `"${product.title}" ya no aparece como destacado.`,
-        )
-      } catch (err) {
-        return toolError(
-          `No pude actualizar el destaque: ${err instanceof Error ? err.message : 'error desconocido'}`,
-        )
+        return state
+          ? `¡Listo Shirley! "${product.title}" fue publicado y ya está visible en la tienda web (/shop) ✨`
+          : `"${product.title}" ha sido cambiado a borrador y ya no aparece en la tienda web.`
       }
-    },
-  )
 
-  const actualizarInventario = tool(
-    'actualizarInventario',
-    'Actualiza el inventario (unidades disponibles) y/o el precio en COP de un producto, por slug. ' +
-      'Puedes actualizar solo uno de los dos valores.',
-    {
-      slug: z.string().describe('Slug del producto'),
-      inventario: z.number().int().optional().describe('Nueva cantidad de unidades disponibles'),
-      precioCOP: z.number().int().optional().describe('Nuevo precio en pesos colombianos, sin decimales'),
-    },
-    async ({ slug, inventario, precioCOP }) => {
-      if (inventario === undefined && precioCOP === undefined) {
-        return text('Indícame al menos un valor nuevo: inventario o precio.')
-      }
-      try {
+      case 'actualizarInventario': {
+        const { slug, inventario, precioCOP } = args
+        if (inventario === undefined && precioCOP === undefined) {
+          return 'Shirley, indícame al menos el nuevo inventario o precio.'
+        }
         const product = await findProductBySlug(payload, slug)
-        if (!product) return text(`No encontré ningún producto con el slug "${slug}".`)
-        const data: Record<string, number> = {}
-        if (inventario !== undefined) data.inventory = inventario
-        if (precioCOP !== undefined) data.priceInCOP = precioCOP
+        if (!product) return `No encontré ningún producto con el slug "${slug}".`
+        const data: Record<string, any> = {}
+        if (inventario !== undefined) data.inventory = Number(inventario)
+        if (precioCOP !== undefined) {
+          data.priceInCOPEnabled = true
+          data.priceInCOP = Number(precioCOP)
+        }
         await payload.update({
           collection: 'products',
           id: product.id,
           data,
-          draft: false,
-          overrideAccess: false,
+          overrideAccess: true,
         })
         const cambios = [
           inventario !== undefined ? `inventario → ${inventario} unidades` : null,
           precioCOP !== undefined ? `precio → ${formatCOP(precioCOP)}` : null,
-        ]
-          .filter(Boolean)
-          .join(', ')
-        return text(`Actualicé "${product.title}": ${cambios}.`)
-      } catch (err) {
-        return toolError(
-          `No pude actualizar el producto: ${err instanceof Error ? err.message : 'error desconocido'}`,
-        )
+        ].filter(Boolean).join(', ')
+        return `Actualicé "${product.title}": ${cambios} ✅`
       }
-    },
-  )
 
-  const pedidosPendientes = tool(
-    'pedidosPendientes',
-    'Lista los pedidos web pendientes de confirmación (estado processing), del más viejo al más nuevo.',
-    {},
-    async () => {
-      try {
+      case 'destacarProducto': {
+        const { slug, destacado = true } = args
+        const product = await findProductBySlug(payload, slug)
+        if (!product) return `No encontré ningún producto con el slug "${slug}".`
+        await payload.update({
+          collection: 'products',
+          id: product.id,
+          data: { featured: Boolean(destacado) },
+          overrideAccess: true,
+        })
+        return destacado
+          ? `¡Listo! "${product.title}" ahora está marcado como producto destacado en la tienda ✨`
+          : `"${product.title}" ya no aparece como producto destacado.`
+      }
+
+      // ─── 2. GESTIÓN DE LA LANDING PAGE & FOTOS ────────────────────────────
+      case 'actualizarFotoLanding': {
+        const { seccion, mediaId } = args
+        if (!mediaId) {
+          return 'Shirley, adjúntame la foto por Telegram junto con el mensaje para actualizar la sección.'
+        }
+        const homePage = await getHomePage(payload)
+        if (!homePage) return 'No encontré la página de Inicio en la base de datos.'
+
+        const layout = [...((homePage.layout || []) as any[])]
+        let actualizada = false
+
+        if (seccion === 'tradicion') {
+          const idx = layout.findIndex((b) => b.blockType === 'features')
+          if (idx >= 0) {
+            layout[idx] = { ...layout[idx], centerImage: mediaId }
+            actualizada = true
+          }
+        } else if (seccion === 'historia') {
+          const idx = layout.findIndex((b) => b.blockType === 'nenufarStory')
+          if (idx >= 0) {
+            layout[idx] = { ...layout[idx], image: mediaId }
+            actualizada = true
+          }
+        }
+
+        if (!actualizada) {
+          return `No encontré la sección "${seccion}" en la landing page para actualizar su foto.`
+        }
+
+        await payload.update({
+          collection: 'pages',
+          id: homePage.id,
+          data: { layout, _status: 'published' } as any,
+          overrideAccess: true,
+        })
+
+        return `¡Foto de la sección "${seccion === 'tradicion' ? 'Tradición y Delicadeza' : 'Nuestra Historia'}" actualizada exitosamente en la landing! ✨ Puedes verla en vivo en la web.`
+      }
+
+      case 'agregarSlideHero': {
+        const { titulo, subtitulo, botonTexto, botonUrl, mediaId } = args
+        const homePage = await getHomePage(payload)
+        if (!homePage) return 'No encontré la página de Inicio en la base de datos.'
+
+        const currentHero = (homePage.hero || {}) as any
+        const currentSlides = Array.isArray(currentHero.slides) ? [...currentHero.slides] : []
+
+        const newSlide = {
+          heading: titulo,
+          subheading: subtitulo || '',
+          linkLabel: botonTexto || 'Ver Colección',
+          linkUrl: botonUrl || '/shop',
+          ...(mediaId ? { image: mediaId } : {}),
+        }
+
+        currentSlides.push(newSlide)
+
+        await payload.update({
+          collection: 'pages',
+          id: homePage.id,
+          data: {
+            hero: {
+              ...currentHero,
+              type: 'slider',
+              slides: currentSlides,
+            },
+            _status: 'published',
+          } as any,
+          overrideAccess: true,
+        })
+
+        return `¡Listo Shirley! El nuevo slide "${titulo}" fue agregado al carrusel de la landing page (Total slides: ${currentSlides.length}) ✨`
+      }
+
+      case 'listarSlidesHero': {
+        const homePage = await getHomePage(payload)
+        if (!homePage) return 'No encontré la página de Inicio.'
+        const slides = (homePage.hero as any)?.slides || []
+        if (slides.length === 0) return 'El carrusel principal no tiene diapositivas actualmente.'
+
+        const list = slides.map((s: any, i: number) => {
+          const imgStatus = s.image ? '📸 Con foto' : '⚠️ Sin foto'
+          return `${i + 1}. "${s.heading || 'Sin título'}" — ${imgStatus} (Botón: ${s.linkLabel || 'Ver'})`
+        })
+        return `Carrusel Principal (${slides.length} slides):\n${list.join('\n')}`
+      }
+
+      case 'eliminarSlideHero': {
+        const { posicion } = args
+        const index = Number(posicion) - 1
+        const homePage = await getHomePage(payload)
+        if (!homePage) return 'No encontré la página de Inicio.'
+        const currentHero = (homePage.hero || {}) as any
+        const currentSlides = Array.isArray(currentHero.slides) ? [...currentHero.slides] : []
+
+        if (index < 0 || index >= currentSlides.length) {
+          return `La posición ${posicion} no existe. Actualmente hay ${currentSlides.length} diapositivas.`
+        }
+
+        const removed = currentSlides.splice(index, 1)[0]
+        await payload.update({
+          collection: 'pages',
+          id: homePage.id,
+          data: {
+            hero: { ...currentHero, slides: currentSlides },
+            _status: 'published',
+          } as any,
+          overrideAccess: true,
+        })
+
+        return `Diapositiva "${removed.heading || posicion}" eliminada del carrusel. Quedan ${currentSlides.length} slides.`
+      }
+
+      // ─── 3. PEDIDOS ───────────────────────────────────────────────────────
+      case 'pedidosPendientes': {
         const result = await payload.find({
           collection: 'orders',
           depth: 1,
-          limit: 20,
-          overrideAccess: false,
-          sort: 'createdAt',
+          limit: 15,
+          overrideAccess: true,
+          sort: '-createdAt',
           where: { status: { equals: 'processing' } },
         })
         if (result.docs.length === 0) {
-          return text('No tienes pedidos pendientes. Todo al día 💜')
+          return 'No tienes pedidos pendientes por confirmar. ¡Todo al día! 💜'
         }
-        const lines = result.docs.map((o) => {
-          const order = o as {
-            id: number
-            customerEmail?: string | null
-            amount?: number | null
-            createdAt?: string
-            items?: { quantity?: number; product?: { title?: string } | number | null }[] | null
-          }
-          const items = (order.items ?? [])
-            .map((it) => {
-              const titulo = typeof it.product === 'object' ? it.product?.title : 'producto'
-              return `${it.quantity ?? 1}× ${titulo ?? 'producto'}`
+        const lines = result.docs.map((o: any) => {
+          const items = (o.items ?? [])
+            .map((it: any) => {
+              const titulo = typeof it.product === 'object' ? it.product?.title : 'Joya'
+              return `${it.quantity ?? 1}x ${titulo}`
             })
             .join(', ')
-          return (
-            `- #${order.id} — ${formatCOP(order.amount)} — ${order.customerEmail ?? 'sin email'}\n` +
-            `  📦 ${items || '(sin items)'}`
-          )
+          return `• Pedido #${o.id} — ${formatCOP(o.amount)} — ${o.customerEmail || 'Sin email'}\n  📦 ${items || 'Sin items'}`
         })
-        return text(`Tienes ${result.docs.length} pedido(s) pendiente(s):\n${lines.join('\n')}`)
-      } catch (err) {
-        return toolError(
-          `No pude consultar los pedidos: ${err instanceof Error ? err.message : 'error desconocido'}`,
-        )
+        return `Tienes ${result.docs.length} pedido(s) pendiente(s):\n${lines.join('\n')}`
       }
-    },
-  )
 
-  const confirmarPedido = tool(
-    'confirmarPedido',
-    'Confirma un pedido web: cambia su estado a completed (pagado y coordinado). Pide el número de pedido si no lo tienes.',
-    { pedidoId: z.number().int().describe('Número (ID) del pedido a confirmar') },
-    async ({ pedidoId }) => {
-      try {
+      case 'confirmarPedido': {
+        const { pedidoId } = args
         const order = await payload.findByID({
           collection: 'orders',
-          id: pedidoId,
+          id: Number(pedidoId),
           depth: 0,
-          overrideAccess: false,
+          overrideAccess: true,
         })
-        if (!order) return text(`No encontré el pedido #${pedidoId}.`)
-        if (order.status === 'completed') {
-          return text(`El pedido #${pedidoId} ya estaba confirmado.`)
-        }
+        if (!order) return `No encontré el pedido #${pedidoId}.`
+        if (order.status === 'completed') return `El pedido #${pedidoId} ya estaba confirmado anteriormente.`
         await payload.update({
           collection: 'orders',
-          id: pedidoId,
+          id: Number(pedidoId),
           data: { status: 'completed' },
-          overrideAccess: false,
+          overrideAccess: true,
         })
-        return text(`Pedido #${pedidoId} confirmado ✅ (${formatCOP(order.amount)}).`)
-      } catch (err) {
-        return toolError(
-          `No pude confirmar el pedido: ${err instanceof Error ? err.message : 'error desconocido'}`,
-        )
+        return `Pedido #${pedidoId} confirmado exitosamente ✅ (${formatCOP(order.amount)}).`
       }
-    },
-  )
 
-  const publicarEvento = tool(
-    'publicarEvento',
-    'Agenda un evento (feria, taller, pop-up) dejándolo como borrador en el sitio. ' +
-      'Shirley lo publica desde /admin cuando revise la fecha y la foto.',
-    {
-      titulo: z.string().describe('Nombre del evento'),
-      fecha: z.string().describe('Fecha y hora en formato ISO, ej. "2026-09-15T10:00:00-05:00"'),
-      lugar: z.string().optional().describe('Lugar, ej. "Cartagena — Centro Histórico"'),
-      descripcion: z.string().optional().describe('Descripción breve'),
-      tipo: z
-        .enum(['feria', 'taller', 'pop-up'])
-        .optional()
-        .describe('Tipo de evento: feria, taller o pop-up (por defecto feria)'),
-    },
-    async ({ titulo, fecha, lugar, descripcion, tipo }) => {
-      try {
+      // ─── 4. TALLERES & TESTIMONIOS ────────────────────────────────────────
+      case 'publicarEvento': {
+        const { titulo, fecha, lugar, descripcion, tipo } = args
         const parsed = new Date(fecha)
-        if (Number.isNaN(parsed.getTime())) {
-          return text(`La fecha "${fecha}" no es válida. Usa formato ISO, ej. 2026-09-15T10:00:00.`)
-        }
         const event = await payload.create({
           collection: 'events',
           data: {
             title: titulo,
-            date: parsed.toISOString(),
-            type: tipo || 'feria',
-            ...(lugar ? { location: lugar } : {}),
-            ...(descripcion ? { description: descripcion } : {}),
-          },
-          draft: true,
-          overrideAccess: false,
+            date: Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString(),
+            type: tipo || 'taller',
+            location: lugar || 'Cartagena de Indias',
+            description: descripcion || '',
+            _status: 'published',
+          } as any,
+          draft: false,
+          overrideAccess: true,
         })
-        return text(
-          `Evento "${titulo}" (${tipo || 'feria'}) guardado como borrador (#${event.id}). Revísalo y publícalo desde /admin.`,
-        )
-      } catch (err) {
-        return toolError(
-          `No pude crear el evento: ${err instanceof Error ? err.message : 'error desconocido'}`,
-        )
+        return `¡Evento publicado! "${titulo}" (${tipo || 'taller'}) ya aparece en la sección de talleres de la landing ✨ (#${event.id})`
       }
-    },
-  )
 
-  const publicarProducto = tool(
-    'publicarProducto',
-    'Publica o cambia a borrador un producto existente por su slug o ID para que sea visible (o invisible) inmediatamente en la tienda web (/shop).',
-    {
-      slug: z.string().describe('Slug o nombre aproximado del producto a publicar o despublicar'),
-      publicar: z
-        .boolean()
-        .optional()
-        .describe('true para publicar en la tienda (por defecto), false para cambiar a borrador'),
-    },
-    async ({ slug, publicar }) => {
-      const state = publicar ?? true
-      try {
-        const product = await findProductBySlug(payload, slug)
-        if (!product) return text(`No encontré ningún producto con el slug "${slug}".`)
-        await payload.update({
-          collection: 'products',
-          id: product.id,
-          data: {
-            _status: state ? 'published' : 'draft',
-          },
-          draft: !state,
-          overrideAccess: false,
-        })
-        return text(
-          state
-            ? `¡Listo! "${product.title}" fue publicado exitosamente y ya está visible en la tienda web (/shop). ✨`
-            : `"${product.title}" ha sido cambiado a borrador y ya no es visible en la tienda web.`,
-        )
-      } catch (err) {
-        return toolError(
-          `No pude actualizar el estado de publicación: ${err instanceof Error ? err.message : 'error desconocido'}`,
-        )
-      }
-    },
-  )
-
-  const crearProductoDraft = tool(
-    'crearProductoDraft',
-    'Crea un producto nuevo. Puede guardarse como borrador o publicarse de inmediato en la tienda web (/shop) si Shirley lo solicita.',
-    {
-      titulo: z.string().describe('Nombre de la pieza, ej. "Aretes filigrana oro"'),
-      precioCOP: z.number().int().optional().describe('Precio en pesos colombianos, sin decimales'),
-      inventario: z.number().int().optional().describe('Cantidad inicial de unidades disponibles'),
-      publicar: z
-        .boolean()
-        .optional()
-        .describe('true para publicarlo de inmediato en la tienda web, false para dejarlo en borrador'),
-    },
-    async ({ titulo, precioCOP, inventario, publicar }) => {
-      const shouldPublish = publicar ?? false
-      try {
-        const product = await payload.create({
-          collection: 'products',
-          data: {
-            title: titulo,
-            ...(precioCOP !== undefined
-              ? { priceInCOPEnabled: true, priceInCOP: precioCOP }
-              : {}),
-            ...(inventario !== undefined ? { inventory: inventario } : {}),
-            _status: shouldPublish ? 'published' : 'draft',
-          },
-          draft: !shouldPublish,
-          overrideAccess: false,
-        })
-        return text(
-          shouldPublish
-            ? `¡Listo! Producto "${titulo}" creado y publicado exitosamente (#${product.id})` +
-                (precioCOP !== undefined ? ` con precio ${formatCOP(precioCOP)}` : '') +
-                '. Ya está visible en la tienda web (/shop). ✨'
-            : `Producto "${titulo}" creado en borrador (#${product.id})` +
-                (precioCOP !== undefined ? ` con precio ${formatCOP(precioCOP)}` : '') +
-                '. Puedes revisarlo y publicarlo cuando quieras desde Telegram o desde /admin.',
-        )
-      } catch (err) {
-        return toolError(
-          `No pude crear el producto: ${err instanceof Error ? err.message : 'error desconocido'}`,
-        )
-      }
-    },
-  )
-
-  const crearTestimonio = tool(
-    'crearTestimonio',
-    'Guarda un testimonio de compradora con foto real para la landing. Si Shirley envía una foto por Telegram, se vincula automáticamente.',
-    {
-      nombre: z.string().describe('Nombre de la compradora'),
-      testimonio: z.string().describe('Cita textual del testimonio'),
-      rol: z.string().optional().describe('Rol o ciudad, ej. "Cartagena"'),
-      calificacion: z.number().int().min(1).max(5).optional().describe('Calificación 1-5'),
-      mediaId: z.number().int().optional().describe('ID de Media ya subido (foto) — lo pasa el webhook si hay foto adjunta'),
-    },
-    async ({ nombre, testimonio, rol, calificacion, mediaId }) => {
-      try {
-        if (!mediaId) {
-          return text(
-            'Necesito una foto real de la compradora para el testimonio. Envíame la foto por Telegram junto con el testimonio, o súbela primero en /admin → Medios y pásame el ID.',
-          )
-        }
+      case 'crearTestimonio': {
+        const { nombre, testimonio, rol, calificacion, mediaId } = args
         const doc = await payload.create({
           collection: 'testimonials',
           data: {
-            quote: testimonio,
             authorName: nombre,
+            quote: testimonio,
             ...(rol ? { authorRole: rol } : {}),
-            avatar: mediaId,
-            ...(calificacion ? { rating: calificacion } : {}),
+            ...(calificacion ? { rating: Number(calificacion) } : { rating: 5 }),
+            ...(mediaId ? { avatar: mediaId } : {}),
             _status: 'published',
-          },
+          } as any,
           draft: false,
-          overrideAccess: false,
+          overrideAccess: true,
         })
-        return text(`Testimonio de "${nombre}" guardado y publicado (#${doc.id}) ✨`)
-      } catch (err) {
-        return toolError(
-          `No pude guardar el testimonio: ${err instanceof Error ? err.message : 'error desconocido'}`,
-        )
+        return `Testimonio de "${nombre}" publicado en la landing exitosamente ✨ (#${doc.id})`
       }
-    },
-  )
 
-  const listarTestimonios = tool(
-    'listarTestimonios',
-    'Lista los testimonios publicados de la landing.',
-    {},
-    async () => {
-      try {
+      case 'listarTestimonios': {
         const res = await payload.find({
           collection: 'testimonials',
           limit: 10,
-          overrideAccess: false,
+          overrideAccess: true,
           where: { _status: { equals: 'published' } },
           sort: '-createdAt',
         })
-        if (res.docs.length === 0) return text('Aún no hay testimonios publicados.')
-        const lines = res.docs.map((d: any) => `- #${d.id} — ${d.authorName}: “${d.quote.slice(0, 80)}…”`)
-        return text(`Testimonios (${res.docs.length}):\n${lines.join('\n')}`)
-      } catch (err) {
-        return toolError(
-          `No pude listar testimonios: ${err instanceof Error ? err.message : 'error desconocido'}`,
-        )
+        if (res.docs.length === 0) return 'Aún no hay testimonios publicados en la landing.'
+        const lines = res.docs.map((d: any) => `• #${d.id} — ${d.authorName}: "${d.quote.slice(0, 60)}..."`)
+        return `Testimonios publicados (${res.docs.length}):\n${lines.join('\n')}`
       }
-    },
-  )
 
-  return createSdkMcpServer({
-    name: 'nenufar-tienda',
-    version: '1.0.0',
-    tools: [
-      buscarProducto,
-      destacarProducto,
-      actualizarInventario,
-      publicarProducto,
-      pedidosPendientes,
-      confirmarPedido,
-      publicarEvento,
-      crearProductoDraft,
-      crearTestimonio,
-      listarTestimonios,
-    ],
-  })
+      default:
+        return `Herramienta "${toolName}" no reconocida.`
+    }
+  } catch (err) {
+    payload.logger.error({ msg: `[shirley-agent] Error ejecutando ${toolName}`, err })
+    return `Ocurrió un inconveniente ejecutando ${toolName}. Puedes verificar directamente en /admin.`
+  }
 }
+

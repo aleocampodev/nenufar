@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
+import { InitialLoader } from '@/components/Loading/InitialLoader'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
@@ -58,7 +59,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
-      className={[inter.variable, playfair.variable, GeistMono.variable].filter(Boolean).join(' ')}
+      className={['scroll-smooth', inter.variable, playfair.variable, GeistMono.variable].filter(Boolean).join(' ')}
       lang="es"
       suppressHydrationWarning
     >
@@ -74,6 +75,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
         <Providers>
+          <InitialLoader />
           <AdminBar />
           <LivePreviewListener />
 

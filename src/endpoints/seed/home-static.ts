@@ -66,28 +66,37 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
           },
         },
       ],
-      // Slider slides - placeholders (images added later by Shirley via /admin)
+      // Slider slides - Krafti 3 editorial slides with high-res jewelry photography
       slides: [
         {
-          heading: 'Mostacilla con Alma Caribeña',
-          subheading: 'Piezas únicas tejidas a mano en Cartagena, con la dedicación de Shirley.',
-          linkLabel: 'Explorar Catálogo',
+          heading: 'Joyas Tejidas con Alma Caribeña',
+          subheading: 'Piezas únicas de mostacilla y filigrana tejidas pacientemente a mano en Cartagena de Indias.',
+          linkLabel: 'Explorar Colección',
           linkUrl: '/shop',
-          image: null as any,
+          image: {
+            url: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1920&auto=format&fit=crop&q=85',
+            alt: 'Joyería artesanal tejida a mano',
+          } as any,
+        },
+        {
+          heading: 'Filigrana y Mostacilla de Autor',
+          subheading: 'Inspiración tradicional momposina con un diseño contemporáneo, liviano e hipoalergénico.',
+          linkLabel: 'Ver Catálogo',
+          linkUrl: '/shop',
+          image: {
+            url: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1920&auto=format&fit=crop&q=85',
+            alt: 'Piezas exclusivas de joyería artesanal',
+          } as any,
         },
         {
           heading: 'Talleres que Tejen Comunidad',
-          subheading: 'Aprende la técnica ancestral de la mostacilla en nuestros talleres presenciales.',
-          linkLabel: 'Ver Talleres',
+          subheading: 'Aprende las técnicas ancestrales de tejido en nuestros talleres y experiencias presenciales.',
+          linkLabel: 'Próximos Talleres',
           linkUrl: '/eventos',
-          image: null as any,
-        },
-        {
-          heading: 'Ferias y Pop-ups en Cartagena',
-          subheading: 'Encuéntranos en ferias artesanales y mercados locales. ¡Te esperamos!',
-          linkLabel: 'Próximas Ferias',
-          linkUrl: '/eventos',
-          image: null as any,
+          image: {
+            url: 'https://images.unsplash.com/photo-1611591475102-4a00832049d5?w=1920&auto=format&fit=crop&q=85',
+            alt: 'Talleres artesanales en Cartagena',
+          } as any,
         },
       ] as any,
     },
@@ -95,33 +104,39 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
       {
         blockType: 'features',
         tagline: 'Tradición y Delicadeza',
-        heading: 'Por qué elegir Nénufar Joyería',
+        heading: 'Por qué elegir Nenúfar Joyería',
         items: [
           {
             icon: 'handmade',
-            title: '100% Hecho a Mano',
-            description: 'Cada pieza es tejida pacientemente por Shirley en Cartagena con mostacilla calibrada de alta calidad.',
+            title: 'HECHO A MANO',
+            description: 'Cada pieza es elaborada a mano, hilo por hilo, siguiendo técnicas tradicionales de tejido en mostacilla.',
           },
           {
-            icon: 'shipping',
-            title: 'Envíos a Toda Colombia',
-            description: 'Llegamos a tu ciudad con empaque seguro y seguimiento en tiempo real vía Telegram/WhatsApp.',
+            icon: 'ancestral',
+            title: 'DISEÑO ANCESTRAL',
+            description: 'Inspirados en los patrones y colores de las comunidades indígenas colombianas, cada diseño cuenta una historia.',
           },
           {
-            icon: 'quality',
-            title: 'Materiales Duraderos',
-            description: 'Hilos de alta resistencia e insumos hipoalergénicos diseñados para durar y mantener su brillo.',
+            icon: 'colors',
+            title: 'COLORES AUTÉNTICOS',
+            description: 'Combinaciones vibrantes hechas con mostacilla checa y materiales de alta calidad, pensadas para durar.',
           },
           {
-            icon: 'gift',
-            title: 'Lista para Regalar',
-            description: 'Todas nuestras joyas se envían en una presentación artesanal lista para sorprender a alguien especial.',
+            icon: 'unique',
+            title: 'PIEZAS ÚNICAS',
+            description: 'Ninguna pieza es igual a otra: cada collar, arete o pulsera es una obra original, hecha para ti.',
           },
         ],
       },
       {
         blockType: 'imageStrip',
         images: [],
+      },
+      {
+        blockType: 'testimonials',
+        tagline: 'Voces de Nuestra Comunidad',
+        heading: 'Lo que dicen quienes lucen Nenúfar',
+        limit: 3,
       },
       {
         blockType: 'nenufarStory',
@@ -179,12 +194,6 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
         },
       },
       {
-        blockType: 'testimonials',
-        tagline: 'Voces de Nuestra Comunidad',
-        heading: 'Lo que dicen quienes lucen Nénufar',
-        limit: 3,
-      },
-      {
         blockType: 'upcomingEvents',
         title: 'Próximas Ferias y Talleres en Cartagena',
         filterByType: 'todos',
@@ -205,7 +214,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                     format: 0,
                     mode: 'normal',
                     style: '',
-                    text: '¿Buscas una pieza personalizada?',
+                    text: '¿Buscas una joya personalizada?',
                     version: 1,
                   },
                 ],
@@ -224,7 +233,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                     format: 0,
                     mode: 'normal',
                     style: '',
-                    text: 'Shirley confecciona joyas a tu medida con colores, grabados o piedras especiales. Arma tu pedido y te contactará directamente por WhatsApp.',
+                    text: 'Shirley confecciona joyas a tu medida con colores, piedras o grabados especiales. Escríbenos y coordinaremos directamente contigo.',
                     version: 1,
                   },
                 ],
@@ -245,8 +254,8 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
           {
             link: {
               type: 'custom',
-              url: '/shop',
-              label: 'Ver Catálogo Completo',
+              url: '/contacto',
+              label: 'Personalizar mi Joya',
               appearance: 'default',
             },
           },
@@ -255,7 +264,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
     ],
     meta: {
       description: 'Joyería artesanal colombiana hecha a mano en Cartagena. Cada pieza cuenta una historia.',
-      title: 'Nénufar — Joyería Artesanal Colombiana',
+      title: 'Nenúfar — Joyería Artesanal Colombiana',
     },
     title: 'Inicio',
   }

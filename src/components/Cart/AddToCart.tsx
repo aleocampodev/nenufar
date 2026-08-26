@@ -94,18 +94,22 @@ export function AddToCart({ product }: Props) {
     return false
   }, [selectedVariant, cart?.items, product])
 
+  const isOutOfStock = disabled && (product.inventory === 0 || (selectedVariant && selectedVariant.inventory === 0))
+
   return (
     <Button
-      aria-label="Add to cart"
-      variant={'outline'}
-      className={clsx({
-        'hover:opacity-90': true,
-      })}
+      aria-label={isOutOfStock ? 'Producto Agotado' : 'Agregar al carrito'}
+      className={clsx(
+        'rounded-full px-8 py-3.5 text-xs uppercase tracking-wider font-medium transition-all shadow-sm',
+        isOutOfStock
+          ? 'bg-red-600 hover:bg-red-600 text-white font-bold cursor-not-allowed border-transparent opacity-100'
+          : 'bg-brand hover:bg-brand-dark text-white border-transparent cursor-pointer'
+      )}
       disabled={disabled || isLoading}
       onClick={addToCart}
       type="submit"
     >
-      Agregar al carrito
+      {isOutOfStock ? 'Agotado' : 'Agregar al carrito'}
     </Button>
   )
 }

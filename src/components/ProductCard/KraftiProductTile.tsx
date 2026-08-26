@@ -15,14 +15,14 @@ type Props = {
   isHero?: boolean
 }
 
-// Paleta pastel artesanal exacta de Krafti
+// Paleta pastel artesanal exacta de Krafti (según referencia: peach, blanco, crema almendra)
 const KRAFTI_BG_COLORS = [
-  'bg-[#E9ECEF] dark:bg-zinc-900/50', // cool mist / light stone (Hero item in Krafti)
-  'bg-[#FAEDE4] dark:bg-zinc-900/80', // soft blush peach (Top middle in Krafti)
-  'bg-[#FDFBF7] dark:bg-zinc-900/40', // ivory cream (Top right in Krafti)
-  'bg-[#FDFBF7] dark:bg-zinc-900/70', // ivory cream (Bottom middle in Krafti)
-  'bg-[#FAF5EE] dark:bg-zinc-900/60', // soft warm sand (Bottom right in Krafti)
-  'bg-[#F3EFF8] dark:bg-zinc-900/75', // gentle lavender mist
+  'bg-[#F7EBE1] dark:bg-zinc-900/60', // 1. Peach / Rosa empolvado suave (Top left)
+  'bg-[#FFFFFF] dark:bg-zinc-900/20', // 2. Blanco puro (Top right)
+  'bg-[#FFFFFF] dark:bg-zinc-900/20', // 3. Blanco puro (Bottom left)
+  'bg-[#FAF5ED] dark:bg-zinc-900/80', // 4. Crema almendra cálido (Bottom right)
+  'bg-[#F5EFE8] dark:bg-zinc-900/50', // 5. Arena suave
+  'bg-[#F6F1F8] dark:bg-zinc-900/70', // 6. Lavanda empolvada
 ]
 
 export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = false }) => {
@@ -91,7 +91,7 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = fa
       className={`group relative flex flex-col justify-between overflow-hidden border-r border-b border-border/40 transition-all duration-300 ${bgClass} ${
         isHero
           ? 'col-span-1 md:col-span-2 row-span-1 md:row-span-2 min-h-[500px] md:min-h-[700px]'
-          : 'col-span-1 row-span-1 min-h-[280px] md:min-h-[350px]'
+          : 'col-span-1 row-span-1 min-h-[380px] sm:min-h-[440px]'
       }`}
     >
       {/* Badges superiores (Destacado / Agotado) */}
@@ -106,21 +106,21 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = fa
         )}
 
         {isOutOfStock && (
-          <span className="bg-neutral-900/90 text-white text-[10px] uppercase font-semibold tracking-wider px-3 py-1 rounded-full">
+          <span className="bg-red-600 text-white text-[10px] uppercase font-bold tracking-widest px-3.5 py-1 rounded-full shadow-sm">
             Agotado
           </span>
         )}
       </div>
 
       {/* Contenedor de la Imagen con efecto Krafti */}
-      <div className="flex-1 flex items-center justify-center p-8 sm:p-14 relative overflow-hidden">
+      <div className="flex-1 flex items-center justify-center p-8 sm:p-12 relative overflow-hidden">
         <Link
           href={`/products/${productSlug}`}
-          className="relative w-full h-full flex items-center justify-center min-h-[200px] z-10 focus:outline-none"
+          className="relative w-full h-full flex items-center justify-center min-h-[220px] z-10 focus:outline-none"
         >
           {image ? (
             <Media
-              className="max-h-[90%] max-w-[90%] w-auto h-auto object-contain transition-transform duration-700 ease-out group-hover:scale-[1.07]"
+              className="max-h-[90%] max-w-[90%] w-auto h-auto object-contain transition-transform duration-700 ease-out group-hover:scale-[1.07] drop-shadow-[0_10px_20px_rgba(0,0,0,0.06)]"
               resource={image}
               priority={index === 0}
             />
@@ -131,18 +131,26 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = fa
           )}
         </Link>
 
-        {/* Botón flotante AGREGAR AL CARRITO al hacer hover estilo Krafti */}
-        {!isOutOfStock && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/15 opacity-0 transition-opacity duration-300 group-hover:opacity-100 backdrop-blur-[2px] z-30 pointer-events-none group-hover:pointer-events-auto">
+        {/* Botón flotante estilo Píldora redondeada consistente con los Filtros */}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 backdrop-blur-[1px] z-30 pointer-events-none group-hover:pointer-events-auto">
+          {isOutOfStock ? (
+            <button
+              type="button"
+              disabled
+              className="px-6 sm:px-7 py-2.5 sm:py-3 rounded-full text-xs uppercase tracking-wider font-bold bg-red-600 text-white shadow-md border border-white/20 cursor-not-allowed flex items-center gap-2"
+            >
+              Agotado
+            </button>
+          ) : (
             <button
               type="button"
               onClick={handleAddToCart}
               disabled={isLoading || isPending}
-              className="bg-brand hover:bg-brand-dark text-white text-[11px] uppercase font-semibold tracking-[0.25em] px-8 py-3.5 shadow-2xl border border-white/20 transform translate-y-3 group-hover:translate-y-0 transition-all duration-300 flex items-center gap-2 cursor-pointer pointer-events-auto"
+              className="px-6 sm:px-7 py-2.5 sm:py-3 rounded-full text-xs uppercase tracking-wider font-medium bg-brand hover:bg-brand-dark text-white shadow-md border border-white/20 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 flex items-center gap-2 cursor-pointer pointer-events-auto"
             >
               {added ? (
                 <>
-                  <Check className="w-4 h-4" />
+                  <Check className="w-3.5 h-3.5" />
                   Agregado
                 </>
               ) : (
@@ -152,31 +160,31 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = fa
                 </>
               )}
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Información del Producto Centrada al Pie estilo Krafti */}
       <Link
         href={`/products/${productSlug}`}
-        className="pb-7 sm:pb-9 px-6 text-center flex flex-col items-center justify-center gap-1.5 z-10 focus:outline-none"
+        className="pb-8 sm:pb-10 px-6 text-center flex flex-col items-center justify-center gap-1.5 z-10 focus:outline-none"
       >
         <h3
-          className={`font-serif uppercase tracking-[0.2em] text-foreground transition-colors duration-300 group-hover:text-brand font-bold leading-snug ${
+          className={`font-serif uppercase tracking-[0.25em] text-[#9A6038] dark:text-[#E2AB80] transition-colors duration-300 group-hover:text-brand font-medium leading-snug ${
             isHero ? 'text-base sm:text-lg md:text-xl' : 'text-xs sm:text-sm'
           }`}
         >
           {title}
         </h3>
 
-        <span className="text-[11px] italic font-serif text-muted-foreground">
-          {categoryTitle || 'Joyas de Mostacilla'}
+        <span className="text-[11px] font-light tracking-wide text-neutral-500 dark:text-neutral-400">
+          {categoryTitle || 'Joyería Artesanal'}
         </span>
 
         {typeof price === 'number' && (
           <span
-            className={`font-serif text-foreground/80 font-medium tracking-wide mt-0.5 ${
-              isHero ? 'text-base' : 'text-sm'
+            className={`font-serif text-[#9A6038] dark:text-amber-200/90 font-light tracking-wider mt-0.5 ${
+              isHero ? 'text-base' : 'text-xs sm:text-sm'
             }`}
           >
             <Price amount={price} currencyCode="COP" />

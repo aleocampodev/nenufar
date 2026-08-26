@@ -15,19 +15,24 @@ export const TestimonialsBlock: React.FC<Props> = async ({
   heading = 'Lo que dicen quienes lucen Nenúfar',
   limit = 3,
 }) => {
-  const payload = await getPayload({ config: configPromise })
+  let docs: any[] = []
+  try {
+    const payload = await getPayload({ config: configPromise })
 
-  const testimonialsRes = await payload.find({
-    collection: 'testimonials',
-    depth: 1,
-    limit: limit || 3,
-    overrideAccess: true,
-    where: {
-      _status: { equals: 'published' },
-    },
-  })
+    const testimonialsRes = await payload.find({
+      collection: 'testimonials',
+      depth: 1,
+      limit: limit || 3,
+      overrideAccess: true,
+      where: {
+        _status: { equals: 'published' },
+      },
+    })
 
-  let docs = testimonialsRes.docs as any[]
+    docs = testimonialsRes.docs as any[]
+  } catch (err) {
+    console.error('Error fetching testimonials:', err)
+  }
 
   // Placeholder when no testimonials yet (so landing is not empty before Shirley adds real ones)
   if (!docs || docs.length === 0) {
@@ -61,25 +66,21 @@ export const TestimonialsBlock: React.FC<Props> = async ({
   }
 
   return (
-    <section className="py-24 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Encabezado */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          {tagline && (
-            <span className="text-xs uppercase tracking-[0.25em] text-brand font-semibold font-sans mb-2 block">
-              {tagline}
-            </span>
-          )}
-          {heading && (
-            <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-bold tracking-tight">
-              {heading}
-            </h2>
-          )}
-          <div className="w-12 h-0.5 bg-brand mx-auto mt-4 rounded-full" />
+    <section id="testimonios" className="py-24 md:py-32 bg-[#FAF8F5] border-y border-neutral-100 scroll-mt-24">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Encabezado Editorial Krafti */}
+        <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+          <span className="text-xs uppercase tracking-[0.3em] text-[#8B5A2B] font-semibold font-sans block">
+            {tagline}
+          </span>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-foreground font-normal tracking-tight">
+            {heading}
+          </h2>
+          <div className="w-10 h-0.5 bg-brand mx-auto mt-4 rounded-full opacity-60" />
         </div>
 
-        {/* Grilla de Testimonios */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Grilla de Testimonios Editoriales */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
           {docs.map((t) => {
             const avatar = t.avatar && typeof t.avatar === 'object' ? (t.avatar as any) : null
             const avatarUrl = avatar?.url || null
@@ -88,26 +89,24 @@ export const TestimonialsBlock: React.FC<Props> = async ({
             return (
               <div
                 key={t.id}
-                className="relative flex flex-col justify-between p-8 rounded-3xl bg-card border border-border/60 hover:border-brand/30 transition-all duration-300 shadow-sm"
+                className="relative flex flex-col justify-between p-8 sm:p-10 rounded-2xl bg-white border border-neutral-100/80 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_35px_rgba(0,0,0,0.07)] transition-all duration-300 group"
               >
                 <div>
-                  {/* Estrellas */}
-                  <div className="flex items-center gap-1 mb-6">
-                    {Array.from({ length: rating }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
+                  {/* Comilla Decorativa */}
+                  <div className="text-brand/30 group-hover:text-brand/50 transition-colors mb-4">
+                    <Quote className="w-8 h-8 rotate-180" />
                   </div>
 
-                  {/* Cita */}
-                  <p className="font-serif italic text-foreground text-sm sm:text-base leading-relaxed mb-6">
+                  {/* Cita en Serif Itálica */}
+                  <p className="font-serif italic text-neutral-800 text-base sm:text-lg leading-relaxed mb-8">
                     &ldquo;{t.quote}&rdquo;
                   </p>
                 </div>
 
-                {/* Autor */}
-                <div className="flex items-center gap-3 pt-6 border-t border-border/40">
+                {/* Autor y Origen */}
+                <div className="flex items-center gap-4 pt-6 border-t border-neutral-100">
                   {avatarUrl ? (
-                    <div className="relative w-11 h-11 rounded-full overflow-hidden border border-brand/30 bg-muted flex-shrink-0">
+                    <div className="relative w-12 h-12 rounded-full overflow-hidden border border-brand/30 bg-muted flex-shrink-0">
                       <Image
                         src={avatarUrl}
                         alt={t.authorName}
@@ -117,17 +116,17 @@ export const TestimonialsBlock: React.FC<Props> = async ({
                       />
                     </div>
                   ) : (
-                    <div className="w-11 h-11 rounded-full bg-brand/10 text-brand flex items-center justify-center font-serif font-bold text-sm flex-shrink-0 border border-brand/20">
+                    <div className="w-12 h-12 rounded-full bg-[#F5EFEB] text-[#8B5A2B] flex items-center justify-center font-serif font-semibold text-base flex-shrink-0 border border-[#8B5A2B]/20">
                       {t.authorName.charAt(0)}
                     </div>
                   )}
 
                   <div className="flex flex-col min-w-0">
-                    <span className="font-serif font-semibold text-sm text-foreground truncate">
+                    <span className="font-serif font-medium text-base text-foreground truncate">
                       {t.authorName}
                     </span>
                     {t.authorRole && (
-                      <span className="text-[11px] text-muted-foreground truncate">
+                      <span className="text-[11px] uppercase tracking-wider text-[#8B5A2B] truncate font-sans">
                         {t.authorRole}
                       </span>
                     )}

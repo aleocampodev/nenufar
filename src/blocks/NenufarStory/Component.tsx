@@ -6,79 +6,77 @@ import React from 'react'
 
 export const NenufarStoryBlock: React.FC<Props & { id?: string }> = ({
   image,
-  tagline,
-  heading,
+  tagline = 'Hecho a mano en Cartagena',
+  heading = 'Nenúfar — Manos que tejen historias',
   description,
-  linkUrl,
-  linkLabel,
+  linkUrl = '/shop',
+  linkLabel = 'Conocer la colección',
   id,
 }) => {
   const hasImage = image && typeof image === 'object'
 
   return (
     <section
-      id={id}
-      className="py-12 md:py-20 bg-background border-y border-border/30"
+      id={id || 'historia'}
+      className="py-20 md:py-28 bg-[#FAF8F5] border-y border-neutral-100 scroll-mt-24"
     >
-      <div className="container">
-        {/* Krafti style: split 50/50, imagen izquierda grande, texto derecha */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
-          {/* Imagen Shirley - mitad izquierda, estilo Krafti h5-img1 */}
-          <div className="relative overflow-hidden rounded-2xl bg-muted aspect-[4/5] lg:aspect-[4/3.5]">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Krafti split: Gran foto artesanal izquierda, narrativa y firma derecha */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Imagen Taller / Shirley */}
+          <div className="relative overflow-hidden rounded-3xl bg-neutral-100 aspect-[4/5] shadow-[0_10px_40px_rgba(0,0,0,0.06)]">
             {hasImage ? (
               <PayloadMedia
                 resource={image as Media}
                 sizeName="card"
                 fill
-                imgClassName="object-cover"
+                imgClassName="object-cover transition-transform duration-700 hover:scale-105"
               />
             ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-brand/10 via-muted to-brand/5 p-8 text-center">
-                <div className="w-20 h-20 rounded-full bg-brand/15 border border-brand/20 flex items-center justify-center text-2xl mb-4">
-                  🌸
-                </div>
-                <p className="text-sm tracking-[0.2em] uppercase text-brand font-semibold">Foto de Shirley</p>
-                <p className="text-xs text-muted-foreground mt-2 max-w-[260px]">
-                  Sube la foto de Shirley en el medio desde el admin → Medios. Mientras, se ve este placeholder.
-                </p>
-              </div>
+              <img
+                src="https://images.unsplash.com/photo-1590794056226-017905317107?w=1000&auto=format&fit=crop&q=80"
+                alt="Taller artesanal de joyería en mostacilla"
+                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+              />
             )}
           </div>
 
-          {/* Texto - mitad derecha, alusivo a Nenúfar */}
-          <div className="space-y-5 lg:pl-2">
+          {/* Contenido Narrativo */}
+          <div className="space-y-6 lg:pl-4">
             {tagline && (
-              <span className="inline-block text-xs tracking-[0.25em] uppercase text-brand font-semibold">
+              <span className="inline-block text-xs tracking-[0.3em] uppercase text-[#8B5A2B] font-semibold font-sans">
                 {tagline}
               </span>
             )}
             {heading && (
-              <h2 className="font-serif text-3xl sm:text-4xl leading-tight font-bold text-foreground">
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl leading-[1.15] font-normal text-foreground">
                 {heading}
               </h2>
             )}
-            <div className="w-12 h-0.5 bg-brand rounded-full" />
+            <div className="w-12 h-0.5 bg-brand rounded-full opacity-60" />
 
             {description ? (
-              <RichText data={description} enableGutter={false} className="prose prose-sm sm:prose-base max-w-none text-muted-foreground" />
+              <RichText data={description} enableGutter={false} className="prose prose-sm sm:prose-base max-w-none text-neutral-600 font-light leading-relaxed" />
             ) : (
-              <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+              <div className="space-y-4 text-sm sm:text-base leading-relaxed text-neutral-600 font-light">
                 <p>
-                  <strong className="text-foreground">Nenúfar</strong> nace en Cartagena de Indias de las manos de <strong className="text-foreground">Shirley</strong>, artesana que teje mostacilla con la paciencia y el color del Caribe. Cada collar, pulsera y arete es una historia hecha a mano, con hilos de alta resistencia y mostacilla calibrada que garantiza brillo y duración.
+                  <strong className="text-neutral-900 font-medium">Nenúfar</strong> nace en Cartagena de Indias de las manos de <strong className="text-neutral-900 font-medium">Shirley</strong>, artesana que teje mostacilla con la paciencia y el color del Caribe. Cada collar, pulsera y arete es una historia hecha a mano, con hilos de alta resistencia y mostacilla calibrada que garantiza brillo y duración.
                 </p>
                 <p>
-                  Inspirada en la filigrana momposina y en los patios de Cartagena, Shirley crea piezas livianas, hipoalergénicas y llenas de significado — perfectas para regalar o para llevar un pedacito del Caribe contigo.
+                  Inspirada en la filigrana momposina y en los patios cartageneros, Shirley crea piezas livianas, hipoalergénicas y llenas de significado — perfectas para regalar o para llevar un pedacito del Caribe contigo.
                 </p>
               </div>
             )}
 
             {linkUrl && linkLabel && (
-              <Link
-                href={linkUrl}
-                className="inline-flex items-center justify-center mt-2 px-7 py-3 rounded-full bg-brand text-white text-xs tracking-widest uppercase font-medium hover:bg-brand/90 transition-colors shadow-sm"
-              >
-                {linkLabel}
-              </Link>
+              <div className="pt-2">
+                <Link
+                  href={linkUrl}
+                  className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-brand text-white text-xs tracking-[0.2em] uppercase font-medium hover:bg-brand-dark transition-all duration-300 shadow-[0_4px_20px_rgba(106,27,154,0.25)]"
+                >
+                  {linkLabel}
+                </Link>
+              </div>
             )}
           </div>
         </div>

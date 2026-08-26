@@ -567,17 +567,30 @@ export interface Page {
       }
     | {
         /**
-         * Texto pequeño en mayúsculas sobre el título
+         * Texto pequeño en mayúsculas sobre el título (ej: Tradición y Delicadeza)
          */
         tagline?: string | null;
         heading?: string | null;
         /**
-         * Imagen del centro, estilo Krafti bowl de madera. Si está vacía se muestra placeholder.
+         * Imagen del centro destacada. Si se deja vacía se muestra imagen ilustrativa por defecto.
          */
         centerImage?: (number | null) | Media;
         items?:
           | {
-              icon?: ('handmade' | 'shipping' | 'quality' | 'gift' | 'support') | null;
+              icon?:
+                | (
+                    | 'handmade'
+                    | 'ancestral'
+                    | 'colors'
+                    | 'unique'
+                    | 'design'
+                    | 'quality'
+                    | 'gift'
+                    | 'shipping'
+                    | 'support'
+                    | 'sparkles'
+                  )
+                | null;
               title: string;
               description: string;
               id?: string | null;

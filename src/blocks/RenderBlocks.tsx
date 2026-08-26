@@ -11,6 +11,7 @@ import { NenufarStoryBlock } from '@/blocks/NenufarStory/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 import { ThreeItemGridBlock } from '@/blocks/ThreeItemGrid/Component'
 import { UpcomingEventsBlock } from '@/blocks/UpcomingEvents/Component'
+import { ScrollReveal } from '@/components/Animation/ScrollReveal'
 import { toKebabCase } from '@/utilities/toKebabCase'
 import React, { Fragment } from 'react'
 
@@ -40,6 +41,17 @@ export const RenderBlocks: React.FC<{
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
   if (hasBlocks) {
+    const unspacedBlocks = new Set([
+      'features',
+      'imageStrip',
+      'testimonials',
+      'nenufarStory',
+      'upcomingEvents',
+      'cta',
+      'banner',
+      'archive',
+    ])
+
     return (
       <Fragment>
         {blocks.map((block, index) => {
@@ -49,12 +61,17 @@ export const RenderBlocks: React.FC<{
             const Block = blockComponents[blockType]
 
             if (Block) {
+              const shouldApplyMargin = !unspacedBlocks.has(blockType)
+
               return (
-                <div className="my-16" key={index}>
+                <ScrollReveal
+                  key={index}
+                  className={shouldApplyMargin ? 'my-16' : ''}
+                >
                   {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                   {/* @ts-ignore - weird type mismatch here */}
                   <Block id={toKebabCase(blockName!)} {...block} />
-                </div>
+                </ScrollReveal>
               )
             }
           }

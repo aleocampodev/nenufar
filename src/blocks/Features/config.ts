@@ -13,7 +13,7 @@ export const FeaturesBlock: Block = {
       label: 'Subtítulo / Tagline',
       defaultValue: 'Tradición y Delicadeza',
       admin: {
-        description: 'Texto pequeño en mayúsculas sobre el título',
+        description: 'Texto pequeño en mayúsculas sobre el título (ej: Tradición y Delicadeza)',
       },
     },
     {
@@ -25,52 +25,57 @@ export const FeaturesBlock: Block = {
     {
       name: 'centerImage',
       type: 'upload',
-      label: 'Imagen central (bowl / pieza destacada)',
+      label: 'Imagen central (pieza destacada / joya)',
       relationTo: 'media',
       admin: {
-        description: 'Imagen del centro, estilo Krafti bowl de madera. Si está vacía se muestra placeholder.',
+        description: 'Imagen del centro destacada. Si se deja vacía se muestra imagen ilustrativa por defecto.',
       },
     },
     {
       name: 'items',
       type: 'array',
-      label: 'Lista de Beneficios (4 alrededor de la imagen)',
-      minRows: 4,
-      maxRows: 4,
+      label: 'Lista de Beneficios',
+      minRows: 1,
+      maxRows: 8,
       defaultValue: [
         {
           icon: 'handmade',
-          title: '100% Hecho a Mano',
-          description: 'Cada pieza es tejida pacientemente por Shirley en Cartagena con mostacilla calibrada de alta calidad.',
+          title: 'HECHO A MANO',
+          description: 'Cada pieza es elaborada a mano, hilo por hilo, siguiendo técnicas tradicionales de tejido en mostacilla.',
         },
         {
-          icon: 'shipping',
-          title: 'Envíos a Toda Colombia',
-          description: 'Llegamos a tu ciudad con empaque seguro y seguimiento en tiempo real vía Telegram/WhatsApp.',
+          icon: 'ancestral',
+          title: 'DISEÑO ANCESTRAL',
+          description: 'Inspirados en los patrones y colores de las comunidades indígenas colombianas, cada diseño cuenta una historia.',
         },
         {
-          icon: 'quality',
-          title: 'Materiales Duraderos',
-          description: 'Hilos de alta resistencia e insumos hipoalergénicos diseñados para durar y mantener su brillo.',
+          icon: 'colors',
+          title: 'COLORES AUTÉNTICOS',
+          description: 'Combinaciones vibrantes hechas con mostacilla checa y materiales de alta calidad, pensadas para durar.',
         },
         {
-          icon: 'gift',
-          title: 'Lista para Regalar',
-          description: 'Todas nuestras joyas se envían en una presentación artesanal lista para sorprender a alguien especial.',
+          icon: 'unique',
+          title: 'PIEZAS ÚNICAS',
+          description: 'Ninguna pieza es igual a otra: cada collar, arete o pulsera es una obra original, hecha para ti.',
         },
       ],
       fields: [
         {
           name: 'icon',
           type: 'select',
-          label: 'Ícono',
+          label: 'Ícono Representativo',
           defaultValue: 'handmade',
           options: [
-            { label: 'Arte Manual / Tijeras / Manos', value: 'handmade' },
-            { label: 'Envíos / Entrega rápida', value: 'shipping' },
-            { label: 'Brillo / Calidad de materiales', value: 'quality' },
-            { label: 'Empaque de Regalo', value: 'gift' },
-            { label: 'Atención Personalizada', value: 'support' },
+            { label: '🪡 Hecho a Mano / Aguja e Hilo', value: 'handmade' },
+            { label: '💠 Diseño Ancestral / Patrón Indígena', value: 'ancestral' },
+            { label: '🔘 Colores Auténticos / Mostacilla Checa', value: 'colors' },
+            { label: '⭐ Piezas Únicas / Estrella', value: 'unique' },
+            { label: '💎 Joya / Filigrana de Autor', value: 'design' },
+            { label: '🛡️ Insumos Duraderos / Calidad', value: 'quality' },
+            { label: '🎁 Empaque de Regalo Artesanal', value: 'gift' },
+            { label: '🚚 Envíos a Toda Colombia', value: 'shipping' },
+            { label: '🤝 Atención Personalizada Shirley', value: 'support' },
+            { label: '✨ Brillo y Delicadeza', value: 'sparkles' },
           ],
         },
         {
@@ -89,3 +94,5 @@ export const FeaturesBlock: Block = {
     },
   ],
 }
+
+
