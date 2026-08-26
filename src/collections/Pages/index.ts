@@ -59,11 +59,13 @@ export const Pages: CollectionConfig = {
     {
       name: 'title',
       type: 'text',
+      label: 'Título de la página',
       required: true,
     },
     {
       name: 'publishedOn',
       type: 'date',
+      label: 'Fecha de publicación',
       admin: {
         date: {
           pickerAppearance: 'dayAndTime',
@@ -86,7 +88,7 @@ export const Pages: CollectionConfig = {
       tabs: [
         {
           fields: [hero],
-          label: 'Hero',
+          label: 'Portada — Carrusel / Encabezado',
         },
         {
           fields: [
@@ -109,7 +111,7 @@ export const Pages: CollectionConfig = {
               required: true,
             },
           ],
-          label: 'Content',
+          label: 'Contenido (bloques de la página)',
         },
         {
           name: 'meta',
@@ -143,10 +145,12 @@ export const Pages: CollectionConfig = {
     {
       name: 'slug',
       type: 'text',
+      label: 'URL amigable (slug)',
       index: true,
       unique: true,
       admin: {
         position: 'sidebar',
+        description: 'Se genera automático desde el título. Ej: inicio → /inicio, home → /',
       },
       hooks: {
         beforeValidate: [

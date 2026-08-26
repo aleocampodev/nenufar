@@ -12,32 +12,39 @@ import { linkGroup } from '@/fields/linkGroup'
 export const hero: Field = {
   name: 'hero',
   type: 'group',
+  label: 'Encabezado (Hero)',
+  admin: {
+    description: 'Elige cómo se ve la parte superior de la página. Para la landing usa "Carrusel".',
+  },
   fields: [
     {
       name: 'type',
       type: 'select',
-      defaultValue: 'lowImpact',
-      label: 'Type',
+      defaultValue: 'slider',
+      label: 'Tipo de encabezado',
+      admin: {
+        description: 'Carrusel = 3 imágenes deslizables (recomendado para la landing). Los demás son solo texto/imagen estática.',
+      },
       options: [
         {
-          label: 'None',
+          label: 'Carrusel (Krafti) — Recomendado ⭐',
+          value: 'slider',
+        },
+        {
+          label: 'Ninguno (sin encabezado)',
           value: 'none',
         },
         {
-          label: 'High Impact',
-          value: 'highImpact',
-        },
-        {
-          label: 'Medium Impact',
-          value: 'mediumImpact',
-        },
-        {
-          label: 'Low Impact',
+          label: 'Impacto Bajo — Solo texto + botón',
           value: 'lowImpact',
         },
         {
-          label: 'Slider (Krafti)',
-          value: 'slider',
+          label: 'Impacto Medio — Texto + imagen',
+          value: 'mediumImpact',
+        },
+        {
+          label: 'Impacto Alto — Pantalla completa',
+          value: 'highImpact',
         },
       ],
       required: true,
@@ -45,6 +52,9 @@ export const hero: Field = {
     {
       name: 'richText',
       type: 'richText',
+      admin: {
+        condition: (_, { type } = {}) => type !== 'slider' && type !== 'none',
+      },
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
           return [
@@ -55,11 +65,14 @@ export const hero: Field = {
           ]
         },
       }),
-      label: false,
+      label: 'Texto del encabezado',
     },
     linkGroup({
       overrides: {
         maxRows: 2,
+        admin: {
+          condition: (_, { type } = {}) => type !== 'slider' && type !== 'none',
+        },
       },
     }),
     {
