@@ -70,12 +70,12 @@ export function HeaderClient({ header, categories = [] }: Props) {
 
   return (
     <header
-      className={`sticky top-0 z-40 transition-all duration-500 ${
+      className={`sticky top-0 z-40 transition-all duration-500 border-none ${
         isPurple
-          ? 'bg-[#6A1B9A]/95 dark:bg-[#4A106E]/95 backdrop-blur-md text-white shadow-[0_8px_30px_rgba(106,27,154,0.35)] border-b border-purple-800/40'
+          ? 'bg-[#6A1B9A]/95 dark:bg-[#4A106E]/95 backdrop-blur-md text-white shadow-[0_8px_30px_rgba(106,27,154,0.35)]'
           : isTransparent
-          ? 'bg-transparent text-white border-b border-white/15'
-          : 'bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md text-neutral-800 dark:text-neutral-100 border-b border-neutral-100 dark:border-neutral-800 shadow-sm'
+          ? 'bg-transparent text-white'
+          : 'bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md text-neutral-800 dark:text-neutral-100 shadow-sm'
       }`}
     >
         <nav className="flex items-center justify-between max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 h-[74px] sm:h-[78px]">
