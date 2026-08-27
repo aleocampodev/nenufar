@@ -197,11 +197,11 @@ export const FeaturesBlock: React.FC<Props> = ({
   }
 
   return (
-    <section id={id || 'tradicion'} className="py-20 md:py-28 bg-[#FAF8F5]/60 overflow-hidden scroll-mt-24">
+    <section id={id || 'tradicion'} className="py-14 sm:py-16 md:py-20 bg-[#FAF8F5]/60 overflow-hidden scroll-mt-24">
       <div className="max-w-[1060px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Encabezado Editorial Krafti */}
         {(tagline || heading) && (
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 space-y-2.5">
             {tagline && (
               <span className="text-xs uppercase tracking-[0.3em] text-[#8B5A2B] font-semibold font-sans block">
                 {tagline}
@@ -212,14 +212,14 @@ export const FeaturesBlock: React.FC<Props> = ({
                 {heading}
               </h2>
             )}
-            <div className="w-12 h-0.5 bg-brand mx-auto mt-4 rounded-full opacity-60" />
+            <div className="w-12 h-0.5 bg-brand mx-auto mt-3.5 rounded-full opacity-60" />
           </div>
         )}
 
         {/* Krafti Item Showcase: Feature cards around a framed artisan jewelry piece */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12 items-center">
           {/* Left Column - Features (Right-aligned on Desktop) */}
-          <div className="flex flex-col gap-10 lg:gap-14 order-2 lg:order-1">
+          <div className="flex flex-col gap-10 sm:gap-12 lg:gap-16 order-2 lg:order-1">
             {leftItems.map((item, idx) => (
               <div key={item.id || idx}>
                 <div className="hidden lg:block">
@@ -233,7 +233,7 @@ export const FeaturesBlock: React.FC<Props> = ({
           </div>
 
           {/* Center Column - Featured Artisan Piece in Luxury Arch Frame */}
-          <div className="flex justify-center order-1 lg:order-2 py-4 lg:py-0">
+          <div className="flex justify-center order-1 lg:order-2 py-2 lg:py-0">
             <div className="relative">
               {/* Outer decorative ring border */}
               <div className="absolute -inset-3 rounded-t-[154px] rounded-b-[2rem] border border-brand/15 pointer-events-none" />
@@ -253,7 +253,7 @@ export const FeaturesBlock: React.FC<Props> = ({
           </div>
 
           {/* Right Column - Features (Left-aligned on Desktop) */}
-          <div className="flex flex-col gap-10 lg:gap-14 order-3">
+          <div className="flex flex-col gap-10 sm:gap-12 lg:gap-16 order-3">
             {rightItems.map((item, idx) => (
               <div key={item.id || idx}>
                 <div className="hidden lg:block">
