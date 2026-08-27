@@ -34,8 +34,8 @@ export const NenufarStoryBlock: React.FC<Props & { id?: string }> = ({
               />
             ) : (
               <img
-                src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1200&auto=format&fit=crop&q=85"
-                alt="Taller artesanal de joyería en mostacilla Shirley"
+                src="/media/shirley-creadora.jpeg"
+                alt="Shirley tejiendo joyería en mostacilla en su taller"
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
               />
             )}
@@ -65,17 +65,6 @@ export const NenufarStoryBlock: React.FC<Props & { id?: string }> = ({
                 <p>
                   Inspirada en la filigrana momposina y en los patios cartageneros, Shirley crea piezas livianas, hipoalergénicas y llenas de significado — perfectas para regalar o para llevar un pedacito del Caribe contigo.
                 </p>
-              </div>
-            )}
-
-            {linkUrl && linkLabel && (
-              <div className="pt-2">
-                <Link
-                  href={linkUrl}
-                  className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-brand text-white text-xs tracking-[0.2em] uppercase font-medium hover:bg-brand-dark transition-all duration-300 shadow-[0_4px_20px_rgba(106,27,154,0.25)]"
-                >
-                  {linkLabel}
-                </Link>
               </div>
             )}
           </div>
