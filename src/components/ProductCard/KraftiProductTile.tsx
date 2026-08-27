@@ -15,21 +15,13 @@ type Props = {
   isHero?: boolean
 }
 
-// Dos únicos colores de fondo estrictamente intercalados en damero 2D
+// Dos únicos colores de fondo estrictamente intercalados en damero 2D uniforme (4 columnas)
 const BG_ARENA = 'bg-[#FAF5ED] dark:bg-zinc-900/60'
 const BG_BLANCO = 'bg-[#FFFFFF] dark:bg-zinc-900/20'
 
-const getKraftiBg = (index: number, isHero: boolean): string => {
-  if (isHero) return BG_ARENA
-  if (index === 1) return BG_BLANCO // Fila 1, Col 3
-  if (index === 2) return BG_ARENA  // Fila 1, Col 4
-  if (index === 3) return BG_ARENA  // Fila 2, Col 3
-  if (index === 4) return BG_BLANCO // Fila 2, Col 4
-
-  // Damero continuo 4 columnas para index >= 5
-  const rel = index - 5
-  const row = Math.floor(rel / 4)
-  const col = rel % 4
+const getKraftiBg = (index: number): string => {
+  const row = Math.floor(index / 4)
+  const col = index % 4
   const isArena = (row + col) % 2 === 0
   return isArena ? BG_ARENA : BG_BLANCO
 }
@@ -59,7 +51,7 @@ const extractShortDescription = (desc: any, max = 80): string => {
   return ''
 }
 
-export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = false }) => {
+export const KraftiProductTile: React.FC<Props> = ({ product, index }) => {
   const { addItem, isLoading } = useCart()
   const [isPending, startTransition] = useTransition()
   const [added, setAdded] = React.useState(false)
@@ -92,7 +84,7 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = fa
       : null
 
   const isOutOfStock = typeof inventory === 'number' && inventory <= 0
-  const bgClass = getKraftiBg(index, isHero)
+  const bgClass = getKraftiBg(index)
   const shortDescription = extractShortDescription(description)
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -123,13 +115,9 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = fa
 
   return (
     <div
-      className={`group relative flex flex-col justify-between overflow-hidden border-r border-b border-border/40 transition-all duration-300 ${bgClass} ${
-        isHero
-          ? 'col-span-1 md:col-span-2 row-span-1 md:row-span-2'
-          : 'col-span-1 row-span-1'
-      }`}
+      className={`group relative flex flex-col justify-between overflow-hidden border-r border-b border-border/40 transition-all duration-300 ${bgClass} col-span-1 row-span-1`}
     >
-      {/* Badges superiores (Destacado / Agotado) sutiles y elegantes */}
+      {/* Badges superiores sutiles (Destacado / Agotado) */}
       <div className="absolute top-3.5 left-3.5 right-3.5 z-20 flex items-center justify-between pointer-events-none">
         {featured ? (
           <span className="inline-flex items-center gap-1 bg-brand text-white text-[9px] uppercase font-medium tracking-widest px-2.5 py-0.5 rounded-full shadow-sm">
@@ -147,10 +135,8 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = fa
         )}
       </div>
 
-      {/* Contenedor de la Imagen: amplio, nítido y de alta visibilidad */}
-      <div className={`relative w-full flex items-center justify-center p-4 sm:p-6 ${
-        isHero ? 'h-[380px] sm:h-[460px]' : 'h-[250px] sm:h-[290px]'
-      }`}>
+      {/* Contenedor de la Imagen: proporción uniforme de alta visibilidad */}
+      <div className="relative w-full h-[280px] sm:h-[320px] flex items-center justify-center p-5 sm:p-6 overflow-hidden">
         <Link
           href={`/products/${productSlug}`}
           className="relative w-full h-full flex items-center justify-center z-10 focus:outline-none"
@@ -158,9 +144,9 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = fa
           {image ? (
             <Media
               fill
-              imgClassName="object-contain p-2 transition-transform duration-700 ease-out group-hover:scale-105 drop-shadow-[0_12px_28px_rgba(0,0,0,0.08)]"
+              imgClassName="object-contain p-2 transition-transform duration-500 ease-out group-hover:scale-105 drop-shadow-[0_10px_25px_rgba(0,0,0,0.07)]"
               resource={image}
-              priority={index === 0}
+              priority={index < 4}
             />
           ) : (
             <div className="flex aspect-square w-24 items-center justify-center rounded-full bg-background/40 text-muted-foreground/30 text-3xl font-serif">
@@ -205,32 +191,26 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = fa
       {/* Información del Producto Centrada al Pie estilo Krafti */}
       <Link
         href={`/products/${productSlug}`}
-        className="pb-6 sm:pb-7 px-5 sm:px-6 text-center flex flex-col items-center justify-center gap-1.5 z-10 focus:outline-none"
+        className="pb-6 sm:pb-7 px-4 sm:px-6 text-center flex flex-col items-center justify-center gap-1.5 z-10 focus:outline-none"
       >
-        <h3
-          className={`font-serif uppercase tracking-[0.2em] text-[#8B5A2B] dark:text-[#E2AB80] transition-colors duration-300 group-hover:text-brand font-medium leading-snug line-clamp-1 ${
-            isHero ? 'text-base sm:text-lg md:text-xl' : 'text-xs sm:text-sm'
-          }`}
-        >
-          {title}
-        </h3>
-
-        <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-neutral-400 dark:text-neutral-500">
+        <span className="text-[10px] font-sans font-semibold tracking-[0.25em] uppercase text-neutral-400 dark:text-neutral-500">
           {categoryTitle || 'Joyería en Mostacilla'}
         </span>
 
+        <h3 className="font-serif uppercase tracking-[0.18em] text-[#8B5A2B] dark:text-[#E2AB80] transition-colors duration-300 group-hover:text-brand font-medium text-sm sm:text-base leading-snug line-clamp-1">
+          {title}
+        </h3>
+
         {shortDescription ? (
-          <p className="text-xs font-light text-neutral-600 dark:text-neutral-300 line-clamp-2 max-w-[260px] mx-auto mt-0.5 leading-relaxed">
+          <p className="text-xs font-light text-neutral-600 dark:text-neutral-300 line-clamp-2 max-w-[260px] mx-auto mt-0.5 leading-relaxed min-h-[32px]">
             {shortDescription}
           </p>
-        ) : null}
+        ) : (
+          <div className="min-h-[32px]" />
+        )}
 
         {typeof price === 'number' && (
-          <span
-            className={`font-serif text-[#8B5A2B] dark:text-amber-200/90 font-normal tracking-wider mt-1 ${
-              isHero ? 'text-base' : 'text-xs sm:text-sm'
-            }`}
-          >
+          <span className="font-serif text-[#8B5A2B] dark:text-amber-200/90 font-medium tracking-wider text-sm sm:text-base mt-1">
             <Price amount={price} currencyCode="COP" />
           </span>
         )}

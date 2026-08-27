@@ -133,22 +133,17 @@ export default async function ShopPage({ searchParams }: Props) {
         </div>
       )}
 
-      {/* Grilla Full-Bleed Estilo Krafti Masonry (4 columnas con Hero 2x2) */}
+      {/* Grilla Impecable y Uniforme de Catálogo (Misma medida en todas las joyas) */}
       {docs.length > 0 && (
         <div className="w-full border-t border-l border-border/40">
-          <div className="grid grid-cols-1 md:grid-cols-4 grid-flow-dense gap-0">
-            {docs.map((product, index) => {
-              // El primer producto ocupa el slot Hero 2x2 como en Krafti
-              const isHero = index === 0
-              return (
-                <KraftiProductTile
-                  key={product.id}
-                  product={product}
-                  index={index}
-                  isHero={isHero}
-                />
-              )
-            })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0">
+            {docs.map((product, index) => (
+              <KraftiProductTile
+                key={product.id}
+                product={product}
+                index={index}
+              />
+            ))}
           </div>
         </div>
       )}
