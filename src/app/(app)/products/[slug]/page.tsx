@@ -183,8 +183,8 @@ export default async function ProductPage({ params }: Args) {
       <div className="container pt-8 pb-8">
         <Button asChild variant="ghost" className="mb-4">
           <Link href="/shop">
-            <ChevronLeftIcon />
-            All products
+            <ChevronLeftIcon className="mr-1 h-4 w-4" />
+            Volver al Catálogo
           </Link>
         </Button>
         <div className="flex flex-col gap-12 rounded-lg border p-8 md:py-12 lg:flex-row lg:gap-8 bg-primary-foreground">
@@ -222,17 +222,17 @@ function RelatedProducts({ products }: { products: Product[] }) {
 
   return (
     <div className="py-8">
-      <h2 className="mb-4 text-2xl font-bold">Related Products</h2>
+      <h2 className="mb-4 text-2xl font-bold font-serif text-brand-dark">Joyas Relacionadas</h2>
       <ul className="flex w-full gap-4 overflow-x-auto pt-1">
         {products.map((product) => (
           <li
             className="aspect-square w-full flex-none min-[475px]:w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
             key={product.id}
           >
-            <Link className="relative h-full w-full" href={`/products/${(product as any).slug}`}>
+            <Link className="relative h-full w-full" href={`/products/${(product as any).slug || product.id}`}>
               <GridTileImage
                 label={{
-                  amount: product.priceInCOP!,
+                  amount: product.priceInCOP ?? 0,
                   title: product.title,
                 }}
                 media={product.meta?.image as Media}
@@ -250,6 +250,30 @@ const queryProductBySlug = async ({ slug }: { slug: string }) => {
 
   const payload = await getPayload({ config: configPromise })
 
+  const isNumeric = /^\d+$/.test(slug)
+  const decodedSlug = decodeURIComponent(slug)
+
+  const identifierConditions: any[] = [
+    {
+      slug: {
+        equals: decodedSlug,
+      },
+    },
+    {
+      slug: {
+        equals: slug,
+      },
+    },
+  ]
+
+  if (isNumeric) {
+    identifierConditions.push({
+      id: {
+        equals: Number(slug),
+      },
+    })
+  }
+
   const result = await payload.find({
     collection: 'products',
     depth: 3,
@@ -260,9 +284,7 @@ const queryProductBySlug = async ({ slug }: { slug: string }) => {
     where: {
       and: [
         {
-          slug: {
-            equals: slug,
-          },
+          or: identifierConditions,
         },
         ...(draft ? [] : [{ _status: { equals: 'published' } }]),
       ],
