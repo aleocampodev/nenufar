@@ -176,7 +176,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                     format: 0,
                     mode: 'normal',
                     style: '',
-                    text: 'Inspirada en la filigrana momposina y en los patios de Cartagena, Shirley crea piezas livianas, hipoalergénicas y llenas de significado — perfectas para regalar o para llevar un pedacito del Caribe contigo. En la mitad de esta historia estás tú, luciendo una pieza única.',
+                    text: 'Inspirada en los tejidos ancestrales de los Emberá y en los colores de Cartagena, Shirley crea piezas livianas, hipoalergénicas y llenas de significado — perfectas para regalar o para llevar un pedacito del Caribe contigo. En la mitad de esta historia estás tú, luciendo una pieza única.',
                     version: 1,
                   },
                 ],

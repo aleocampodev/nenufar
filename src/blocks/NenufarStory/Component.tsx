@@ -63,7 +63,7 @@ export const NenufarStoryBlock: React.FC<Props & { id?: string }> = ({
                   <strong className="text-neutral-900 font-medium">Nenúfar</strong> nace en Cartagena de Indias de las manos de <strong className="text-neutral-900 font-medium">Shirley</strong>, artesana que teje mostacilla con la paciencia y el color del Caribe. Cada collar, pulsera y arete es una historia hecha a mano, con hilos de alta resistencia y mostacilla calibrada que garantiza brillo y duración.
                 </p>
                 <p>
-                  Inspirada en la filigrana momposina y en los patios cartageneros, Shirley crea piezas livianas, hipoalergénicas y llenas de significado — perfectas para regalar o para llevar un pedacito del Caribe contigo.
+                  Inspirada en los tejidos ancestrales de los Emberá y en los colores de Cartagena, Shirley crea piezas livianas, hipoalergénicas y llenas de significado — perfectas para regalar o para llevar un pedacito del Caribe contigo. En la mitad de esta historia estás tú, luciendo una pieza única.
                 </p>
               </div>
             )}

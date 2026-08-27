@@ -65,7 +65,7 @@ export const homePageData: (args: ProductArgs) => RequiredDataFromCollectionSlug
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'Piezas únicas en filigrana momposina, plata 925 y piedras naturales hechas a mano en Cartagena de Indias por Shirley.',
+                  text: 'Piezas únicas inspiradas en los tejidos ancestrales Emberá, mostacilla calibrada y piedras naturales hechas a mano en Cartagena de Indias por Shirley.',
                   version: 1,
                 },
               ],
