@@ -49,7 +49,7 @@ export const SliderHeroClient: React.FC<{
   if (!slides?.length) return null
 
   return (
-    <section className="relative w-full overflow-hidden">
+    <section className="relative w-full overflow-hidden -mt-[74px] sm:-mt-[78px]">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex">
           {slides.map((slide, i) => {
