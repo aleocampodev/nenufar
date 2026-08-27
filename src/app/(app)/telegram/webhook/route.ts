@@ -125,7 +125,6 @@ export async function POST(request: Request): Promise<Response> {
             collection: 'media',
             data: {
               alt: text || 'Joya Nénufar',
-              fileName: `joya-${Date.now()}`,
             },
             file: {
               data: buffer,
