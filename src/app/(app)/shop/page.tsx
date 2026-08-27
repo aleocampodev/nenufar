@@ -76,6 +76,7 @@ export default async function ShopPage({ searchParams }: Props) {
     select: {
       title: true,
       slug: true,
+      description: true,
       gallery: true,
       categories: true,
       variants: true,
