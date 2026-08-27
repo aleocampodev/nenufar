@@ -92,7 +92,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
           heading: 'Talleres que Tejen Comunidad',
           subheading: 'Aprende las técnicas ancestrales de tejido en nuestros talleres y experiencias presenciales.',
           linkLabel: 'Próximos Talleres',
-          linkUrl: '/eventos',
+          linkUrl: '/#talleres',
           image: {
             url: 'https://images.unsplash.com/photo-1611591475102-4a00832049d5?w=1920&auto=format&fit=crop&q=85',
             alt: 'Talleres artesanales en Cartagena',

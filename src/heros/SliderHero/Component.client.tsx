@@ -91,7 +91,18 @@ export const SliderHeroClient: React.FC<{
                           <div className="pt-2">
                             <Link
                               href={slide.linkUrl}
-                              className="inline-block px-8 py-3.5 bg-white text-neutral-900 text-xs tracking-[0.22em] uppercase font-medium rounded-full hover:bg-brand hover:text-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.15)]"
+                              onClick={(e) => {
+                                if (slide.linkUrl?.includes('#')) {
+                                  const hash = slide.linkUrl.substring(slide.linkUrl.indexOf('#'))
+                                  const el = document.querySelector(hash)
+                                  if (el) {
+                                    e.preventDefault()
+                                    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                                    window.history.pushState(null, '', hash)
+                                  }
+                                }
+                              }}
+                              className="inline-block px-8 py-3.5 bg-white text-neutral-900 text-xs tracking-[0.22em] uppercase font-medium rounded-full hover:bg-brand hover:text-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.15)] cursor-pointer"
                             >
                               {slide.linkLabel}
                             </Link>

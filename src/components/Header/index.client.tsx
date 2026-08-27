@@ -34,6 +34,20 @@ export function HeaderClient({ header, categories = [] }: Props) {
 
   const displayCategories = categories && categories.length > 0 ? categories : defaultCategories
 
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.includes('#')) {
+      const hash = href.substring(href.indexOf('#'))
+      if (pathname === '/' || pathname === '') {
+        e.preventDefault()
+        const el = document.querySelector(hash)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          window.history.pushState(null, '', hash)
+        }
+      }
+    }
+  }
+
   return (
     <header className="sticky top-0 z-40 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-neutral-100 dark:border-neutral-800 transition-all">
       <nav className="flex items-center justify-between max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 h-[76px]">
@@ -107,6 +121,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
           {/* Tradición & Delicadeza (Sección en Landing) */}
           <Link
             href="/#tradicion"
+            onClick={(e) => handleAnchorClick(e, '/#tradicion')}
             className="text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative text-neutral-700 hover:text-brand"
           >
             Tradición
@@ -115,6 +130,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
           {/* Nuestra Historia (Sección en Landing) */}
           <Link
             href="/#historia"
+            onClick={(e) => handleAnchorClick(e, '/#historia')}
             className="text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative text-neutral-700 hover:text-brand"
           >
             Historia
@@ -123,6 +139,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
           {/* Talleres & Ferias (Sección en Landing) */}
           <Link
             href="/#talleres"
+            onClick={(e) => handleAnchorClick(e, '/#talleres')}
             className="text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative text-neutral-700 hover:text-brand"
           >
             Talleres & Ferias
@@ -131,6 +148,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
           {/* Contacto (Sección en Landing) */}
           <Link
             href="/#contacto"
+            onClick={(e) => handleAnchorClick(e, '/#contacto')}
             className="text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative text-neutral-700 hover:text-brand"
           >
             Contacto
