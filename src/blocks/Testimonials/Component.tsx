@@ -10,6 +10,8 @@ type Props = {
   limit?: number | null
 }
 
+import { TestimonialsGridClient, type TestimonialItem } from './TestimonialsGridClient'
+
 export const TestimonialsBlock: React.FC<Props> = async ({
   tagline = 'Voces de Nuestra Comunidad',
   heading = 'Lo que dicen quienes lucen Nenúfar',
@@ -65,77 +67,34 @@ export const TestimonialsBlock: React.FC<Props> = async ({
     ]
   }
 
+  const formattedDocs: TestimonialItem[] = docs.map((t) => {
+    const avatar = t.avatar && typeof t.avatar === 'object' ? (t.avatar as any) : null
+    return {
+      id: t.id,
+      quote: t.quote,
+      authorName: t.authorName,
+      authorRole: t.authorRole || null,
+      avatarUrl: avatar?.url || null,
+      rating: t.rating || 5,
+    }
+  })
+
   return (
-    <section id="testimonios" className="py-24 md:py-32 bg-[#FAF8F5] border-y border-neutral-100 scroll-mt-24">
+    <section id="testimonios" className="py-14 sm:py-16 md:py-20 bg-[#FAF8F5] border-y border-neutral-100 scroll-mt-24">
       <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Encabezado Editorial Krafti */}
-        <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 space-y-2.5">
           <span className="text-xs uppercase tracking-[0.3em] text-[#8B5A2B] font-semibold font-sans block">
             {tagline}
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-foreground font-normal tracking-tight">
             {heading}
           </h2>
-          <div className="w-10 h-0.5 bg-brand mx-auto mt-4 rounded-full opacity-60" />
+          <div className="w-12 h-0.5 bg-brand mx-auto mt-3.5 rounded-full opacity-60" />
         </div>
 
-        {/* Grilla de Testimonios Editoriales */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
-          {docs.map((t) => {
-            const avatar = t.avatar && typeof t.avatar === 'object' ? (t.avatar as any) : null
-            const avatarUrl = avatar?.url || null
-            const rating = t.rating || 5
-
-            return (
-              <div
-                key={t.id}
-                className="relative flex flex-col justify-between p-8 sm:p-10 rounded-2xl bg-white border border-neutral-100/80 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_35px_rgba(0,0,0,0.07)] transition-all duration-300 group"
-              >
-                <div>
-                  {/* Comilla Decorativa */}
-                  <div className="text-brand/30 group-hover:text-brand/50 transition-colors mb-4">
-                    <Quote className="w-8 h-8 rotate-180" />
-                  </div>
-
-                  {/* Cita en Serif Itálica */}
-                  <p className="font-serif italic text-neutral-800 text-base sm:text-lg leading-relaxed mb-8">
-                    &ldquo;{t.quote}&rdquo;
-                  </p>
-                </div>
-
-                {/* Autor y Origen */}
-                <div className="flex items-center gap-4 pt-6 border-t border-neutral-100">
-                  {avatarUrl ? (
-                    <div className="relative w-12 h-12 rounded-full overflow-hidden border border-brand/30 bg-muted flex-shrink-0">
-                      <Image
-                        src={avatarUrl}
-                        alt={t.authorName}
-                        className="object-cover"
-                        fill
-                        unoptimized
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-[#F5EFEB] text-[#8B5A2B] flex items-center justify-center font-serif font-semibold text-base flex-shrink-0 border border-[#8B5A2B]/20">
-                      {t.authorName.charAt(0)}
-                    </div>
-                  )}
-
-                  <div className="flex flex-col min-w-0">
-                    <span className="font-serif font-medium text-base text-foreground truncate">
-                      {t.authorName}
-                    </span>
-                    {t.authorRole && (
-                      <span className="text-[11px] uppercase tracking-wider text-[#8B5A2B] truncate font-sans">
-                        {t.authorRole}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        {/* Grilla Interactiva con Modal de Historia al hacer Clic */}
+        <TestimonialsGridClient testimonials={formattedDocs} />
       </div>
     </section>
   )
