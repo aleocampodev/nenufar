@@ -73,8 +73,8 @@ export function MobileMenu({ menu, categories = [] }: Props) {
 
   return (
     <Sheet onOpenChange={setIsOpen} open={isOpen}>
-      <SheetTrigger className="relative flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 text-foreground hover:border-brand hover:text-brand transition-colors">
-        <MenuIcon className="h-4 w-4" />
+      <SheetTrigger className="relative flex h-10 w-10 items-center justify-center rounded-full border border-current text-inherit opacity-90 hover:opacity-100 hover:bg-white/15 transition-all">
+        <MenuIcon className="h-4 w-4 text-inherit" />
       </SheetTrigger>
 
       <SheetContent side="left" className="px-5 w-[300px] sm:w-[360px] overflow-y-auto">
