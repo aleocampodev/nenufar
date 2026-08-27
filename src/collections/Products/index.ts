@@ -53,7 +53,7 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
     meta: true,
   },
   fields: [
-    { name: 'title', type: 'text', required: true },
+    { name: 'title', type: 'text', label: 'Nombre de la Joya', required: true },
     {
       type: 'tabs',
       tabs: [
@@ -62,6 +62,7 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
             {
               name: 'description',
               type: 'richText',
+              label: 'Historia y Descripción de la Pieza',
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => {
                   return [
@@ -73,17 +74,18 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
                   ]
                 },
               }),
-              label: false,
               required: false,
             },
             {
               name: 'gallery',
               type: 'array',
+              label: 'Galería de Fotos de la Joya',
               minRows: 1,
               fields: [
                 {
                   name: 'image',
                   type: 'upload',
+                  label: 'Foto de la joya',
                   relationTo: 'media',
                   required: true,
                 },
@@ -134,10 +136,11 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
             {
               name: 'layout',
               type: 'blocks',
+              label: 'Bloques Adicionales',
               blocks: [CallToAction, Content, MediaBlock],
             },
           ],
-          label: 'Content',
+          label: 'Contenido & Galería',
         },
         {
           fields: [
@@ -145,6 +148,7 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
             {
               name: 'relatedProducts',
               type: 'relationship',
+              label: 'Joyas Relacionadas',
               filterOptions: ({ id }) => {
                 if (id) {
                   return {
@@ -165,11 +169,11 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
               relationTo: 'products',
             },
           ],
-          label: 'Product Details',
+          label: 'Precios & Detalles',
         },
         {
           name: 'meta',
-          label: 'SEO',
+          label: 'SEO & Redes Sociales',
           fields: [
             OverviewField({
               titlePath: 'meta.title',
@@ -199,6 +203,7 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
     {
       name: 'categories',
       type: 'relationship',
+      label: 'Categorías',
       admin: {
         position: 'sidebar',
         sortOptions: 'title',
