@@ -51,9 +51,9 @@ export default async function HomePage() {
   const isSlider = (hero as any)?.type === 'slider'
 
   return (
-    <article className={isSlider ? 'pb-24' : 'pt-8 pb-24 space-y-12'}>
+    <article className={isSlider ? 'pb-16' : 'pt-8 pb-16'}>
       <RenderHero {...hero} />
-      {isSlider ? <div className="space-y-12 pt-12"><RenderBlocks blocks={layout} /></div> : <RenderBlocks blocks={layout} />}
+      <RenderBlocks blocks={layout} />
     </article>
   )
 }

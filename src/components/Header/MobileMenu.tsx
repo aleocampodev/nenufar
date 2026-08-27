@@ -54,6 +54,23 @@ export function MobileMenu({ menu, categories = [] }: Props) {
 
   const [categoriesExpanded, setCategoriesExpanded] = useState(true)
 
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    closeMobileMenu()
+    if (href.includes('#')) {
+      const hash = href.substring(href.indexOf('#'))
+      if (pathname === '/' || pathname === '') {
+        e.preventDefault()
+        setTimeout(() => {
+          const el = document.querySelector(hash)
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            window.history.pushState(null, '', hash)
+          }
+        }, 150)
+      }
+    }
+  }
+
   return (
     <Sheet onOpenChange={setIsOpen} open={isOpen}>
       <SheetTrigger className="relative flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 text-foreground hover:border-brand hover:text-brand transition-colors">
@@ -117,7 +134,7 @@ export function MobileMenu({ menu, categories = [] }: Props) {
             <li>
               <Link
                 href="/#tradicion"
-                onClick={closeMobileMenu}
+                onClick={(e) => handleAnchorClick(e, '/#tradicion')}
                 className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
               >
                 Tradición & Delicadeza
@@ -127,7 +144,7 @@ export function MobileMenu({ menu, categories = [] }: Props) {
             <li>
               <Link
                 href="/#historia"
-                onClick={closeMobileMenu}
+                onClick={(e) => handleAnchorClick(e, '/#historia')}
                 className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
               >
                 Nuestra Historia
@@ -137,7 +154,7 @@ export function MobileMenu({ menu, categories = [] }: Props) {
             <li>
               <Link
                 href="/#talleres"
-                onClick={closeMobileMenu}
+                onClick={(e) => handleAnchorClick(e, '/#talleres')}
                 className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
               >
                 Talleres & Ferias
@@ -147,7 +164,7 @@ export function MobileMenu({ menu, categories = [] }: Props) {
             <li>
               <Link
                 href="/#contacto"
-                onClick={closeMobileMenu}
+                onClick={(e) => handleAnchorClick(e, '/#contacto')}
                 className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
               >
                 Contacto & Pedidos
