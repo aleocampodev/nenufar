@@ -110,8 +110,8 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = fa
     <div
       className={`group relative flex flex-col justify-between overflow-hidden border-r border-b border-border/40 transition-all duration-300 ${bgClass} ${
         isHero
-          ? 'col-span-1 md:col-span-2 row-span-1 md:row-span-2 min-h-[440px] md:min-h-[560px]'
-          : 'col-span-1 row-span-1 min-h-[320px] max-h-[380px]'
+          ? 'col-span-1 md:col-span-2 row-span-1 md:row-span-2'
+          : 'col-span-1 row-span-1'
       }`}
     >
       {/* Badges superiores (Destacado / Agotado) */}
@@ -132,15 +132,18 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, isHero = fa
         )}
       </div>
 
-      {/* Contenedor de la Imagen con proporción equilibrada */}
-      <div className="flex-1 flex items-center justify-center p-5 sm:p-6 relative overflow-hidden">
+      {/* Contenedor de la Imagen con proporción equilibrada y visualización 100% nítida */}
+      <div className={`relative w-full flex items-center justify-center p-4 sm:p-6 ${
+        isHero ? 'h-[360px] sm:h-[480px]' : 'h-[230px] sm:h-[270px]'
+      }`}>
         <Link
           href={`/products/${productSlug}`}
-          className="relative w-full h-full flex items-center justify-center min-h-[170px] sm:min-h-[190px] z-10 focus:outline-none"
+          className="relative w-full h-full flex items-center justify-center z-10 focus:outline-none"
         >
           {image ? (
             <Media
-              className="max-h-[160px] sm:max-h-[185px] max-w-[85%] w-auto h-auto object-contain transition-transform duration-700 ease-out group-hover:scale-[1.06] drop-shadow-[0_8px_18px_rgba(0,0,0,0.06)]"
+              fill
+              imgClassName="object-contain p-2 transition-transform duration-700 ease-out group-hover:scale-[1.05] drop-shadow-[0_10px_25px_rgba(0,0,0,0.08)]"
               resource={image}
               priority={index === 0}
             />
