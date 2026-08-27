@@ -67,7 +67,12 @@ export const CallToActionBlock: React.FC<
             <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full sm:w-auto">
               {(links && links.length > 0) ? (
                 links.map(({ link }, i) => (
-                  <CMSLink key={i} size="lg" className="rounded-full px-8 py-3.5 text-xs uppercase tracking-wider font-medium shadow-md w-full text-center" {...link} />
+                  <CMSLink
+                    key={i}
+                    size="lg"
+                    className="rounded-full px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(106,27,154,0.25)] hover:shadow-[0_6px_25px_rgba(106,27,154,0.35)] transition-all duration-300 w-full sm:w-auto text-center cursor-pointer"
+                    {...link}
+                  />
                 ))
               ) : (
                 <a
