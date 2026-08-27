@@ -13,7 +13,7 @@ export const NenufarStoryBlock: React.FC<Props & { id?: string }> = ({
   linkLabel = 'Conocer la colección',
   id,
 }) => {
-  const hasImage = image && typeof image === 'object'
+  const hasImage = Boolean(image && (typeof image === 'object' ? (image as Media)?.url || (image as Media)?.id : image))
 
   return (
     <section
@@ -34,8 +34,8 @@ export const NenufarStoryBlock: React.FC<Props & { id?: string }> = ({
               />
             ) : (
               <img
-                src="https://images.unsplash.com/photo-1590794056226-017905317107?w=1000&auto=format&fit=crop&q=80"
-                alt="Taller artesanal de joyería en mostacilla"
+                src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1200&auto=format&fit=crop&q=85"
+                alt="Taller artesanal de joyería en mostacilla Shirley"
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
               />
             )}

@@ -23,6 +23,7 @@ async function queryHomePage(): Promise<Page | null> {
   try {
     const result = await payload.find({
       collection: 'pages',
+      depth: 2,
       draft,
       limit: 1,
       overrideAccess: draft,
