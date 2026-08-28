@@ -6,17 +6,19 @@ export const SidebarHeader: React.FC = () => {
       href="/"
       target="_blank"
       rel="noopener noreferrer"
-      title="Ir a la tienda Nenúfar (Landing Page)"
+      className="sidebar-header-link"
       style={{
         display: 'flex',
         alignItems: 'center',
         gap: '0.85rem',
         padding: '1.25rem 1rem 1rem 1rem',
-        marginBottom: '0.75rem',
+        margin: '0 0 0.75rem 0',
         borderBottom: '1px solid var(--color-base-150)',
         textDecoration: 'none',
         cursor: 'pointer',
-        transition: 'all 0.2s ease',
+        background: 'transparent',
+        backgroundColor: 'transparent',
+        borderRadius: 0,
       }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
