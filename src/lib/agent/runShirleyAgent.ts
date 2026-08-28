@@ -219,8 +219,14 @@ export async function runShirleyAgent({
     return trimmed
   })()
 
-  // 1. Cargar memoria previa de Supabase
-  const historyMessages = await loadRecentHistory(payload, chatId)
+  const isResetCommand =
+    text.trim() === '/start' ||
+    text.trim() === '/iniciar' ||
+    text.trim() === '/reiniciar' ||
+    text.trim() === '/reset'
+
+  // 1. Cargar memoria previa de Supabase (o iniciar sesión limpia si envió /start)
+  const historyMessages = isResetCommand ? [] : await loadRecentHistory(payload, chatId)
   const system = buildSystemPrompt(userName)
   const baseUrl = (process.env.ANTHROPIC_BASE_URL || 'http://localhost:4000').replace(/\/$/, '')
   const apiKey =
