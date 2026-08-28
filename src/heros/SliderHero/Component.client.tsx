@@ -20,8 +20,8 @@ type Slide = {
 const getImagePositionClass = (pos?: string | null) => {
   if (pos === 'center') return 'object-cover object-center'
   if (pos === 'bottom') return 'object-cover object-bottom'
-  // Por defecto 'top' (20% en mobile, 25% en desktop) para encuadrar rostros y figuras sin cortar cabezas
-  return 'object-cover object-[center_20%] md:object-[center_25%]'
+  // Por defecto 'top': anclado al borde superior exacto (0% top) para mostrar cabezas y rostros completos
+  return 'object-cover object-top'
 }
 
 export const SliderHeroClient: React.FC<{
