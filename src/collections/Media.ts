@@ -59,7 +59,9 @@ export const Media: CollectionConfig = {
     adminThumbnail: ({ doc }) => {
       const d = doc as any
       if (d?.mimeType?.startsWith('video/') || d?.filename?.match(/\.(mp4|webm|mov|m4v)$/i)) {
-        return '/media/shirley-nenufar-1.jpeg'
+        const base = (d?.filename || '').replace(/\.[^/.]+$/, '')
+        const posterFile = `${base}-poster.jpg`
+        return getSupabasePublicUrl(posterFile) || '/media/taller-artesanal-poster.jpg'
       }
       return (
         d?.thumbnailURL ||
@@ -132,7 +134,9 @@ export const Media: CollectionConfig = {
         if (doc.filename) {
           doc.url = getSupabasePublicUrl(doc.filename)
           if (doc.mimeType?.startsWith('video/') || doc.filename.match(/\.(mp4|webm|mov|m4v)$/i)) {
-            doc.thumbnailURL = '/media/shirley-nenufar-1.jpeg'
+            const base = doc.filename.replace(/\.[^/.]+$/, '')
+            const posterFile = `${base}-poster.jpg`
+            doc.thumbnailURL = getSupabasePublicUrl(posterFile) || '/media/taller-artesanal-poster.jpg'
           } else {
             doc.thumbnailURL = doc.sizes?.thumbnail?.filename
               ? getSupabasePublicUrl(doc.sizes.thumbnail.filename)
@@ -156,6 +160,33 @@ export const Media: CollectionConfig = {
                 buffer,
                 mimeType: doc.mimeType || (doc.filename?.match(/\.(mp4|mov)$/i) ? 'video/mp4' : 'image/jpeg'),
               })
+
+              // If it is a video, automatically extract a poster frame with ffmpeg and upload to Supabase
+              if (doc.mimeType?.startsWith('video/') || doc.filename.match(/\.(mp4|webm|mov|m4v)$/i)) {
+                try {
+                  const { exec } = await import('child_process')
+                  const util = await import('util')
+                  const execPromise = util.promisify(exec)
+                  const base = doc.filename.replace(/\.[^/.]+$/, '')
+                  const posterFilename = `${base}-poster.jpg`
+                  const posterFilePath = path.join(staticDir, posterFilename)
+
+                  await execPromise(
+                    `ffmpeg -ss 00:00:01.000 -i "${mainFilePath}" -vframes 1 -q:v 2 "${posterFilePath}" -y`
+                  )
+
+                  if (fs.existsSync(posterFilePath)) {
+                    const posterBuffer = await fs.promises.readFile(posterFilePath)
+                    await uploadToSupabaseStorage({
+                      filename: posterFilename,
+                      buffer: posterBuffer,
+                      mimeType: 'image/jpeg',
+                    })
+                  }
+                } catch (ffmpegErr) {
+                  req.payload.logger.warn({ msg: '[Video Poster] Error extracting poster frame', ffmpegErr })
+                }
+              }
             }
           }
           if (doc.sizes && typeof doc.sizes === 'object') {
