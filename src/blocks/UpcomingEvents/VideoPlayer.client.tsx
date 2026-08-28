@@ -35,8 +35,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   return (
     <div className="flex flex-col items-center w-full max-w-sm mx-auto">
-      {/* Marco Celular / Reel 9:16 */}
-      <div className="relative w-full aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl border-4 border-stone-800 bg-stone-950 group">
+      {/* Marco Celular / Reel 9:16 Claro */}
+      <div className="relative w-full aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl border-4 border-stone-300 bg-stone-900 group">
         {/* Badge Superior */}
         <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-300 text-[10px] uppercase tracking-widest font-semibold border border-amber-500/20">
           <Sparkles className="w-3 h-3 text-amber-400" />
@@ -72,13 +72,13 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           </button>
         </div>
 
-        {/* Degradado inferior */}
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
+        {/* Degradado inferior sutil */}
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
       </div>
 
       {/* Pie de Video Editorial */}
       {caption && (
-        <p className="mt-4 text-xs sm:text-sm text-stone-400 font-light text-center leading-relaxed max-w-xs">
+        <p className="mt-4 text-xs sm:text-sm text-stone-600 font-light text-center leading-relaxed max-w-xs">
           {caption}
         </p>
       )}
