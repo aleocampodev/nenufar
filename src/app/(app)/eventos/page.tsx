@@ -6,12 +6,12 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
 export const metadata: Metadata = {
-  description: 'Próximos eventos, ferias y talleres de Nénufar en Cartagena y Colombia.',
+  description: 'Próximos eventos, ferias y talleres de Nenúfar en Cartagena y Colombia.',
   openGraph: mergeOpenGraph({
-    title: 'Eventos | Nénufar',
+    title: 'Eventos | Nenúfar',
     url: '/eventos',
   }),
-  title: 'Eventos | Nénufar',
+  title: 'Eventos | Nenúfar',
 }
 
 function formatEventDate(dateStr: string): string {
@@ -73,7 +73,7 @@ export default async function EventosPage() {
       <header className="mb-10">
         <h1 className="text-4xl font-serif mb-4 text-neutral-900">Eventos</h1>
         <p className="text-xl text-neutral-600 font-light">
-          Ferias, talleres y encuentros de Nénufar
+          Ferias, talleres y encuentros de Nenúfar
         </p>
       </header>
 

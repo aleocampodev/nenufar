@@ -16,7 +16,7 @@ export const BeforeDashboard: React.FC = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
         <span style={{ fontSize: '24px' }}>🌸</span>
         <h3 style={{ margin: 0, fontSize: '20px', color: '#261a37', fontWeight: 600, fontFamily: 'serif' }}>
-          ¡Bienvenida al Panel de Control de Nénufar!
+          ¡Bienvenida al Panel de Control de Nenúfar!
         </h3>
       </div>
       <p style={{ color: '#5f4d83', fontSize: '14px', margin: '0 0 18px 0', lineHeight: 1.5 }}>

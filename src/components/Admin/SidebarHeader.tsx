@@ -2,7 +2,11 @@ import React from 'react'
 
 export const SidebarHeader: React.FC = () => {
   return (
-    <div
+    <a
+      href="/"
+      target="_blank"
+      rel="noopener noreferrer"
+      title="Ir a la tienda Nenúfar (Landing Page)"
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -10,11 +14,14 @@ export const SidebarHeader: React.FC = () => {
         padding: '1.25rem 1rem 1rem 1rem',
         marginBottom: '0.75rem',
         borderBottom: '1px solid var(--color-base-150)',
+        textDecoration: 'none',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
       }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        alt="Nénufar Logo"
+        alt="Nenúfar Logo"
         src="/nenufar-logo.png"
         style={{
           height: '42px',
@@ -32,8 +39,8 @@ export const SidebarHeader: React.FC = () => {
           letterSpacing: '-0.02em',
         }}
       >
-        Nénufar
+        Nenúfar
       </span>
-    </div>
+    </a>
   )
 }

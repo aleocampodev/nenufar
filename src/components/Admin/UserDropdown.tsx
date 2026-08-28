@@ -122,7 +122,7 @@ export const UserDropdown: React.FC = () => {
                 color: '#6B7280',
               }}
             >
-              Nénufar Joyería
+              Nenúfar Joyería
             </div>
           </div>
 

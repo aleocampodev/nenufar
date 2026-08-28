@@ -4,14 +4,14 @@ const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
   locale: 'es_CO',
   description:
-    'Joyería artesanal colombiana hecha a mano en Cartagena. Piezas únicas de Nénufar.',
+    'Joyería artesanal colombiana hecha a mano en Cartagena. Piezas únicas de Nenúfar.',
   images: [
     {
       url: '/og-default.jpg',
     },
   ],
-  siteName: 'Nénufar',
-  title: 'Nénufar — Joyería Artesanal Colombiana',
+  siteName: 'Nenúfar',
+  title: 'Nenúfar — Joyería Artesanal Colombiana',
 }
 
 export const mergeOpenGraph = (og?: Partial<Metadata['openGraph']>): Metadata['openGraph'] => {

@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const description =
     product.meta?.description ||
     plainDescription(product, 155) ||
-    `${product.title} — joyería artesanal colombiana hecha a mano por Nénufar.`
+    `${product.title} — joyería artesanal colombiana hecha a mano por Nenúfar.`
   const title = product.meta?.title || `${product.title} | ${SITE_NAME} Joyería Artesanal`
   const canonical = `${getServerSideURL()}/products/${(product as any).slug || slug}`
 

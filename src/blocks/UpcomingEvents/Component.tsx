@@ -82,7 +82,7 @@ export const UpcomingEventsBlock: React.FC<Props> = async ({
         title: 'Feria Artesanal del Caribe',
         date: '2026-09-20T10:00:00.000Z',
         location: 'Plaza de San Pedro Claver, Cartagena',
-        description: 'Encuentra nuestras piezas exclusivas de filigrana y mostacilla en el stand de Nénufar.',
+        description: 'Encuentra nuestras piezas exclusivas de filigrana y mostacilla en el stand de Nenúfar.',
         image: null,
       },
       {

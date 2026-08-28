@@ -65,7 +65,7 @@ export const BeforeLogin: React.FC = () => {
           letterSpacing: '-0.02em',
         }}
       >
-        Nénufar Admin
+        Nenúfar Admin
       </h2>
       <p style={{ color: '#6b7280', fontSize: '0.95rem', lineHeight: 1.5 }}>
         Panel de administración exclusivo para Shirley.

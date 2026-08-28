@@ -25,10 +25,10 @@ export default function PedidosEnviarPage() {
 }
 
 export const metadata: Metadata = {
-  description: 'Confirmá tu pedido a Nénufar. Shirley te contacta para coordinar.',
+  description: 'Confirmá tu pedido a Nenúfar. Shirley te contacta para coordinar.',
   openGraph: mergeOpenGraph({
-    title: 'Confirmar pedido | Nénufar',
+    title: 'Confirmar pedido | Nenúfar',
     url: '/pedidos/enviar',
   }),
-  title: 'Confirmar pedido | Nénufar',
+  title: 'Confirmar pedido | Nenúfar',
 }

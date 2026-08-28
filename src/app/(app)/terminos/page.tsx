@@ -5,12 +5,12 @@ import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 const LAST_UPDATED = '1 de agosto de 2026'
 
 export const metadata: Metadata = {
-  description: 'Términos y condiciones de compra en Nénufar. Joyería artesanal colombiana.',
+  description: 'Términos y condiciones de compra en Nenúfar. Joyería artesanal colombiana.',
   openGraph: mergeOpenGraph({
-    title: 'Términos y Condiciones | Nénufar',
+    title: 'Términos y Condiciones | Nenúfar',
     url: '/terminos',
   }),
-  title: 'Términos y Condiciones | Nénufar',
+  title: 'Términos y Condiciones | Nenúfar',
 }
 
 export default function TerminosPage() {
@@ -24,7 +24,7 @@ export default function TerminosPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-serif mb-3 text-neutral-900">1. Aceptación</h2>
           <p className="text-neutral-700 leading-relaxed">
-            Al realizar un pedido en Nénufar aceptás estos términos y condiciones. Si no estás de
+            Al realizar un pedido en Nenúfar aceptás estos términos y condiciones. Si no estás de
             acuerdo con alguno de ellos, por favor no realices tu pedido y contactanos para resolver
             cualquier duda.
           </p>
@@ -33,7 +33,7 @@ export default function TerminosPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-serif mb-3 text-neutral-900">2. Productos artesanales</h2>
           <p className="text-neutral-700 leading-relaxed">
-            Todas las piezas de Nénufar son elaboradas a mano por Shirley en su taller en Cartagena,
+            Todas las piezas de Nenúfar son elaboradas a mano por Shirley en su taller en Cartagena,
             Colombia. Dado su carácter artesanal, pueden existir pequeñas variaciones en color,
             textura y acabado entre piezas, lo cual forma parte de su autenticidad y valor.
           </p>
@@ -68,7 +68,7 @@ export default function TerminosPage() {
           <h2 className="text-2xl font-serif mb-3 text-neutral-900">5. Envíos</h2>
           <p className="text-neutral-700 leading-relaxed">
             Realizamos envíos a todo Colombia. El costo y tiempo de envío varían según la empresa de
-            mensajería y la ubicación de destino. Nénufar no se hace responsable por demoras
+            mensajería y la ubicación de destino. Nenúfar no se hace responsable por demoras
             ocasionadas por la empresa de mensajería una vez el paquete ha sido entregado a la
             transportadora.
           </p>
@@ -86,7 +86,7 @@ export default function TerminosPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-serif mb-3 text-neutral-900">7. Propiedad intelectual</h2>
           <p className="text-neutral-700 leading-relaxed">
-            Todos los diseños, fotografías y contenidos de Nénufar son propiedad de Shirley y están
+            Todos los diseños, fotografías y contenidos de Nenúfar son propiedad de Shirley y están
             protegidos por las leyes colombianas de derechos de autor. Queda prohibida su
             reproducción sin autorización expresa.
           </p>

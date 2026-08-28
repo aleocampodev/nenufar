@@ -20,7 +20,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'Nénufar — Joyería Artesanal',
+                  text: 'Nenúfar — Joyería Artesanal',
                   version: 1,
                 },
               ],

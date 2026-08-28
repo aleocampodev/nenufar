@@ -28,7 +28,7 @@ export const homePageData: (args: ProductArgs) => RequiredDataFromCollectionSlug
           link: {
             type: 'custom',
             appearance: 'outline',
-            label: 'Sobre Nénufar',
+            label: 'Sobre Nenúfar',
             url: '/sobre-nenufar',
           },
         },

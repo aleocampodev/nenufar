@@ -35,7 +35,7 @@ export function validateConsent(value: unknown): ConsentValidationResult {
  * Single source of truth — form UI and confirmation page both use this.
  */
 export const CONSENT_TEXT =
-  'Autorizo a Nénufar a enviar mis datos de contacto y mi pedido a Shirley para que me contacte. Tus datos no se comparten con terceros y se usan solo para procesar tu pedido. Ver política de privacidad.'
+  'Autorizo a Nenúfar a enviar mis datos de contacto y mi pedido a Shirley para que me contacte. Tus datos no se comparten con terceros y se usan solo para procesar tu pedido. Ver política de privacidad.'
 
 /**
  * The privacy notice URL — referenced in the consent text.

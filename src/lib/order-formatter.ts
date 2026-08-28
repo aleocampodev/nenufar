@@ -107,8 +107,8 @@ export function formatOrderMessage({
   const esPersonalizado = Boolean(personalizacion)
   lines.push(
     esPersonalizado
-      ? '✦ <b>Pedido PERSONALIZADO — Nénufar</b>'
-      : '🔔 <b>Nuevo pedido — Nénufar</b>',
+      ? '✦ <b>Pedido PERSONALIZADO — Nenúfar</b>'
+      : '🔔 <b>Nuevo pedido — Nenúfar</b>',
   )
   lines.push('━━━━━━━━━━━━━━━━━━━━━━━')
   lines.push(`🎫 Pedido: <code>#${escapeHtml(orderId)}</code>`)
