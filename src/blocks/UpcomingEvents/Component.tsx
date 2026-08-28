@@ -30,15 +30,17 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
   let eventsList: EventItem[] = []
 
   if (events && Array.isArray(events) && events.length > 0) {
-    eventsList = events.map((ev, idx) => ({
-      id: ev.id || `ev-${idx + 1}`,
-      title: ev.title,
-      date: ev.date,
-      endDate: ev.endDate,
-      location: ev.location,
-      description: ev.description,
-      type: ev.type,
-    }))
+    eventsList = events
+      .filter((ev) => ev != null && typeof ev === 'object')
+      .map((ev, idx) => ({
+        id: ev.id || `ev-${idx + 1}`,
+        title: ev.title || '',
+        date: ev.date || '',
+        endDate: ev.endDate || null,
+        location: ev.location || null,
+        description: ev.description || null,
+        type: ev.type || 'feria',
+      }))
   } else {
     try {
       const payload = await getPayload({ config: configPromise })

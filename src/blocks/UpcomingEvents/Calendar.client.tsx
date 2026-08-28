@@ -36,14 +36,17 @@ export const CalendarClient: React.FC<CalendarClientProps> = ({ events = [] }) =
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
 
   // Filtrar eventos EXCLUSIVAMENTE del mes actual
-  const monthEvents = events.filter((ev) => {
+  const monthEvents = (events || []).filter((ev) => {
+    if (!ev || !ev.date) return false
     const d = new Date(ev.date)
+    if (Number.isNaN(d.getTime())) return false
     return d.getFullYear() === currentYear && d.getMonth() === currentMonth
   })
 
   // Obtener evento de un día específico
   const getEventForDay = (day: number) => {
     return monthEvents.find((ev) => {
+      if (!ev || !ev.date) return false
       const d = new Date(ev.date)
       return d.getDate() === day
     })
@@ -51,7 +54,7 @@ export const CalendarClient: React.FC<CalendarClientProps> = ({ events = [] }) =
 
   // Evento activo en el mes visible
   const activeEvent =
-    (selectedEventId ? monthEvents.find((ev) => ev.id === selectedEventId) : null) ||
+    (selectedEventId ? monthEvents.find((ev) => ev && ev.id === selectedEventId) : null) ||
     monthEvents[0] ||
     null
 

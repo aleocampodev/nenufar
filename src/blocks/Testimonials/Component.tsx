@@ -76,17 +76,19 @@ export const TestimonialsBlock: React.FC<Props> = async ({
     ]
   }
 
-  const formattedDocs: TestimonialItem[] = docs.map((t) => {
-    const avatar = t.avatar && typeof t.avatar === 'object' ? (t.avatar as any) : null
-    return {
-      id: t.id,
-      quote: t.quote,
-      authorName: t.authorName,
-      authorRole: t.authorRole || null,
-      avatarUrl: avatar?.url || null,
-      rating: t.rating || 5,
-    }
-  })
+  const formattedDocs: TestimonialItem[] = (docs || [])
+    .filter((t) => t != null && typeof t === 'object')
+    .map((t, idx) => {
+      const avatar = t.avatar && typeof t.avatar === 'object' ? (t.avatar as any) : null
+      return {
+        id: t.id || `test-${idx + 1}`,
+        quote: t.quote || '',
+        authorName: t.authorName || 'Cliente',
+        authorRole: t.authorRole || null,
+        avatarUrl: avatar?.url || null,
+        rating: t.rating || 5,
+      }
+    })
 
   return (
     <section id="testimonios" className="py-14 sm:py-16 md:py-20 bg-[#FAF8F5] border-y border-neutral-100 scroll-mt-24">
