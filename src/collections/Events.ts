@@ -10,6 +10,7 @@ export const Events: CollectionConfig = {
     plural: 'Eventos y Ferias',
   },
   admin: {
+    hidden: true,
     group: 'Contenido Web',
     useAsTitle: 'title',
     defaultColumns: ['title', 'date', 'location', '_status'],

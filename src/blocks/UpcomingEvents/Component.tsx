@@ -13,6 +13,7 @@ interface UpcomingEventsBlockProps {
   video?: Media | string | null
   videoUrl?: string | null
   videoCaption?: string | null
+  events?: any[] | null
   id?: string
 }
 
@@ -23,36 +24,49 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
   video,
   videoUrl,
   videoCaption,
+  events,
   id,
 }) => {
   let eventsList: EventItem[] = []
 
-  try {
-    const payload = await getPayload({ config: configPromise })
-    const result = await payload.find({
-      collection: "events",
-      depth: 1,
-      limit: 12,
-      overrideAccess: true,
-      sort: "date",
-      where: {
-        _status: { equals: "published" },
-      },
-    })
+  if (events && Array.isArray(events) && events.length > 0) {
+    eventsList = events.map((ev, idx) => ({
+      id: ev.id || `ev-${idx + 1}`,
+      title: ev.title,
+      date: ev.date,
+      endDate: ev.endDate,
+      location: ev.location,
+      description: ev.description,
+      type: ev.type,
+    }))
+  } else {
+    try {
+      const payload = await getPayload({ config: configPromise })
+      const result = await payload.find({
+        collection: "events",
+        depth: 1,
+        limit: 12,
+        overrideAccess: true,
+        sort: "date",
+        where: {
+          _status: { equals: "published" },
+        },
+      })
 
-    if (result.docs && result.docs.length > 0) {
-      eventsList = result.docs.map((doc: any) => ({
-        id: doc.id,
-        title: doc.title,
-        date: doc.date,
-        endDate: doc.endDate,
-        location: doc.location,
-        description: doc.description,
-        type: doc.type,
-      }))
+      if (result.docs && result.docs.length > 0) {
+        eventsList = result.docs.map((doc: any) => ({
+          id: doc.id,
+          title: doc.title,
+          date: doc.date,
+          endDate: doc.endDate,
+          location: doc.location,
+          description: doc.description,
+          type: doc.type,
+        }))
+      }
+    } catch (err) {
+      console.warn("[UpcomingEvents] Error fetching events:", err)
     }
-  } catch (err) {
-    console.warn("[UpcomingEvents] Error fetching events:", err)
   }
 
   // Fallbacks de ferias y talleres en Cartagena si la base de datos está vacía

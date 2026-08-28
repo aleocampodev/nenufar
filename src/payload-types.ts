@@ -570,6 +570,16 @@ export interface Page {
          * Frase descriptiva que acompaña el video vertical en la tienda.
          */
         videoCaption?: string | null;
+        events?:
+          | {
+              title: string;
+              type?: ('feria' | 'taller' | 'popup') | null;
+              date: string;
+              location: string;
+              description?: string | null;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'upcomingEvents';
@@ -615,6 +625,16 @@ export interface Page {
         tagline?: string | null;
         heading?: string | null;
         limit?: number | null;
+        items?:
+          | {
+              authorName: string;
+              authorRole?: string | null;
+              quote: string;
+              rating?: number | null;
+              avatar?: (number | null) | Media;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'testimonials';
@@ -1574,6 +1594,16 @@ export interface PagesSelect<T extends boolean = true> {
               video?: T;
               videoUrl?: T;
               videoCaption?: T;
+              events?:
+                | T
+                | {
+                    title?: T;
+                    type?: T;
+                    date?: T;
+                    location?: T;
+                    description?: T;
+                    id?: T;
+                  };
               id?: T;
               blockName?: T;
             };
@@ -1602,6 +1632,16 @@ export interface PagesSelect<T extends boolean = true> {
               tagline?: T;
               heading?: T;
               limit?: T;
+              items?:
+                | T
+                | {
+                    authorName?: T;
+                    authorRole?: T;
+                    quote?: T;
+                    rating?: T;
+                    avatar?: T;
+                    id?: T;
+                  };
               id?: T;
               blockName?: T;
             };

@@ -11,7 +11,8 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
 }) => {
   if (!context.disableRevalidate) {
     if (doc._status === 'published' && doc.slug) {
-      const path = doc.slug === 'home' ? '/' : `/${doc.slug}`
+      const isHome = doc.slug === 'home' || doc.slug === 'inicio'
+      const path = isHome ? '/' : `/${doc.slug}`
 
       payload.logger.info(`Revalidating page at path: ${path}`)
 
@@ -19,7 +20,8 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
     }
 
     if (previousDoc?._status === 'published' && doc._status !== 'published' && previousDoc?.slug) {
-      const oldPath = previousDoc.slug === 'home' ? '/' : `/${previousDoc.slug}`
+      const wasHome = previousDoc.slug === 'home' || previousDoc.slug === 'inicio'
+      const oldPath = wasHome ? '/' : `/${previousDoc.slug}`
 
       payload.logger.info(`Revalidating old page at path: ${oldPath}`)
 

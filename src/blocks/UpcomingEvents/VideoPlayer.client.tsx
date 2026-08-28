@@ -46,7 +46,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         {/* Video Element */}
         <video
           ref={videoRef}
-          src={videoUrl || ""}
+          src={videoUrl || undefined}
           autoPlay
           loop
           muted

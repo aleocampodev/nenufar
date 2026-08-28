@@ -68,7 +68,7 @@ export const CalendarClient: React.FC<CalendarClientProps> = ({ events = [] }) =
       month: "long",
       year: "numeric",
       timeZone: "America/Bogota",
-    })
+    }).replace(/\u00a0|\u202f/g, ' ')
   }
 
   const formatTime = (dateStr: string) => {
@@ -77,7 +77,7 @@ export const CalendarClient: React.FC<CalendarClientProps> = ({ events = [] }) =
       hour: "2-digit",
       minute: "2-digit",
       timeZone: "America/Bogota",
-    })
+    }).replace(/\u00a0|\u202f/g, ' ')
   }
 
   return (

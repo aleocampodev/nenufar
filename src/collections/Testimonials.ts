@@ -10,6 +10,7 @@ export const Testimonials: CollectionConfig = {
     plural: 'Testimonios',
   },
   admin: {
+    hidden: true,
     group: 'Contenido Web',
     useAsTitle: 'authorName',
     defaultColumns: ['authorName', 'quote', '_status', 'updatedAt'],

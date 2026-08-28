@@ -30,7 +30,12 @@ async function queryHomePage(): Promise<Page | null> {
       pagination: false,
       where: {
         and: [
-          { slug: { equals: 'home' } },
+          {
+            or: [
+              { slug: { equals: 'home' } },
+              { slug: { equals: 'inicio' } },
+            ],
+          },
           ...(!draft ? [{ _status: { equals: 'published' } }] : []),
         ],
       },
@@ -50,7 +55,10 @@ async function queryHomePage(): Promise<Page | null> {
         overrideAccess: true,
         pagination: false,
         where: {
-          slug: { equals: 'home' },
+          or: [
+            { slug: { equals: 'home' } },
+            { slug: { equals: 'inicio' } },
+          ],
         },
       })
 
