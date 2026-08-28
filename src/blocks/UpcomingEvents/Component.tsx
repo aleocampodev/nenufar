@@ -102,9 +102,25 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
     ]
   }
 
-  const mediaObj = video as Media
-  const hasVideoMedia = mediaObj && typeof mediaObj === "object" && mediaObj.url
-  const finalVideoUrl = hasVideoMedia ? mediaObj.url : videoUrl
+  let finalVideoUrl = videoUrl
+  if (video && typeof video === 'object' && (video as Media).url) {
+    finalVideoUrl = (video as Media).url
+  } else if (typeof video === 'number') {
+    try {
+      const payload = await getPayload({ config: configPromise })
+      const mediaDoc = await payload.findByID({ collection: 'media', id: video })
+      if (mediaDoc?.url) {
+        finalVideoUrl = mediaDoc.url
+      }
+    } catch (err) {
+      console.warn('[UpcomingEvents] Error fetching video media:', err)
+    }
+  }
+
+  // Fallback a video real subido si no hay URL configurada
+  if (!finalVideoUrl) {
+    finalVideoUrl = '/media/taller-artesanal.mp4'
+  }
 
   return (
     <section id={id || "talleres"} className="w-full py-20 bg-[#FAF8F5] text-stone-900 border-t border-stone-200/80">

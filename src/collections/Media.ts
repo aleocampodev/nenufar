@@ -59,7 +59,7 @@ export const Media: CollectionConfig = {
     adminThumbnail: ({ doc }) => {
       const d = doc as any
       if (d?.mimeType?.startsWith('video/') || d?.filename?.match(/\.(mp4|webm|mov|m4v)$/i)) {
-        return d?.url || getSupabasePublicUrl(d?.filename || '')
+        return '/media/shirley-nenufar-1.jpeg'
       }
       return (
         d?.thumbnailURL ||
@@ -131,9 +131,13 @@ export const Media: CollectionConfig = {
         if (!doc) return doc
         if (doc.filename) {
           doc.url = getSupabasePublicUrl(doc.filename)
-          doc.thumbnailURL = doc.sizes?.thumbnail?.filename
-            ? getSupabasePublicUrl(doc.sizes.thumbnail.filename)
-            : doc.url
+          if (doc.mimeType?.startsWith('video/') || doc.filename.match(/\.(mp4|webm|mov|m4v)$/i)) {
+            doc.thumbnailURL = '/media/shirley-nenufar-1.jpeg'
+          } else {
+            doc.thumbnailURL = doc.sizes?.thumbnail?.filename
+              ? getSupabasePublicUrl(doc.sizes.thumbnail.filename)
+              : doc.url
+          }
         }
         return doc
       },
