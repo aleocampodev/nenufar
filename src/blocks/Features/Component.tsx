@@ -119,7 +119,7 @@ const getIconComponent = (icon?: string | null) => {
 
 export const FeaturesBlock: React.FC<Props> = ({
   tagline = 'Tradición y Delicadeza',
-  heading = 'Por qué elegir Nenúfar Joyería',
+  heading = 'Por qué elegir Nénufar Joyería',
   centerImage,
   items,
   id,
@@ -158,16 +158,16 @@ export const FeaturesBlock: React.FC<Props> = ({
       const media = centerImage as MediaType
       const url = media.url || (media as any).sizes?.card?.url || (media as any).sizes?.thumbnail?.url
       if (url) {
-        return { src: url, alt: media.alt || 'Joyería artesanal Nenúfar' }
+        return { src: url, alt: media.alt || 'Joyería artesanal Nénufar' }
       }
     }
     if (typeof centerImage === 'string' && centerImage.trim().length > 0) {
-      return { src: centerImage, alt: 'Joyería artesanal Nenúfar' }
+      return { src: centerImage, alt: 'Joyería artesanal Nénufar' }
     }
-    // Fallback fotográfico local de alta resolución de la tienda
+    // Fallback fotográfico real de alta resolución de la tienda en Supabase Storage
     return {
-      src: '/media/landing-image2.jpeg',
-      alt: 'Joyería artesanal en mostacilla tejida a mano',
+      src: 'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/colombia-aretes.jpeg',
+      alt: 'Joyería artesanal en mostacilla tejida a mano - Nénufar',
     }
   }
 

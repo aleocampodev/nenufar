@@ -20,7 +20,7 @@ export const FeaturesBlock: Block = {
       name: 'heading',
       type: 'text',
       label: 'Título Principal',
-      defaultValue: 'Por qué elegir Nenúfar Joyería',
+      defaultValue: 'Por qué elegir Nénufar Joyería',
     },
     {
       name: 'centerImage',

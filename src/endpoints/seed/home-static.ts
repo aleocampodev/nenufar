@@ -107,8 +107,11 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
       {
         blockType: 'nenufarStory',
         tagline: 'Hecho a mano en Cartagena',
-        heading: 'Nenúfar — Manos que tejen historias',
-        image: null as any,
+        heading: 'Nénufar — Manos que tejen historias',
+        image: {
+          url: 'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/shirley-creadora.jpeg',
+          alt: 'Shirley tejiendo joyería en mostacilla en su taller',
+        } as any,
         linkLabel: 'Explorar Catálogo',
         linkUrl: '/shop',
         description: {
@@ -124,7 +127,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                     format: 0,
                     mode: 'normal',
                     style: '',
-                    text: 'Nenúfar nace en Cartagena de Indias de las manos de Shirley, artesana que teje mostacilla con la paciencia y el color del Caribe. Cada collar ceremonial, okama y otapa es una historia tejida a mano, con hilos de alta resistencia y micro-mostacilla checa calibrada que garantiza brillo y duración.',
+                    text: 'Nénufar nace en Cartagena de Indias de las manos de Shirley, artesana que teje mostacilla con la paciencia y el color del Caribe. Cada collar ceremonial, okama y otapa es una historia tejida a mano, con hilos de alta resistencia y micro-mostacilla checa calibrada que garantiza brillo y duración.',
                     version: 1,
                   },
                 ],
@@ -171,7 +174,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
             title: 'El Okama Ceremonial',
             excerpt: 'El camino sagrado que viste y abraza el cuello de la mujer.',
             imageUrl:
-              'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=800&auto=format&fit=crop&q=80',
+              'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Embera.jpeg',
             storyMeaning:
               'En lengua Emberá, Okama significa literalmente "camino que recorre el cuello". Es el collar más sagrado de la mujer indígena: comunica su madurez, dignidad y conexión profunda con las aguas de los ríos y los ciclos de la luna.',
             storyCraft:
@@ -184,7 +187,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
             title: 'La Otapa Ancestral',
             excerpt: 'Estructura geométrica que custodia el espíritu y narra los senderos de la selva.',
             imageUrl:
-              'https://images.unsplash.com/photo-1611591475102-4a00832049d5?w=800&auto=format&fit=crop&q=80',
+              'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-ancestral.jpg',
             storyMeaning:
               'La Otapa es la expresión geométrica del linaje ancestral. Sus patrones en zigzag y rombos representan los senderos de la montaña, la piel protectora de la serpiente sagrada y un escudo contra las malas energías.',
             storyCraft:
@@ -197,7 +200,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
             title: 'El Okama Contemporáneo',
             excerpt: 'La magia del tejido Emberá adaptada a un formato liviano para cada día.',
             imageUrl:
-              'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=800&auto=format&fit=crop&q=80',
+              'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Collar-flor.jpeg',
             storyMeaning:
               'Creado para la mujer que desea portar la fuerza del tejido indígena en su rutina diaria (reuniones, salidas casuales o eventos formales) sin recurrir a formatos ceremoniales gigantes.',
             storyCraft:
@@ -210,7 +213,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
             title: 'La Otapa de Autor',
             excerpt: 'Obras de arte textil irrepetibles: nacen una sola vez y no vuelven a existir igual.',
             imageUrl:
-              'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&auto=format&fit=crop&q=80',
+              'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/colombia-aretes.jpeg',
             storyMeaning:
               'Piezas nacidas de la inspiración pura de Shirley en Cartagena, fusionando la técnica milenaria Emberá con paletas de color inspiradas en los atardeceres y la arquitectura caribeña.',
             storyCraft:
@@ -223,7 +226,11 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
       {
         blockType: 'features',
         tagline: 'Tradición y Delicadeza',
-        heading: 'Por qué elegir Nenúfar Joyería',
+        heading: 'Por qué elegir Nénufar Joyería',
+        centerImage: {
+          url: 'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/colombia-aretes.jpeg',
+          alt: 'Joyería artesanal en mostacilla tejida a mano - Nénufar',
+        } as any,
         items: [
           {
             icon: 'handmade',

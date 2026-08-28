@@ -34,7 +34,7 @@ export const NenufarStoryBlock: React.FC<Props & { id?: string }> = ({
               />
             ) : (
               <img
-                src="/media/shirley-creadora.jpeg"
+                src="https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/shirley-creadora.jpeg"
                 alt="Shirley tejiendo joyería en mostacilla en su taller"
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
               />
