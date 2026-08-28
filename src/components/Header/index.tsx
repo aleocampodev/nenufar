@@ -1,6 +1,4 @@
 import { getCachedGlobal, getCachedCategories } from '@/utilities/getGlobals'
-
-import './index.css'
 import { HeaderClient } from './index.client'
 
 export async function Header() {
