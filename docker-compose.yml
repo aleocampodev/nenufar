@@ -22,6 +22,9 @@ services:
     environment:
       GROQ_API_KEY: ${GROQ_API_KEY:-}
       LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-nenufar-local}
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
+      LANGFUSE_HOST: ${LANGFUSE_HOST:-https://cloud.langfuse.com}
       PYTHONPATH: /app
     command: ["--config", "/app/config.yaml", "--port", "4000"]
 
