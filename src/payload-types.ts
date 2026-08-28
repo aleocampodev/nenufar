@@ -1033,16 +1033,31 @@ export interface Form {
  */
 export interface ImageStripBlock {
   /**
-   * 4 fotos en fila completa, sin separación. Ideal para mostrar taller, proceso, piezas.
+   * Texto pequeño en mayúsculas sobre el título principal.
+   */
+  tagline?: string | null;
+  heading?: string | null;
+  description?: string | null;
+  /**
+   * Personaliza cada una de las 4 tarjetas. Puedes subir una foto propia o mantener la imagen por defecto.
    */
   images?:
     | {
-        image: number | Media;
-        alt?: string | null;
+        category?: string | null;
+        title?: string | null;
+        excerpt?: string | null;
         /**
-         * Ej: /shop, /sobre-nenufar
+         * Sube la foto del collar o pechera. Tiene prioridad sobre la URL.
          */
-        linkUrl?: string | null;
+        image?: (number | null) | Media;
+        /**
+         * URL directa de la imagen (ej: Unsplash, CDN o enlace externo).
+         */
+        imageUrl?: string | null;
+        storyMeaning?: string | null;
+        storyCraft?: string | null;
+        storyFeel?: string | null;
+        alt?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -1708,12 +1723,21 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "ImageStripBlock_select".
  */
 export interface ImageStripBlockSelect<T extends boolean = true> {
+  tagline?: T;
+  heading?: T;
+  description?: T;
   images?:
     | T
     | {
+        category?: T;
+        title?: T;
+        excerpt?: T;
         image?: T;
+        imageUrl?: T;
+        storyMeaning?: T;
+        storyCraft?: T;
+        storyFeel?: T;
         alt?: T;
-        linkUrl?: T;
         id?: T;
       };
   id?: T;
