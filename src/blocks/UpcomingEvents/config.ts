@@ -75,6 +75,98 @@ export const UpcomingEventsBlock: Block = {
             },
           ],
         },
+        {
+          label: "Calendario de Ferias & Talleres",
+          fields: [
+            {
+              name: "events",
+              type: "array",
+              label: "Lista de Eventos y Ferias",
+              labels: {
+                singular: "Evento / Feria",
+                plural: "Eventos y Ferias",
+              },
+              minRows: 1,
+              maxRows: 10,
+              defaultValue: [
+                {
+                  title: "Feria Artesanal del Centro Histórico",
+                  type: "feria",
+                  date: "2026-09-15T15:00:00.000Z",
+                  location: "Plaza de San Pedro Claver, Cartagena de Indias",
+                  description:
+                    "Shirley presentará su colección completa de Okamas y Otapas ceremoniales tejidos en micro-mostacilla checa calibrada.",
+                },
+                {
+                  title: "Taller Vivencial de Tejido Emberá",
+                  type: "taller",
+                  date: "2026-09-22T10:00:00.000Z",
+                  location: "Taller Nénufar, Getsemaní, Cartagena",
+                  description:
+                    "Aprende las puntadas ancestrales de hilado en mostacilla en un encuentro íntimo de 3 horas con Shirley. Incluye kit de materiales.",
+                },
+                {
+                  title: "Pop-Up Joyas de Autor & Café",
+                  type: "popup",
+                  date: "2026-09-29T16:00:00.000Z",
+                  location: "Calle del Espíritu Santo, Getsemaní",
+                  description:
+                    "Muestra exclusiva de piezas únicas y personalización en vivo mientras disfrutas del mejor café de origen colombiano.",
+                },
+              ],
+              fields: [
+                {
+                  type: "row",
+                  fields: [
+                    {
+                      name: "title",
+                      type: "text",
+                      label: "Nombre del Evento o Feria",
+                      required: true,
+                      admin: { width: "70%" },
+                    },
+                    {
+                      name: "type",
+                      type: "select",
+                      label: "Tipo",
+                      defaultValue: "feria",
+                      admin: { width: "30%" },
+                      options: [
+                        { label: "🎪 Feria Artesanal", value: "feria" },
+                        { label: "🪡 Taller Vivencial", value: "taller" },
+                        { label: "✨ Pop-Up / Muestra", value: "popup" },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "row",
+                  fields: [
+                    {
+                      name: "date",
+                      type: "date",
+                      label: "Fecha del Evento",
+                      required: true,
+                      admin: { width: "40%" },
+                    },
+                    {
+                      name: "location",
+                      type: "text",
+                      label: "Lugar / Ubicación en Cartagena",
+                      required: true,
+                      admin: { width: "60%" },
+                    },
+                  ],
+                },
+                {
+                  name: "description",
+                  type: "textarea",
+                  label: "Descripción Detallada del Evento",
+                },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],
