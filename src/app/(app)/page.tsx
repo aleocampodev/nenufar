@@ -26,7 +26,7 @@ async function queryHomePage(): Promise<Page | null> {
       depth: 2,
       draft,
       limit: 1,
-      overrideAccess: draft,
+      overrideAccess: true,
       pagination: false,
       where: {
         and: [
@@ -38,6 +38,25 @@ async function queryHomePage(): Promise<Page | null> {
 
     if (result.docs && result.docs.length > 0) {
       return result.docs[0] as Page
+    }
+
+    // Si no está publicado y no estamos en draftMode, buscar el documento borrador de la DB antes del fallback estático
+    if (!draft) {
+      const draftResult = await payload.find({
+        collection: 'pages',
+        depth: 2,
+        draft: true,
+        limit: 1,
+        overrideAccess: true,
+        pagination: false,
+        where: {
+          slug: { equals: 'home' },
+        },
+      })
+
+      if (draftResult.docs && draftResult.docs.length > 0) {
+        return draftResult.docs[0] as Page
+      }
     }
   } catch (err) {
     payload.logger.warn({ msg: '[Home] Error querying home page from DB, falling back to static', err })

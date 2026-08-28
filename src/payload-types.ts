@@ -552,15 +552,24 @@ export interface Page {
     | BannerBlock
     | FormBlock
     | {
+        /**
+         * Texto pequeño en mayúsculas sobre el título principal.
+         */
+        tagline?: string | null;
         title?: string | null;
+        description?: string | null;
         /**
-         * Filtra qué tipo de eventos mostrar en la landing
+         * Sube un video vertical en formato celular (9:16 / estilo Reel). Tiene prioridad sobre la URL.
          */
-        filterByType?: ('todos' | 'feria' | 'taller' | 'pop-up') | null;
+        video?: (number | null) | Media;
         /**
-         * Máximo 6 eventos en el home.
+         * Enlace directo MP4 si el video está alojado externamente.
          */
-        limit?: number | null;
+        videoUrl?: string | null;
+        /**
+         * Frase descriptiva que acompaña el video vertical en la tienda.
+         */
+        videoCaption?: string | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'upcomingEvents';
@@ -1039,23 +1048,29 @@ export interface ImageStripBlock {
   heading?: string | null;
   description?: string | null;
   /**
-   * Personaliza cada una de las 4 tarjetas. Puedes subir una foto propia o mantener la imagen por defecto.
+   * Gestiona cada una de las 4 imágenes continuas. Al tocarlas en la tienda, revelarán su historia sagrada y técnica.
    */
   images?:
     | {
+        title: string;
         category?: string | null;
-        title?: string | null;
+        /**
+         * Texto breve visible en la tarjeta antes de expandir.
+         */
         excerpt?: string | null;
-        /**
-         * Sube la foto del collar o pechera. Tiene prioridad sobre la URL.
-         */
         image?: (number | null) | Media;
-        /**
-         * URL directa de la imagen (ej: Unsplash, CDN o enlace externo).
-         */
         imageUrl?: string | null;
+        /**
+         * Significado cultural según la cosmovisión indígena.
+         */
         storyMeaning?: string | null;
+        /**
+         * Horas de hilado, cantidad de mostacillas y paciencia.
+         */
         storyCraft?: string | null;
+        /**
+         * Cómo cae en el cuerpo, peso pluma y cierres hipoalergénicos.
+         */
         storyFeel?: string | null;
         alt?: string | null;
         id?: string | null;
@@ -1553,9 +1568,12 @@ export interface PagesSelect<T extends boolean = true> {
         upcomingEvents?:
           | T
           | {
+              tagline?: T;
               title?: T;
-              filterByType?: T;
-              limit?: T;
+              description?: T;
+              video?: T;
+              videoUrl?: T;
+              videoCaption?: T;
               id?: T;
               blockName?: T;
             };
@@ -1729,8 +1747,8 @@ export interface ImageStripBlockSelect<T extends boolean = true> {
   images?:
     | T
     | {
-        category?: T;
         title?: T;
+        category?: T;
         excerpt?: T;
         image?: T;
         imageUrl?: T;
