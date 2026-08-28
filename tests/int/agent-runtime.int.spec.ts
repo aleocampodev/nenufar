@@ -86,4 +86,56 @@ describe('runShirleyAgent', () => {
     expect(reply).toBe(AGENT_FALLBACK)
     expect(fakePayload.logger.error).toHaveBeenCalled()
   })
+
+  it('ejecuta generarCopyProducto y devuelve propuesta atractiva en español', async () => {
+    const { executeShirleyTool } = await import('@/lib/agent/tools')
+    const res = await executeShirleyTool(
+      'generarCopyProducto',
+      {
+        nombrePieza: 'Aretes Filigrana Atardecer',
+        materialesOTecnica: 'filigrana momposina en plata',
+        ocasionOEstilo: 'elegantes para eventos especiales',
+      },
+      fakePayload,
+    )
+
+    expect(res).toContain('Aretes Filigrana Atardecer')
+    expect(res).toContain('Cartagena')
+    expect(res).toContain('100% a mano')
+  })
+
+  it('ejecuta generarCopyLanding para hero y cta', async () => {
+    const { executeShirleyTool } = await import('@/lib/agent/tools')
+    const heroRes = await executeShirleyTool(
+      'generarCopyLanding',
+      { seccion: 'hero', enfoque: 'colección caribeña' },
+      fakePayload,
+    )
+    expect(heroRes).toContain('Carrusel Principal')
+    expect(heroRes).toContain('Joyas Tejidas con Alma Caribeña')
+
+    const ctaRes = await executeShirleyTool(
+      'generarCopyLanding',
+      { seccion: 'cta' },
+      fakePayload,
+    )
+    expect(ctaRes).toContain('Personalizar mi Joya')
+  })
+
+  it('ejecuta generarPostRedes con hooks y llamado a la acción', async () => {
+    const { executeShirleyTool } = await import('@/lib/agent/tools')
+    const res = await executeShirleyTool(
+      'generarPostRedes',
+      {
+        redSocial: 'instagram',
+        tema: 'Pechera Okama Ceremonial',
+      },
+      fakePayload,
+    )
+
+    expect(res).toContain('INSTAGRAM')
+    expect(res).toContain('Pechera Okama Ceremonial')
+    expect(res).toContain('#NenufarJoyería')
+    expect(res).toContain('nenufar.co/shop')
+  })
 })

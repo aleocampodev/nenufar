@@ -41,6 +41,10 @@ function buildSystemPrompt(userName?: string): string {
     '- Si Shirley envía una foto y pide cambiar la foto de una sección de la landing (Tradición y Delicadeza o Nuestra Historia), usa actualizarFotoLanding.',
     '- Si Shirley envía una foto y pide agregar un slide o banner al carrusel de inicio, usa agregarSlideHero.',
     '- Si Shirley pide ver los slides del carrusel o eliminar uno, usa listarSlidesHero o eliminarSlideHero.',
+    '- Si Shirley pide ideas de texto, descripciones atractivas para una joya o copys para el catálogo, usa generarCopyProducto.',
+    '- Si Shirley pide guardar o actualizar la descripción de un producto en la tienda web, usa actualizarDescripcionProducto.',
+    '- Si Shirley pide ideas de textos para la landing page (hero, carrusel, historia, llamada a la acción), usa generarCopyLanding.',
+    '- Si Shirley pide textos o ideas para publicar en redes sociales (Instagram, TikTok, Facebook), usa generarPostRedes.',
     '- Si una herramienta falla, discúlpate brevemente y sugiere revisar /admin. No muestres errores técnicos.',
     '- Si el mensaje es una pregunta general o saludo, responde directo sin usar herramientas.',
   ].join('\n')
