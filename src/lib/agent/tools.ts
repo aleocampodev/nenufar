@@ -70,6 +70,37 @@ async function getHomePage(payload: Payload) {
   return result.docs[0] || null
 }
 
+function textToLexical(text: string) {
+  const paragraphs = text.split('\n\n').map((p) => p.trim()).filter(Boolean)
+  return {
+    root: {
+      type: 'root',
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      version: 1,
+      children: paragraphs.map((p) => ({
+        type: 'paragraph',
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        version: 1,
+        children: [
+          {
+            type: 'text',
+            detail: 0,
+            format: 0,
+            mode: 'normal',
+            style: '',
+            text: p,
+            version: 1,
+          },
+        ],
+      })),
+    },
+  }
+}
+
 /**
  * Definiciones de herramientas para el API de Anthropic / LiteLLM.
  */
@@ -344,6 +375,99 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
     input_schema: {
       type: 'object',
       properties: {},
+    },
+  },
+
+  // ─── 5. COPYWRITING, CATÁLOGO, LANDING & REDES ─────────────────────────
+  {
+    name: 'generarCopyProducto',
+    description:
+      'Genera propuestas de textos persuasivos y atractivos para una joya (título llamativo, historia artesanal en Cartagena, descripción de materiales y llamado a la acción). ' +
+      'Puede basarse en un producto existente por su slug o en los detalles que Shirley indique.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        slug: {
+          type: 'string',
+          description: 'Slug del producto existente (opcional si se indican nombre o características)',
+        },
+        nombrePieza: {
+          type: 'string',
+          description: 'Nombre de la joya o tipo de accesorio (ej. "Aretes Filigrana Caribe")',
+        },
+        materialesOTecnica: {
+          type: 'string',
+          description: 'Técnica o materiales (ej. "mostacilla checa calibrada, tejido a mano, hilos de colores")',
+        },
+        ocasionOEstilo: {
+          type: 'string',
+          description: 'Ocasión o estilo (ej. "uso diario liviano", "fiesta", "regalo especial")',
+        },
+      },
+    },
+  },
+  {
+    name: 'actualizarDescripcionProducto',
+    description:
+      'Guarda o actualiza la descripción y narrativa artesanal de una joya en el catálogo web (/products/[slug]).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        slug: {
+          type: 'string',
+          description: 'Slug de la joya a actualizar',
+        },
+        descripcion: {
+          type: 'string',
+          description: 'Texto completo de la descripción de la pieza para el catálogo',
+        },
+      },
+      required: ['slug', 'descripcion'],
+    },
+  },
+  {
+    name: 'generarCopyLanding',
+    description:
+      'Genera copys atractivos y persuasivos para secciones de la landing page (carrusel Hero, bloque de historia, llamada a la acción CTA o banner promocional).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        seccion: {
+          type: 'string',
+          enum: ['hero', 'cta', 'historia', 'taller'],
+          description: 'Sección de la web para la que se redacta el texto',
+        },
+        enfoque: {
+          type: 'string',
+          description: 'Tema o motivo (ej. "nueva colección", "descuento especial", "invitación a taller presencial", "joyas personalizadas por encargo")',
+        },
+      },
+      required: ['seccion'],
+    },
+  },
+  {
+    name: 'generarPostRedes',
+    description:
+      'Crea publicaciones atractivas para redes sociales (Instagram, TikTok, Facebook) con gancho (hook), cuerpo emotivo, llamado a la acción (CTA) con enlace a la web y hashtags recomendados.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        redSocial: {
+          type: 'string',
+          enum: ['instagram', 'tiktok', 'facebook', 'general'],
+          description: 'Red social de destino (por defecto instagram)',
+        },
+        tema: {
+          type: 'string',
+          description: 'Joya, colección, taller o historia a promocionar (ej. "Aretes Filigrana Atardecer")',
+        },
+        objetivo: {
+          type: 'string',
+          enum: ['venta_catalogo', 'taller_evento', 'proceso_artesanal', 'posicionamiento'],
+          description: 'Objetivo de la publicación',
+        },
+      },
+      required: ['tema'],
     },
   },
 ]
@@ -664,6 +788,132 @@ export async function executeShirleyTool(
         if (res.docs.length === 0) return 'Aún no hay testimonios publicados en la landing.'
         const lines = res.docs.map((d: any) => `• #${d.id} — ${d.authorName}: "${d.quote.slice(0, 60)}..."`)
         return `Testimonios publicados (${res.docs.length}):\n${lines.join('\n')}`
+      }
+
+      // ─── 5. COPYWRITING, CATÁLOGO, LANDING & REDES ─────────────────────────
+      case 'generarCopyProducto': {
+        const { slug, nombrePieza, materialesOTecnica, ocasionOEstilo } = args
+        let product: ProductWithSlug | null = null
+        if (slug) {
+          product = await findProductBySlug(payload, slug)
+        }
+        const titulo = product?.title || nombrePieza || 'Joya Artesanal Nénufar'
+        const precio = product ? formatCOP(product.priceInCOP) : ''
+        const tecnica = materialesOTecnica || 'mostacilla checa calibrada e hilos de alta resistencia tejidos a mano'
+        const estilo = ocasionOEstilo || 'ideal para lucir con elegancia y autenticidad en cualquier ocasión'
+
+        const propuesta = [
+          `✨ Propuesta de Copy para Catálogo & Web:`,
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+          `💎 Título sugerido: ${titulo}`,
+          ...(precio ? [`🏷️ Precio: ${precio}`] : []),
+          ``,
+          `📖 Descripción para la ficha del producto:`,
+          `"${titulo} es una pieza única elaborada 100% a mano por Shirley en Cartagena de Indias. Creada mediante ${tecnica}, combina la tradición artesanal colombiana con un diseño contemporáneo, ${estilo}.`,
+          ``,
+          `• Ultraliviana y cómoda para llevar todo el día.`,
+          `• Acabados hipoalergénicos pensados para proteger tu piel.`,
+          `• Cada detalle cuenta una historia irrepetible y llena de calidez caribeña."`,
+          ``,
+          `🎯 Llamado a la acción (CTA):`,
+          `"Haz tu pedido por la web y Shirley coordinará personalmente el pago y envío a tu ciudad."`,
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+          `💡 Si te gusta esta descripción, puedes decirme: "actualiza la descripción de ${slug || titulo} con este texto" para publicarla de inmediato.`
+        ].join('\n')
+
+        return propuesta
+      }
+
+      case 'actualizarDescripcionProducto': {
+        const { slug, descripcion } = args
+        const product = await findProductBySlug(payload, slug)
+        if (!product) return `No encontré ningún producto con el slug "${slug}".`
+
+        const lexical = textToLexical(descripcion)
+        await payload.update({
+          collection: 'products',
+          id: product.id,
+          data: {
+            description: lexical as any,
+          },
+          overrideAccess: true,
+        })
+
+        return `¡Listo Shirley! La descripción de "${product.title}" ha sido actualizada en la tienda web (/products/${product.slug || slug}) ✨`
+      }
+
+      case 'generarCopyLanding': {
+        const { seccion = 'hero', enfoque } = args
+        const motivo = enfoque || 'nueva colección de joyas artesanales'
+
+        if (seccion === 'hero') {
+          return [
+            `🎨 Opciones de Copy para el Carrusel Principal (Hero Slider):`,
+            `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+            `Opción 1 (Emotiva & Ancestral):`,
+            `• Título: Joyas Tejidas con Alma Caribeña`,
+            `• Subtítulo: Piezas únicas elaboradas pacientemente a mano en Cartagena de Indias para resaltar tu esencia.`,
+            `• Botón: Explorar Colección → /shop`,
+            ``,
+            `Opción 2 (Enfocada en ${motivo}):`,
+            `• Título: Arte Textil & Filigrana de Autor`,
+            `• Subtítulo: Descubre diseños exclusivos inspirados en los colores y la magia del Caribe colombiano.`,
+            `• Botón: Ver Catálogo → /shop`,
+            `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+            `💡 Puedes decirme: "agrega un slide con el título X y subtítulo Y" junto a una foto para publicarlo.`
+          ].join('\n')
+        }
+
+        if (seccion === 'cta') {
+          return [
+            `🎨 Opciones para Bloque de Pedido Personalizado (CTA):`,
+            `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+            `Opción 1:`,
+            `• Título: ¿Buscas una joya personalizada a tu medida?`,
+            `• Subtítulo: Shirley confecciona piezas por encargo con tus colores, patrones o combinaciones favoritas. Cuéntanos tu idea y la tejemos para ti.`,
+            `• Botón: Personalizar mi Joya → /contacto`,
+            ``,
+            `Opción 2:`,
+            `• Título: Lleva una pieza con historia propia`,
+            `• Subtítulo: Diseños exclusivos y ediciones limitadas hechas con amor en Cartagena. Haz tu pedido directo sin intermediarios.`,
+            `• Botón: Escribir a Shirley → /contacto`
+          ].join('\n')
+        }
+
+        return [
+          `🎨 Copy para la sección "${seccion}" (${motivo}):`,
+          `• Título: Manos que Tejen Tradición e Identidad`,
+          `• Cuerpo: Cada pieza de Nénufar nace en el corazón de Cartagena de Indias. Shirley entrelaza hilos y mostacillas creando obras de autor que honran el legado cultural de Colombia.`,
+          `• Cierre: Joyería liviana, hipoalergénica y llena de significado.`
+        ].join('\n')
+      }
+
+      case 'generarPostRedes': {
+        const { redSocial = 'instagram', tema, objetivo = 'venta_catalogo' } = args
+        void objetivo
+        const red = String(redSocial || 'instagram').toLowerCase()
+
+        return [
+          `📱 Propuestas de Publicación para ${red.toUpperCase()} (${tema}):`,
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+          `🌟 Opción 1 — Enfoque Historia & Conexión:`,
+          `【Gancho】 No es solo una joya, son horas de paciencia y amor tejidas a mano en Cartagena 🌊✨`,
+          ``,
+          `【Cuerpo】 Cada detalle de "${tema}" cuenta una historia de tradición y dedicación artesanal. Diseñada para ser ultraliviana, hipoalergénica y acompañarte en tus momentos más especiales.`,
+          ``,
+          `【Llamado a la Acción】 Pídela directamente desde el catálogo en el enlace de nuestra biografía o visita nenufar.co/shop 🛍️ Shirley coordinará tu entrega con mucho amor.`,
+          ``,
+          `【Hashtags】 #NenufarJoyería #HechoAMano #JoyeríaArtesanal #CartagenaDeIndias #ModaColombiana #ArtesaníasColombia`,
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+          `🔥 Opción 2 — Enfoque Exclusividad & Estilo:`,
+          `【Gancho】 ¿Buscando ese toque auténtico que transforme cualquier atuendo? ✨`,
+          ``,
+          `【Cuerpo】 "${tema}" es una pieza de autor en edición limitada. Elaborada minuciosamente a mano en nuestro taller caribeño, perfecta para regalar o consentirte con algo verdaderamente único.`,
+          ``,
+          `【Llamado a la Acción】 Envíos a toda Colombia 📦🇨🇴 Haz tu pedido en nenufar.co/shop antes de que se agote.`,
+          ``,
+          `【Hashtags】 #JoyeríaDeAutor #PiezasÚnicas #Cartagena #MostacillaCheca #RegaloEspecial #HechoEnColombia`
+        ].join('\n')
       }
 
       default:
