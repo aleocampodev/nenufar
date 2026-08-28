@@ -140,8 +140,25 @@ header .avatar {
 }
 
 /* ── Sidebar Navigation: Píldora activa con borde violeta ─── */
+.sidebar-header-link,
+.sidebar-header-link:hover,
+.sidebar-header-link:focus,
+.sidebar-header-link:active {
+  background-color: transparent !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid var(--color-base-150) !important;
+  margin: 0 0 0.75rem 0 !important;
+  padding: 1.25rem 1rem 1rem 1rem !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 .nav__link,
-.nav a {
+.nav a:not(.sidebar-header-link) {
   border-radius: 12px;
   margin: 2px 8px;
   padding: 8px 12px;
@@ -149,14 +166,14 @@ header .avatar {
 }
 
 .nav__link:hover,
-.nav a:hover {
+.nav a:not(.sidebar-header-link):hover {
   background-color: var(--color-base-100);
 }
 
 .nav__link--active,
 .nav__link.active,
-.nav a[aria-current='page'],
-.nav a.active {
+.nav a:not(.sidebar-header-link)[aria-current='page'],
+.nav a:not(.sidebar-header-link).active {
   background-color: rgba(106, 27, 154, 0.08) !important;
   border: 1.5px solid var(--nenufar-brand) !important;
   color: var(--nenufar-brand) !important;
