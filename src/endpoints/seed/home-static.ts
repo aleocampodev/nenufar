@@ -187,7 +187,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
             title: 'La Otapa Ancestral',
             excerpt: 'Estructura geométrica que custodia el espíritu y narra los senderos de la selva.',
             imageUrl:
-              'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-ancestral.jpg',
+              'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-narana.jpg',
             storyMeaning:
               'La Otapa es la expresión geométrica del linaje ancestral. Sus patrones en zigzag y rombos representan los senderos de la montaña, la piel protectora de la serpiente sagrada y un escudo contra las malas energías.',
             storyCraft:

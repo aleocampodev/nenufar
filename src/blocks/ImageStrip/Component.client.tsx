@@ -45,7 +45,7 @@ const DEFAULT_ITEMS: CardItem[] = [
     title: "La Otapa Ancestral",
     excerpt: "Estructura geométrica de rombos y senderos de selva que custodia el espíritu.",
     imageUrl:
-      "https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-ancestral.jpg",
+      "https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-narana.jpg",
     storyMeaning:
       "La Otapa es la expresión geométrica del linaje ancestral. Sus patrones en zigzag y rombos representan los senderos de la montaña, la piel protectora de la serpiente sagrada y un escudo contra las malas energías.",
     storyCraft:
@@ -93,7 +93,18 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
   const items = images && images.length > 0 ? images : DEFAULT_ITEMS
 
   const toggleExpand = (index: number) => {
-    setExpandedIndex((prev) => (prev === index ? null : index))
+    setExpandedIndex((prev) => {
+      const next = prev === index ? null : index
+      if (next !== null && typeof window !== "undefined") {
+        setTimeout(() => {
+          const el = document.getElementById("historia-expandida")
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "nearest" })
+          }
+        }, 100)
+      }
+      return next
+    })
   }
 
   const activeItem = expandedIndex !== null ? items[expandedIndex] || DEFAULT_ITEMS[expandedIndex % 4] : null
@@ -133,10 +144,13 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
           const imgSrc = hasMedia ? media.url : item.imageUrl || fallback.imageUrl
 
           return (
-            <div
+            <button
+              type="button"
               key={item.id || i}
               onClick={() => toggleExpand(i)}
-              className={`group relative aspect-[4/5] sm:aspect-square lg:aspect-[3/4] overflow-hidden cursor-pointer bg-stone-900 select-none transition-all duration-300 ${
+              aria-expanded={isExpanded}
+              aria-label={`Ver historia de ${title}`}
+              className={`group relative aspect-[4/5] sm:aspect-square lg:aspect-[3/4] overflow-hidden cursor-pointer bg-stone-900 select-none text-left w-full p-0 border-0 transition-all duration-300 ${
                 isExpanded ? "ring-4 ring-inset ring-amber-400 z-10" : ""
               }`}
             >
@@ -146,31 +160,31 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
                   resource={media}
                   sizeName="card"
                   fill
-                  imgClassName="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  imgClassName="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               ) : (
                 <img
                   src={imgSrc || ""}
                   alt={title || ""}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               )}
 
               {/* Degradado Krafti inferior */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-85 group-hover:opacity-95 transition-opacity duration-300 flex flex-col justify-end p-6 sm:p-8 text-white">
-                <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-amber-300 mb-1.5">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10 opacity-90 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 sm:p-8 text-white">
+                <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-amber-300 mb-1.5 drop-shadow-sm">
                   {category}
                 </span>
-                <h3 className="font-serif text-xl sm:text-2xl font-normal text-white mb-2 leading-snug">
+                <h3 className="font-serif text-xl sm:text-2xl font-normal text-white mb-2 leading-snug drop-shadow-md">
                   {title}
                 </h3>
                 {excerpt && (
-                  <p className="text-xs text-stone-200 line-clamp-2 mb-3 font-light leading-relaxed">
+                  <p className="text-xs text-stone-200 line-clamp-2 mb-3 font-light leading-relaxed drop-shadow-sm">
                     {excerpt}
                   </p>
                 )}
 
-                {/* Indicador de lectura (Puro texto) */}
+                {/* Indicador de lectura */}
                 <div className="pt-2 border-t border-white/20 flex items-center justify-between text-xs font-medium text-amber-300 group-hover:text-amber-200">
                   <span>{isExpanded ? "Cerrar historia" : "Leer historia y técnica"}</span>
                   {isExpanded ? (
@@ -180,14 +194,14 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
                   )}
                 </div>
               </div>
-            </div>
+            </button>
           )
         })}
       </div>
 
       {/* PANEL EXPANDIBLE DE HISTORIA ANCESTRAL (Aparece abajo de la tira al tocar cualquiera) */}
       {activeItem && expandedIndex !== null && (
-        <div className="bg-stone-900 text-white py-12 px-4 sm:px-6 lg:px-8 border-b border-stone-800 animate-in fade-in duration-400">
+        <div id="historia-expandida" className="bg-[#1C1917] text-white py-12 px-4 sm:px-6 lg:px-8 border-b border-stone-800 animate-in fade-in duration-400">
           <div className="container mx-auto max-w-5xl relative">
             {/* Botón de cerrar */}
             <button
@@ -208,7 +222,7 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
               </h3>
               {activeItem.excerpt && (
                 <p className="text-sm sm:text-base text-amber-200/90 italic font-serif">
-                  \"{activeItem.excerpt || DEFAULT_ITEMS[expandedIndex % 4].excerpt}\"
+                  &ldquo;{activeItem.excerpt || DEFAULT_ITEMS[expandedIndex % 4].excerpt}&rdquo;
                 </p>
               )}
             </div>
