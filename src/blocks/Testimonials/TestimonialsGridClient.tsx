@@ -194,7 +194,7 @@ export function TestimonialsGridClient({ testimonials }: TestimonialsGridClientP
             <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF8F5] border border-neutral-200/80 mb-6 space-y-3">
               <div>
                 <span className="text-[10px] uppercase tracking-[0.2em] text-[#8B5A2B] font-semibold block mb-1">
-                  Pieza Nénufar
+                  Pieza Nenúfar
                 </span>
                 <h4 className="font-serif text-base text-foreground font-medium">
                   {activeDetails.pieceName}

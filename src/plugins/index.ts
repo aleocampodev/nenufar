@@ -19,7 +19,7 @@ import { isAdmin } from '@/access/isAdmin'
 import { isDocumentOwner } from '@/access/isDocumentOwner'
 
 const generateTitle: GenerateTitle<Product | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | Nénufar Joyería Artesanal` : 'Nénufar — Joyería Artesanal Colombiana'
+  return doc?.title ? `${doc.title} | Nenúfar Joyería Artesanal` : 'Nenúfar — Joyería Artesanal Colombiana'
 }
 
 const generateURL: GenerateURL<Product | Page> = ({ doc }) => {

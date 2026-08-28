@@ -20,7 +20,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'Nénufar — Joyería Artesanal',
+                  text: 'Nenúfar — Joyería Artesanal',
                   version: 1,
                 },
               ],
@@ -264,7 +264,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
     ],
     meta: {
       description: 'Joyería artesanal colombiana hecha a mano en Cartagena. Cada pieza cuenta una historia.',
-      title: 'Nénufar — Joyería Artesanal Colombiana',
+      title: 'Nenúfar — Joyería Artesanal Colombiana',
     },
     title: 'Inicio',
   }

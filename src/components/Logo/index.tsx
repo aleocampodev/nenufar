@@ -36,26 +36,4 @@ export const Logo = () => {
   )
 }
 
-export const Icon = () => {
-  return (
-    /* eslint-disable @next/next/no-img-element */
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '0.25rem',
-      }}
-    >
-      <img
-        alt="Nénufar Icon"
-        src="/nenufar-icon.png"
-        style={{
-          height: '32px',
-          width: '32px',
-          objectFit: 'contain',
-        }}
-      />
-    </div>
-  )
-}
+export const Icon = () => null

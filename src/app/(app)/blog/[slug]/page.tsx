@@ -56,8 +56,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const metaImage = typeof post.meta?.image === 'object' ? (post.meta?.image as Media) : undefined
   const author =
     typeof post.author === 'object' && post.author !== null
-      ? (post.author as { name?: string | null }).name || 'Nénufar'
-      : 'Nénufar'
+      ? (post.author as { name?: string | null }).name || 'Nenúfar'
+      : 'Nenúfar'
 
   const articleJsonLd = {
     '@context': 'https://schema.org',
@@ -68,7 +68,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     datePublished: post.publishedAt || post.createdAt,
     dateModified: post.updatedAt,
     author: { '@type': 'Person', name: author },
-    publisher: { '@type': 'Organization', name: 'Nénufar' },
+    publisher: { '@type': 'Organization', name: 'Nenúfar' },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `${getServerSideURL()}/blog/${post.slug}`,
@@ -154,14 +154,14 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
   if (!post) {
     return {
-      title: 'Artículo no encontrado | Nénufar',
+      title: 'Artículo no encontrado | Nenúfar',
       robots: { index: false, follow: false },
     }
   }
 
-  const title = post.meta?.title || `${post.title} | Nénufar Blog`
+  const title = post.meta?.title || `${post.title} | Nenúfar Blog`
   const description =
-    post.meta?.description || plainExcerpt(post.content) || `Lee este artículo en el blog de Nénufar.`
+    post.meta?.description || plainExcerpt(post.content) || `Lee este artículo en el blog de Nenúfar.`
   const canonical = `${getServerSideURL()}/blog/${post.slug}`
   const metaImage = typeof post.meta?.image === 'object' ? (post.meta?.image as Media) : undefined
   const ogImages = metaImage?.url

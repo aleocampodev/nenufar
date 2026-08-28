@@ -93,10 +93,10 @@ export default async function ConfirmationPage({ searchParams }: ConfirmationPag
 }
 
 export const metadata: Metadata = {
-  description: 'Tu pedido fue enviado a Nénufar.',
+  description: 'Tu pedido fue enviado a Nenúfar.',
   openGraph: mergeOpenGraph({
-    title: 'Pedido enviado | Nénufar',
+    title: 'Pedido enviado | Nenúfar',
     url: '/pedidos/enviar/confirmacion',
   }),
-  title: 'Pedido enviado | Nénufar',
+  title: 'Pedido enviado | Nenúfar',
 }
