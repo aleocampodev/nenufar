@@ -26,12 +26,11 @@ const TIMEOUT_MS = 25_000
 /** Ventana máxima de mensajes previos para memoria conversacional. */
 const MAX_HISTORY_MESSAGES = 10
 
-function buildSystemPrompt(userName?: string): string {
-  const nombre = userName ? userName : 'Shirley'
+function buildSystemPrompt(): string {
   return [
     'Eres el asistente de gestión de Nénufar, la marca de joyería artesanal en Cartagena, Colombia.',
-    `Tu interlocutora es ${nombre}, quien administra y opera la tienda, escribiéndote desde Telegram.`,
-    `Dirígete siempre a ella amablemente por su nombre (${nombre}).`,
+    'Tu interlocutora es Shirley, dueña, diseñadora artesanal y administradora de la tienda, quien te escribe desde Telegram.',
+    'Dirígete siempre a ella con cariño y respeto como Shirley.',
     '',
     'Tono: cálido, cercano y cartagenero, pero eficiente. Respuestas cortas (es Telegram). Español.',
     '',
@@ -196,7 +195,6 @@ export async function runShirleyAgent({
   text,
   payload,
   chatId,
-  userName,
   mediaId,
 }: RunShirleyAgentArgs): Promise<string> {
   const startTime = Date.now()
@@ -206,9 +204,8 @@ export async function runShirleyAgent({
 
   const cleanPrompt = (() => {
     const trimmed = text.trim()
-    const nombre = userName ? userName : 'Shirley'
     if (trimmed === '/start' || trimmed === '/iniciar') {
-      return `Hola, soy ${nombre}. ¿Cómo estás y en qué me puedes ayudar hoy en la tienda?`
+      return 'Hola, soy Shirley. ¿Cómo estás y en qué me puedes ayudar hoy en la tienda?'
     }
     if (trimmed === '/help' || trimmed === '/ayuda') {
       return '¿Qué herramientas y tareas puedes hacer por mí en la tienda?'
@@ -227,7 +224,7 @@ export async function runShirleyAgent({
 
   // 1. Cargar memoria previa de Supabase (o iniciar sesión limpia si envió /start)
   const historyMessages = isResetCommand ? [] : await loadRecentHistory(payload, chatId)
-  const system = buildSystemPrompt(userName)
+  const system = buildSystemPrompt()
   const baseUrl = (process.env.ANTHROPIC_BASE_URL || 'http://localhost:4000').replace(/\/$/, '')
   const apiKey =
     process.env.ANTHROPIC_AUTH_TOKEN || process.env.LITELLM_MASTER_KEY || 'sk-nenufar-local'

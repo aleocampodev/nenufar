@@ -33,6 +33,15 @@ const blockComponents = {
   upcomingEvents: UpcomingEventsBlock,
 }
 
+const defaultBlockIds: Record<string, string> = {
+  features: 'tradicion',
+  nenufarStory: 'historia',
+  upcomingEvents: 'talleres',
+  cta: 'contacto',
+  testimonials: 'testimonios',
+  imageStrip: 'artesania',
+}
+
 export const RenderBlocks: React.FC<{
   blocks: Page['layout'][0][]
 }> = (props) => {
@@ -62,6 +71,9 @@ export const RenderBlocks: React.FC<{
 
             if (Block) {
               const shouldApplyMargin = !unspacedBlocks.has(blockType)
+              const blockId = blockName
+                ? toKebabCase(blockName)
+                : defaultBlockIds[blockType] || undefined
 
               return (
                 <ScrollReveal
@@ -70,7 +82,7 @@ export const RenderBlocks: React.FC<{
                 >
                   {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                   {/* @ts-ignore - weird type mismatch here */}
-                  <Block id={toKebabCase(blockName!)} {...block} />
+                  <Block {...block} id={blockId} />
                 </ScrollReveal>
               )
             }
