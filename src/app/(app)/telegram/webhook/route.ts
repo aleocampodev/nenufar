@@ -145,12 +145,10 @@ export async function POST(request: Request): Promise<Response> {
       }
     }
 
-    const userName = message?.from?.first_name ?? message?.from?.username
     const reply = await runShirleyAgent({
       text,
       payload,
       chatId,
-      userName,
       mediaId: uploadedMediaId,
     })
     payload.logger.info({ msg: '[telegram] handled by shirley-agent', chatId })

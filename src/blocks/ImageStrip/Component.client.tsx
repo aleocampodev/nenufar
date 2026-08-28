@@ -110,7 +110,7 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
   const activeItem = expandedIndex !== null ? items[expandedIndex] || DEFAULT_ITEMS[expandedIndex % 4] : null
 
   return (
-    <section id={id || "tradicion"} className="w-full bg-[#FAF8F5] pt-16 sm:pt-20">
+    <section id={id || "artesania"} className="w-full bg-[#FAF8F5] pt-16 sm:pt-20 scroll-mt-24">
       {/* Encabezado Editorial Superior */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center mb-12">
         {tagline && (

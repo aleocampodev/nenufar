@@ -125,7 +125,7 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
   }
 
   return (
-    <section id={id || "talleres"} className="w-full py-20 bg-[#FAF8F5] text-stone-900 border-t border-stone-200/80">
+    <section id={id || "talleres"} className="w-full py-20 bg-[#FAF8F5] text-stone-900 border-t border-stone-200/80 scroll-mt-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {/* Encabezado Editorial Claro */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
