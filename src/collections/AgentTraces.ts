@@ -10,8 +10,15 @@ export const AgentTraces: CollectionConfig = {
   admin: {
     group: 'Bot de Shirley',
     useAsTitle: 'query',
-    defaultColumns: ['chatId', 'query', 'executionTimeMs', 'status', 'toolsUsed', 'createdAt'],
-    description: 'Auditoría, latencia, métricas de rendimiento y trazabilidad de Shirley Bot',
+    defaultColumns: [
+      'query',
+      'totalTokens',
+      'executionTimeMs',
+      'toolsUsed',
+      'cost',
+      'createdAt',
+    ],
+    description: 'Auditoría, consumo de tokens, latencia y métricas de rendimiento de Shirley Bot',
   },
   access: {
     create: adminOnly,
@@ -44,6 +51,39 @@ export const AgentTraces: CollectionConfig = {
       label: 'Herramientas Ejecutadas',
       admin: {
         description: 'Lista de herramientas invocadas en el bucle agéntico',
+      },
+    },
+    {
+      name: 'inputTokens',
+      type: 'number',
+      label: 'Tokens de Entrada (Prompt)',
+      admin: {
+        description: 'Tokens consumidos por el prompt y contexto previo',
+      },
+    },
+    {
+      name: 'outputTokens',
+      type: 'number',
+      label: 'Tokens de Salida (Respuesta)',
+      admin: {
+        description: 'Tokens generados por el modelo de IA',
+      },
+    },
+    {
+      name: 'totalTokens',
+      type: 'number',
+      label: 'Total Tokens Consumidos',
+      admin: {
+        description: 'Suma de tokens de entrada y salida',
+      },
+    },
+    {
+      name: 'cost',
+      type: 'text',
+      label: 'Costo Estimado',
+      defaultValue: '$0 USD (Groq Free Tier)',
+      admin: {
+        description: 'Costo monetario real de la inferencia',
       },
     },
     {

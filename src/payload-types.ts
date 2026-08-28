@@ -1406,7 +1406,7 @@ export interface AgentMessage {
   createdAt: string;
 }
 /**
- * Auditoría, latencia, métricas de rendimiento y trazabilidad de Shirley Bot
+ * Auditoría, consumo de tokens, latencia y métricas de rendimiento de Shirley Bot
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "agent-traces".
@@ -1420,6 +1420,22 @@ export interface AgentTrace {
    * Lista de herramientas invocadas en el bucle agéntico
    */
   toolsUsed?: string | null;
+  /**
+   * Tokens consumidos por el prompt y contexto previo
+   */
+  inputTokens?: number | null;
+  /**
+   * Tokens generados por el modelo de IA
+   */
+  outputTokens?: number | null;
+  /**
+   * Suma de tokens de entrada y salida
+   */
+  totalTokens?: number | null;
+  /**
+   * Costo monetario real de la inferencia
+   */
+  cost?: string | null;
   /**
    * Duración total del bucle agéntico en milisegundos
    */
@@ -2053,6 +2069,10 @@ export interface AgentTracesSelect<T extends boolean = true> {
   query?: T;
   responseSummary?: T;
   toolsUsed?: T;
+  inputTokens?: T;
+  outputTokens?: T;
+  totalTokens?: T;
+  cost?: T;
   executionTimeMs?: T;
   status?: T;
   errorMessage?: T;

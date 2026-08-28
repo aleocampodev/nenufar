@@ -151,6 +151,10 @@ async function recordTrace(
     query: string
     responseSummary?: string
     toolsUsed?: string
+    inputTokens?: number
+    outputTokens?: number
+    totalTokens?: number
+    cost?: string
     executionTimeMs: number
     status: 'success' | 'error' | 'fallback'
     errorMessage?: string
@@ -165,6 +169,10 @@ async function recordTrace(
         query: data.query,
         responseSummary: data.responseSummary,
         toolsUsed: data.toolsUsed,
+        inputTokens: data.inputTokens ?? 0,
+        outputTokens: data.outputTokens ?? 0,
+        totalTokens: data.totalTokens ?? 0,
+        cost: data.cost ?? '$0 USD (Groq Free Tier)',
         executionTimeMs: data.executionTimeMs,
         status: data.status,
         errorMessage: data.errorMessage,
@@ -193,6 +201,8 @@ export async function runShirleyAgent({
 }: RunShirleyAgentArgs): Promise<string> {
   const startTime = Date.now()
   const toolsInvoked: string[] = []
+  let totalInputTokens = 0
+  let totalOutputTokens = 0
 
   const cleanPrompt = (() => {
     const trimmed = text.trim()
@@ -261,6 +271,10 @@ export async function runShirleyAgent({
           query: text,
           responseSummary: AGENT_FALLBACK,
           toolsUsed: toolsInvoked.join(', ') || 'ninguna',
+          inputTokens: totalInputTokens,
+          outputTokens: totalOutputTokens,
+          totalTokens: totalInputTokens + totalOutputTokens,
+          cost: '$0 USD (Groq Free Tier)',
           executionTimeMs: Date.now() - startTime,
           status: 'error',
           errorMessage: `HTTP ${response.status}: ${errorText}`,
@@ -271,6 +285,13 @@ export async function runShirleyAgent({
       }
 
       const data = await response.json()
+
+      // Acumular conteo de tokens devueltos por LiteLLM / Groq
+      if (data.usage) {
+        totalInputTokens += Number(data.usage.input_tokens || 0)
+        totalOutputTokens += Number(data.usage.output_tokens || 0)
+      }
+
       const content = (data.content ?? []) as Array<Record<string, any>>
 
       // 1. Detectar invocaciones de herramientas (tool_use)
@@ -314,12 +335,16 @@ export async function runShirleyAgent({
           toolName: toolsInvoked.join(', ') || undefined,
         })
 
-        // Registrar métrica de observabilidad
+        // Registrar métrica de observabilidad con conteo de tokens
         void recordTrace(payload, {
           chatId,
           query: text,
           responseSummary: finalReply,
           toolsUsed: toolsInvoked.join(', ') || 'ninguna',
+          inputTokens: totalInputTokens,
+          outputTokens: totalOutputTokens,
+          totalTokens: totalInputTokens + totalOutputTokens,
+          cost: '$0 USD (Groq Free Tier)',
           executionTimeMs: Date.now() - startTime,
           status: 'success',
           model,
@@ -334,6 +359,10 @@ export async function runShirleyAgent({
       query: text,
       responseSummary: AGENT_FALLBACK,
       toolsUsed: toolsInvoked.join(', ') || 'ninguna',
+      inputTokens: totalInputTokens,
+      outputTokens: totalOutputTokens,
+      totalTokens: totalInputTokens + totalOutputTokens,
+      cost: '$0 USD (Groq Free Tier)',
       executionTimeMs: Date.now() - startTime,
       status: 'fallback',
       errorMessage: 'Se alcanzó el límite de MAX_TURNS sin respuesta textual',
@@ -353,6 +382,10 @@ export async function runShirleyAgent({
       query: text,
       responseSummary: AGENT_FALLBACK,
       toolsUsed: toolsInvoked.join(', ') || 'ninguna',
+      inputTokens: totalInputTokens,
+      outputTokens: totalOutputTokens,
+      totalTokens: totalInputTokens + totalOutputTokens,
+      cost: '$0 USD (Groq Free Tier)',
       executionTimeMs: Date.now() - startTime,
       status: 'error',
       errorMessage: errorMsg,
