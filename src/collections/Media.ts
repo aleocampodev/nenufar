@@ -58,6 +58,11 @@ export const Media: CollectionConfig = {
     staticDir: path.resolve(mediaDir, '../../public/media'),
     adminThumbnail: ({ doc }) => {
       const d = doc as any
+      if (d?.mimeType?.startsWith('video/') || d?.filename?.match(/\.(mp4|webm|mov|m4v)$/i)) {
+        const base = (d?.filename || '').replace(/\.[^/.]+$/, '')
+        const posterFile = `${base}-poster.jpg`
+        return getSupabasePublicUrl(posterFile) || '/media/taller-artesanal-poster.jpg'
+      }
       return (
         d?.thumbnailURL ||
         d?.sizes?.thumbnail?.url ||
@@ -65,7 +70,19 @@ export const Media: CollectionConfig = {
         getSupabasePublicUrl(d?.sizes?.thumbnail?.filename || d?.filename || '')
       )
     },
-    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif', 'image/svg+xml'],
+    mimeTypes: [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/avif',
+      'image/gif',
+      'image/svg+xml',
+      'video/mp4',
+      'video/webm',
+      'video/quicktime',
+      'video/ogg',
+      'video/x-m4v',
+    ],
     focalPoint: true,
     imageSizes: [
       {
@@ -116,16 +133,22 @@ export const Media: CollectionConfig = {
         if (!doc) return doc
         if (doc.filename) {
           doc.url = getSupabasePublicUrl(doc.filename)
-          doc.thumbnailURL = doc.sizes?.thumbnail?.filename
-            ? getSupabasePublicUrl(doc.sizes.thumbnail.filename)
-            : doc.url
+          if (doc.mimeType?.startsWith('video/') || doc.filename.match(/\.(mp4|webm|mov|m4v)$/i)) {
+            const base = doc.filename.replace(/\.[^/.]+$/, '')
+            const posterFile = `${base}-poster.jpg`
+            doc.thumbnailURL = getSupabasePublicUrl(posterFile) || '/media/taller-artesanal-poster.jpg'
+          } else {
+            doc.thumbnailURL = doc.sizes?.thumbnail?.filename
+              ? getSupabasePublicUrl(doc.sizes.thumbnail.filename)
+              : doc.url
+          }
         }
         return doc
       },
     ],
     afterChange: [
       async ({ doc, req }) => {
-        // Sync uploaded image and variants to Supabase Storage bucket in background
+        // Sync uploaded image/video and variants to Supabase Storage bucket in background
         try {
           const staticDir = path.resolve(mediaDir, '../../public/media')
           if (doc.filename) {
@@ -135,8 +158,35 @@ export const Media: CollectionConfig = {
               await uploadToSupabaseStorage({
                 filename: doc.filename,
                 buffer,
-                mimeType: doc.mimeType || 'image/jpeg',
+                mimeType: doc.mimeType || (doc.filename?.match(/\.(mp4|mov)$/i) ? 'video/mp4' : 'image/jpeg'),
               })
+
+              // If it is a video, automatically extract a poster frame with ffmpeg and upload to Supabase
+              if (doc.mimeType?.startsWith('video/') || doc.filename.match(/\.(mp4|webm|mov|m4v)$/i)) {
+                try {
+                  const { exec } = await import('child_process')
+                  const util = await import('util')
+                  const execPromise = util.promisify(exec)
+                  const base = doc.filename.replace(/\.[^/.]+$/, '')
+                  const posterFilename = `${base}-poster.jpg`
+                  const posterFilePath = path.join(staticDir, posterFilename)
+
+                  await execPromise(
+                    `ffmpeg -ss 00:00:01.000 -i "${mainFilePath}" -vframes 1 -q:v 2 "${posterFilePath}" -y`
+                  )
+
+                  if (fs.existsSync(posterFilePath)) {
+                    const posterBuffer = await fs.promises.readFile(posterFilePath)
+                    await uploadToSupabaseStorage({
+                      filename: posterFilename,
+                      buffer: posterBuffer,
+                      mimeType: 'image/jpeg',
+                    })
+                  }
+                } catch (ffmpegErr) {
+                  req.payload.logger.warn({ msg: '[Video Poster] Error extracting poster frame', ffmpegErr })
+                }
+              }
             }
           }
           if (doc.sizes && typeof doc.sizes === 'object') {

@@ -17,6 +17,8 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { es } from '@payloadcms/translations/languages/es'
 
+import { AgentMessages } from '@/collections/AgentMessages'
+import { AgentTraces } from '@/collections/AgentTraces'
 import { Categories } from '@/collections/Categories'
 import { Events } from '@/collections/Events'
 import { Media } from '@/collections/Media'
@@ -49,7 +51,17 @@ export default buildConfig({
     },
     user: Users.slug,
   },
-  collections: [Users, Pages, Categories, Media, Posts, Events, Testimonials],
+  collections: [
+    Users,
+    Pages,
+    Categories,
+    Media,
+    Posts,
+    Events,
+    Testimonials,
+    AgentMessages,
+    AgentTraces,
+  ],
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL || '',

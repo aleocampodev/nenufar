@@ -90,7 +90,7 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
 }) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
 
-  const items = images && images.length > 0 ? images : DEFAULT_ITEMS
+  const items = images && images.length > 0 ? images.filter((img) => img != null && typeof img === 'object') : DEFAULT_ITEMS
 
   const toggleExpand = (index: number) => {
     setExpandedIndex((prev) => {

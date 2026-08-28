@@ -23,6 +23,9 @@ const MAX_TURNS = 4
 /** Timeout total de la consulta. */
 const TIMEOUT_MS = 25_000
 
+/** Ventana máxima de mensajes previos para memoria conversacional. */
+const MAX_HISTORY_MESSAGES = 10
+
 function buildSystemPrompt(userName?: string): string {
   const nombre = userName ? userName : 'Shirley'
   return [
@@ -46,12 +49,143 @@ function buildSystemPrompt(userName?: string): string {
     '- Si Shirley pide ideas de textos para la landing page (hero, carrusel, historia, llamada a la acción), usa generarCopyLanding.',
     '- Si una herramienta falla, discúlpate brevemente y sugiere revisar /admin. No muestres errores técnicos.',
     '- Si el mensaje es una pregunta general o saludo, responde directo sin usar herramientas.',
+    '- Tienes acceso al historial de conversación previo: úsalo para entender referencias a productos, fotos o temas hablados anteriormente.',
   ].join('\n')
 }
 
 interface AnthropicMessage {
   role: 'user' | 'assistant'
   content: string | Array<Record<string, any>>
+}
+
+/**
+ * Carga el historial de conversación reciente para dar memoria contextual al agente.
+ */
+async function loadRecentHistory(
+  payload: Payload,
+  chatId: number,
+): Promise<AnthropicMessage[]> {
+  try {
+    const result = await payload.find({
+      collection: 'agent-messages' as any,
+      where: {
+        chatId: { equals: chatId },
+      },
+      sort: '-createdAt',
+      limit: MAX_HISTORY_MESSAGES,
+      overrideAccess: true,
+    })
+
+    if (!result.docs || result.docs.length === 0) {
+      return []
+    }
+
+    // Orden cronológico (más antiguo al más reciente)
+    const chronologicalDocs = [...result.docs].reverse()
+    const history: AnthropicMessage[] = []
+
+    for (const doc of chronologicalDocs) {
+      if (doc.role === 'user' || doc.role === 'assistant') {
+        const textContent = typeof doc.content === 'string' ? doc.content.trim() : ''
+        if (textContent) {
+          history.push({
+            role: doc.role,
+            content: textContent,
+          })
+        }
+      }
+    }
+
+    return history
+  } catch (err) {
+    payload.logger.warn({
+      msg: '[shirley-agent] No se pudo cargar historial conversacional, continuando sin memoria previa',
+      err: err instanceof Error ? err.message : String(err),
+    })
+    return []
+  }
+}
+
+/**
+ * Guarda un mensaje en la colección de historial de Supabase.
+ */
+async function persistMessage(
+  payload: Payload,
+  data: {
+    chatId: number
+    role: 'user' | 'assistant' | 'tool'
+    content?: string
+    toolName?: string
+    toolCalls?: any
+    toolResults?: any
+  },
+): Promise<void> {
+  try {
+    await payload.create({
+      collection: 'agent-messages' as any,
+      data: {
+        chatId: data.chatId,
+        role: data.role,
+        content: data.content,
+        toolName: data.toolName,
+        toolCalls: data.toolCalls,
+        toolResults: data.toolResults,
+      },
+      overrideAccess: true,
+    })
+  } catch (err) {
+    payload.logger.warn({
+      msg: '[shirley-agent] Error persistiendo mensaje en historial',
+      err: err instanceof Error ? err.message : String(err),
+    })
+  }
+}
+
+/**
+ * Registra una traza de ejecución para auditoría y observabilidad en Supabase.
+ */
+async function recordTrace(
+  payload: Payload,
+  data: {
+    chatId: number
+    query: string
+    responseSummary?: string
+    toolsUsed?: string
+    inputTokens?: number
+    outputTokens?: number
+    totalTokens?: number
+    cost?: string
+    executionTimeMs: number
+    status: 'success' | 'error' | 'fallback'
+    errorMessage?: string
+    model?: string
+  },
+): Promise<void> {
+  try {
+    await payload.create({
+      collection: 'agent-traces' as any,
+      data: {
+        chatId: data.chatId,
+        query: data.query,
+        responseSummary: data.responseSummary,
+        toolsUsed: data.toolsUsed,
+        inputTokens: data.inputTokens ?? 0,
+        outputTokens: data.outputTokens ?? 0,
+        totalTokens: data.totalTokens ?? 0,
+        cost: data.cost ?? '$0 USD (Groq Free Tier)',
+        executionTimeMs: data.executionTimeMs,
+        status: data.status,
+        errorMessage: data.errorMessage,
+        model: data.model,
+      },
+      overrideAccess: true,
+    })
+  } catch (err) {
+    payload.logger.warn({
+      msg: '[shirley-agent] Error registrando traza de observabilidad',
+      err: err instanceof Error ? err.message : String(err),
+    })
+  }
 }
 
 /**
@@ -65,7 +199,11 @@ export async function runShirleyAgent({
   userName,
   mediaId,
 }: RunShirleyAgentArgs): Promise<string> {
-  void chatId
+  const startTime = Date.now()
+  const toolsInvoked: string[] = []
+  let totalInputTokens = 0
+  let totalOutputTokens = 0
+
   const cleanPrompt = (() => {
     const trimmed = text.trim()
     const nombre = userName ? userName : 'Shirley'
@@ -81,13 +219,31 @@ export async function runShirleyAgent({
     return trimmed
   })()
 
+  const isResetCommand =
+    text.trim() === '/start' ||
+    text.trim() === '/iniciar' ||
+    text.trim() === '/reiniciar' ||
+    text.trim() === '/reset'
+
+  // 1. Cargar memoria previa de Supabase (o iniciar sesión limpia si envió /start)
+  const historyMessages = isResetCommand ? [] : await loadRecentHistory(payload, chatId)
   const system = buildSystemPrompt(userName)
   const baseUrl = (process.env.ANTHROPIC_BASE_URL || 'http://localhost:4000').replace(/\/$/, '')
   const apiKey =
     process.env.ANTHROPIC_AUTH_TOKEN || process.env.LITELLM_MASTER_KEY || 'sk-nenufar-local'
   const model = process.env.ANTHROPIC_MODEL || 'nenufar-bot'
 
-  const messages: AnthropicMessage[] = [{ role: 'user', content: cleanPrompt }]
+  const messages: AnthropicMessage[] = [
+    ...historyMessages,
+    { role: 'user', content: cleanPrompt },
+  ]
+
+  // Persistir mensaje del usuario
+  void persistMessage(payload, {
+    chatId,
+    role: 'user',
+    content: text,
+  })
 
   try {
     for (let turn = 0; turn < MAX_TURNS; turn++) {
@@ -115,10 +271,33 @@ export async function runShirleyAgent({
           status: response.status,
           errorText,
         })
+
+        void recordTrace(payload, {
+          chatId,
+          query: text,
+          responseSummary: AGENT_FALLBACK,
+          toolsUsed: toolsInvoked.join(', ') || 'ninguna',
+          inputTokens: totalInputTokens,
+          outputTokens: totalOutputTokens,
+          totalTokens: totalInputTokens + totalOutputTokens,
+          cost: '$0 USD (Groq Free Tier)',
+          executionTimeMs: Date.now() - startTime,
+          status: 'error',
+          errorMessage: `HTTP ${response.status}: ${errorText}`,
+          model,
+        })
+
         return AGENT_FALLBACK
       }
 
       const data = await response.json()
+
+      // Acumular conteo de tokens devueltos por LiteLLM / Groq
+      if (data.usage) {
+        totalInputTokens += Number(data.usage.input_tokens || 0)
+        totalOutputTokens += Number(data.usage.output_tokens || 0)
+      }
+
       const content = (data.content ?? []) as Array<Record<string, any>>
 
       // 1. Detectar invocaciones de herramientas (tool_use)
@@ -128,6 +307,7 @@ export async function runShirleyAgent({
 
         const toolResults: Array<Record<string, any>> = []
         for (const toolCall of toolCalls) {
+          toolsInvoked.push(toolCall.name)
           const toolArgs = {
             ...(toolCall.input ?? {}),
             ...(mediaId ? { mediaId } : {}),
@@ -151,16 +331,73 @@ export async function runShirleyAgent({
       // 2. Extraer texto de respuesta final
       const textBlock = content.find((item) => item.type === 'text')
       if (textBlock && typeof textBlock.text === 'string' && textBlock.text.trim()) {
-        return textBlock.text.trim()
+        const finalReply = textBlock.text.trim()
+
+        // Persistir respuesta del asistente
+        void persistMessage(payload, {
+          chatId,
+          role: 'assistant',
+          content: finalReply,
+          toolName: toolsInvoked.join(', ') || undefined,
+        })
+
+        // Registrar métrica de observabilidad con conteo de tokens
+        void recordTrace(payload, {
+          chatId,
+          query: text,
+          responseSummary: finalReply,
+          toolsUsed: toolsInvoked.join(', ') || 'ninguna',
+          inputTokens: totalInputTokens,
+          outputTokens: totalOutputTokens,
+          totalTokens: totalInputTokens + totalOutputTokens,
+          cost: '$0 USD (Groq Free Tier)',
+          executionTimeMs: Date.now() - startTime,
+          status: 'success',
+          model,
+        })
+
+        return finalReply
       }
     }
 
+    void recordTrace(payload, {
+      chatId,
+      query: text,
+      responseSummary: AGENT_FALLBACK,
+      toolsUsed: toolsInvoked.join(', ') || 'ninguna',
+      inputTokens: totalInputTokens,
+      outputTokens: totalOutputTokens,
+      totalTokens: totalInputTokens + totalOutputTokens,
+      cost: '$0 USD (Groq Free Tier)',
+      executionTimeMs: Date.now() - startTime,
+      status: 'fallback',
+      errorMessage: 'Se alcanzó el límite de MAX_TURNS sin respuesta textual',
+      model,
+    })
+
     return AGENT_FALLBACK
   } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : String(err)
     payload.logger.error({
       msg: '[shirley-agent] Error crítico en el loop agéntico',
-      err: err instanceof Error ? err.message : String(err),
+      err: errorMsg,
     })
+
+    void recordTrace(payload, {
+      chatId,
+      query: text,
+      responseSummary: AGENT_FALLBACK,
+      toolsUsed: toolsInvoked.join(', ') || 'ninguna',
+      inputTokens: totalInputTokens,
+      outputTokens: totalOutputTokens,
+      totalTokens: totalInputTokens + totalOutputTokens,
+      cost: '$0 USD (Groq Free Tier)',
+      executionTimeMs: Date.now() - startTime,
+      status: 'error',
+      errorMessage: errorMsg,
+      model,
+    })
+
     return AGENT_FALLBACK
   }
 }

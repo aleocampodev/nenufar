@@ -47,6 +47,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         <video
           ref={videoRef}
           src={videoUrl || undefined}
+          poster="/media/taller-artesanal-poster.jpg"
           autoPlay
           loop
           muted
