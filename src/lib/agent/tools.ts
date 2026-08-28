@@ -428,7 +428,7 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
   {
     name: 'generarCopyLanding',
     description:
-      'Genera copys atractivos y persuasivos para secciones de la landing page (carrusel Hero, bloque de historia, llamada a la acción CTA o banner promocional).',
+      'Genera copys atractivos y persuasivos para secciones de la landing page web (carrusel Hero, bloque de historia, llamada a la acción CTA o banner promocional).',
     input_schema: {
       type: 'object',
       properties: {
@@ -443,31 +443,6 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
         },
       },
       required: ['seccion'],
-    },
-  },
-  {
-    name: 'generarPostRedes',
-    description:
-      'Crea publicaciones atractivas para redes sociales (Instagram, TikTok, Facebook) con gancho (hook), cuerpo emotivo, llamado a la acción (CTA) con enlace a la web y hashtags recomendados.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        redSocial: {
-          type: 'string',
-          enum: ['instagram', 'tiktok', 'facebook', 'general'],
-          description: 'Red social de destino (por defecto instagram)',
-        },
-        tema: {
-          type: 'string',
-          description: 'Joya, colección, taller o historia a promocionar (ej. "Aretes Filigrana Atardecer")',
-        },
-        objetivo: {
-          type: 'string',
-          enum: ['venta_catalogo', 'taller_evento', 'proceso_artesanal', 'posicionamiento'],
-          description: 'Objetivo de la publicación',
-        },
-      },
-      required: ['tema'],
     },
   },
 ]
@@ -885,34 +860,6 @@ export async function executeShirleyTool(
           `• Título: Manos que Tejen Tradición e Identidad`,
           `• Cuerpo: Cada pieza de Nénufar nace en el corazón de Cartagena de Indias. Shirley entrelaza hilos y mostacillas creando obras de autor que honran el legado cultural de Colombia.`,
           `• Cierre: Joyería liviana, hipoalergénica y llena de significado.`
-        ].join('\n')
-      }
-
-      case 'generarPostRedes': {
-        const { redSocial = 'instagram', tema, objetivo = 'venta_catalogo' } = args
-        void objetivo
-        const red = String(redSocial || 'instagram').toLowerCase()
-
-        return [
-          `📱 Propuestas de Publicación para ${red.toUpperCase()} (${tema}):`,
-          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-          `🌟 Opción 1 — Enfoque Historia & Conexión:`,
-          `【Gancho】 No es solo una joya, son horas de paciencia y amor tejidas a mano en Cartagena 🌊✨`,
-          ``,
-          `【Cuerpo】 Cada detalle de "${tema}" cuenta una historia de tradición y dedicación artesanal. Diseñada para ser ultraliviana, hipoalergénica y acompañarte en tus momentos más especiales.`,
-          ``,
-          `【Llamado a la Acción】 Pídela directamente desde el catálogo en el enlace de nuestra biografía o visita nenufar.co/shop 🛍️ Shirley coordinará tu entrega con mucho amor.`,
-          ``,
-          `【Hashtags】 #NenufarJoyería #HechoAMano #JoyeríaArtesanal #CartagenaDeIndias #ModaColombiana #ArtesaníasColombia`,
-          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-          `🔥 Opción 2 — Enfoque Exclusividad & Estilo:`,
-          `【Gancho】 ¿Buscando ese toque auténtico que transforme cualquier atuendo? ✨`,
-          ``,
-          `【Cuerpo】 "${tema}" es una pieza de autor en edición limitada. Elaborada minuciosamente a mano en nuestro taller caribeño, perfecta para regalar o consentirte con algo verdaderamente único.`,
-          ``,
-          `【Llamado a la Acción】 Envíos a toda Colombia 📦🇨🇴 Haz tu pedido en nenufar.co/shop antes de que se agote.`,
-          ``,
-          `【Hashtags】 #JoyeríaDeAutor #PiezasÚnicas #Cartagena #MostacillaCheca #RegaloEspecial #HechoEnColombia`
         ].join('\n')
       }
 

@@ -121,21 +121,4 @@ describe('runShirleyAgent', () => {
     )
     expect(ctaRes).toContain('Personalizar mi Joya')
   })
-
-  it('ejecuta generarPostRedes con hooks y llamado a la acción', async () => {
-    const { executeShirleyTool } = await import('@/lib/agent/tools')
-    const res = await executeShirleyTool(
-      'generarPostRedes',
-      {
-        redSocial: 'instagram',
-        tema: 'Pechera Okama Ceremonial',
-      },
-      fakePayload,
-    )
-
-    expect(res).toContain('INSTAGRAM')
-    expect(res).toContain('Pechera Okama Ceremonial')
-    expect(res).toContain('#NenufarJoyería')
-    expect(res).toContain('nenufar.co/shop')
-  })
 })
