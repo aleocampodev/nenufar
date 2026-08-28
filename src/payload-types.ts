@@ -552,15 +552,18 @@ export interface Page {
     | BannerBlock
     | FormBlock
     | {
+        tagline?: string | null;
         title?: string | null;
+        description?: string | null;
         /**
-         * Filtra qué tipo de eventos mostrar en la landing
+         * Sube un video vertical 9:16 grabado desde celular.
          */
-        filterByType?: ('todos' | 'feria' | 'taller' | 'pop-up') | null;
+        video?: (number | null) | Media;
         /**
-         * Máximo 6 eventos en el home.
+         * Enlace directo de video MP4 o CDN.
          */
-        limit?: number | null;
+        videoUrl?: string | null;
+        videoCaption?: string | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'upcomingEvents';
@@ -1553,9 +1556,12 @@ export interface PagesSelect<T extends boolean = true> {
         upcomingEvents?:
           | T
           | {
+              tagline?: T;
               title?: T;
-              filterByType?: T;
-              limit?: T;
+              description?: T;
+              video?: T;
+              videoUrl?: T;
+              videoCaption?: T;
               id?: T;
               blockName?: T;
             };

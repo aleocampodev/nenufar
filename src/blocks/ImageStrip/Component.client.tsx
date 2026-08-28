@@ -166,14 +166,11 @@ export const ImageStripClient: React.FC<Props & { id?: string }> = ({
           })}
         </div>
 
-        {/* CTA General al Catálogo */}
-        <div className="text-center mt-12">
-          <Link
-            href="/shop"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-brand hover:bg-brand-dark text-white text-xs uppercase tracking-[0.2em] font-medium shadow-md hover:shadow-lg transition-all"
-          >
-            Explorar Todos los Collares en la Tienda →
-          </Link>
+        {/* Pie Editorial */}
+        <div className="text-center mt-10">
+          <p className="text-xs text-stone-500 font-light tracking-wide">
+            Toca cualquiera de las 4 piezas para conocer su significado sagrado, técnica de hilado y confort en cuerpo.
+          </p>
         </div>
       </div>
 
