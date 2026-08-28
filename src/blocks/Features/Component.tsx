@@ -164,9 +164,9 @@ export const FeaturesBlock: React.FC<Props> = ({
     if (typeof centerImage === 'string' && centerImage.trim().length > 0) {
       return { src: centerImage, alt: 'Joyería artesanal Nénufar' }
     }
-    // Fallback fotográfico real de alta resolución de la tienda en Supabase Storage
+    // Fallback fotográfico real de alta resolución de la tienda
     return {
-      src: 'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/colombia-aretes.jpeg',
+      src: '/media/colombia-aretes-6.jpeg',
       alt: 'Joyería artesanal en mostacilla tejida a mano - Nénufar',
     }
   }

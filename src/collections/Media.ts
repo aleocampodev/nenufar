@@ -58,6 +58,9 @@ export const Media: CollectionConfig = {
     staticDir: path.resolve(mediaDir, '../../public/media'),
     adminThumbnail: ({ doc }) => {
       const d = doc as any
+      if (d?.mimeType?.startsWith('video/') || d?.filename?.match(/\.(mp4|webm|mov|m4v)$/i)) {
+        return d?.url || getSupabasePublicUrl(d?.filename || '')
+      }
       return (
         d?.thumbnailURL ||
         d?.sizes?.thumbnail?.url ||
@@ -65,7 +68,19 @@ export const Media: CollectionConfig = {
         getSupabasePublicUrl(d?.sizes?.thumbnail?.filename || d?.filename || '')
       )
     },
-    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif', 'image/svg+xml'],
+    mimeTypes: [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/avif',
+      'image/gif',
+      'image/svg+xml',
+      'video/mp4',
+      'video/webm',
+      'video/quicktime',
+      'video/ogg',
+      'video/x-m4v',
+    ],
     focalPoint: true,
     imageSizes: [
       {
@@ -125,7 +140,7 @@ export const Media: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc, req }) => {
-        // Sync uploaded image and variants to Supabase Storage bucket in background
+        // Sync uploaded image/video and variants to Supabase Storage bucket in background
         try {
           const staticDir = path.resolve(mediaDir, '../../public/media')
           if (doc.filename) {
@@ -135,7 +150,7 @@ export const Media: CollectionConfig = {
               await uploadToSupabaseStorage({
                 filename: doc.filename,
                 buffer,
-                mimeType: doc.mimeType || 'image/jpeg',
+                mimeType: doc.mimeType || (doc.filename?.match(/\.(mp4|mov)$/i) ? 'video/mp4' : 'image/jpeg'),
               })
             }
           }
