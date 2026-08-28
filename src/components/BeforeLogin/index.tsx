@@ -4,6 +4,12 @@ import React, { useEffect } from 'react'
 
 export const BeforeLogin: React.FC = () => {
   useEffect(() => {
+    // Limpia atributos inyectados por extensiones (Grammarly, etc.) en document.body
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.removeAttribute('data-new-gr-c-s-check-loaded')
+      document.body.removeAttribute('data-gr-ext-installed')
+    }
+
     // Agrega el ojito al campo de contraseña del login de Payload
     const addEyeToggle = () => {
       const passwordInput = document.querySelector<HTMLInputElement>('input[type="password"]')

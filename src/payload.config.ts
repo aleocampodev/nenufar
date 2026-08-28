@@ -36,6 +36,7 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     components: {
+      providers: ['@/providers/AdminHydrationProvider#AdminHydrationProvider'],
       actions: ['@/components/Admin/UserDropdown#UserDropdown'],
       beforeLogin: ['@/components/BeforeLogin#BeforeLogin'],
       beforeDashboard: ['@/components/BeforeDashboard#BeforeDashboard'],
