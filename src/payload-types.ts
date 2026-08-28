@@ -79,6 +79,8 @@ export interface Config {
     posts: Post;
     events: Event;
     testimonials: Testimonial;
+    'agent-messages': AgentMessage;
+    'agent-traces': AgentTrace;
     forms: Form;
     'form-submissions': FormSubmission;
     addresses: Address;
@@ -115,6 +117,8 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    'agent-messages': AgentMessagesSelect<false> | AgentMessagesSelect<true>;
+    'agent-traces': AgentTracesSelect<false> | AgentTracesSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     addresses: AddressesSelect<false> | AddressesSelect<true>;
@@ -1357,6 +1361,82 @@ export interface Testimonial {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Historial conversacional y contexto de Shirley en Telegram para memoria persistente
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agent-messages".
+ */
+export interface AgentMessage {
+  id: number;
+  /**
+   * Telegram Chat ID del remitente
+   */
+  chatId: number;
+  role: 'user' | 'assistant' | 'tool';
+  content?: string | null;
+  /**
+   * Nombre de la tool si el rol es tool o assistant
+   */
+  toolName?: string | null;
+  /**
+   * Detalle de tool_use de Anthropic si aplica
+   */
+  toolCalls?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Resultado devuelto por la tool
+   */
+  toolResults?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Auditoría, latencia, métricas de rendimiento y trazabilidad de Shirley Bot
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agent-traces".
+ */
+export interface AgentTrace {
+  id: number;
+  chatId: number;
+  query: string;
+  responseSummary?: string | null;
+  /**
+   * Lista de herramientas invocadas en el bucle agéntico
+   */
+  toolsUsed?: string | null;
+  /**
+   * Duración total del bucle agéntico en milisegundos
+   */
+  executionTimeMs?: number | null;
+  status?: ('success' | 'error' | 'fallback') | null;
+  /**
+   * Información del error si la ejecución falló
+   */
+  errorMessage?: string | null;
+  /**
+   * Nombre del modelo en LiteLLM / Groq
+   */
+  model?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-submissions".
  */
@@ -1424,6 +1504,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'testimonials';
         value: number | Testimonial;
+      } | null)
+    | ({
+        relationTo: 'agent-messages';
+        value: number | AgentMessage;
+      } | null)
+    | ({
+        relationTo: 'agent-traces';
+        value: number | AgentTrace;
       } | null)
     | ({
         relationTo: 'forms';
@@ -1941,6 +2029,36 @@ export interface TestimonialsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agent-messages_select".
+ */
+export interface AgentMessagesSelect<T extends boolean = true> {
+  chatId?: T;
+  role?: T;
+  content?: T;
+  toolName?: T;
+  toolCalls?: T;
+  toolResults?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agent-traces_select".
+ */
+export interface AgentTracesSelect<T extends boolean = true> {
+  chatId?: T;
+  query?: T;
+  responseSummary?: T;
+  toolsUsed?: T;
+  executionTimeMs?: T;
+  status?: T;
+  errorMessage?: T;
+  model?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
