@@ -103,6 +103,29 @@ export const hero: Field = {
           required: false,
         },
         {
+          name: 'imagePosition',
+          type: 'select',
+          label: 'Enfoque de la foto (para no cortar rostros)',
+          defaultValue: 'top',
+          options: [
+            {
+              label: '👤 Rostros / Superior (Recomendado para fotos con Shirley o personas)',
+              value: 'top',
+            },
+            {
+              label: '🎯 Centro (Recomendado para fotos de joyas solas o productos centrados)',
+              value: 'center',
+            },
+            {
+              label: '📐 Inferior (Enfocar la parte baja)',
+              value: 'bottom',
+            },
+          ],
+          admin: {
+            description: 'Elige "Rostros / Superior" para que al recortar la imagen en pantallas no corte las cabezas.',
+          },
+        },
+        {
           name: 'heading',
           type: 'text',
           label: 'Título grande',

@@ -14,6 +14,14 @@ type Slide = {
   subheading?: string | null
   linkLabel?: string | null
   linkUrl?: string | null
+  imagePosition?: 'top' | 'center' | 'bottom' | null
+}
+
+const getImagePositionClass = (pos?: string | null) => {
+  if (pos === 'center') return 'object-cover object-center'
+  if (pos === 'bottom') return 'object-cover object-bottom'
+  // Por defecto 'top' (20% en mobile, 25% en desktop) para encuadrar rostros y figuras sin cortar cabezas
+  return 'object-cover object-[center_20%] md:object-[center_25%]'
 }
 
 export const SliderHeroClient: React.FC<{
@@ -55,6 +63,7 @@ export const SliderHeroClient: React.FC<{
           {slides.map((slide, i) => {
             const media = slide.image as Media
             const isFirst = i === 0
+            const positionClass = getImagePositionClass(slide.imagePosition)
             return (
               <div key={i} className="flex-[0_0_100%] min-w-0 relative">
                 {/* Background image - Krafti full-bleed, no cut */}
@@ -65,7 +74,7 @@ export const SliderHeroClient: React.FC<{
                       sizeName="hero"
                       fill
                       priority={isFirst}
-                      imgClassName="object-cover"
+                      imgClassName={positionClass}
                     />
                   ) : (
                     <div className="absolute inset-0 bg-gradient-to-br from-brand/20 to-muted" />
