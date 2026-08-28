@@ -69,33 +69,36 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
       // Slider slides - Krafti 3 editorial slides with high-res jewelry photography
       slides: [
         {
-          heading: 'Joyas Tejidas con Alma Caribeña',
-          subheading: 'Piezas únicas de mostacilla y filigrana tejidas pacientemente a mano en Cartagena de Indias.',
-          linkLabel: 'Explorar Colección',
+          heading: 'Mostacilla con Alma Caribeña',
+          subheading: 'Piezas únicas tejidas a mano en Cartagena, con la dedicación de Shirley.',
+          linkLabel: 'Explorar Catálogo',
           linkUrl: '/shop',
+          imagePosition: 'top',
           image: {
-            url: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1920&auto=format&fit=crop&q=85',
-            alt: 'Joyería artesanal tejida a mano',
-          } as any,
-        },
-        {
-          heading: 'Filigrana y Mostacilla de Autor',
-          subheading: 'Inspiración tradicional momposina con un diseño contemporáneo, liviano e hipoalergénico.',
-          linkLabel: 'Ver Catálogo',
-          linkUrl: '/shop',
-          image: {
-            url: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1920&auto=format&fit=crop&q=85',
-            alt: 'Piezas exclusivas de joyería artesanal',
+            url: 'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-ancestral.jpg',
+            alt: 'Mostacilla con Alma Caribeña - Collar Ancestral',
           } as any,
         },
         {
           heading: 'Talleres que Tejen Comunidad',
-          subheading: 'Aprende las técnicas ancestrales de tejido en nuestros talleres y experiencias presenciales.',
-          linkLabel: 'Próximos Talleres',
-          linkUrl: '/#talleres',
+          subheading: 'Aprende la técnica ancestral de la mostacilla en nuestros talleres presenciales.',
+          linkLabel: 'Ver Talleres',
+          linkUrl: '/eventos',
+          imagePosition: 'top',
           image: {
-            url: 'https://images.unsplash.com/photo-1611591475102-4a00832049d5?w=1920&auto=format&fit=crop&q=85',
-            alt: 'Talleres artesanales en Cartagena',
+            url: 'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/talleres-comunidad.jpeg',
+            alt: 'Talleres que Tejen Comunidad - Shirley Nénufar',
+          } as any,
+        },
+        {
+          heading: 'Ferias y Pop-ups en Cartagena',
+          subheading: 'Encuéntranos en ferias artesanales y mercados locales. ¡Te esperamos!',
+          linkLabel: 'Próximas Ferias',
+          linkUrl: '/eventos',
+          imagePosition: 'top',
+          image: {
+            url: 'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/feria-y-talleres.jpg',
+            alt: 'Ferias y Pop-ups en Cartagena',
           } as any,
         },
       ] as any,

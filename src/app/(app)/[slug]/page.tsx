@@ -86,19 +86,31 @@ const queryPageBySlug = async ({ slug }: { slug: string }) => {
 
     const payload = await getPayload({ config: configPromise })
 
-    const result = await payload.find({
+    let result = await payload.find({
       collection: 'pages',
       depth: 2,
       draft,
       limit: 100,
-      overrideAccess: draft,
+      overrideAccess: true,
       pagination: false,
       where: {
         and: [...(!draft ? [{ _status: { equals: 'published' } }] : [])],
       },
     })
 
-    const found = result.docs?.find((doc: any) => doc.slug === slug) || null
+    let found = result.docs?.find((doc: any) => doc.slug === slug) || null
+
+    if (!found && !draft) {
+      result = await payload.find({
+        collection: 'pages',
+        depth: 2,
+        draft: true,
+        limit: 100,
+        overrideAccess: true,
+        pagination: false,
+      })
+      found = result.docs?.find((doc: any) => doc.slug === slug) || null
+    }
 
     return found
   } catch (err) {
