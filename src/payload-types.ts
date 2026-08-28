@@ -527,6 +527,10 @@ export interface Page {
     slides?:
       | {
           image?: (number | null) | Media;
+          /**
+           * Elige "Rostros / Superior" para que al recortar la imagen en pantallas no corte las cabezas.
+           */
+          imagePosition?: ('top' | 'center' | 'bottom') | null;
           heading?: string | null;
           subheading?: string | null;
           linkLabel?: string | null;
@@ -1512,6 +1516,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               image?: T;
+              imagePosition?: T;
               heading?: T;
               subheading?: T;
               linkLabel?: T;
