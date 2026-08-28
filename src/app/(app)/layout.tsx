@@ -3,7 +3,6 @@ import type { ReactNode } from 'react'
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
-import { InitialLoader } from '@/components/Loading/InitialLoader'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
@@ -78,7 +77,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         />
         <Providers>
           <HashScrollHandler />
-          <InitialLoader />
           <AdminBar />
           <LivePreviewListener />
 
@@ -86,8 +84,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <main>{children}</main>
           <Footer />
         </Providers>
-
-        <link href="/(app)/animations.css" rel="stylesheet" />
       </body>
     </html>
   )
