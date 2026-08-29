@@ -27,6 +27,7 @@ import { UserDropdown as UserDropdown_723e3e3ed226af4f99e35d24b8315d33 } from '@
 import { BeforeDashboard as BeforeDashboard_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
 import { BeforeLogin as BeforeLogin_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
 import { SidebarHeader as SidebarHeader_c1341160fb5268037b70134edf9bf152 } from '@/components/Admin/SidebarHeader'
+import { AdminHydrationProvider as AdminHydrationProvider_305619c75b9933b681ea681476e2320c } from '@/providers/AdminHydrationProvider'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -60,5 +61,6 @@ export const importMap = {
   "@/components/BeforeDashboard#BeforeDashboard": BeforeDashboard_1a7510af427896d367a49dbf838d2de6,
   "@/components/BeforeLogin#BeforeLogin": BeforeLogin_8a7ab0eb7ab5c511aba12e68480bfe5e,
   "@/components/Admin/SidebarHeader#SidebarHeader": SidebarHeader_c1341160fb5268037b70134edf9bf152,
+  "@/providers/AdminHydrationProvider#AdminHydrationProvider": AdminHydrationProvider_305619c75b9933b681ea681476e2320c,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
