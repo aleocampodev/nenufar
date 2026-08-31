@@ -109,7 +109,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
                 href="/shop"
                 className={`flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 ${
                   isPurple
-                    ? 'text-white/90 hover:text-[#5f0092]'
+                    ? 'text-white/80 hover:text-white'
                     : isTransparent
                     ? 'text-white hover:text-[#5f0092]'
                     : pathname?.startsWith('/shop')
@@ -168,7 +168,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
               onClick={(e) => handleAnchorClick(e, '/#tradicion')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
                 isPurple
-                  ? 'text-white/90 hover:text-[#5f0092]'
+                  ? 'text-white/80 hover:text-white'
                   : isTransparent
                   ? 'text-white hover:text-[#5f0092]'
                   : 'text-neutral-700 hover:text-[#5f0092]'
@@ -183,7 +183,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
               onClick={(e) => handleAnchorClick(e, '/#historia')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
                 isPurple
-                  ? 'text-white/90 hover:text-[#5f0092]'
+                  ? 'text-white/80 hover:text-white'
                   : isTransparent
                   ? 'text-white hover:text-[#5f0092]'
                   : 'text-neutral-700 hover:text-[#5f0092]'
@@ -198,7 +198,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
               onClick={(e) => handleAnchorClick(e, '/#talleres')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
                 isPurple
-                  ? 'text-white/90 hover:text-[#5f0092]'
+                  ? 'text-white/80 hover:text-white'
                   : isTransparent
                   ? 'text-white hover:text-[#5f0092]'
                   : 'text-neutral-700 hover:text-[#5f0092]'
@@ -213,7 +213,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
               onClick={(e) => handleAnchorClick(e, '/#contacto')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
                 isPurple
-                  ? 'text-white/90 hover:text-[#5f0092]'
+                  ? 'text-white/80 hover:text-white'
                   : isTransparent
                   ? 'text-white hover:text-[#5f0092]'
                   : 'text-neutral-700 hover:text-[#5f0092]'
