@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8E24AA" />
+      <stop offset="100%" stop-color="#4A0E6D" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D8B4FE" />
+      <stop offset="100%" stop-color="#8E24AA" />
+    </linearGradient>
+  </defs>
+  <!-- Petalo Central -->
+  <path d="M32 8 C28 22 24 38 32 52 C40 38 36 22 32 8 Z" fill="url(#brandGrad)" />
+  <!-- Petalos Izquierdos -->
+  <path d="M32 20 C22 28 14 38 18 50 C24 51 28 46 32 38 Z" fill="url(#accentGrad)" opacity="0.95" />
+  <path d="M32 32 C20 36 8 42 10 52 C16 54 24 50 32 46 Z" fill="url(#brandGrad)" opacity="0.85" />
+  <!-- Petalos Derechos -->
+  <path d="M32 20 C42 28 50 38 46 50 C40 51 36 46 32 38 Z" fill="url(#accentGrad)" opacity="0.95" />
+  <path d="M32 32 C44 36 56 42 54 52 C48 54 40 50 32 46 Z" fill="url(#brandGrad)" opacity="0.85" />
+  <!-- Base de la flor -->
+  <circle cx="32" cy="52" r="3.5" fill="#FAF8F5" />
+  <circle cx="32" cy="52" r="2" fill="#8B5A2B" />
+</svg>
