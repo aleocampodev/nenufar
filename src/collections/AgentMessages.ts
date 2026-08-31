@@ -8,6 +8,7 @@ export const AgentMessages: CollectionConfig = {
     plural: 'Historial de Conversación',
   },
   admin: {
+    hidden: true,
     group: 'Bot de Shirley',
     useAsTitle: 'content',
     defaultColumns: ['chatId', 'role', 'content', 'toolName', 'createdAt'],

@@ -8,6 +8,7 @@ export const AgentTraces: CollectionConfig = {
     plural: 'Trazas y Métricas de IA',
   },
   admin: {
+    hidden: true,
     group: 'Bot de Shirley',
     useAsTitle: 'query',
     defaultColumns: [
