@@ -5,8 +5,12 @@ import { SliderHeroClient } from './Component.client'
 
 type Slide = {
   image: number | Media
+  imagePosition?: 'top' | 'center' | 'bottom' | null
+  badge?: string | null
   heading: string
+  metaText?: string | null
   subheading?: string | null
+  tabTitle?: string | null
   linkLabel?: string | null
   linkUrl?: string | null
 }

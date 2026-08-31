@@ -2,25 +2,27 @@
 
 import type { Media } from '@/payload-types'
 import useEmblaCarousel from 'embla-carousel-react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import { Media as PayloadMedia } from '@/components/Media'
 
-type Slide = {
+export type Slide = {
   image: number | Media
+  imagePosition?: 'top' | 'center' | 'bottom' | null
+  badge?: string | null
   heading: string
+  metaText?: string | null
   subheading?: string | null
+  tabTitle?: string | null
   linkLabel?: string | null
   linkUrl?: string | null
-  imagePosition?: 'top' | 'center' | 'bottom' | null
 }
 
 const getImagePositionClass = (pos?: string | null) => {
   if (pos === 'center') return 'object-cover object-center'
   if (pos === 'bottom') return 'object-cover object-bottom'
-  // Por defecto 'top': anclado al borde superior exacto (0% top) para mostrar cabezas y rostros completos
   return 'object-cover object-top'
 }
 
@@ -29,8 +31,9 @@ export const SliderHeroClient: React.FC<{
   fallbackRichText?: any
   fallbackLinks?: any
 }> = ({ slides }) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 25 })
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
@@ -47,57 +50,84 @@ export const SliderHeroClient: React.FC<{
     onSelect()
   }, [emblaApi, onSelect])
 
-  // Auto-play 5s
+  // Autoplay with pause on hover
   useEffect(() => {
-    if (!emblaApi) return
-    const id = setInterval(() => emblaApi.scrollNext(), 5000)
+    if (!emblaApi || isPaused) return
+    const id = setInterval(() => {
+      emblaApi.scrollNext()
+    }, 6000)
     return () => clearInterval(id)
-  }, [emblaApi])
+  }, [emblaApi, isPaused])
 
   if (!slides?.length) return null
 
   return (
-    <section className="relative w-full overflow-hidden -mt-[74px] sm:-mt-[78px]">
+    <section
+      className="relative w-full overflow-hidden -mt-[74px] sm:-mt-[78px] select-none"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      aria-roledescription="carousel"
+      aria-label="Colecciones destacadas"
+    >
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex">
           {slides.map((slide, i) => {
             const media = slide.image as Media
             const isFirst = i === 0
             const positionClass = getImagePositionClass(slide.imagePosition)
+            const badgeText = slide.badge || 'Colección Destacada'
+            const meta = slide.metaText || 'Cartagena de Indias • Hecho a Mano'
+
             return (
               <div key={i} className="flex-[0_0_100%] min-w-0 relative">
-                {/* Background image - Krafti full-bleed, no cut */}
-                <div className="relative h-[68vh] md:h-[78vh] lg:h-[82vh] min-h-[520px] w-full overflow-hidden bg-[#f5f1eb]">
+                {/* Background image container with full viewport presence */}
+                <div className="relative h-[85vh] sm:h-[90vh] lg:h-screen min-h-[580px] w-full overflow-hidden bg-neutral-900">
                   {media && typeof media === 'object' ? (
                     <PayloadMedia
                       resource={media}
                       sizeName="hero"
                       fill
                       priority={isFirst}
-                      imgClassName={positionClass}
+                      imgClassName={`${positionClass} transition-transform duration-1000 ease-out`}
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand/20 to-muted" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand/40 to-neutral-950" />
                   )}
-                  <div className="absolute inset-0 bg-black/30 md:bg-black/25" />
 
-                  {/* Content - with elegant editorial typography */}
-                  <div className="absolute inset-0 flex items-center">
+                  {/* High-contrast cinematic overlays for flawless legibility */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/35" />
+                  <div className="absolute inset-0 bg-black/20" />
+
+                  {/* Main Editorial Content Area (Aligned Left-Center as in Reference) */}
+                  <div className="absolute inset-0 flex items-center pt-24 sm:pt-20 pb-28 md:pb-32">
                     <div className="container max-w-[1300px] px-6 sm:px-12 lg:px-20">
-                      <div className="max-w-2xl text-white space-y-4">
-                        <span className="inline-block text-xs sm:text-sm uppercase tracking-[0.3em] font-medium text-purple-200 drop-shadow-sm">
-                          Colección Artesanal
-                        </span>
-                        <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] font-normal tracking-tight drop-shadow-md">
+                      <div className="max-w-2xl text-white space-y-4 sm:space-y-5">
+                        {/* Overline Badge */}
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#E85D4A] animate-pulse" />
+                          {badgeText}
+                        </div>
+
+                        {/* Preserved Typography Heading */}
+                        <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08] drop-shadow-md">
                           {slide.heading}
                         </h1>
+
+                        {/* Metadata Tagline (Location & Craft Details) */}
+                        <div className="text-xs sm:text-sm font-medium tracking-[0.2em] uppercase text-white/75 drop-shadow-sm">
+                          {meta}
+                        </div>
+
+                        {/* Subheading / Description */}
                         {slide.subheading && (
-                          <p className="text-sm md:text-base text-white/90 leading-relaxed max-w-lg font-light drop-shadow-sm">
+                          <p className="text-sm sm:text-base text-white/85 leading-relaxed max-w-lg font-light drop-shadow-sm pt-1">
                             {slide.subheading}
                           </p>
                         )}
+
+                        {/* Primary CTA Button (Reference Style) */}
                         {slide.linkLabel && slide.linkUrl && (
-                          <div className="pt-2">
+                          <div className="pt-3 sm:pt-4">
                             <Link
                               href={slide.linkUrl}
                               onClick={(e) => {
@@ -111,7 +141,7 @@ export const SliderHeroClient: React.FC<{
                                   }
                                 }
                               }}
-                              className="inline-block px-8 py-3.5 bg-white text-neutral-900 text-xs tracking-[0.22em] uppercase font-medium rounded-full hover:bg-brand hover:text-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.15)] cursor-pointer"
+                              className="inline-flex items-center justify-center px-8 sm:px-10 py-3.5 sm:py-4 rounded-full bg-[#E85D4A] hover:bg-[#D44B38] text-white text-xs sm:text-sm font-semibold tracking-[0.18em] uppercase transition-all duration-300 shadow-[0_8px_25px_rgba(232,93,74,0.35)] hover:shadow-[0_12px_32px_rgba(232,93,74,0.5)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                             >
                               {slide.linkLabel}
                             </Link>
@@ -127,47 +157,72 @@ export const SliderHeroClient: React.FC<{
         </div>
       </div>
 
-      {/* Edge-clipped Geometric Diamond Arrows (Krafti signature) */}
+      {/* Bottom Controls Bar (Reference Layout: Left Circular Buttons, Right Slide Title Tabs) */}
       {slides.length > 1 && (
-        <>
-          {/* Flecha Izquierda recortada al borde */}
-          <button
-            aria-label="Anterior"
-            onClick={scrollPrev}
-            className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 w-[52px] h-[104px] overflow-hidden z-20 group cursor-pointer"
-          >
-            <span className="absolute left-[18px] top-[12px] w-[80px] h-[80px] bg-white rotate-45 shadow-[-4px_4px_18px_rgba(0,0,0,0.12)] transition-colors duration-200 group-hover:bg-neutral-50" />
-            <span className="relative z-10 flex items-center justify-start h-full pl-3 text-[#8B5A2B] group-hover:-translate-x-0.5 transition-transform duration-200">
-              <ChevronLeft className="w-6 h-6 stroke-[2]" />
-            </span>
-          </button>
-
-          {/* Flecha Derecha recortada al borde */}
-          <button
-            aria-label="Siguiente"
-            onClick={scrollNext}
-            className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 w-[52px] h-[104px] overflow-hidden z-20 group cursor-pointer"
-          >
-            <span className="absolute -left-[46px] top-[12px] w-[80px] h-[80px] bg-white rotate-45 shadow-[4px_4px_18px_rgba(0,0,0,0.12)] transition-colors duration-200 group-hover:bg-neutral-50" />
-            <span className="relative z-10 flex items-center justify-end h-full pr-3 text-[#8B5A2B] group-hover:translate-x-0.5 transition-transform duration-200">
-              <ChevronRight className="w-6 h-6 stroke-[2]" />
-            </span>
-          </button>
-
-          {/* Dots / Bullets */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-20">
-            {slides.map((_, i) => (
+        <div className="absolute bottom-6 sm:bottom-10 left-0 right-0 z-20 pointer-events-none">
+          <div className="container max-w-[1300px] px-6 sm:px-12 lg:px-20 flex items-center justify-between">
+            {/* Left Circular Navigation Controls */}
+            <div className="flex items-center gap-3 pointer-events-auto">
               <button
-                key={i}
-                aria-label={`Ir al slide ${i + 1}`}
-                onClick={() => scrollTo(i)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === selectedIndex ? 'w-8 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'
-                }`}
-              />
-            ))}
+                aria-label="Diapositiva anterior"
+                onClick={scrollPrev}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/30 bg-black/30 hover:bg-white text-white hover:text-neutral-950 backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-md group cursor-pointer active:scale-95"
+              >
+                <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 group-hover:-translate-x-0.5" />
+              </button>
+              <button
+                aria-label="Diapositiva siguiente"
+                onClick={scrollNext}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/30 bg-black/30 hover:bg-white text-white hover:text-neutral-950 backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-md group cursor-pointer active:scale-95"
+              >
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 group-hover:translate-x-0.5" />
+              </button>
+            </div>
+
+            {/* Right Tabs Switcher with Slide Names & Animated Indicator */}
+            <div className="hidden sm:flex items-center gap-6 md:gap-8 pointer-events-auto">
+              {slides.map((s, idx) => {
+                const isActive = idx === selectedIndex
+                const title = s.tabTitle || s.heading || `Slide ${idx + 1}`
+
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => scrollTo(idx)}
+                    className={`group text-left py-2 relative transition-all duration-300 cursor-pointer ${
+                      isActive ? 'text-white font-medium' : 'text-white/60 hover:text-white'
+                    }`}
+                  >
+                    <span className="text-xs md:text-sm tracking-wide block truncate max-w-[200px]">
+                      {title}
+                    </span>
+                    <span
+                      className={`absolute bottom-0 left-0 right-0 h-[2px] rounded-full transition-all duration-300 ${
+                        isActive
+                          ? 'bg-white scale-x-100 opacity-100'
+                          : 'bg-white/40 scale-x-0 group-hover:scale-x-100 opacity-0 group-hover:opacity-100'
+                      }`}
+                    />
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Mobile-only Slide Indicator */}
+            <div className="sm:hidden flex items-center gap-1.5 pointer-events-auto">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  aria-label={`Ir al slide ${i + 1}`}
+                  onClick={() => scrollTo(i)}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i === selectedIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/40'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
-        </>
+        </div>
       )}
     </section>
   )
