@@ -85,7 +85,7 @@ export const SliderHeroClient: React.FC<{
                   <div className="absolute inset-0 flex items-center">
                     <div className="container max-w-[1300px] px-6 sm:px-12 lg:px-20">
                       <div className="max-w-2xl text-white space-y-4">
-                        <span className="inline-block text-xs sm:text-xs uppercase tracking-[0.25em] font-semibold text-brand bg-white/95 dark:bg-zinc-900/90 px-4 py-1.5 rounded-full shadow-md border border-brand/20">
+                        <span className="inline-block text-xs uppercase tracking-[0.25em] font-semibold text-white bg-[#5f0092] px-4 py-1.5 rounded-full shadow-md">
                           Colección Artesanal
                         </span>
                         <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] font-normal tracking-tight drop-shadow-md">
