@@ -54,6 +54,51 @@ async function findProductBySlug(
   return (result.docs[0] as ProductWithSlug | undefined) ?? null
 }
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+async function findOrCreateCategory(
+  payload: Payload,
+  title: string,
+): Promise<{ doc: { id: number; title: string; slug?: string }; created: boolean }> {
+  const cleanTitle = title.trim()
+  const slug = slugify(cleanTitle)
+
+  const existing = await payload.find({
+    collection: 'categories',
+    limit: 1,
+    depth: 0,
+    overrideAccess: true,
+    where: {
+      or: [
+        { slug: { equals: slug } },
+        { title: { like: cleanTitle } },
+      ],
+    },
+  })
+
+  if (existing.docs.length > 0) {
+    return { doc: existing.docs[0] as any, created: false }
+  }
+
+  const newDoc = await payload.create({
+    collection: 'categories',
+    data: {
+      title: cleanTitle,
+      slug: slug || undefined,
+    } as any,
+    overrideAccess: true,
+  })
+
+  return { doc: newDoc as any, created: true }
+}
+
 async function getHomePage(payload: Payload) {
   const result = await payload.find({
     collection: 'pages',
@@ -142,6 +187,10 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
           type: 'number',
           description: 'Cantidad de unidades disponibles (ej. 5)',
         },
+        categoria: {
+          type: 'string',
+          description: 'Nombre de la categoría opcional a la que pertenece la joya (ej. "Aretes", "Collares", "Pulseras"). Si no existe se creará automáticamente.',
+        },
         publicar: {
           type: 'boolean',
           description: 'true para publicarlo de inmediato en la tienda web, false para dejarlo en borrador',
@@ -209,6 +258,50 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
         },
       },
       required: ['slug'],
+    },
+  },
+  {
+    name: 'crearCategoria',
+    description:
+      'Crea una nueva categoría en el catálogo de joyas (ej. "Aretes", "Collares", "Pulseras", "Tobilleras", "Anillos"). ' +
+      'Permite clasificar las piezas y habilitar filtros automáticos en la tienda web (/shop).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        titulo: {
+          type: 'string',
+          description: 'Nombre de la categoría, ej. "Tobilleras", "Aretes", "Collares", "Pulseras"',
+        },
+      },
+      required: ['titulo'],
+    },
+  },
+  {
+    name: 'listarCategorias',
+    description:
+      'Lista todas las categorías de joyas registradas en el catálogo con el número de piezas asociadas.',
+    input_schema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: 'asignarCategoriaProducto',
+    description:
+      'Asigna o vincula una categoría a una joya existente del catálogo por su slug o nombre.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        slug: {
+          type: 'string',
+          description: 'Slug o identificador del producto al que se le asignará la categoría',
+        },
+        categoria: {
+          type: 'string',
+          description: 'Nombre o título de la categoría a asignar (ej. "Aretes", "Collares", "Pulseras")',
+        },
+      },
+      required: ['slug', 'categoria'],
     },
   },
 
@@ -479,8 +572,15 @@ export async function executeShirleyTool(
       }
 
       case 'crearProductoDraft': {
-        const { titulo, precioCOP, inventario, publicar, mediaId } = args
+        const { titulo, precioCOP, inventario, publicar, mediaId, categoria } = args
         const shouldPublish = Boolean(publicar)
+        let categoryIds: number[] = []
+
+        if (categoria) {
+          const { doc: catDoc } = await findOrCreateCategory(payload, String(categoria))
+          categoryIds = [catDoc.id]
+        }
+
         const doc = await payload.create({
           collection: 'products',
           data: {
@@ -488,14 +588,16 @@ export async function executeShirleyTool(
             ...(precioCOP !== undefined ? { priceInCOPEnabled: true, priceInCOP: Number(precioCOP) } : {}),
             ...(inventario !== undefined ? { inventory: Number(inventario) } : {}),
             ...(mediaId ? { images: [{ image: mediaId }] } : {}),
+            ...(categoryIds.length > 0 ? { categories: categoryIds } : {}),
             _status: shouldPublish ? 'published' : 'draft',
           } as any,
           draft: !shouldPublish,
           overrideAccess: true,
         })
+        const catMsg = categoryIds.length > 0 ? ` en la categoría "${categoria}"` : ''
         return shouldPublish
-          ? `¡Listo Shirley! Joya "${titulo}" creada y publicada exitosamente en el catálogo (/shop) con precio ${formatCOP(precioCOP)} ✨`
-          : `Joya "${titulo}" guardada como borrador (#${doc.id}) con precio ${formatCOP(precioCOP)}. Puedes publicarla cuando quieras diciendo "publicar ${titulo}".`
+          ? `¡Listo Shirley! Joya "${titulo}" creada y publicada exitosamente en el catálogo (/shop)${catMsg} con precio ${formatCOP(precioCOP)} ✨`
+          : `Joya "${titulo}" guardada como borrador (#${doc.id})${catMsg} con precio ${formatCOP(precioCOP)}. Puedes publicarla cuando quieras diciendo "publicar ${titulo}".`
       }
 
       case 'publicarProducto': {
@@ -554,6 +656,96 @@ export async function executeShirleyTool(
         return destacado
           ? `¡Listo! "${product.title}" ahora está marcado como producto destacado en la tienda ✨`
           : `"${product.title}" ya no aparece como producto destacado.`
+      }
+
+      case 'crearCategoria': {
+        const { titulo } = args
+        const cleanTitle = String(titulo || '').trim()
+        if (!cleanTitle) {
+          return 'Shirley, indícame el nombre de la categoría que deseas crear.'
+        }
+
+        const { doc, created } = await findOrCreateCategory(payload, cleanTitle)
+        if (!created) {
+          return `La categoría "${doc.title}" ya existía en el catálogo de Nenúfar.`
+        }
+
+        return `¡Listo Shirley! Categoría "${cleanTitle}" creada exitosamente ✨ Ya está disponible para organizar tus joyas y en los filtros de la tienda web (/shop).`
+      }
+
+      case 'listarCategorias': {
+        const categoriesRes = await payload.find({
+          collection: 'categories',
+          limit: 50,
+          depth: 0,
+          overrideAccess: true,
+          sort: 'title',
+        })
+
+        if (categoriesRes.docs.length === 0) {
+          return 'No hay categorías registradas en el catálogo todavía. Puedes crear una diciendo "crea la categoría Aretes".'
+        }
+
+        const lines: string[] = []
+        for (const cat of categoriesRes.docs) {
+          const countRes = await payload.find({
+            collection: 'products',
+            limit: 0,
+            depth: 0,
+            overrideAccess: true,
+            where: {
+              categories: {
+                contains: cat.id,
+              },
+            },
+          })
+          const count = countRes.totalDocs
+          lines.push(`• ${cat.title} (${count} ${count === 1 ? 'joya' : 'joyas'})`)
+        }
+
+        return `Categorías en el catálogo (${categoriesRes.docs.length}):\n${lines.join('\n')}`
+      }
+
+      case 'asignarCategoriaProducto': {
+        const { slug, categoria } = args
+        const cleanSlug = String(slug || '').trim()
+        const cleanCat = String(categoria || '').trim()
+
+        if (!cleanSlug || !cleanCat) {
+          return 'Shirley, por favor indícame la joya (slug o nombre) y la categoría a asignar.'
+        }
+
+        const product = await findProductBySlug(payload, cleanSlug)
+        if (!product) {
+          return `No encontré ningún producto con el slug "${cleanSlug}".`
+        }
+
+        const { doc: catDoc } = await findOrCreateCategory(payload, cleanCat)
+
+        const fullProduct = await payload.findByID({
+          collection: 'products',
+          id: product.id,
+          depth: 0,
+          overrideAccess: true,
+        })
+
+        const currentCatIds: number[] = Array.isArray((fullProduct as any)?.categories)
+          ? (fullProduct as any).categories.map((c: any) => (typeof c === 'object' ? c.id : c))
+          : []
+
+        if (!currentCatIds.includes(catDoc.id)) {
+          currentCatIds.push(catDoc.id)
+          await payload.update({
+            collection: 'products',
+            id: product.id,
+            data: {
+              categories: currentCatIds,
+            },
+            overrideAccess: true,
+          })
+        }
+
+        return `¡Listo Shirley! Asocié la categoría "${catDoc.title}" a la joya "${product.title}" ✨`
       }
 
       // ─── 2. GESTIÓN DE LA LANDING PAGE & FOTOS ────────────────────────────
