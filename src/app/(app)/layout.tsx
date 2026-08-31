@@ -56,6 +56,8 @@ export const metadata: Metadata = {
 }
 
 import { HashScrollHandler } from '@/components/Navigation/HashScrollHandler'
+import { ScrollProgress } from '@/components/Navigation/ScrollProgress'
+import { ScrollToTop } from '@/components/Navigation/ScrollToTop'
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -76,6 +78,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
         <Providers>
+          <ScrollProgress />
           <HashScrollHandler />
           <AdminBar />
           <LivePreviewListener />
@@ -83,6 +86,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <Header />
           <main>{children}</main>
           <Footer />
+          <ScrollToTop />
         </Providers>
       </body>
     </html>
