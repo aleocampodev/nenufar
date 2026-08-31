@@ -109,12 +109,12 @@ export function HeaderClient({ header, categories = [] }: Props) {
                 href="/shop"
                 className={`flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 ${
                   isPurple
-                    ? 'text-white/90 hover:text-purple-200'
+                    ? 'text-white/90 hover:text-[#5f0092]'
                     : isTransparent
-                    ? 'text-white/95 hover:text-purple-300'
+                    ? 'text-white hover:text-[#5f0092]'
                     : pathname?.startsWith('/shop')
-                    ? 'text-brand font-semibold'
-                    : 'text-neutral-700 hover:text-brand'
+                    ? 'text-[#5f0092] font-semibold'
+                    : 'text-neutral-700 hover:text-[#5f0092]'
                 }`}
               >
                 Catálogo
@@ -143,7 +143,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
                         key={cat.slug}
                         href={`/shop?category=${cat.slug}`}
                         onClick={() => setCatOpen(false)}
-                        className="block px-3 py-2 text-xs text-neutral-700 hover:text-brand hover:bg-brand/5 rounded-lg transition-colors font-sans"
+                        className="block px-3 py-2 text-xs text-neutral-700 hover:text-[#5f0092] hover:bg-brand/5 rounded-lg transition-colors font-sans"
                       >
                         {cat.title}
                       </Link>
@@ -153,7 +153,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
                     <Link
                       href="/shop"
                       onClick={() => setCatOpen(false)}
-                      className="block px-3 py-1.5 text-xs font-semibold text-brand hover:text-brand-dark transition-colors"
+                      className="block px-3 py-1.5 text-xs font-semibold text-[#5f0092] hover:text-[#4A0E6D] transition-colors"
                     >
                       Explorar todo el catálogo →
                     </Link>
@@ -168,10 +168,10 @@ export function HeaderClient({ header, categories = [] }: Props) {
               onClick={(e) => handleAnchorClick(e, '/#tradicion')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
                 isPurple
-                  ? 'text-white/90 hover:text-purple-200'
+                  ? 'text-white/90 hover:text-[#5f0092]'
                   : isTransparent
-                  ? 'text-white/95 hover:text-purple-300'
-                  : 'text-neutral-700 hover:text-brand'
+                  ? 'text-white hover:text-[#5f0092]'
+                  : 'text-neutral-700 hover:text-[#5f0092]'
               }`}
             >
               Tradición
@@ -183,10 +183,10 @@ export function HeaderClient({ header, categories = [] }: Props) {
               onClick={(e) => handleAnchorClick(e, '/#historia')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
                 isPurple
-                  ? 'text-white/90 hover:text-purple-200'
+                  ? 'text-white/90 hover:text-[#5f0092]'
                   : isTransparent
-                  ? 'text-white/95 hover:text-purple-300'
-                  : 'text-neutral-700 hover:text-brand'
+                  ? 'text-white hover:text-[#5f0092]'
+                  : 'text-neutral-700 hover:text-[#5f0092]'
               }`}
             >
               Historia
@@ -198,10 +198,10 @@ export function HeaderClient({ header, categories = [] }: Props) {
               onClick={(e) => handleAnchorClick(e, '/#talleres')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
                 isPurple
-                  ? 'text-white/90 hover:text-purple-200'
+                  ? 'text-white/90 hover:text-[#5f0092]'
                   : isTransparent
-                  ? 'text-white/95 hover:text-purple-300'
-                  : 'text-neutral-700 hover:text-brand'
+                  ? 'text-white hover:text-[#5f0092]'
+                  : 'text-neutral-700 hover:text-[#5f0092]'
               }`}
             >
               Talleres & Ferias
@@ -213,10 +213,10 @@ export function HeaderClient({ header, categories = [] }: Props) {
               onClick={(e) => handleAnchorClick(e, '/#contacto')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
                 isPurple
-                  ? 'text-white/90 hover:text-purple-200'
+                  ? 'text-white/90 hover:text-[#5f0092]'
                   : isTransparent
-                  ? 'text-white/95 hover:text-purple-300'
-                  : 'text-neutral-700 hover:text-brand'
+                  ? 'text-white hover:text-[#5f0092]'
+                  : 'text-neutral-700 hover:text-[#5f0092]'
               }`}
             >
               Contacto
