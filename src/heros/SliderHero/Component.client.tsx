@@ -104,7 +104,7 @@ export const SliderHeroClient: React.FC<{
                       <div className="max-w-2xl text-white space-y-4 sm:space-y-5">
                         {/* Overline Badge */}
                         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#E85D4A] animate-pulse" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-300 animate-pulse" />
                           {badgeText}
                         </div>
 
@@ -125,7 +125,7 @@ export const SliderHeroClient: React.FC<{
                           </p>
                         )}
 
-                        {/* Primary CTA Button (Reference Style) */}
+                        {/* Primary CTA Button (Brand Purple matching Menu) */}
                         {slide.linkLabel && slide.linkUrl && (
                           <div className="pt-3 sm:pt-4">
                             <Link
@@ -141,7 +141,7 @@ export const SliderHeroClient: React.FC<{
                                   }
                                 }
                               }}
-                              className="inline-flex items-center justify-center px-8 sm:px-10 py-3.5 sm:py-4 rounded-full bg-[#E85D4A] hover:bg-[#D44B38] text-white text-xs sm:text-sm font-semibold tracking-[0.18em] uppercase transition-all duration-300 shadow-[0_8px_25px_rgba(232,93,74,0.35)] hover:shadow-[0_12px_32px_rgba(232,93,74,0.5)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                              className="inline-flex items-center justify-center px-8 sm:px-10 py-3.5 sm:py-4 rounded-full bg-[#6A1B9A] hover:bg-[#581482] text-white text-xs sm:text-sm font-semibold tracking-[0.18em] uppercase transition-all duration-300 shadow-[0_8px_25px_rgba(106,27,154,0.45)] hover:shadow-[0_12px_35px_rgba(106,27,154,0.65)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                             >
                               {slide.linkLabel}
                             </Link>
