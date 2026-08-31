@@ -3,8 +3,8 @@ import React from 'react'
 
 export default function Loading() {
   return (
-    <div className="min-h-[85vh] flex items-center justify-center bg-[#FAF8F5]">
-      <NenufarLoader fullScreen />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#FAF8F5]">
+      <NenufarLoader />
     </div>
   )
 }
