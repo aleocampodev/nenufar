@@ -6,8 +6,9 @@ import React from 'react'
 import { ShopFilterBar } from './ShopFilterBar'
 
 export const metadata = {
-  description: 'Catálogo de Joyería Artesanal en Cartagena — Nenúfar.',
-  title: 'Catálogo de Joyas | Nenúfar',
+  description:
+    'Explora el catálogo de joyas artesanales colombianas en mostacilla y filigrana. Piezas únicas hechas a mano en Cartagena, perfectas para regalar en Amor y Amistad, cumpleaños o Navidad.',
+  title: 'Catálogo de Joyería Artesanal & Regalos de Autor | Nenúfar Cartagena',
 }
 
 const PAGE_SIZE = 20

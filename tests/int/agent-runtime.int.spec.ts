@@ -121,4 +121,61 @@ describe('runShirleyAgent', () => {
     )
     expect(ctaRes).toContain('Personalizar mi Joya')
   })
+
+  it('ejecuta crearCategoria y listarCategorias correctamente', async () => {
+    const { executeShirleyTool } = await import('@/lib/agent/tools')
+    const mockPayload = {
+      ...fakePayload,
+      find: vi
+        .fn()
+        // First find (in findOrCreateCategory): empty -> creates new
+        .mockResolvedValueOnce({ docs: [] })
+        // Second find (in listarCategorias): returns categories
+        .mockResolvedValueOnce({ docs: [{ id: 10, title: 'Tobilleras', slug: 'tobilleras' }] })
+        // Third find (counting products for Tobilleras)
+        .mockResolvedValueOnce({ docs: [], totalDocs: 3 }),
+      create: vi.fn().mockResolvedValueOnce({ id: 10, title: 'Tobilleras', slug: 'tobilleras' }),
+    } as any
+
+    const createRes = await executeShirleyTool(
+      'crearCategoria',
+      { titulo: 'Tobilleras' },
+      mockPayload,
+    )
+    expect(createRes).toContain('Tobilleras')
+    expect(createRes).toContain('creada exitosamente')
+
+    const listRes = await executeShirleyTool('listarCategorias', {}, mockPayload)
+    expect(listRes).toContain('Tobilleras (3 joyas)')
+  })
+
+  it('ejecuta asignarCategoriaProducto asociando la categoría al producto', async () => {
+    const { executeShirleyTool } = await import('@/lib/agent/tools')
+    const mockPayload = {
+      ...fakePayload,
+      find: vi
+        .fn()
+        // find product by slug
+        .mockResolvedValueOnce({ docs: [{ id: 1, title: 'Aretes Sol', slug: 'aretes-sol' }] })
+        // find category (in findOrCreateCategory)
+        .mockResolvedValueOnce({ docs: [{ id: 5, title: 'Aretes', slug: 'aretes' }] }),
+      findByID: vi.fn().mockResolvedValueOnce({ id: 1, title: 'Aretes Sol', categories: [] }),
+      update: vi.fn().mockResolvedValueOnce({ id: 1 }),
+    } as any
+
+    const res = await executeShirleyTool(
+      'asignarCategoriaProducto',
+      { slug: 'aretes-sol', categoria: 'Aretes' },
+      mockPayload,
+    )
+
+    expect(res).toContain('Asocié la categoría "Aretes" a la joya "Aretes Sol"')
+    expect(mockPayload.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        collection: 'products',
+        id: 1,
+        data: { categories: [5] },
+      }),
+    )
+  })
 })

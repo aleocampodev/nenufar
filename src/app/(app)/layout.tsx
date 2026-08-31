@@ -9,13 +9,30 @@ import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { Providers } from '@/providers'
 import type { Metadata } from 'next'
 
-const organizationJsonLd = {
+const storeJsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'Nenúfar',
-  description: 'Joyería artesanal colombiana hecha a mano en Cartagena.',
+  '@type': ['JewelryStore', 'Store', 'Organization'],
+  name: 'Nenúfar — Joyería Artesanal Colombiana',
+  alternateName: ['Nenúfar', 'Nenúfar Joyería'],
+  description:
+    'Joyería artesanal colombiana hecha a mano por Shirley en Cartagena. Piezas de autor en mostacilla y filigrana: el regalo perfecto para Amor y Amistad, cumpleaños, mamá y Navidad.',
   url: getServerSideURL(),
   logo: `${getServerSideURL()}/favicon.svg`,
+  image: `${getServerSideURL()}/og-default.jpg`,
+  priceRange: '$$',
+  currenciesAccepted: 'COP',
+  paymentAccepted: 'Nequi, Daviplata, Transferencia Bancaria',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Cartagena de Indias',
+    addressRegion: 'Bolívar',
+    addressCountry: 'CO',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: '10.39972',
+    longitude: '-75.51444',
+  },
   sameAs: [
     'https://www.facebook.com/Nenufar.co',
     'https://www.instagram.com/nenufar.co/',
@@ -40,11 +57,38 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   title: {
-    default: 'Nenúfar — Joyería Artesanal Colombiana',
-    template: '%s | Nenúfar',
+    default: 'Nenúfar — Joyería Artesanal Colombiana | Regalos Únicos de Autor',
+    template: '%s | Nenúfar Joyería',
   },
   description:
-    'Joyería artesanal colombiana hecha a mano en Cartagena. Piezas únicas de Nenúfar.',
+    'Joyería artesanal colombiana hecha a mano en Cartagena. Aretes, collares y pulseras en mostacilla calibrada. El regalo perfecto para Amor y Amistad, cumpleaños, mamá y Navidad.',
+  keywords: [
+    'Nenúfar',
+    'nenufar',
+    'nenufar joyeria',
+    'joyería artesanal',
+    'joyería artesanal colombiana',
+    'joyas en Cartagena',
+    'regalo de amor y amistad',
+    'regalos de amor y amistad',
+    'regalo amor y amistad colombia',
+    'regalo de cumpleanos',
+    'regalo de cumpleaños',
+    'regalos de cumpleaños para mujer',
+    'regalo para mama',
+    'regalo para mamá',
+    'regalos dia de la madre',
+    'regalo de navidad',
+    'regalo de navidad colombia',
+    'regalos de navidad',
+    'regalos artesanales colombia',
+    'aretes en mostacilla',
+    'collares tejidos a mano',
+    'pulseras artesanales',
+    'joyas de autor cartagena',
+    'regalos unicos para mujer',
+    'joyas hechas a mano cartagena',
+  ],
   robots: {
     follow: true,
     index: true,
@@ -52,6 +96,9 @@ export const metadata: Metadata = {
   openGraph: mergeOpenGraph(),
   twitter: {
     card: 'summary_large_image',
+    title: 'Nenúfar — Joyería Artesanal Colombiana | Regalos de Autor',
+    description:
+      'Joyería artesanal colombiana hecha a mano en Cartagena. Piezas únicas de autor ideales para regalar en Amor y Amistad, cumpleaños y fechas especiales.',
   },
 }
 
@@ -71,9 +118,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       </head>
       <body>
         <script
-          id="organization-jsonld"
+          id="store-jsonld"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(storeJsonLd) }}
         />
         <Providers>
           <HashScrollHandler />
