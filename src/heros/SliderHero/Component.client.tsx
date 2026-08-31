@@ -79,7 +79,8 @@ export const SliderHeroClient: React.FC<{
                   ) : (
                     <div className="absolute inset-0 bg-gradient-to-br from-brand/20 to-muted" />
                   )}
-                  <div className="absolute inset-0 bg-black/30 md:bg-black/25" />
+                  {/* Editorial Scrim: degradé más oscuro a la izquierda para garantizar legibilidad perfecta del texto, y transparente a la derecha para ver la foto con total nitidez */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/15 md:from-black/65 md:via-black/30 md:to-transparent" />
 
                   {/* Content - with elegant editorial typography */}
                   <div className="absolute inset-0 flex items-center">
@@ -88,11 +89,11 @@ export const SliderHeroClient: React.FC<{
                         <span className="inline-block text-xs uppercase tracking-[0.25em] font-semibold text-white bg-[#5f0092] px-4 py-1.5 rounded-full shadow-md">
                           Colección Artesanal
                         </span>
-                        <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] font-normal tracking-tight drop-shadow-md">
+                        <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] font-normal tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
                           {slide.heading}
                         </h1>
                         {slide.subheading && (
-                          <p className="text-sm md:text-base text-white/90 leading-relaxed max-w-lg font-light drop-shadow-sm">
+                          <p className="text-sm md:text-base text-white/95 leading-relaxed max-w-lg font-normal drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                             {slide.subheading}
                           </p>
                         )}
