@@ -13,14 +13,22 @@ export const generateMeta = async (args: { doc: Page | Product }): Promise<Metad
     'url' in doc.meta.image &&
     `${process.env.NEXT_PUBLIC_SERVER_URL}${doc.meta.image.url}`
 
+  const isProduct = Boolean(doc && 'priceInCOP' in doc)
+  const defaultTitle = doc?.title
+    ? `${doc.title} — Joyería Artesanal | Nenúfar Cartagena`
+    : 'Nenúfar — Joyería Artesanal Colombiana | Regalos Únicos de Autor'
+
+  const defaultDescription = isProduct
+    ? `${doc?.title || 'Joya artesanal'} hecha a mano por Shirley en Cartagena de Indias. El regalo perfecto de autor para Amor y Amistad, cumpleaños o sorprender a alguien especial.`
+    : 'Joyería artesanal colombiana hecha a mano en Cartagena. Piezas de autor en mostacilla y filigrana: el regalo perfecto para Amor y Amistad, cumpleaños y fechas especiales.'
+
+  const metaTitle = doc?.meta?.title || defaultTitle
+  const metaDescription = doc?.meta?.description || defaultDescription
+
   return {
-    description: doc?.meta?.description,
+    description: metaDescription,
     openGraph: mergeOpenGraph({
-      ...(doc?.meta?.description
-        ? {
-            description: doc?.meta?.description,
-          }
-        : {}),
+      description: metaDescription,
       images: ogImage
         ? [
             {
@@ -28,9 +36,9 @@ export const generateMeta = async (args: { doc: Page | Product }): Promise<Metad
             },
           ]
         : undefined,
-      title: doc?.meta?.title || doc?.title || 'Payload Ecommerce Template',
+      title: metaTitle,
       url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',
     }),
-    title: doc?.meta?.title || doc?.title || 'Payload Ecommerce Template',
+    title: metaTitle,
   }
 }
