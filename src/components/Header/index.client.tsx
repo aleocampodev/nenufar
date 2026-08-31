@@ -108,8 +108,10 @@ export function HeaderClient({ header, categories = [] }: Props) {
               <Link
                 href="/shop"
                 className={`flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 ${
-                  isPurple || isTransparent
-                    ? 'text-white/90 hover:text-white'
+                  isPurple
+                    ? 'text-white/90 hover:text-purple-200'
+                    : isTransparent
+                    ? 'text-white/95 hover:text-purple-300'
                     : pathname?.startsWith('/shop')
                     ? 'text-brand font-semibold'
                     : 'text-neutral-700 hover:text-brand'
@@ -119,7 +121,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
                 <ChevronDown
                   className={`w-3.5 h-3.5 transition-transform duration-200 ${
                     catOpen ? 'rotate-180' : ''
-                  } ${isPurple || isTransparent ? 'text-white/80' : 'text-neutral-400'}`}
+                  } ${isPurple ? 'text-white/80' : isTransparent ? 'text-white/90' : 'text-neutral-400'}`}
                 />
               </Link>
 
@@ -141,7 +143,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
                         key={cat.slug}
                         href={`/shop?category=${cat.slug}`}
                         onClick={() => setCatOpen(false)}
-                        className="block px-3 py-2 text-xs text-neutral-700 hover:text-brand hover:bg-neutral-50 rounded-lg transition-colors font-sans"
+                        className="block px-3 py-2 text-xs text-neutral-700 hover:text-brand hover:bg-brand/5 rounded-lg transition-colors font-sans"
                       >
                         {cat.title}
                       </Link>
@@ -165,8 +167,10 @@ export function HeaderClient({ header, categories = [] }: Props) {
               href="/#tradicion"
               onClick={(e) => handleAnchorClick(e, '/#tradicion')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
-                isPurple || isTransparent
-                  ? 'text-white/90 hover:text-white'
+                isPurple
+                  ? 'text-white/90 hover:text-purple-200'
+                  : isTransparent
+                  ? 'text-white/95 hover:text-purple-300'
                   : 'text-neutral-700 hover:text-brand'
               }`}
             >
@@ -178,8 +182,10 @@ export function HeaderClient({ header, categories = [] }: Props) {
               href="/#historia"
               onClick={(e) => handleAnchorClick(e, '/#historia')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
-                isPurple || isTransparent
-                  ? 'text-white/90 hover:text-white'
+                isPurple
+                  ? 'text-white/90 hover:text-purple-200'
+                  : isTransparent
+                  ? 'text-white/95 hover:text-purple-300'
                   : 'text-neutral-700 hover:text-brand'
               }`}
             >
@@ -191,8 +197,10 @@ export function HeaderClient({ header, categories = [] }: Props) {
               href="/#talleres"
               onClick={(e) => handleAnchorClick(e, '/#talleres')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
-                isPurple || isTransparent
-                  ? 'text-white/90 hover:text-white'
+                isPurple
+                  ? 'text-white/90 hover:text-purple-200'
+                  : isTransparent
+                  ? 'text-white/95 hover:text-purple-300'
                   : 'text-neutral-700 hover:text-brand'
               }`}
             >
@@ -204,8 +212,10 @@ export function HeaderClient({ header, categories = [] }: Props) {
               href="/#contacto"
               onClick={(e) => handleAnchorClick(e, '/#contacto')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
-                isPurple || isTransparent
-                  ? 'text-white/90 hover:text-white'
+                isPurple
+                  ? 'text-white/90 hover:text-purple-200'
+                  : isTransparent
+                  ? 'text-white/95 hover:text-purple-300'
                   : 'text-neutral-700 hover:text-brand'
               }`}
             >
