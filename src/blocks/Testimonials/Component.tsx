@@ -16,33 +16,34 @@ import { TestimonialsGridClient, type TestimonialItem } from './TestimonialsGrid
 export const TestimonialsBlock: React.FC<Props> = async ({
   tagline = 'Voces de Nuestra Comunidad',
   heading = 'Lo que dicen quienes lucen Nenúfar',
-  limit = 3,
+  limit = 6,
   items,
 }) => {
   let docs: any[] = []
 
-  if (items && Array.isArray(items) && items.length > 0) {
-    docs = items
-  } else {
-    try {
-      const payload = await getPayload({ config: configPromise })
+  try {
+    const payload = await getPayload({ config: configPromise })
 
-      const testimonialsRes = await payload.find({
-        collection: 'testimonials',
-        depth: 1,
-        limit: limit || 3,
-        overrideAccess: true,
-        where: {
-          _status: { equals: 'published' },
-        },
-      })
+    const testimonialsRes = await payload.find({
+      collection: 'testimonials',
+      depth: 1,
+      limit: limit || 6,
+      overrideAccess: true,
+      where: {
+        _status: { equals: 'published' },
+      },
+    })
 
-      if (testimonialsRes.docs && testimonialsRes.docs.length > 0) {
-        docs = testimonialsRes.docs as any[]
-      }
-    } catch (err) {
-      console.error('Error fetching testimonials:', err)
+    if (testimonialsRes.docs && testimonialsRes.docs.length > 0) {
+      docs = testimonialsRes.docs as any[]
     }
+  } catch (err) {
+    console.error('Error fetching testimonials collection:', err)
+  }
+
+  // Fallback to block items if collection has no items
+  if ((!docs || docs.length === 0) && items && Array.isArray(items) && items.length > 0) {
+    docs = items
   }
 
   // Placeholder when no testimonials yet (so landing is not empty before Shirley adds real ones)
