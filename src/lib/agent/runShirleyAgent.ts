@@ -245,8 +245,11 @@ export async function runShirleyAgent({
     content: text,
   })
 
+    console.log(`⏱️ [agent] Iniciando consulta (${Date.now() - startTime}ms)`)
   try {
     for (let turn = 0; turn < MAX_TURNS; turn++) {
+      const turnStart = Date.now()
+      console.log(`⏱️ [agent] Llamando a LiteLLM Turno ${turn + 1}...`)
       const response = await fetch(`${baseUrl}/v1/messages`, {
         method: 'POST',
         headers: {
@@ -256,13 +259,14 @@ export async function runShirleyAgent({
         },
         body: JSON.stringify({
           model,
-          max_tokens: 1024,
+          max_tokens: 384,
           system,
           messages,
           tools: ANTHROPIC_SHIRLEY_TOOLS,
         }),
         signal: AbortSignal.timeout(TIMEOUT_MS),
       })
+      console.log(`⏱️ [agent] LiteLLM Turno ${turn + 1} respondió en ${Date.now() - turnStart}ms (status: ${response.status})`)
 
       if (!response.ok) {
         const errorText = await response.text()

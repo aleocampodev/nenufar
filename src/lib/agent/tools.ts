@@ -701,22 +701,26 @@ export async function executeShirleyTool(
           return 'No hay categorías registradas en el catálogo todavía. Puedes crear una diciendo "crea la categoría Aretes".'
         }
 
-        const lines: string[] = []
-        for (const cat of categoriesRes.docs) {
-          const countRes = await payload.find({
-            collection: 'products',
-            limit: 0,
-            depth: 0,
-            overrideAccess: true,
-            where: {
-              categories: {
-                contains: cat.id,
+        const counts = await Promise.all(
+          categoriesRes.docs.map((cat) =>
+            payload.find({
+              collection: 'products',
+              limit: 0,
+              depth: 0,
+              overrideAccess: true,
+              where: {
+                categories: {
+                  contains: cat.id,
+                },
               },
-            },
-          })
-          const count = countRes.totalDocs
-          lines.push(`• ${cat.title} (${count} ${count === 1 ? 'joya' : 'joyas'})`)
-        }
+            }),
+          ),
+        )
+
+        const lines = categoriesRes.docs.map((cat, i) => {
+          const count = counts[i]?.totalDocs ?? 0
+          return `• ${cat.title} (${count} ${count === 1 ? 'joya' : 'joyas'})`
+        })
 
         return `Categorías en el catálogo (${categoriesRes.docs.length}):\n${lines.join('\n')}`
       }
