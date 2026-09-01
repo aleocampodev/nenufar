@@ -39,7 +39,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'Piezas únicas hechas a mano en Cartagena de Indias. Filigrana, plata y piedras naturales elaboradas con dedicación por Shirley.',
+                  text: 'Piezas de autor tejidas a mano en Cartagena de Indias. Geometría sagrada Emberá y micro-mostacilla checa calibrada elaboradas con dedicación por Shirley.',
                   version: 1,
                 },
               ],
@@ -235,7 +235,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
       {
         blockType: 'features',
         tagline: 'Tradición y Delicadeza',
-        heading: 'Por qué elegir Nénufar Joyería',
+        heading: 'El Rigor y la Paciencia de Nuestro Oficio',
         centerImage: {
           url: 'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/colombia-aretes.jpeg',
           alt: 'Joyería artesanal en mostacilla tejida a mano - Nénufar',

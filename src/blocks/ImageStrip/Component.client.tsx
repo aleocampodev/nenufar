@@ -149,6 +149,7 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
               key={item.id || i}
               onClick={() => toggleExpand(i)}
               aria-expanded={isExpanded}
+              aria-controls="historia-expandida"
               aria-label={`Ver historia de ${title}`}
               className={`group relative aspect-[4/5] sm:aspect-square lg:aspect-[3/4] overflow-hidden cursor-pointer bg-stone-900 select-none text-left w-full p-0 border-0 transition-all duration-300 ${
                 isExpanded ? "ring-4 ring-inset ring-amber-400 z-10" : ""
@@ -163,35 +164,29 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
                   imgClassName="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               ) : (
-                <img
-                  src={imgSrc || ""}
-                  alt={title || ""}
-                  className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-                />
+                <div className="absolute inset-0 bg-stone-800" />
               )}
 
-              {/* Degradado Krafti inferior */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10 opacity-90 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 sm:p-8 text-white">
-                <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-amber-300 mb-1.5 drop-shadow-sm">
+              {/* Degradado y Textos de la tarjeta */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-5 sm:p-6 text-white transition-opacity duration-300">
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-amber-300 mb-1">
                   {category}
                 </span>
-                <h3 className="font-serif text-xl sm:text-2xl font-normal text-white mb-2 leading-snug drop-shadow-md">
+                <h3 className="font-serif text-lg sm:text-xl font-medium leading-snug mb-1">
                   {title}
                 </h3>
                 {excerpt && (
-                  <p className="text-xs text-stone-200 line-clamp-2 mb-3 font-light leading-relaxed drop-shadow-sm">
+                  <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed opacity-90">
                     {excerpt}
                   </p>
                 )}
-
-                {/* Indicador de lectura */}
-                <div className="pt-2 border-t border-white/20 flex items-center justify-between text-xs font-medium text-amber-300 group-hover:text-amber-200">
-                  <span>{isExpanded ? "Cerrar historia" : "Leer historia y técnica"}</span>
-                  {isExpanded ? (
-                    <ChevronUp className="w-4 h-4 text-amber-400" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 text-amber-400 group-hover:translate-y-0.5 transition-transform" />
-                  )}
+                <div className="mt-3 flex items-center gap-1.5 text-xs text-amber-400 font-medium">
+                  <span>{isExpanded ? "Ocultar historia" : "Descubrir historia"}</span>
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-300 ${
+                      isExpanded ? "rotate-180" : ""
+                    }`}
+                  />
                 </div>
               </div>
             </button>
@@ -203,10 +198,10 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
       {activeItem && expandedIndex !== null && (
         <div id="historia-expandida" className="bg-[#1C1917] text-white py-12 px-4 sm:px-6 lg:px-8 border-b border-stone-800 animate-in fade-in duration-400">
           <div className="container mx-auto max-w-5xl relative">
-            {/* Botón de cerrar */}
+            {/* Botón de cerrar con 44px min touch target */}
             <button
               onClick={() => setExpandedIndex(null)}
-              className="absolute top-0 right-0 p-2 rounded-full bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white transition-colors"
+              className="absolute top-0 right-0 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white transition-colors flex items-center justify-center cursor-pointer active:scale-95"
               aria-label="Cerrar detalle"
             >
               <X className="w-5 h-5" />
@@ -282,7 +277,7 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
               </span>
               <button
                 onClick={() => setExpandedIndex(null)}
-                className="text-xs uppercase tracking-wider text-amber-300 hover:text-amber-200 font-medium py-2 px-4 rounded-lg bg-stone-800 hover:bg-stone-700 transition-colors"
+                className="text-xs uppercase tracking-wider text-amber-300 hover:text-amber-200 font-medium min-h-[44px] py-2.5 px-5 rounded-lg bg-stone-800 hover:bg-stone-700 transition-colors flex items-center justify-center cursor-pointer active:scale-95"
               >
                 Cerrar historia ↑
               </button>

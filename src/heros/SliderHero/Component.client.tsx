@@ -66,6 +66,8 @@ export const SliderHeroClient: React.FC<{
       className="relative w-full overflow-hidden -mt-[74px] sm:-mt-[78px] select-none"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onFocus={() => setIsPaused(true)}
+      onBlur={() => setIsPaused(false)}
       aria-roledescription="carousel"
       aria-label="Colecciones destacadas"
     >
@@ -166,16 +168,16 @@ export const SliderHeroClient: React.FC<{
               <button
                 aria-label="Diapositiva anterior"
                 onClick={scrollPrev}
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/30 bg-black/30 hover:bg-white text-white hover:text-neutral-950 backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-md group cursor-pointer active:scale-95"
+                className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full border border-white/30 bg-black/30 hover:bg-white text-white hover:text-neutral-950 backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-md group cursor-pointer active:scale-95"
               >
-                <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 group-hover:-translate-x-0.5" />
+                <ArrowLeft className="w-5 h-5 transition-transform duration-200 group-hover:-translate-x-0.5" />
               </button>
               <button
                 aria-label="Diapositiva siguiente"
                 onClick={scrollNext}
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/30 bg-black/30 hover:bg-white text-white hover:text-neutral-950 backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-md group cursor-pointer active:scale-95"
+                className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full border border-white/30 bg-black/30 hover:bg-white text-white hover:text-neutral-950 backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-md group cursor-pointer active:scale-95"
               >
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                <ArrowRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-0.5" />
               </button>
             </div>
 
@@ -208,17 +210,21 @@ export const SliderHeroClient: React.FC<{
               })}
             </div>
 
-            {/* Mobile-only Slide Indicator */}
-            <div className="sm:hidden flex items-center gap-1.5 pointer-events-auto">
+            {/* Mobile-only Slide Indicator with 44px touch area */}
+            <div className="sm:hidden flex items-center gap-1 pointer-events-auto">
               {slides.map((_, i) => (
                 <button
                   key={i}
                   aria-label={`Ir al slide ${i + 1}`}
                   onClick={() => scrollTo(i)}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    i === selectedIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/40'
-                  }`}
-                />
+                  className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
+                >
+                  <span
+                    className={`h-1.5 rounded-full transition-all duration-300 block ${
+                      i === selectedIndex ? 'w-6 bg-white' : 'w-2 bg-white/40'
+                    }`}
+                  />
+                </button>
               ))}
             </div>
           </div>

@@ -76,10 +76,12 @@ export const TestimonialsClient: React.FC<{
                       )}
 
                       {showRating && t.rating ? (
-                        <div className="flex gap-1">
+                        <div className="flex items-center gap-1" aria-label={`${t.rating} de 5 estrellas`}>
+                          <span className="sr-only">{t.rating} de 5 estrellas</span>
                           {Array.from({ length: 5 }).map((_, i) => (
                             <Star
                               key={i}
+                              aria-hidden="true"
                               className={`w-4 h-4 ${i < t.rating! ? 'fill-brand text-brand' : 'text-muted-foreground/30'}`}
                             />
                           ))}
@@ -106,28 +108,34 @@ export const TestimonialsClient: React.FC<{
           {testimonials.length > 1 && (
             <>
               <button
-                aria-label="Anterior"
+                aria-label="Testimonio anterior"
                 onClick={scrollPrev}
-                className="hidden md:flex absolute -left-3 lg:-left-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white border border-border shadow-sm hover:bg-muted items-center justify-center transition"
+                className="hidden md:flex absolute -left-3 lg:-left-5 top-1/2 -translate-y-1/2 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white border border-border shadow-md hover:bg-muted items-center justify-center transition cursor-pointer"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-5 h-5 text-foreground" />
               </button>
               <button
-                aria-label="Siguiente"
+                aria-label="Testimonio siguiente"
                 onClick={scrollNext}
-                className="hidden md:flex absolute -right-3 lg:-right-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white border border-border shadow-sm hover:bg-muted items-center justify-center transition"
+                className="hidden md:flex absolute -right-3 lg:-right-5 top-1/2 -translate-y-1/2 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white border border-border shadow-md hover:bg-muted items-center justify-center transition cursor-pointer"
               >
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-5 h-5 text-foreground" />
               </button>
 
-              <div className="flex justify-center gap-2 mt-6">
+              <div className="flex justify-center items-center gap-1 mt-6">
                 {testimonials.map((_, i) => (
                   <button
                     key={i}
                     aria-label={`Ir al testimonio ${i + 1}`}
                     onClick={() => emblaApi?.scrollTo(i)}
-                    className={`h-2 rounded-full transition-all ${i === selectedIndex ? 'w-6 bg-brand' : 'w-2 bg-border hover:bg-brand/50'}`}
-                  />
+                    className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
+                  >
+                    <span
+                      className={`h-2 rounded-full transition-all block ${
+                        i === selectedIndex ? 'w-6 bg-brand' : 'w-2 bg-border hover:bg-brand/50'
+                      }`}
+                    />
+                  </button>
                 ))}
               </div>
             </>
