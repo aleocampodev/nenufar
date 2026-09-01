@@ -6,7 +6,7 @@
 model_list:
   - model_name: nenufar-bot
     litellm_params:
-      model: groq/openai/gpt-oss-20b
+      model: groq/qwen/qwen3.8-27b
       api_key: os.environ/GROQ_API_KEY
       max_tokens: 1024
 

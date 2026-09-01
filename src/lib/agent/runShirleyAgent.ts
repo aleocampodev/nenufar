@@ -20,8 +20,8 @@ export const AGENT_FALLBACK =
 /** Límite de rondas agénticas. */
 const MAX_TURNS = 4
 
-/** Timeout total de la consulta. */
-const TIMEOUT_MS = 25_000
+/** Timeout por petición al gateway. */
+const TIMEOUT_MS = 40_000
 
 /** Ventana máxima de mensajes previos para memoria conversacional. */
 const MAX_HISTORY_MESSAGES = 10
