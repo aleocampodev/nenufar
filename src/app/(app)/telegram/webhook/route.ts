@@ -163,7 +163,8 @@ export async function POST(request: Request): Promise<Response> {
           const audioRes = await fetch(downloadUrl)
           const arrayBuffer = await audioRes.arrayBuffer()
           const audioBuffer = Buffer.from(arrayBuffer)
-          const ext = fileJson.result.file_path.split('.').pop() || 'ogg'
+          let ext = fileJson.result.file_path.split('.').pop() || 'ogg'
+          if (ext.toLowerCase() === 'oga') ext = 'ogg'
 
           const transcribed = await transcribeAudioWithGroq({
             audioBuffer,

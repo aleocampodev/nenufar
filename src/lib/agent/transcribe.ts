@@ -34,9 +34,17 @@ export async function transcribeAudioWithGroq({
     throw new Error('GROQ_API_KEY no está configurada para transcripción de audio.')
   }
 
+  // Groq Whisper requiere estrictamente una de estas extensiones: [flac mp3 mp4 mpeg mpga m4a ogg opus wav webm]
+  // Telegram envía notas de voz con extensión .oga, que debe mapearse a .ogg
+  const cleanName = filename.toLowerCase().endsWith('.oga')
+    ? filename.replace(/\.oga$/i, '.ogg')
+    : /\.(flac|mp3|mp4|mpeg|mpga|m4a|ogg|opus|wav|webm)$/i.test(filename)
+      ? filename
+      : 'voice.ogg'
+
   const formData = new FormData()
   const blob = new Blob([audioBuffer], { type: mimetype })
-  formData.append('file', blob, filename)
+  formData.append('file', blob, cleanName)
   formData.append('model', 'whisper-large-v3-turbo')
   formData.append('language', 'es')
   formData.append('response_format', 'json')
