@@ -90,14 +90,20 @@ export const Pages: CollectionConfig = {
       tabs: [
         {
           fields: [hero],
-          label: '1. Carrusel superior (fotos)',
+          label: '1. Carrusel Hero Superior (Fotos)',
         },
         {
           fields: [
             {
               name: 'layout',
               type: 'blocks',
+              label: 'Secciones de la Página (en orden visual de arriba a abajo)',
               blocks: [
+                NenufarStory,
+                ImageStrip,
+                Features,
+                TestimonialsBlock,
+                UpcomingEventsBlock,
                 CallToAction,
                 Content,
                 MediaBlock,
@@ -106,16 +112,11 @@ export const Pages: CollectionConfig = {
                 ThreeItemGrid,
                 Banner,
                 FormBlock,
-                UpcomingEventsBlock,
-                Features,
-                ImageStrip,
-                NenufarStory,
-                TestimonialsBlock,
               ],
               required: true,
             },
           ],
-          label: '2. Contenido de la página (abajo del carrusel)',
+          label: '2. Secciones de la Landing Page (en orden)',
         },
         {
           name: 'meta',

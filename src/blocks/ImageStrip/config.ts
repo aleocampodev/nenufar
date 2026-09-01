@@ -4,7 +4,7 @@ export const ImageStrip: Block = {
   slug: "imageStrip",
   interfaceName: "ImageStripBlock",
   labels: {
-    singular: "Galería Ancestral de Okamas & Otapas",
+    singular: "2. Universo Ancestral (Okamas & Otapas)",
     plural: "Galerías de Okamas & Otapas",
   },
   admin: {

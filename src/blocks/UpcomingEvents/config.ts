@@ -3,8 +3,8 @@ import type { Block } from "payload"
 export const UpcomingEventsBlock: Block = {
   slug: "upcomingEvents",
   labels: {
-    singular: "Talleres & Ferias (Video + Calendario)",
-    plural: "Bloques de Talleres & Ferias",
+    singular: '5. Ferias & Talleres en Cartagena (Video + Calendario)',
+    plural: 'Bloques de Talleres & Ferias',
   },
   admin: {
     description:

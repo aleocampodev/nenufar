@@ -3,7 +3,7 @@ import type { Block } from 'payload'
 export const TestimonialsBlock: Block = {
   slug: 'testimonials',
   labels: {
-    singular: 'Bloque de Testimonios',
+    singular: '4. Testimonios de Clientas',
     plural: 'Bloques de Testimonios',
   },
   fields: [

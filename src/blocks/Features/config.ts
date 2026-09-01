@@ -3,8 +3,8 @@ import type { Block } from 'payload'
 export const FeaturesBlock: Block = {
   slug: 'features',
   labels: {
-    singular: 'Bloque de Beneficios / Features',
-    plural: 'Bloques de Beneficios / Features',
+    singular: '3. Tradición & Delicadeza (3 Pilares)',
+    plural: 'Bloques de Beneficios / Tradición',
   },
   fields: [
     {
