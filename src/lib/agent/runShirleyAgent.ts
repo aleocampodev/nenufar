@@ -43,6 +43,7 @@ function buildSystemPrompt(): string {
     '- Puedes asignar categorías a joyas existentes con asignarCategoriaProducto.',
     '- Puedes publicar o despublicar cualquier producto existente con la herramienta publicarProducto.',
     '- Si Shirley envía una foto y pide cambiar la foto de una sección de la landing (Tradición y Delicadeza o Nuestra Historia), usa actualizarFotoLanding.',
+    '- Si Shirley envía un video y pide actualizar el video de ferias y talleres (o sección vivencial), usa actualizarVideoTaller.',
     '- Si Shirley envía una foto y pide agregar un slide o banner al carrusel de inicio, usa agregarSlideHero.',
     '- Si Shirley pide ver los slides del carrusel o eliminar uno, usa listarSlidesHero o eliminarSlideHero.',
     '- Si Shirley pide ideas de texto, descripciones atractivas para una joya o copys para el catálogo web (/products/[slug]), usa generarCopyProducto.',

@@ -324,6 +324,21 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
     },
   },
   {
+    name: 'actualizarVideoTaller',
+    description:
+      'Actualiza el video vertical (formato celular 9:16) y texto de la sección "Talleres en Vivo & Próximas Ferias" de la landing page. ' +
+      'Requiere que Shirley envíe un video por Telegram.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        pieDeVideo: {
+          type: 'string',
+          description: 'Texto o frase descriptiva opcional al pie del video (ej. "El arte de tejer paciencia: experiencia vivencial en Getsemaní con Shirley.")',
+        },
+      },
+    },
+  },
+  {
     name: 'agregarSlideHero',
     description:
       'Agrega una nueva diapositiva al carrusel principal superior (slider) de la landing page. ' +
@@ -786,6 +801,44 @@ export async function executeShirleyTool(
         })
 
         return `¡Foto de la sección "${seccion === 'tradicion' ? 'Tradición y Delicadeza' : 'Nuestra Historia'}" actualizada exitosamente en la landing! ✨ Puedes verla en vivo en la web.`
+      }
+
+      case 'actualizarVideoTaller': {
+        const { pieDeVideo, mediaId } = args
+        if (!mediaId) {
+          return 'Shirley, por favor adjúntame el video por Telegram junto con el mensaje para actualizar la sección de Talleres y Ferias.'
+        }
+        const homePage = await getHomePage(payload)
+        if (!homePage) return 'No encontré la página de Inicio en la base de datos.'
+
+        const layout = [...((homePage.layout || []) as any[])]
+        const idx = layout.findIndex((b) => b.blockType === 'upcomingEvents')
+
+        if (idx >= 0) {
+          layout[idx] = {
+            ...layout[idx],
+            video: mediaId,
+            ...(pieDeVideo ? { videoCaption: pieDeVideo } : {}),
+          }
+        } else {
+          layout.push({
+            blockType: 'upcomingEvents',
+            tagline: 'EXPERIENCIAS & ENCUENTROS',
+            title: 'Talleres en Vivo & Próximas Ferias en Cartagena',
+            description: 'Vive el arte de tejer mostacilla en nuestro taller o encuéntranos en las ferias artesanales del Centro Histórico.',
+            video: mediaId,
+            videoCaption: pieDeVideo || 'El arte de tejer paciencia: experiencia vivencial en Cartagena con Shirley.',
+          })
+        }
+
+        await payload.update({
+          collection: 'pages',
+          id: homePage.id,
+          data: { layout, _status: 'published' } as any,
+          overrideAccess: true,
+        })
+
+        return '¡Video de Talleres y Ferias actualizado exitosamente en la landing page! ✨ Ya los visitantes pueden ver la experiencia vivencial en la web.'
       }
 
       case 'agregarSlideHero': {

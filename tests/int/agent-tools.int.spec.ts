@@ -34,6 +34,7 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
         'listarCategorias',
         'asignarCategoriaProducto',
         'actualizarFotoLanding',
+        'actualizarVideoTaller',
         'agregarSlideHero',
         'listarSlidesHero',
         'eliminarSlideHero',
@@ -280,6 +281,39 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
     it('actualizarFotoLanding: requiere foto adjunta', async () => {
       const res = await executeShirleyTool('actualizarFotoLanding', { seccion: 'tradicion' }, mockPayload as any)
       expect(res).toContain('adjúntame la foto por Telegram')
+    })
+
+    it('actualizarVideoTaller: actualiza el video de ferias y talleres en el layout', async () => {
+      mockPayload.find.mockResolvedValueOnce({
+        docs: [
+          {
+            id: 1,
+            slug: 'home',
+            layout: [{ blockType: 'upcomingEvents', video: 5, videoCaption: 'Video anterior' }],
+          },
+        ],
+      } as any)
+
+      const res = await executeShirleyTool(
+        'actualizarVideoTaller',
+        { mediaId: 77, pieDeVideo: 'Nuevo video tejiendo mostacilla' },
+        mockPayload as any,
+      )
+
+      expect(res).toContain('Video de Talleres y Ferias actualizado exitosamente')
+      expect(mockPayload.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            layout: [
+              expect.objectContaining({
+                blockType: 'upcomingEvents',
+                video: 77,
+                videoCaption: 'Nuevo video tejiendo mostacilla',
+              }),
+            ],
+          }),
+        }),
+      )
     })
 
     it('agregarSlideHero: agrega una nueva diapositiva al carrusel', async () => {

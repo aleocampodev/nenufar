@@ -55,6 +55,24 @@ interface TelegramAudio {
   title?: string
 }
 
+interface TelegramVideo {
+  file_id: string
+  file_unique_id: string
+  width?: number
+  height?: number
+  duration?: number
+  mime_type?: string
+  file_size?: number
+}
+
+interface TelegramDocument {
+  file_id: string
+  file_unique_id: string
+  file_name?: string
+  mime_type?: string
+  file_size?: number
+}
+
 interface TelegramUpdate {
   update_id: number
   message?: {
@@ -63,6 +81,9 @@ interface TelegramUpdate {
     text?: string
     caption?: string
     photo?: TelegramPhotoSize[]
+    video?: TelegramVideo
+    video_note?: TelegramVideo
+    document?: TelegramDocument
     voice?: TelegramVoice
     audio?: TelegramAudio
   }
@@ -103,8 +124,9 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ ok: true, ignored: 'unauthorized' })
   }
 
-  // Updates sin texto, ni foto, ni audio/voz se aceptan sin procesar.
-  if (!text && !message?.photo && !message?.voice && !message?.audio) {
+  // Updates sin texto, ni media (foto, video, doc), ni audio/voz se aceptan sin procesar.
+  const hasMedia = message?.photo || message?.video || message?.video_note || message?.document
+  if (!text && !hasMedia && !message?.voice && !message?.audio) {
     return Response.json({ ok: true })
   }
 
@@ -166,13 +188,55 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     // Si después de intentar transcribir aún no hay texto
-    if (!text && !message?.photo) {
+    if (!text && !hasMedia) {
       clearInterval(typingInterval)
       await sendTelegramReply({
         chatId,
         text: 'Shirley, no alcancé a escuchar con claridad tu nota de voz 🎙️. ¿Me la repites o me escribes por texto? 💜',
       })
       return Response.json({ ok: true })
+    }
+
+    // 5. Procesar video adjunto de Telegram si existe
+    const videoObj = message?.video ?? message?.video_note
+    if (videoObj?.file_id && process.env.TELEGRAM_BOT_TOKEN) {
+      try {
+        const fileRes = await fetch(
+          `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getFile?file_id=${videoObj.file_id}`,
+        )
+        const fileJson = (await fileRes.json()) as {
+          ok: boolean
+          result?: { file_path?: string }
+        }
+        if (fileJson.ok && fileJson.result?.file_path) {
+          const downloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${fileJson.result.file_path}`
+          const vidRes = await fetch(downloadUrl)
+          const arrayBuffer = await vidRes.arrayBuffer()
+          const buffer = Buffer.from(arrayBuffer)
+          const ext = fileJson.result.file_path.split('.').pop() || 'mp4'
+
+          const mediaDoc = await payload.create({
+            collection: 'media',
+            data: {
+              alt: text || 'Video del taller artesanal Nénufar',
+            },
+            file: {
+              data: buffer,
+              mimetype: videoObj.mime_type || 'video/mp4',
+              name: `taller-${Date.now()}.${ext}`,
+              size: buffer.length,
+            },
+            overrideAccess: true,
+          })
+          uploadedMediaId = mediaDoc.id
+          payload.logger.info({
+            msg: '[telegram] Video descargado y guardado en Media',
+            mediaId: uploadedMediaId,
+          })
+        }
+      } catch (vidErr) {
+        payload.logger.error({ msg: '[telegram] Error descargando video de Telegram', err: vidErr })
+      }
     }
 
     // 5. Procesar foto adjunta de Telegram si existe
