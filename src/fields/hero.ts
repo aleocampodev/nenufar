@@ -126,15 +126,30 @@ export const hero: Field = {
           },
         },
         {
+          name: 'badge',
+          type: 'text',
+          label: 'Etiqueta superior (ej: COLECCIÓN DESTACADA, TALLER PRESENCIAL)',
+        },
+        {
           name: 'heading',
           type: 'text',
           label: 'Título grande',
           required: false,
         },
         {
+          name: 'metaText',
+          type: 'text',
+          label: 'Sub-etiqueta o metadatos (ej: CARTAGENA DE INDIAS • HECHO A MANO)',
+        },
+        {
           name: 'subheading',
           type: 'textarea',
-          label: 'Subtítulo',
+          label: 'Subtítulo descriptivo',
+        },
+        {
+          name: 'tabTitle',
+          type: 'text',
+          label: 'Nombre en la pestaña inferior derecha (si está vacío, usa el título)',
         },
         {
           name: 'linkLabel',

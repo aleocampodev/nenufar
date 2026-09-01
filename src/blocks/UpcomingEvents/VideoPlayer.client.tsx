@@ -55,21 +55,21 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           className="w-full h-full object-cover"
         />
 
-        {/* Botones de Control Flotantes */}
+        {/* Botones de Control Flotantes con mínimo 44px de área táctil */}
         <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2">
           <button
             onClick={toggleMute}
-            className="p-2.5 rounded-full bg-black/60 backdrop-blur-md text-white hover:bg-black/80 transition-colors border border-white/10"
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-black/60 backdrop-blur-md text-white hover:bg-black/80 transition-colors border border-white/10 flex items-center justify-center cursor-pointer active:scale-95"
             aria-label={isMuted ? "Activar sonido" : "Silenciar"}
           >
-            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-400" />}
+            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5 text-amber-400" />}
           </button>
           <button
             onClick={togglePlay}
-            className="p-2.5 rounded-full bg-black/60 backdrop-blur-md text-white hover:bg-black/80 transition-colors border border-white/10"
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-black/60 backdrop-blur-md text-white hover:bg-black/80 transition-colors border border-white/10 flex items-center justify-center cursor-pointer active:scale-95"
             aria-label={isPlaying ? "Pausar video" : "Reproducir"}
           >
-            {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 text-amber-400" />}
+            {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 text-amber-400" />}
           </button>
         </div>
 

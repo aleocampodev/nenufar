@@ -119,7 +119,7 @@ const getIconComponent = (icon?: string | null) => {
 
 export const FeaturesBlock: React.FC<Props> = ({
   tagline = 'Tradición y Delicadeza',
-  heading = 'Por qué elegir Nénufar Joyería',
+  heading = 'El Rigor y la Paciencia de Nuestro Oficio',
   centerImage,
   items,
   id,

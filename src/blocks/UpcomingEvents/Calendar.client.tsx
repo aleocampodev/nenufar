@@ -108,7 +108,7 @@ export const CalendarClient: React.FC<CalendarClientProps> = ({ events = [] }) =
         {/* Nombres de los Días */}
         <div className="grid grid-cols-7 gap-1 text-center mb-2">
           {DAY_NAMES.map((d, idx) => (
-            <span key={idx} className="text-[11px] font-sans font-semibold uppercase tracking-wider text-stone-400 py-1">
+            <span key={idx} className="text-[11px] font-sans font-bold uppercase tracking-wider text-stone-600 dark:text-stone-300 py-1">
               {d}
             </span>
           ))}
@@ -118,10 +118,10 @@ export const CalendarClient: React.FC<CalendarClientProps> = ({ events = [] }) =
         <div className="grid grid-cols-7 gap-1 sm:gap-1.5 text-center mb-6">
           {/* Días vacíos previos */}
           {Array.from({ length: firstDayIndex }).map((_, idx) => (
-            <div key={`empty-${idx}`} className="h-9 sm:h-11 rounded-xl" />
+            <div key={`empty-${idx}`} className="min-h-[44px] h-11 rounded-xl" />
           ))}
 
-          {/* Días del mes */}
+          {/* Días del mes con mínimo 44px de altura táctil */}
           {Array.from({ length: daysInMonth }).map((_, idx) => {
             const dayNumber = idx + 1
             const ev = getEventForDay(dayNumber)
@@ -134,7 +134,7 @@ export const CalendarClient: React.FC<CalendarClientProps> = ({ events = [] }) =
                 type="button"
                 disabled={!hasEvent}
                 onClick={() => ev && setSelectedEventId(ev.id)}
-                className={`relative h-9 sm:h-11 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-medium transition-all duration-200 ${
+                className={`relative min-h-[44px] h-11 rounded-xl flex flex-col items-center justify-center text-xs sm:text-sm font-medium transition-all duration-200 ${
                   hasEvent
                     ? isSelected
                       ? "bg-brand text-white shadow-md shadow-brand/25 font-bold scale-105"

@@ -39,7 +39,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'Piezas únicas hechas a mano en Cartagena de Indias. Filigrana, plata y piedras naturales elaboradas con dedicación por Shirley.',
+                  text: 'Piezas de autor tejidas a mano en Cartagena de Indias. Geometría sagrada Emberá y micro-mostacilla checa calibrada elaboradas con dedicación por Shirley.',
                   version: 1,
                 },
               ],
@@ -69,8 +69,11 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
       // Slider slides - Krafti 3 editorial slides with high-res jewelry photography
       slides: [
         {
+          badge: 'COLECCIÓN DESTACADA',
           heading: 'Mostacilla con Alma Caribeña',
-          subheading: 'Piezas únicas tejidas a mano en Cartagena, con la dedicación de Shirley.',
+          metaText: 'CARTAGENA DE INDIAS • TEJIDO EMBERÁ • PIEZAS DE AUTOR',
+          subheading: 'Piezas únicas tejidas a mano en Cartagena, con la dedicación y maestría de Shirley.',
+          tabTitle: 'Mostacilla Caribeña',
           linkLabel: 'Explorar Catálogo',
           linkUrl: '/shop',
           imagePosition: 'top',
@@ -80,8 +83,11 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
           } as any,
         },
         {
+          badge: 'EXPERIENCIAS Y APRENDIZAJE',
           heading: 'Talleres que Tejen Comunidad',
-          subheading: 'Aprende la técnica ancestral de la mostacilla en nuestros talleres presenciales.',
+          metaText: 'CARTAGENA • TÉCNICA ANCESTRAL • GRUPOS REDUCIDOS',
+          subheading: 'Aprende la técnica ancestral de la mostacilla en nuestros talleres presenciales guiados por Shirley.',
+          tabTitle: 'Talleres & Comunidad',
           linkLabel: 'Ver Talleres',
           linkUrl: '/eventos',
           imagePosition: 'top',
@@ -91,8 +97,11 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
           } as any,
         },
         {
+          badge: 'ENCUENTROS PRESENCIALES',
           heading: 'Ferias y Pop-ups en Cartagena',
-          subheading: 'Encuéntranos en ferias artesanales y mercados locales. ¡Te esperamos!',
+          metaText: 'CENTRO HISTÓRICO • GETSEMANÍ • EDICIONES DE TEMPORADA',
+          subheading: 'Encuéntranos en ferias artesanales y mercados locales de diseño. ¡Ven a conocer nuestras piezas en vivo!',
+          tabTitle: 'Ferias & Pop-ups',
           linkLabel: 'Próximas Ferias',
           linkUrl: '/eventos',
           imagePosition: 'top',
@@ -226,7 +235,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
       {
         blockType: 'features',
         tagline: 'Tradición y Delicadeza',
-        heading: 'Por qué elegir Nénufar Joyería',
+        heading: 'El Rigor y la Paciencia de Nuestro Oficio',
         centerImage: {
           url: 'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/colombia-aretes.jpeg',
           alt: 'Joyería artesanal en mostacilla tejida a mano - Nénufar',

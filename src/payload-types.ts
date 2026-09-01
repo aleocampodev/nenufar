@@ -535,8 +535,11 @@ export interface Page {
            * Elige "Rostros / Superior" para que al recortar la imagen en pantallas no corte las cabezas.
            */
           imagePosition?: ('top' | 'center' | 'bottom') | null;
+          badge?: string | null;
           heading?: string | null;
+          metaText?: string | null;
           subheading?: string | null;
+          tabTitle?: string | null;
           linkLabel?: string | null;
           /**
            * Ej: /shop, /eventos
@@ -1671,8 +1674,11 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               image?: T;
               imagePosition?: T;
+              badge?: T;
               heading?: T;
+              metaText?: T;
               subheading?: T;
+              tabTitle?: T;
               linkLabel?: T;
               linkUrl?: T;
               id?: T;
