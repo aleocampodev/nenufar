@@ -132,9 +132,8 @@ export const UpcomingEventsBlock: Block = {
                       defaultValue: "feria",
                       admin: { width: "30%" },
                       options: [
-                        { label: "🎪 Feria Artesanal", value: "feria" },
                         { label: "🪡 Taller Vivencial", value: "taller" },
-                        { label: "✨ Pop-Up / Muestra", value: "popup" },
+                        { label: "🎪 Feria Artesanal", value: "feria" },
                       ],
                     },
                   ],

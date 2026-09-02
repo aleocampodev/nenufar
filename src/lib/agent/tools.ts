@@ -443,8 +443,8 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
         },
         tipo: {
           type: 'string',
-          enum: ['taller', 'feria', 'pop-up'],
-          description: 'Tipo de evento: taller, feria o pop-up',
+          enum: ['taller', 'feria'],
+          description: 'Tipo de evento: taller o feria',
         },
       },
       required: ['titulo', 'fecha'],
@@ -607,10 +607,10 @@ export async function executeShirleyTool(
           return `No encontré piezas para "${consulta}" en el catálogo.`
         }
         const lines = result.docs.map((p: any) => {
-          const stock = typeof p.inventory === 'number' && p.inventory <= 0 ? ' — (SIN stock)' : ` (${p.inventory ?? 0} disp.)`
-          return `• ${p.title} — ${formatCOP(p.priceInCOP)}${stock} [/products/${p.slug}]`
+          const stock = typeof p.inventory === 'number' && p.inventory <= 0 ? ' (Sin stock)' : ` (${p.inventory ?? 0} disp.)`
+          return `💎 ${p.title} — ${formatCOP(p.priceInCOP)}${stock}`
         })
-        return `Encontré ${result.docs.length} pieza(s) en el catálogo:\n${lines.join('\n')}`
+        return `Encontré ${result.docs.length} pieza(s) en el catálogo:\n\n${lines.join('\n')}`
       }
 
       case 'crearProductoDraft': {
@@ -966,9 +966,9 @@ export async function executeShirleyTool(
               return `${it.quantity ?? 1}x ${titulo}`
             })
             .join(', ')
-          return `• Pedido #${o.id} — ${formatCOP(o.amount)} — ${o.customerEmail || 'Sin email'}\n  📦 ${items || 'Sin items'}`
+          return `📦 Pedido #${o.id} — ${formatCOP(o.amount)} — ${o.customerEmail || 'Sin email'}\n   Detalle: ${items || 'Sin items'}`
         })
-        return `Tienes ${result.docs.length} pedido(s) pendiente(s):\n${lines.join('\n')}`
+        return `Tienes ${result.docs.length} pedido(s) pendiente(s):\n\n${lines.join('\n\n')}`
       }
 
       case 'confirmarPedido': {
@@ -1022,10 +1022,12 @@ export async function executeShirleyTool(
           return 'No hay talleres ni ferias programados actualmente en la base de datos.'
         }
         const lines = result.docs.map((e: any) => {
-          const d = e.date ? new Date(e.date).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Sin fecha'
-          return `• #${e.id} [${e.type || 'evento'}] "${e.title}" — ${d} (${e.location || 'Cartagena'})`
+          const d = e.date ? new Date(e.date).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Sin fecha'
+          const tipo = e.type === 'taller' ? 'Taller' : 'Feria'
+          const emoji = e.type === 'taller' ? '🪡' : '🎪'
+          return `${emoji} ${e.title} (${tipo})\n   📅 ${d}\n   📍 ${e.location || 'Cartagena de Indias'}\n   🆔 Evento #${e.id}`
         })
-        return `Talleres y Ferias registrados (${result.docs.length}):\n${lines.join('\n')}`
+        return `Talleres y Ferias registrados (${result.docs.length}):\n\n${lines.join('\n\n')}`
       }
 
       case 'eliminarEvento': {

@@ -72,7 +72,7 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
       expect(res).toContain('Aretes Filigrana Sol')
       expect(res).toContain('$ 45.000')
       expect(res).toContain('(5 disp.)')
-      expect(res).toContain('SIN stock')
+      expect(res).toContain('Sin stock')
     })
 
     it('buscarProducto: mensaje amigable cuando no hay coincidencias', async () => {
