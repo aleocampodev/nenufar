@@ -24,7 +24,31 @@ const MAX_TURNS = 4
 const TIMEOUT_MS = 40_000
 
 /** Ventana máxima de mensajes previos para memoria conversacional. */
-const MAX_HISTORY_MESSAGES = 10
+const MAX_HISTORY_MESSAGES = 4
+
+/** Herramientas operativas cuyos mensajes de salida ya están formateados en lenguaje natural para Shirley. */
+const DIRECT_REPLY_TOOLS = new Set([
+  'buscarProducto',
+  'crearProductoDraft',
+  'publicarProducto',
+  'actualizarInventario',
+  'destacarProducto',
+  'crearCategoria',
+  'listarCategorias',
+  'asignarCategoriaProducto',
+  'actualizarFotoLanding',
+  'actualizarVideoTaller',
+  'agregarSlideHero',
+  'listarSlidesHero',
+  'eliminarSlideHero',
+  'pedidosPendientes',
+  'confirmarPedido',
+  'publicarEvento',
+  'listarEventos',
+  'eliminarEvento',
+  'crearTestimonio',
+  'listarTestimonios',
+])
 
 function buildSystemPrompt(): string {
   return [
@@ -371,6 +395,34 @@ export async function runShirleyAgent({
             tool_use_id: toolCall.id,
             content: resultText,
           })
+        }
+
+        const onlyDirectTools = toolCalls.every((tc) => DIRECT_REPLY_TOOLS.has(tc.name))
+        if (onlyDirectTools && toolResults.length > 0) {
+          const directReply = toolResults.map((tr) => tr.content).join('\n\n')
+
+          void persistMessage(payload, {
+            chatId,
+            role: 'assistant',
+            content: directReply,
+            toolName: toolsInvoked.join(', ') || undefined,
+          })
+
+          void recordTrace(payload, {
+            chatId,
+            query: text,
+            responseSummary: directReply,
+            toolsUsed: toolsInvoked.join(', ') || 'ninguna',
+            inputTokens: totalInputTokens,
+            outputTokens: totalOutputTokens,
+            totalTokens: totalInputTokens + totalOutputTokens,
+            cost: '$0 USD (Groq Free Tier)',
+            executionTimeMs: Date.now() - startTime,
+            status: 'success',
+            model,
+          })
+
+          return directReply
         }
 
         messages.push({ role: 'user', content: toolResults })
