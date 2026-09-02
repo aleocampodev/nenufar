@@ -4,6 +4,7 @@ import type { CallToActionBlock as CTABlockProps } from '@/payload-types'
 import { RichText } from '@/components/RichText'
 import { CMSLink } from '@/components/Link'
 import { MessageCircle, MapPin, Clock, Sparkles } from 'lucide-react'
+import { ScrollReveal } from '@/components/Animation/ScrollReveal'
 
 export const CallToActionBlock: React.FC<
   CTABlockProps & {
@@ -12,8 +13,9 @@ export const CallToActionBlock: React.FC<
   }
 > = ({ id, links, richText }) => {
   return (
-    <section id={String(id || 'contacto')} className="container py-16 lg:py-24 scroll-mt-24">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand/5 via-[#FAF8F5] to-brand/10 dark:from-zinc-900 dark:to-zinc-900/60 border border-brand/15 p-8 sm:p-12 lg:p-16 shadow-sm">
+    <section id={String(id || 'contacto')} className="container py-16 lg:py-24 scroll-mt-24 overflow-hidden">
+      <ScrollReveal variant="scale-up" duration={900}>
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand/5 via-[#FAF8F5] to-brand/10 dark:from-zinc-900 dark:to-zinc-900/60 border border-brand/15 p-8 sm:p-12 lg:p-16 shadow-sm">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Columna Izquierda: Mensaje y Detalles del Taller */}
@@ -86,8 +88,7 @@ export const CallToActionBlock: React.FC<
             </div>
           </div>
         </div>
-
-      </div>
+      </ScrollReveal>
     </section>
   )
 }
