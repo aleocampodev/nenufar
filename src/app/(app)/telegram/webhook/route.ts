@@ -14,7 +14,7 @@ import { getPayload } from 'payload'
 import { runShirleyAgent } from '@/lib/agent/runShirleyAgent'
 import { sendTelegramChatAction, sendTelegramReply } from '@/lib/telegram'
 
-export const maxDuration = 60
+export const maxDuration = 300
 
 // Dedupe de updates (Telegram reintenta si no recibe 200). Suficiente para
 // instancia única — mismo criterio que src/lib/idempotency.ts.

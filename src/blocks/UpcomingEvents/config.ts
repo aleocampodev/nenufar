@@ -134,6 +134,7 @@ export const UpcomingEventsBlock: Block = {
                       options: [
                         { label: "🪡 Taller Vivencial", value: "taller" },
                         { label: "🎪 Feria Artesanal", value: "feria" },
+                        { label: "✨ Pop-Up", value: "popup" },
                       ],
                     },
                   ],

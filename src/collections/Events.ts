@@ -34,6 +34,7 @@ export const Events: CollectionConfig = {
       options: [
         { label: 'Taller', value: 'taller' },
         { label: 'Feria', value: 'feria' },
+        { label: 'Pop-up', value: 'pop-up' },
       ],
       admin: {
         description: 'Taller artesanal o feria',
