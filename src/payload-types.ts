@@ -550,47 +550,8 @@ export interface Page {
       | null;
   };
   layout: (
-    | CallToActionBlock
-    | ContentBlock
-    | MediaBlock
-    | ArchiveBlock
-    | CarouselBlock
-    | ThreeItemGridBlock
-    | BannerBlock
-    | FormBlock
-    | {
-        /**
-         * Texto pequeño en mayúsculas sobre el título principal.
-         */
-        tagline?: string | null;
-        title?: string | null;
-        description?: string | null;
-        /**
-         * Sube un video vertical en formato celular (9:16 / estilo Reel). Tiene prioridad sobre la URL.
-         */
-        video?: (number | null) | Media;
-        /**
-         * Enlace directo MP4 si el video está alojado externamente.
-         */
-        videoUrl?: string | null;
-        /**
-         * Frase descriptiva que acompaña el video vertical en la tienda.
-         */
-        videoCaption?: string | null;
-        events?:
-          | {
-              title: string;
-              type?: ('feria' | 'taller' | 'popup') | null;
-              date: string;
-              location: string;
-              description?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'upcomingEvents';
-      }
+    | NenufarStoryBlock
+    | ImageStripBlock
     | {
         /**
          * Texto pequeño en mayúsculas sobre el título (ej: Tradición y Delicadeza)
@@ -626,8 +587,6 @@ export interface Page {
         blockName?: string | null;
         blockType: 'features';
       }
-    | ImageStripBlock
-    | NenufarStoryBlock
     | {
         tagline?: string | null;
         heading?: string | null;
@@ -646,6 +605,47 @@ export interface Page {
         blockName?: string | null;
         blockType: 'testimonials';
       }
+    | {
+        /**
+         * Texto pequeño en mayúsculas sobre el título principal.
+         */
+        tagline?: string | null;
+        title?: string | null;
+        description?: string | null;
+        /**
+         * Sube un video vertical en formato celular (9:16 / estilo Reel). Tiene prioridad sobre la URL.
+         */
+        video?: (number | null) | Media;
+        /**
+         * Enlace directo MP4 si el video está alojado externamente.
+         */
+        videoUrl?: string | null;
+        /**
+         * Frase descriptiva que acompaña el video vertical en la tienda.
+         */
+        videoCaption?: string | null;
+        events?:
+          | {
+              title: string;
+              type?: ('feria' | 'taller' | 'popup') | null;
+              date: string;
+              location: string;
+              description?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'upcomingEvents';
+      }
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | ArchiveBlock
+    | CarouselBlock
+    | ThreeItemGridBlock
+    | BannerBlock
+    | FormBlock
   )[];
   meta?: {
     title?: string | null;
@@ -662,6 +662,88 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NenufarStoryBlock".
+ */
+export interface NenufarStoryBlock {
+  /**
+   * Foto vertical de Shirley trabajando. Recomendado 800x1000. Si aún no tienes, se ve placeholder.
+   */
+  image?: (number | null) | Media;
+  tagline?: string | null;
+  heading: string;
+  /**
+   * Habla de Nenúfar, de Shirley, de la mostacilla. Estilo Krafti: 2-3 párrafos cortos.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Ej: /shop, /sobre-nenufar
+   */
+  linkUrl?: string | null;
+  linkLabel?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'nenufarStory';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageStripBlock".
+ */
+export interface ImageStripBlock {
+  /**
+   * Texto pequeño en mayúsculas sobre el título principal.
+   */
+  tagline?: string | null;
+  heading?: string | null;
+  description?: string | null;
+  /**
+   * Gestiona cada una de las 4 imágenes continuas. Al tocarlas en la tienda, revelarán su historia sagrada y técnica.
+   */
+  images?:
+    | {
+        title: string;
+        category?: string | null;
+        /**
+         * Texto breve visible en la tarjeta antes de expandir.
+         */
+        excerpt?: string | null;
+        image?: (number | null) | Media;
+        imageUrl?: string | null;
+        /**
+         * Significado cultural según la cosmovisión indígena.
+         */
+        storyMeaning?: string | null;
+        /**
+         * Horas de hilado, cantidad de mostacillas y paciencia.
+         */
+        storyCraft?: string | null;
+        /**
+         * Cómo cae en el cuerpo, peso pluma y cierres hipoalergénicos.
+         */
+        storyFeel?: string | null;
+        alt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'imageStrip';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1062,88 +1144,6 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ImageStripBlock".
- */
-export interface ImageStripBlock {
-  /**
-   * Texto pequeño en mayúsculas sobre el título principal.
-   */
-  tagline?: string | null;
-  heading?: string | null;
-  description?: string | null;
-  /**
-   * Gestiona cada una de las 4 imágenes continuas. Al tocarlas en la tienda, revelarán su historia sagrada y técnica.
-   */
-  images?:
-    | {
-        title: string;
-        category?: string | null;
-        /**
-         * Texto breve visible en la tarjeta antes de expandir.
-         */
-        excerpt?: string | null;
-        image?: (number | null) | Media;
-        imageUrl?: string | null;
-        /**
-         * Significado cultural según la cosmovisión indígena.
-         */
-        storyMeaning?: string | null;
-        /**
-         * Horas de hilado, cantidad de mostacillas y paciencia.
-         */
-        storyCraft?: string | null;
-        /**
-         * Cómo cae en el cuerpo, peso pluma y cierres hipoalergénicos.
-         */
-        storyFeel?: string | null;
-        alt?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'imageStrip';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "NenufarStoryBlock".
- */
-export interface NenufarStoryBlock {
-  /**
-   * Foto vertical de Shirley trabajando. Recomendado 800x1000. Si aún no tienes, se ve placeholder.
-   */
-  image?: (number | null) | Media;
-  tagline?: string | null;
-  heading: string;
-  /**
-   * Habla de Nenúfar, de Shirley, de la mostacilla. Estilo Krafti: 2-3 párrafos cortos.
-   */
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Ej: /shop, /sobre-nenufar
-   */
-  linkUrl?: string | null;
-  linkLabel?: string | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'nenufarStory';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1687,14 +1687,44 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
-        cta?: T | CallToActionBlockSelect<T>;
-        content?: T | ContentBlockSelect<T>;
-        mediaBlock?: T | MediaBlockSelect<T>;
-        archive?: T | ArchiveBlockSelect<T>;
-        carousel?: T | CarouselBlockSelect<T>;
-        threeItemGrid?: T | ThreeItemGridBlockSelect<T>;
-        banner?: T | BannerBlockSelect<T>;
-        formBlock?: T | FormBlockSelect<T>;
+        nenufarStory?: T | NenufarStoryBlockSelect<T>;
+        imageStrip?: T | ImageStripBlockSelect<T>;
+        features?:
+          | T
+          | {
+              tagline?: T;
+              heading?: T;
+              centerImage?: T;
+              items?:
+                | T
+                | {
+                    icon?: T;
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        testimonials?:
+          | T
+          | {
+              tagline?: T;
+              heading?: T;
+              limit?: T;
+              items?:
+                | T
+                | {
+                    authorName?: T;
+                    authorRole?: T;
+                    quote?: T;
+                    rating?: T;
+                    avatar?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
         upcomingEvents?:
           | T
           | {
@@ -1717,44 +1747,14 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
-        features?:
-          | T
-          | {
-              tagline?: T;
-              heading?: T;
-              centerImage?: T;
-              items?:
-                | T
-                | {
-                    icon?: T;
-                    title?: T;
-                    description?: T;
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
-        imageStrip?: T | ImageStripBlockSelect<T>;
-        nenufarStory?: T | NenufarStoryBlockSelect<T>;
-        testimonials?:
-          | T
-          | {
-              tagline?: T;
-              heading?: T;
-              limit?: T;
-              items?:
-                | T
-                | {
-                    authorName?: T;
-                    authorRole?: T;
-                    quote?: T;
-                    rating?: T;
-                    avatar?: T;
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
+        cta?: T | CallToActionBlockSelect<T>;
+        content?: T | ContentBlockSelect<T>;
+        mediaBlock?: T | MediaBlockSelect<T>;
+        archive?: T | ArchiveBlockSelect<T>;
+        carousel?: T | CarouselBlockSelect<T>;
+        threeItemGrid?: T | ThreeItemGridBlockSelect<T>;
+        banner?: T | BannerBlockSelect<T>;
+        formBlock?: T | FormBlockSelect<T>;
       };
   meta?:
     | T
@@ -1767,6 +1767,45 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NenufarStoryBlock_select".
+ */
+export interface NenufarStoryBlockSelect<T extends boolean = true> {
+  image?: T;
+  tagline?: T;
+  heading?: T;
+  description?: T;
+  linkUrl?: T;
+  linkLabel?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageStripBlock_select".
+ */
+export interface ImageStripBlockSelect<T extends boolean = true> {
+  tagline?: T;
+  heading?: T;
+  description?: T;
+  images?:
+    | T
+    | {
+        title?: T;
+        category?: T;
+        excerpt?: T;
+        image?: T;
+        imageUrl?: T;
+        storyMeaning?: T;
+        storyCraft?: T;
+        storyFeel?: T;
+        alt?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1883,45 +1922,6 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ImageStripBlock_select".
- */
-export interface ImageStripBlockSelect<T extends boolean = true> {
-  tagline?: T;
-  heading?: T;
-  description?: T;
-  images?:
-    | T
-    | {
-        title?: T;
-        category?: T;
-        excerpt?: T;
-        image?: T;
-        imageUrl?: T;
-        storyMeaning?: T;
-        storyCraft?: T;
-        storyFeel?: T;
-        alt?: T;
-        id?: T;
-      };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "NenufarStoryBlock_select".
- */
-export interface NenufarStoryBlockSelect<T extends boolean = true> {
-  image?: T;
-  tagline?: T;
-  heading?: T;
-  description?: T;
-  linkUrl?: T;
-  linkLabel?: T;
   id?: T;
   blockName?: T;
 }

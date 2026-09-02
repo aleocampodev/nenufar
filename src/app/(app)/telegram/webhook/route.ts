@@ -12,7 +12,6 @@ import config from '@payload-config'
 import { headers } from 'next/headers'
 import { getPayload } from 'payload'
 import { runShirleyAgent } from '@/lib/agent/runShirleyAgent'
-import { transcribeAudioWithGroq } from '@/lib/agent/transcribe'
 import { sendTelegramChatAction, sendTelegramReply } from '@/lib/telegram'
 
 export const maxDuration = 60
@@ -146,55 +145,19 @@ export async function POST(request: Request): Promise<Response> {
   try {
     let uploadedMediaId: number | undefined
 
-    // 4. Procesar nota de voz o audio con Groq Whisper si existe
+    // 4. Si envía nota de voz o audio, indicarle amablemente que use texto
     const audioObj = message?.voice ?? message?.audio
-    if (audioObj?.file_id && process.env.TELEGRAM_BOT_TOKEN) {
-      try {
-        const fileRes = await fetch(
-          `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getFile?file_id=${audioObj.file_id}`,
-        )
-        const fileJson = (await fileRes.json()) as {
-          ok: boolean
-          result?: { file_path?: string }
-        }
-
-        if (fileJson.ok && fileJson.result?.file_path) {
-          const downloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${fileJson.result.file_path}`
-          const audioRes = await fetch(downloadUrl)
-          const arrayBuffer = await audioRes.arrayBuffer()
-          const audioBuffer = Buffer.from(arrayBuffer)
-          let ext = fileJson.result.file_path.split('.').pop() || 'ogg'
-          if (ext.toLowerCase() === 'oga') ext = 'ogg'
-
-          const transcribed = await transcribeAudioWithGroq({
-            audioBuffer,
-            filename: `voice-${Date.now()}.${ext}`,
-            mimetype: audioObj.mime_type || 'audio/ogg',
-          })
-
-          if (transcribed) {
-            payload.logger.info({
-              msg: '[telegram] Nota de voz transcrita con Groq Whisper',
-              transcribed,
-            })
-            text = text ? `${text}\n${transcribed}` : transcribed
-          }
-        }
-      } catch (audioErr) {
-        payload.logger.error({
-          msg: '[telegram] Error transcribiendo nota de voz con Groq Whisper',
-          err: audioErr,
-        })
-      }
-    }
-
-    // Si después de intentar transcribir aún no hay texto
-    if (!text && !hasMedia) {
+    if (audioObj) {
       clearInterval(typingInterval)
       await sendTelegramReply({
         chatId,
-        text: 'Shirley, no alcancé a escuchar con claridad tu nota de voz 🎙️. ¿Me la repites o me escribes por texto? 💜',
+        text: 'Shirley, la tienda ahora opera exclusivamente por mensaje de texto o enviando fotos y videos ✍️. ¡Escríbeme lo que necesitas y te ayudo de inmediato! 💜',
       })
+      return Response.json({ ok: true })
+    }
+
+    if (!text && !hasMedia) {
+      clearInterval(typingInterval)
       return Response.json({ ok: true })
     }
 
