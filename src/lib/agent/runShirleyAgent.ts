@@ -50,6 +50,7 @@ const DIRECT_REPLY_TOOLS = new Set([
   'eliminarEvento',
   'crearTestimonio',
   'listarTestimonios',
+  'eliminarTestimonio',
 ])
 
 function buildSystemPrompt(): string {

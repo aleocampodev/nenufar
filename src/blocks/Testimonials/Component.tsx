@@ -16,7 +16,7 @@ import { TestimonialsGridClient, type TestimonialItem } from './TestimonialsGrid
 export const TestimonialsBlock: React.FC<Props> = async ({
   tagline = 'Voces de Nuestra Comunidad',
   heading = 'Lo que dicen quienes lucen Nenúfar',
-  limit = 3,
+  limit = 6,
   items,
 }) => {
   let docs: any[] = []
@@ -30,7 +30,7 @@ export const TestimonialsBlock: React.FC<Props> = async ({
       const testimonialsRes = await payload.find({
         collection: 'testimonials',
         depth: 1,
-        limit: limit || 3,
+        limit: limit || 6,
         overrideAccess: true,
         where: {
           _status: { equals: 'published' },

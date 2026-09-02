@@ -579,6 +579,20 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
       properties: {},
     },
   },
+  {
+    name: 'eliminarTestimonio',
+    description: 'Elimina un testimonio de la página de inicio por el nombre de la clienta.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        nombre: {
+          type: 'string',
+          description: 'Nombre de la clienta cuyo testimonio se quiere eliminar',
+        },
+      },
+      required: ['nombre'],
+    },
+  },
 
   // ─── 5. COPYWRITING, CATÁLOGO, LANDING & REDES ─────────────────────────
   {
@@ -1260,7 +1274,7 @@ export async function executeShirleyTool(
 
       case 'crearTestimonio': {
         const { nombre, testimonio, rol, calificacion, mediaId } = args
-        const doc = await payload.create({
+        await payload.create({
           collection: 'testimonials',
           data: {
             authorName: nombre,
@@ -1273,7 +1287,7 @@ export async function executeShirleyTool(
           draft: false,
           overrideAccess: true,
         })
-        return `Testimonio de "${nombre}" publicado en la landing exitosamente ✨ (#${doc.id})`
+        return `¡Listo Shirley! El testimonio de "${nombre}" fue publicado exitosamente en tu página de inicio ✨`
       }
 
       case 'listarTestimonios': {
@@ -1284,9 +1298,30 @@ export async function executeShirleyTool(
           where: { _status: { equals: 'published' } },
           sort: '-createdAt',
         })
-        if (res.docs.length === 0) return 'Aún no hay testimonios publicados en la landing.'
-        const lines = res.docs.map((d: any) => `• #${d.id} — ${d.authorName}: "${d.quote.slice(0, 60)}..."`)
-        return `Testimonios publicados (${res.docs.length}):\n${lines.join('\n')}`
+        if (res.docs.length === 0) return 'Aún no hay testimonios publicados en la tienda.'
+        const lines = res.docs.map((d: any) => `⭐ ${d.authorName} (${d.authorRole || 'Clienta'}): "${d.quote.slice(0, 70)}..."`)
+        return `Tienes ${res.docs.length} testimonio(s) en la tienda:\n\n${lines.join('\n\n')}`
+      }
+
+      case 'eliminarTestimonio': {
+        const { nombre } = args
+        const match = await payload.find({
+          collection: 'testimonials',
+          where: {
+            authorName: { like: nombre },
+          },
+          limit: 1,
+          overrideAccess: true,
+        })
+        if (match.docs.length === 0) {
+          return `No encontré ningún testimonio a nombre de "${nombre}".`
+        }
+        await payload.delete({
+          collection: 'testimonials',
+          id: match.docs[0].id,
+          overrideAccess: true,
+        })
+        return `¡Listo Shirley! Eliminé el testimonio de "${match.docs[0].authorName}" de tu página de inicio ✨`
       }
 
       // ─── 5. COPYWRITING, CATÁLOGO, LANDING & REDES ─────────────────────────

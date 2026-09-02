@@ -555,7 +555,7 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
       )
 
       expect(createRes).toContain('Valentina P.')
-      expect(createRes).toContain('publicado en la landing exitosamente')
+      expect(createRes).toContain('fue publicado exitosamente')
 
       mockPayload.find.mockResolvedValueOnce({
         docs: [
@@ -564,8 +564,15 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
       } as any)
 
       const listRes = await executeShirleyTool('listarTestimonios', {}, mockPayload as any)
-      expect(listRes).toContain('Testimonios publicados (1)')
+      expect(listRes).toContain('Tienes 1 testimonio(s)')
       expect(listRes).toContain('Valentina P.')
+
+      mockPayload.find.mockResolvedValueOnce({
+        docs: [{ id: 1, authorName: 'Valentina P.' }],
+      } as any)
+
+      const delRes = await executeShirleyTool('eliminarTestimonio', { nombre: 'Valentina' }, mockPayload as any)
+      expect(delRes).toContain('Eliminé el testimonio de "Valentina P."')
     })
   })
 
