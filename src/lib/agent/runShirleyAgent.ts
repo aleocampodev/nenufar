@@ -38,6 +38,7 @@ const DIRECT_REPLY_TOOLS = new Set([
   'asignarCategoriaProducto',
   'actualizarFotoLanding',
   'actualizarVideoTaller',
+  'actualizarSlideHero',
   'agregarSlideHero',
   'listarSlidesHero',
   'eliminarSlideHero',
@@ -69,7 +70,8 @@ function buildSystemPrompt(): string {
     '- Puedes publicar o despublicar cualquier producto existente con la herramienta publicarProducto.',
     '- Si Shirley envía una foto y pide cambiar la foto de una sección de la landing (Tradición y Delicadeza o Nuestra Historia), usa actualizarFotoLanding.',
     '- Si Shirley envía un video y pide actualizar el video de ferias y talleres (o sección vivencial), usa actualizarVideoTaller.',
-    '- Si Shirley envía una foto y pide agregar un slide o banner al carrusel de inicio, usa agregarSlideHero.',
+    '- Si Shirley envía una foto y pide cambiar o actualizar una foto del carrusel o slider de inicio (slide 1, slide 2, etc.), usa actualizarSlideHero.',
+    '- Si Shirley envía una foto y pide agregar un slide o banner nuevo al carrusel de inicio, usa agregarSlideHero.',
     '- Si Shirley pide ver los slides del carrusel o eliminar uno, usa listarSlidesHero o eliminarSlideHero.',
     '- Si Shirley pide ideas de texto, descripciones atractivas para una joya o copys para el catálogo web (/products/[slug]), usa generarCopyProducto.',
     '- Si Shirley pide agendar un taller o feria, USA SIEMPRE publicarEvento.',
@@ -220,7 +222,7 @@ async function recordTrace(
  * Corre una consulta agéntica completa y devuelve el texto final para enviar
  * por Telegram. Nunca lanza: ante cualquier fallo devuelve AGENT_FALLBACK.
  */
-function determineToolChoice(text: string): { type: 'tool' | 'auto'; name?: string } | undefined {
+function determineToolChoice(text: string, mediaId?: number): { type: 'tool' | 'auto'; name?: string } | undefined {
   const t = text.toLowerCase().trim()
   // 1. Pregunta sobre eventos/talleres programados
   if (
@@ -240,13 +242,20 @@ function determineToolChoice(text: string): { type: 'tool' | 'auto'; name?: stri
     return { type: 'tool', name: 'pedidosPendientes' }
   }
 
-  // 3. Pregunta sobre slides del carrusel hero
-  if (
-    /(slide|slides|carrusel|banner|banners)/i.test(t) &&
-    /(que|cu[aá]les|hay|ver|lista|listar|mostrar)/i.test(t) &&
-    !/(elimina|borra|agrega|crea)/i.test(t)
-  ) {
-    return { type: 'tool', name: 'listarSlidesHero' }
+  // 3. Hero / Carrusel / Slider de Inicio
+  if (/(slide|slides|carrusel|banner|banners|slider|portada)/i.test(t)) {
+    if (/(cambia|actualiza|reemplaza|modifica|pon|foto|imagen)/i.test(t) || Boolean(mediaId)) {
+      return { type: 'tool', name: 'actualizarSlideHero' }
+    }
+    if (/(agrega|crea|a[ñn]ade|nuevo)/i.test(t)) {
+      return { type: 'tool', name: 'agregarSlideHero' }
+    }
+    if (/(elimina|borra|quita|cancela)/i.test(t)) {
+      return { type: 'tool', name: 'eliminarSlideHero' }
+    }
+    if (/(que|cu[aá]les|hay|ver|lista|listar|muestra|mostrar)/i.test(t)) {
+      return { type: 'tool', name: 'listarSlidesHero' }
+    }
   }
 
   // 4. Pregunta sobre productos / catálogo
@@ -313,7 +322,7 @@ export async function runShirleyAgent({
   })
 
   console.log(`⏱️ [agent] Iniciando consulta (${Date.now() - startTime}ms)`)
-  const forcedToolChoice = determineToolChoice(cleanPrompt)
+  const forcedToolChoice = determineToolChoice(cleanPrompt, mediaId)
 
   try {
     for (let turn = 0; turn < MAX_TURNS; turn++) {

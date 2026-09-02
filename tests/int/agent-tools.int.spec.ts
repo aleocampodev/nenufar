@@ -345,6 +345,44 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
       expect(res).toContain('Total slides: 2')
     })
 
+    it('actualizarSlideHero: actualiza la foto o texto de una diapositiva existente', async () => {
+      mockPayload.find.mockResolvedValueOnce({
+        docs: [
+          {
+            id: 1,
+            hero: { type: 'slider', slides: [{ heading: 'Slide Original', image: 10 }] },
+          },
+        ],
+      } as any)
+
+      const res = await executeShirleyTool(
+        'actualizarSlideHero',
+        {
+          posicion: 1,
+          titulo: 'Slide Renovado',
+          mediaId: 99,
+        },
+        mockPayload as any,
+      )
+
+      expect(res).toContain('Actualicé la diapositiva 1')
+      expect(res).toContain('Slide Renovado')
+      expect(mockPayload.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            hero: expect.objectContaining({
+              slides: [
+                expect.objectContaining({
+                  heading: 'Slide Renovado',
+                  image: 99,
+                }),
+              ],
+            }),
+          }),
+        }),
+      )
+    })
+
     it('listarSlidesHero y eliminarSlideHero', async () => {
       mockPayload.find.mockResolvedValue({
         docs: [

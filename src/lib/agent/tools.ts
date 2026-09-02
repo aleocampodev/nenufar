@@ -367,6 +367,37 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
     },
   },
   {
+    name: 'actualizarSlideHero',
+    description:
+      'Actualiza o cambia la imagen de fondo, título o textos de una diapositiva del carrusel superior (hero). Si se envía una foto adjunta, reemplaza la imagen del slide.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        posicion: {
+          type: 'number',
+          description: 'Número de la diapositiva a actualizar (1 para la primera, 2 para la segunda, etc.). Por defecto 1.',
+        },
+        titulo: {
+          type: 'string',
+          description: 'Nuevo título o encabezado de la diapositiva (opcional)',
+        },
+        subtitulo: {
+          type: 'string',
+          description: 'Nuevo subtítulo o descripción (opcional)',
+        },
+        botonTexto: {
+          type: 'string',
+          description: 'Texto del botón (opcional)',
+        },
+        botonUrl: {
+          type: 'string',
+          description: 'Enlace del botón (opcional)',
+        },
+      },
+      required: [],
+    },
+  },
+  {
     name: 'listarSlidesHero',
     description:
       'Lista todas las diapositivas activas en el carrusel superior de la landing page de inicio.',
@@ -905,6 +936,57 @@ export async function executeShirleyTool(
         })
 
         return `¡Listo Shirley! El nuevo slide "${titulo}" fue agregado al carrusel de la landing page (Total slides: ${currentSlides.length}) ✨`
+      }
+
+      case 'actualizarSlideHero': {
+        const { posicion = 1, titulo, subtitulo, botonTexto, botonUrl, mediaId } = args
+        const homePage = await getHomePage(payload)
+        if (!homePage) return 'No encontré la página de Inicio.'
+
+        const currentHero = (homePage.hero || {}) as any
+        const currentSlides = Array.isArray(currentHero.slides) ? [...currentHero.slides] : []
+
+        if (currentSlides.length === 0) {
+          return 'No hay diapositivas en el carrusel de inicio para actualizar.'
+        }
+
+        const index = Math.max(0, Math.min(Number(posicion) - 1, currentSlides.length - 1))
+        const slide = { ...currentSlides[index] }
+
+        if (mediaId) {
+          slide.image = mediaId
+        }
+        if (titulo) {
+          slide.heading = titulo
+        }
+        if (subtitulo) {
+          slide.subheading = subtitulo
+        }
+        if (botonTexto) {
+          slide.linkLabel = botonTexto
+        }
+        if (botonUrl) {
+          slide.linkUrl = botonUrl
+        }
+
+        currentSlides[index] = slide
+
+        await payload.update({
+          collection: 'pages',
+          id: homePage.id,
+          data: {
+            hero: {
+              ...currentHero,
+              type: 'slider',
+              slides: currentSlides,
+            },
+            _status: 'published',
+          } as any,
+          overrideAccess: true,
+        })
+
+        const fotoMsg = mediaId ? ' y reemplacé su foto' : ''
+        return `¡Listo Shirley! Actualicé la diapositiva ${index + 1} ("${slide.heading || 'Carrusel'}")${fotoMsg} en la página de inicio ✨`
       }
 
       case 'listarSlidesHero': {
