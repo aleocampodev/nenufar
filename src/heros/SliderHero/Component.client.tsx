@@ -159,76 +159,45 @@ export const SliderHeroClient: React.FC<{
         </div>
       </div>
 
-      {/* Bottom Controls Bar (Reference Layout: Left Circular Buttons, Right Slide Title Tabs) */}
+      {/* Flechas de Navegación Laterales Flotantes a los Lados */}
       {slides.length > 1 && (
-        <div className="absolute bottom-6 sm:bottom-10 left-0 right-0 z-20 pointer-events-none">
-          <div className="container max-w-[1300px] px-6 sm:px-12 lg:px-20 flex items-center justify-between">
-            {/* Left Circular Navigation Controls */}
-            <div className="flex items-center gap-3 pointer-events-auto">
+        <>
+          <button
+            aria-label="Diapositiva anterior"
+            onClick={scrollPrev}
+            className="absolute left-3 sm:left-6 lg:left-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-13 sm:h-13 rounded-full border border-white/30 bg-black/40 hover:bg-white text-white hover:text-neutral-950 backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-[0_8px_30px_rgba(0,0,0,0.35)] hover:scale-110 active:scale-95 group cursor-pointer"
+          >
+            <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200 group-hover:-translate-x-1" />
+          </button>
+
+          <button
+            aria-label="Diapositiva siguiente"
+            onClick={scrollNext}
+            className="absolute right-3 sm:right-6 lg:right-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-13 sm:h-13 rounded-full border border-white/30 bg-black/40 hover:bg-white text-white hover:text-neutral-950 backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-[0_8px_30px_rgba(0,0,0,0.35)] hover:scale-110 active:scale-95 group cursor-pointer"
+          >
+            <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200 group-hover:translate-x-1" />
+          </button>
+
+          {/* Indicador Minimalista de Puntos Centrado Abajo (Sin pestañas de texto) */}
+          <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 pointer-events-auto">
+            {slides.map((_, i) => (
               <button
-                aria-label="Diapositiva anterior"
-                onClick={scrollPrev}
-                className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full border border-white/30 bg-black/30 hover:bg-white text-white hover:text-neutral-950 backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-md group cursor-pointer active:scale-95"
+                key={i}
+                aria-label={`Ir al slide ${i + 1}`}
+                onClick={() => scrollTo(i)}
+                className="p-2 cursor-pointer group"
               >
-                <ArrowLeft className="w-5 h-5 transition-transform duration-200 group-hover:-translate-x-0.5" />
+                <span
+                  className={`h-2 rounded-full transition-all duration-400 block ${
+                    i === selectedIndex
+                      ? 'w-7 sm:w-8 bg-white shadow-[0_0_12px_rgba(255,255,255,0.8)]'
+                      : 'w-2 bg-white/40 group-hover:bg-white/70'
+                  }`}
+                />
               </button>
-              <button
-                aria-label="Diapositiva siguiente"
-                onClick={scrollNext}
-                className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full border border-white/30 bg-black/30 hover:bg-white text-white hover:text-neutral-950 backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-md group cursor-pointer active:scale-95"
-              >
-                <ArrowRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-0.5" />
-              </button>
-            </div>
-
-            {/* Right Tabs Switcher with Slide Names & Animated Indicator */}
-            <div className="hidden sm:flex items-center gap-6 md:gap-8 pointer-events-auto">
-              {slides.map((s, idx) => {
-                const isActive = idx === selectedIndex
-                const title = s.tabTitle || s.heading || `Slide ${idx + 1}`
-
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => scrollTo(idx)}
-                    className={`group text-left py-2 relative transition-all duration-300 cursor-pointer ${
-                      isActive ? 'text-white font-medium' : 'text-white/60 hover:text-white'
-                    }`}
-                  >
-                    <span className="text-xs md:text-sm tracking-wide block truncate max-w-[200px]">
-                      {title}
-                    </span>
-                    <span
-                      className={`absolute bottom-0 left-0 right-0 h-[2px] rounded-full transition-all duration-300 ${
-                        isActive
-                          ? 'bg-white scale-x-100 opacity-100'
-                          : 'bg-white/40 scale-x-0 group-hover:scale-x-100 opacity-0 group-hover:opacity-100'
-                      }`}
-                    />
-                  </button>
-                )
-              })}
-            </div>
-
-            {/* Mobile-only Slide Indicator with 44px touch area */}
-            <div className="sm:hidden flex items-center gap-1 pointer-events-auto">
-              {slides.map((_, i) => (
-                <button
-                  key={i}
-                  aria-label={`Ir al slide ${i + 1}`}
-                  onClick={() => scrollTo(i)}
-                  className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
-                >
-                  <span
-                    className={`h-1.5 rounded-full transition-all duration-300 block ${
-                      i === selectedIndex ? 'w-6 bg-white' : 'w-2 bg-white/40'
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
-        </div>
+        </>
       )}
     </section>
   )
