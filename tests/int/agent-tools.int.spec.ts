@@ -450,12 +450,12 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
       } as any)
 
       const listRes = await executeShirleyTool('listarEventos', {}, mockPayload as any)
-      expect(listRes).toContain('Talleres y Ferias registrados (2)')
+      expect(listRes).toContain('Tienes 2 actividad(es) programada(s)')
       expect(listRes).toContain('Feria de Joyas')
       expect(listRes).toContain('Taller de Joyas Ancestrales')
 
       const deleteRes = await executeShirleyTool('eliminarEvento', { eventoId: 4 }, mockPayload as any)
-      expect(deleteRes).toContain('eliminado exitosamente')
+      expect(deleteRes).toContain('Eliminé')
       expect(mockPayload.delete).toHaveBeenCalledWith(
         expect.objectContaining({
           collection: 'events',

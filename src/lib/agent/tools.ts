@@ -639,7 +639,7 @@ export async function executeShirleyTool(
         const catMsg = categoryIds.length > 0 ? ` en la categoría "${categoria}"` : ''
         return shouldPublish
           ? `¡Listo Shirley! Joya "${titulo}" creada y publicada exitosamente en el catálogo (/shop)${catMsg} con precio ${formatCOP(precioCOP)} ✨`
-          : `Joya "${titulo}" guardada como borrador (#${doc.id})${catMsg} con precio ${formatCOP(precioCOP)}. Puedes publicarla cuando quieras diciendo "publicar ${titulo}".`
+          : `¡Listo Shirley! Joya "${titulo}" guardada como borrador${catMsg} con precio ${formatCOP(precioCOP)}. Puedes publicarla cuando quieras diciendo "publicar ${titulo}".`
       }
 
       case 'publicarProducto': {
@@ -994,7 +994,7 @@ export async function executeShirleyTool(
       case 'publicarEvento': {
         const { titulo, fecha, lugar, descripcion, tipo } = args
         const parsed = new Date(fecha)
-        const event = await payload.create({
+        await payload.create({
           collection: 'events',
           data: {
             title: titulo,
@@ -1007,7 +1007,8 @@ export async function executeShirleyTool(
           draft: false,
           overrideAccess: true,
         })
-        return `¡Evento publicado! "${titulo}" (${tipo || 'taller'}) ya aparece en la sección de talleres de la landing ✨ (#${event.id})`
+        const tipoLabel = tipo === 'feria' ? 'Feria Artesanal' : 'Taller Artesanal'
+        return `¡Listo Shirley! "${titulo}" (${tipoLabel}) ya está publicado y visible en la sección de talleres de tu tienda ✨`
       }
 
       case 'listarEventos': {
@@ -1019,15 +1020,15 @@ export async function executeShirleyTool(
           sort: '-date',
         })
         if (result.docs.length === 0) {
-          return 'No hay talleres ni ferias programados actualmente en la base de datos.'
+          return 'No hay talleres ni ferias programados actualmente en la tienda.'
         }
         const lines = result.docs.map((e: any) => {
           const d = e.date ? new Date(e.date).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Sin fecha'
-          const tipo = e.type === 'taller' ? 'Taller' : 'Feria'
-          const emoji = e.type === 'taller' ? '🪡' : '🎪'
-          return `${emoji} ${e.title} (${tipo})\n   📅 ${d}\n   📍 ${e.location || 'Cartagena de Indias'}\n   🆔 Evento #${e.id}`
+          const tipo = e.type === 'feria' ? 'Feria Artesanal' : 'Taller Artesanal'
+          const emoji = e.type === 'feria' ? '🎪' : '🪡'
+          return `${emoji} ${e.title} (${tipo})\n   📅 ${d}\n   📍 ${e.location || 'Cartagena de Indias'}`
         })
-        return `Talleres y Ferias registrados (${result.docs.length}):\n\n${lines.join('\n\n')}`
+        return `Tienes ${result.docs.length} actividad(es) programada(s) en la tienda:\n\n${lines.join('\n\n')}`
       }
 
       case 'eliminarEvento': {
@@ -1049,7 +1050,7 @@ export async function executeShirleyTool(
         }
 
         if (!targetId) {
-          return `No encontré ningún taller o feria con ${eventoId ? `el ID #${eventoId}` : `el nombre "${titulo}"`}.`
+          return `No encontré ningún taller o feria con ${eventoId ? `el número ${eventoId}` : `el nombre "${titulo}"`}.`
         }
 
         const deleted = await payload.delete({
@@ -1058,7 +1059,7 @@ export async function executeShirleyTool(
           overrideAccess: true,
         })
 
-        return `Taller/Feria #${targetId} "${deleted?.title || 'Evento'}" eliminado exitosamente de la tienda 🗑️✨`
+        return `¡Listo Shirley! Eliminé "${deleted?.title || 'la actividad'}" de tu tienda 🗑️✨`
       }
 
       case 'crearTestimonio': {
