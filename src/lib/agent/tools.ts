@@ -324,6 +324,42 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
     },
   },
   {
+    name: 'actualizarTextoSeccion',
+    description:
+      'Actualiza el título, subtítulo (tagline), descripción o textos de cualquier sección de la página de inicio (Nuestra Historia, Tradición y Delicadeza, Talleres y Ferias, o Contacto y Visítanos).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        seccion: {
+          type: 'string',
+          enum: ['historia', 'tradicion', 'talleres', 'contacto'],
+          description: 'Sección a actualizar: historia (Nuestra Historia), tradicion (Tradición y Delicadeza), talleres (Talleres y Ferias), o contacto (Contacto y Visítanos).',
+        },
+        titulo: {
+          type: 'string',
+          description: 'Nuevo título principal de la sección (opcional)',
+        },
+        subtitulo: {
+          type: 'string',
+          description: 'Nuevo subtítulo o tagline superior (opcional)',
+        },
+        descripcion: {
+          type: 'string',
+          description: 'Nuevo texto descriptivo o párrafos de la historia (opcional)',
+        },
+        botonTexto: {
+          type: 'string',
+          description: 'Nuevo texto para el botón de la sección (opcional)',
+        },
+        botonUrl: {
+          type: 'string',
+          description: 'Enlace del botón (ej. /shop) (opcional)',
+        },
+      },
+      required: ['seccion'],
+    },
+  },
+  {
     name: 'actualizarVideoTaller',
     description:
       'Actualiza el video vertical (formato celular 9:16) y texto de la sección "Talleres en Vivo & Próximas Ferias" de la landing page. ' +
@@ -863,6 +899,84 @@ export async function executeShirleyTool(
         })
 
         return `¡Foto de la sección "${seccion === 'tradicion' ? 'Tradición y Delicadeza' : 'Nuestra Historia'}" actualizada exitosamente en la landing! ✨ Puedes verla en vivo en la web.`
+      }
+
+      case 'actualizarTextoSeccion': {
+        const { seccion, titulo, subtitulo, descripcion, botonTexto, botonUrl } = args
+        const homePage = await getHomePage(payload)
+        if (!homePage) return 'No encontré la página de Inicio.'
+
+        const layout = Array.isArray(homePage.layout) ? [...homePage.layout] : []
+        let updatedSectionName = 'sección'
+
+        if (seccion === 'historia') {
+          updatedSectionName = 'Nuestra Historia'
+          const blockIndex = layout.findIndex((b: any) => b.blockType === 'nenufarStory')
+          if (blockIndex === -1) return 'No encontré la sección de Nuestra Historia en la página de inicio.'
+          const block = { ...layout[blockIndex] }
+          if (titulo) block.heading = titulo
+          if (subtitulo) block.tagline = subtitulo
+          if (botonTexto) block.linkLabel = botonTexto
+          if (botonUrl) block.linkUrl = botonUrl
+          if (descripcion) {
+            block.description = {
+              root: {
+                type: 'root',
+                children: descripcion.split('\n\n').filter(Boolean).map((p: string) => ({
+                  type: 'paragraph',
+                  children: [{ type: 'text', text: p.trim(), version: 1 }],
+                  direction: 'ltr',
+                  format: '',
+                  indent: 0,
+                  version: 1,
+                })),
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                version: 1,
+              },
+            }
+          }
+          layout[blockIndex] = block
+        } else if (seccion === 'tradicion') {
+          updatedSectionName = 'Tradición & Delicadeza'
+          const blockIndex = layout.findIndex((b: any) => b.blockType === 'features')
+          if (blockIndex === -1) return 'No encontré la sección de Tradición & Delicadeza.'
+          const block = { ...layout[blockIndex] }
+          if (titulo) block.heading = titulo
+          if (subtitulo) block.tagline = subtitulo
+          layout[blockIndex] = block
+        } else if (seccion === 'talleres') {
+          updatedSectionName = 'Talleres & Ferias'
+          const blockIndex = layout.findIndex((b: any) => b.blockType === 'upcomingEvents')
+          if (blockIndex === -1) return 'No encontré la sección de Talleres & Ferias.'
+          const block = { ...layout[blockIndex] }
+          if (titulo) block.title = titulo
+          if (subtitulo) block.tagline = subtitulo
+          if (descripcion) block.description = descripcion
+          layout[blockIndex] = block
+        } else if (seccion === 'contacto') {
+          updatedSectionName = 'Contacto / Visítanos'
+          const blockIndex = layout.findIndex((b: any) => b.blockType === 'cta')
+          if (blockIndex === -1) return 'No encontré la sección de Contacto.'
+          const block = { ...layout[blockIndex] }
+          if (titulo) block.title = titulo
+          if (subtitulo) block.tagline = subtitulo
+          if (descripcion) block.description = descripcion
+          layout[blockIndex] = block
+        }
+
+        await payload.update({
+          collection: 'pages',
+          id: homePage.id,
+          data: {
+            layout,
+            _status: 'published',
+          } as any,
+          overrideAccess: true,
+        })
+
+        return `¡Listo Shirley! Los textos de la sección "${updatedSectionName}" fueron actualizados en tu página de inicio ✨`
       }
 
       case 'actualizarVideoTaller': {

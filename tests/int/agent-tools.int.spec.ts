@@ -286,6 +286,45 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
       expect(res).toContain('adjúntame la foto por Telegram')
     })
 
+    it('actualizarTextoSeccion: actualiza textos de Nuestra Historia y Tradición', async () => {
+      mockPayload.find.mockResolvedValueOnce({
+        docs: [
+          {
+            id: 1,
+            slug: 'home',
+            layout: [{ blockType: 'nenufarStory', heading: 'Título Viejo', tagline: 'Tag Viejo' }],
+          },
+        ],
+      } as any)
+
+      const res = await executeShirleyTool(
+        'actualizarTextoSeccion',
+        {
+          seccion: 'historia',
+          titulo: 'Manos que Crean Magia',
+          subtitulo: 'Cartagena Ancestral',
+          descripcion: 'Primer párrafo de la historia.\n\nSegundo párrafo de la historia.',
+        },
+        mockPayload as any,
+      )
+
+      expect(res).toContain('Nuestra Historia')
+      expect(res).toContain('actualizados')
+      expect(mockPayload.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            layout: [
+              expect.objectContaining({
+                blockType: 'nenufarStory',
+                heading: 'Manos que Crean Magia',
+                tagline: 'Cartagena Ancestral',
+              }),
+            ],
+          }),
+        }),
+      )
+    })
+
     it('actualizarVideoTaller: actualiza el video de ferias y talleres en el layout', async () => {
       mockPayload.find.mockResolvedValueOnce({
         docs: [
