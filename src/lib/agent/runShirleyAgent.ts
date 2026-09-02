@@ -195,6 +195,47 @@ async function recordTrace(
  * Corre una consulta agéntica completa y devuelve el texto final para enviar
  * por Telegram. Nunca lanza: ante cualquier fallo devuelve AGENT_FALLBACK.
  */
+function determineToolChoice(text: string): { type: 'tool' | 'auto'; name?: string } | undefined {
+  const t = text.toLowerCase().trim()
+  // 1. Pregunta sobre eventos/talleres programados
+  if (
+    /(taller|talleres|feria|ferias|evento|eventos)/i.test(t) &&
+    /(que|cu[aá]les|hay|ver|lista|listar|muestra|mostrar|consultar|programad)/i.test(t) &&
+    !/(elimina|borra|cancela|agenda|crea|agrega|publica|nuevo)/i.test(t)
+  ) {
+    return { type: 'tool', name: 'listarEventos' }
+  }
+
+  // 2. Pregunta sobre pedidos pendientes
+  if (
+    /(pedido|pedidos|compras|ventas)/i.test(t) &&
+    /(pendiente|pendientes|nuevo|nuevos|hay|cu[aá]ntos|ver|lista)/i.test(t) &&
+    !/(confirma|complet)/i.test(t)
+  ) {
+    return { type: 'tool', name: 'pedidosPendientes' }
+  }
+
+  // 3. Pregunta sobre slides del carrusel hero
+  if (
+    /(slide|slides|carrusel|banner|banners)/i.test(t) &&
+    /(que|cu[aá]les|hay|ver|lista|listar|mostrar)/i.test(t) &&
+    !/(elimina|borra|agrega|crea)/i.test(t)
+  ) {
+    return { type: 'tool', name: 'listarSlidesHero' }
+  }
+
+  // 4. Pregunta sobre productos / catálogo
+  if (
+    /(joya|joyas|producto|productos|cat[aá]logo|aretes|collares|pulseras|piezas|colecci[oó]n)/i.test(t) &&
+    /(que|cu[aá]les|hay|ver|lista|listar|muestra|mostrar|qu[eé] vendemos|inventario)/i.test(t) &&
+    !/(crea|agrega|publica|elimina|borra|foto)/i.test(t)
+  ) {
+    return { type: 'tool', name: 'buscarProducto' }
+  }
+
+  return undefined
+}
+
 export async function runShirleyAgent({
   text,
   payload,
@@ -246,7 +287,9 @@ export async function runShirleyAgent({
     content: text,
   })
 
-    console.log(`⏱️ [agent] Iniciando consulta (${Date.now() - startTime}ms)`)
+  console.log(`⏱️ [agent] Iniciando consulta (${Date.now() - startTime}ms)`)
+  const forcedToolChoice = determineToolChoice(cleanPrompt)
+
   try {
     for (let turn = 0; turn < MAX_TURNS; turn++) {
       const turnStart = Date.now()
@@ -264,6 +307,7 @@ export async function runShirleyAgent({
           system,
           messages,
           tools: ANTHROPIC_SHIRLEY_TOOLS,
+          ...(turn === 0 && forcedToolChoice ? { tool_choice: forcedToolChoice } : {}),
         }),
         signal: AbortSignal.timeout(TIMEOUT_MS),
       })
