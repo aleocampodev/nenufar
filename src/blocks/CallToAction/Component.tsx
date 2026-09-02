@@ -88,6 +88,7 @@ export const CallToActionBlock: React.FC<
             </div>
           </div>
         </div>
+      </div>
       </ScrollReveal>
     </section>
   )
