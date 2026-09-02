@@ -11,6 +11,7 @@ const createMockPayload = () => ({
   findByID: vi.fn(async () => null),
   create: vi.fn(async ({ data }: any) => ({ id: 101, ...data })),
   update: vi.fn(async ({ id, data }: any) => ({ id, ...data })),
+  delete: vi.fn(async ({ id }: any) => ({ id, title: 'Taller Mostacilla' })),
 })
 
 describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
@@ -41,6 +42,8 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
         'pedidosPendientes',
         'confirmarPedido',
         'publicarEvento',
+        'listarEventos',
+        'eliminarEvento',
         'crearTestimonio',
         'listarTestimonios',
         'generarCopyProducto',
@@ -434,6 +437,29 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
             type: 'taller',
             _status: 'published',
           }),
+        }),
+      )
+    })
+
+    it('listarEventos y eliminarEvento', async () => {
+      mockPayload.find.mockResolvedValueOnce({
+        docs: [
+          { id: 4, title: 'Feria de Joyas', type: 'feria', date: '2026-08-29T00:00:00.000Z', location: 'Cartagena' },
+          { id: 5, title: 'Taller de Joyas Ancestrales', type: 'taller', date: '2026-09-04T21:00:00.000Z', location: 'Getsemaní' },
+        ],
+      } as any)
+
+      const listRes = await executeShirleyTool('listarEventos', {}, mockPayload as any)
+      expect(listRes).toContain('Talleres y Ferias registrados (2)')
+      expect(listRes).toContain('Feria de Joyas')
+      expect(listRes).toContain('Taller de Joyas Ancestrales')
+
+      const deleteRes = await executeShirleyTool('eliminarEvento', { eventoId: 4 }, mockPayload as any)
+      expect(deleteRes).toContain('eliminado exitosamente')
+      expect(mockPayload.delete).toHaveBeenCalledWith(
+        expect.objectContaining({
+          collection: 'events',
+          id: 4,
         }),
       )
     })

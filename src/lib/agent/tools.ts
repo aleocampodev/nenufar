@@ -451,6 +451,33 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
     },
   },
   {
+    name: 'listarEventos',
+    description:
+      'Lista todos los talleres, ferias o pop-ups programados con su ID, título, fecha y ubicación.',
+    input_schema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: 'eliminarEvento',
+    description:
+      'Elimina o cancela un taller o feria de la web por su ID o por su título.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        eventoId: {
+          type: 'number',
+          description: 'ID numérico del evento a eliminar (ej. 4)',
+        },
+        titulo: {
+          type: 'string',
+          description: 'Nombre o parte del nombre del taller/feria a eliminar si no se especifica el ID',
+        },
+      },
+    },
+  },
+  {
     name: 'crearTestimonio',
     description:
       'Guarda un testimonio de compradora con su foto para la sección de testimonios de la landing.',
@@ -981,6 +1008,55 @@ export async function executeShirleyTool(
           overrideAccess: true,
         })
         return `¡Evento publicado! "${titulo}" (${tipo || 'taller'}) ya aparece en la sección de talleres de la landing ✨ (#${event.id})`
+      }
+
+      case 'listarEventos': {
+        const result = await payload.find({
+          collection: 'events',
+          depth: 0,
+          limit: 20,
+          overrideAccess: true,
+          sort: '-date',
+        })
+        if (result.docs.length === 0) {
+          return 'No hay talleres ni ferias programados actualmente en la base de datos.'
+        }
+        const lines = result.docs.map((e: any) => {
+          const d = e.date ? new Date(e.date).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Sin fecha'
+          return `• #${e.id} [${e.type || 'evento'}] "${e.title}" — ${d} (${e.location || 'Cartagena'})`
+        })
+        return `Talleres y Ferias registrados (${result.docs.length}):\n${lines.join('\n')}`
+      }
+
+      case 'eliminarEvento': {
+        const { eventoId, titulo } = args
+        let targetId = eventoId ? Number(eventoId) : null
+
+        if (!targetId && titulo) {
+          const match = await payload.find({
+            collection: 'events',
+            where: {
+              title: { like: titulo },
+            },
+            limit: 1,
+            overrideAccess: true,
+          })
+          if (match.docs.length > 0) {
+            targetId = Number(match.docs[0].id)
+          }
+        }
+
+        if (!targetId) {
+          return `No encontré ningún taller o feria con ${eventoId ? `el ID #${eventoId}` : `el nombre "${titulo}"`}.`
+        }
+
+        const deleted = await payload.delete({
+          collection: 'events',
+          id: targetId,
+          overrideAccess: true,
+        })
+
+        return `Taller/Feria #${targetId} "${deleted?.title || 'Evento'}" eliminado exitosamente de la tienda 🗑️✨`
       }
 
       case 'crearTestimonio': {
