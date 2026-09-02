@@ -6,9 +6,31 @@
 model_list:
   - model_name: nenufar-bot
     litellm_params:
+      model: groq/openai/gpt-oss-120b
+      api_key: os.environ/GROQ_API_KEY
+      max_tokens: 1024
+
+  - model_name: nenufar-bot-20b
+    litellm_params:
+      model: groq/openai/gpt-oss-20b
+      api_key: os.environ/GROQ_API_KEY
+      max_tokens: 1024
+
+  - model_name: nenufar-bot-qwen36
+    litellm_params:
+      model: groq/qwen/qwen3.6-27b
+      api_key: os.environ/GROQ_API_KEY
+      max_tokens: 1024
+
+  - model_name: nenufar-bot-qwen38
+    litellm_params:
       model: groq/qwen/qwen3.8-27b
       api_key: os.environ/GROQ_API_KEY
       max_tokens: 1024
+
+router_settings:
+  fallbacks:
+    - nenufar-bot: ["nenufar-bot-20b", "nenufar-bot-qwen36", "nenufar-bot-qwen38"]
 
 litellm_settings:
   drop_params: true
@@ -17,3 +39,4 @@ litellm_settings:
 
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
+
