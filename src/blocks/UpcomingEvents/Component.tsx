@@ -30,7 +30,36 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
 }) => {
   let eventsList: EventItem[] = []
 
-  if (events && Array.isArray(events) && events.length > 0) {
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const result = await payload.find({
+      collection: "events",
+      depth: 1,
+      limit: 12,
+      overrideAccess: true,
+      sort: "date",
+      where: {
+        _status: { equals: "published" },
+      },
+    })
+
+    if (result.docs && result.docs.length > 0) {
+      eventsList = result.docs.map((doc: any) => ({
+        id: doc.id,
+        title: doc.title,
+        date: doc.date,
+        endDate: doc.endDate,
+        location: doc.location,
+        description: doc.description,
+        type: doc.type,
+      }))
+    }
+  } catch (err) {
+    console.warn("[UpcomingEvents] Error fetching events from collection:", err)
+  }
+
+  // Si la colección no tiene eventos, usar los del bloque o fallbacks
+  if (eventsList.length === 0 && events && Array.isArray(events) && events.length > 0) {
     eventsList = events
       .filter((ev) => ev != null && typeof ev === 'object')
       .map((ev, idx) => ({
@@ -42,34 +71,6 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
         description: ev.description || null,
         type: ev.type || 'feria',
       }))
-  } else {
-    try {
-      const payload = await getPayload({ config: configPromise })
-      const result = await payload.find({
-        collection: "events",
-        depth: 1,
-        limit: 12,
-        overrideAccess: true,
-        sort: "date",
-        where: {
-          _status: { equals: "published" },
-        },
-      })
-
-      if (result.docs && result.docs.length > 0) {
-        eventsList = result.docs.map((doc: any) => ({
-          id: doc.id,
-          title: doc.title,
-          date: doc.date,
-          endDate: doc.endDate,
-          location: doc.location,
-          description: doc.description,
-          type: doc.type,
-        }))
-      }
-    } catch (err) {
-      console.warn("[UpcomingEvents] Error fetching events:", err)
-    }
   }
 
   // Fallbacks de ferias y talleres en Cartagena si la base de datos está vacía
