@@ -177,26 +177,6 @@ export const SliderHeroClient: React.FC<{
           >
             <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200 group-hover:translate-x-1" />
           </button>
-
-          {/* Indicador Minimalista de Puntos Centrado Abajo (Sin pestañas de texto) */}
-          <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 pointer-events-auto">
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                aria-label={`Ir al slide ${i + 1}`}
-                onClick={() => scrollTo(i)}
-                className="p-2 cursor-pointer group"
-              >
-                <span
-                  className={`h-2 rounded-full transition-all duration-400 block ${
-                    i === selectedIndex
-                      ? 'w-7 sm:w-8 bg-white shadow-[0_0_12px_rgba(255,255,255,0.8)]'
-                      : 'w-2 bg-white/40 group-hover:bg-white/70'
-                  }`}
-                />
-              </button>
-            ))}
-          </div>
         </>
       )}
     </section>
