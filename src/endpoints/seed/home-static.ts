@@ -269,127 +269,129 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
       },
       {
         blockType: 'gallery' as any,
-        tagline: 'MUESTRARIO VISUAL & LOOKBOOK',
-        heading: 'Nénufar en la Piel: Arte y Color Caribeño',
+        tagline: 'COMUNIDAD & MOMENTOS REALES',
+        heading: 'Nénufar en la Piel: Ferias, Talleres & Nuestras Clientas',
         description:
-          'Explora nuestras piezas tejidas a mano en Cartagena de Indias, el brillo de la micro-mostacilla checa calibrada y la fuerza del diseño ancestral lucido por mujeres reales.',
+          'Fotografías espontáneas de ferias locales en Cartagena, talleres presenciales de tejido y nuestras queridas clientas luciendo sus joyas artesanales en la vida real.',
         tabs: [
           {
-            tabTitle: 'Collares Ceremoniales',
-            tabSubtitle: 'Okamas y Otapas inspirados en la cosmovisión Emberá',
+            tabTitle: 'Nuestras Clientas',
+            tabSubtitle: 'Mujeres reales que visten y dan vida a cada diseño',
             images: [
               {
-                title: 'El Okama Ceremonial',
-                category: 'Pieza Ancestral',
+                title: 'Clienta luciendo Okama Ceremonial',
+                category: 'Clientas Felices',
                 description:
-                  'Más de 3.200 micro-mostacillas checas hiladas a mano en Cartagena. Caída anatómica sobre el pecho.',
+                  'Una pieza tejida con más de 3.200 micro-mostacillas checas sobre atuendo de lino en Cartagena.',
                 imageUrl: '/api/media/file/Embera-800x1000.webp',
                 isFeatured: true,
               },
               {
-                title: 'La Otapa Ancestral Naranja',
-                category: 'Geometría Sagrada',
+                title: 'Aretes Tricolor en Celebración',
+                category: 'Momentos Especiales',
                 description:
-                  'Patrones en rombo que representan los senderos de la montaña y la protección del linaje.',
-                imageUrl: '/api/media/file/Collar%20Naranja-800x1000.webp',
-              },
-              {
-                title: 'Okama Contemporáneo Flor',
-                category: 'Diseño de Autor',
-                description:
-                  'Elegancia liviana adaptada al uso diario con motivos florales de la naturaleza caribeña.',
-                imageUrl: '/api/media/file/Collar-flor-800x1000.webp',
-              },
-              {
-                title: 'Collar Ancestral Macro',
-                category: 'Detalle de Oficio',
-                description:
-                  'Micro-mostacilla checa calibrada que garantiza un brillo homogéneo y una textura inalterable.',
-                imageUrl: '/api/media/file/Collar%20ancestral-800x1000.webp',
-              },
-            ],
-          },
-          {
-            tabTitle: 'Aretes & Candongas',
-            tabSubtitle: 'Obras de arte textil livianas e hipoalergénicas',
-            images: [
-              {
-                title: 'Candongas de Autor Tricolor',
-                category: 'Piezas de Colección',
-                description:
-                  'Inspiradas en los colores vivos de Cartagena. Caída suave que no pesa ni maltrata el lóbulo.',
+                  'Candongas livianas tejidas a mano complementando una ocasión inolvidable.',
                 imageUrl: '/api/media/file/colombia-aretes-800x1000.webp',
                 isFeatured: true,
               },
               {
-                title: 'Gargantilla & Aretes Geométricos',
-                category: 'Juego de Gala',
+                title: 'Joya de Autor en la Piel',
+                category: 'Diseño Vivo',
                 description:
-                  'Conjunto simétrico en mostacilla tejida con herrajes hipoalergénicos.',
-                imageUrl: '/api/media/file/Collar-flor-800x1000.webp',
+                  'La textura y el brillo de la mostacilla calibrada acompañando el día a día.',
+                imageUrl: '/api/media/file/joya-1788320703397-800x1000.webp',
               },
               {
-                title: 'Detalle de Hilado en Mostacilla',
-                category: 'Textura & Brillo',
+                title: 'Aretes Inspiración Café',
+                category: 'Estilo Caribeño',
                 description:
-                  'Hilo encerado de alta tenacidad que evita deformaciones con el tiempo.',
-                imageUrl: '/api/media/file/Collar%20ancestral-800x1000.webp',
+                  'Joyas con identidad de nuestra tierra colombiana.',
+                imageUrl: '/api/media/file/cafe-aretes-1-800x1000.webp',
               },
             ],
           },
           {
-            tabTitle: 'El Taller de Shirley',
-            tabSubtitle: 'Manos pacientes que dan vida a cada historia',
+            tabTitle: 'Ferias en Cartagena',
+            tabSubtitle: 'Encuentros presenciales en ferias de diseño y pop-ups',
             images: [
               {
-                title: 'Shirley en su Taller',
-                category: 'Manos Creadoras',
+                title: 'Stand de Nénufar en Feria Artesanal',
+                category: 'Ferias & Pop-Ups',
                 description:
-                  'Concentración y maestría en cada puntada. Shirley elabora cada joya de forma individual en Cartagena.',
-                imageUrl: '/api/media/file/shirley-creadora-800x1000.webp',
+                  'Encuentro con cartageneras y visitantes en el Parque de la Independencia.',
+                imageUrl: '/api/media/file/Feria%20y%20talleres-800x1000.webp',
                 isFeatured: true,
               },
               {
-                title: 'Talleres Presenciales',
-                category: 'Comunidad & Oficio',
+                title: 'Shirley Compartiendo su Oficio',
+                category: 'Encuentros Locales',
                 description:
-                  'Transmitiendo el conocimiento ancestral a mujeres que desean aprender este arte tradicional.',
-                imageUrl: '/api/media/file/talleres-comunidad-800x1000.webp',
+                  'Conversaciones cercanas con quienes aprecian la joyería tejida a mano.',
+                imageUrl: '/api/media/file/shirley-nenufar-1-800x1000.webp',
               },
               {
-                title: 'Mesa de Trabajo & Calibración',
-                category: 'Herramientas',
+                title: 'Muestra de Piezas en Vivo',
+                category: 'Mercados de Autor',
                 description:
-                  'Miles de cuentas checas seleccionadas por tono y calibre milimétrico.',
+                  'Exhibición de nuevas combinaciones de color y diseños de temporada.',
+                imageUrl: '/api/media/file/joya-1788385407531-800x1000.webp',
+              },
+            ],
+          },
+          {
+            tabTitle: 'Talleres de Tejido',
+            tabSubtitle: 'Aprender juntas el arte ancestral de la mostacilla',
+            images: [
+              {
+                title: 'Taller Vivencial de Comunidad',
+                category: 'Talleres Presenciales',
+                description:
+                  'Mujeres reunidas en Getsemaní aprendiendo puntadas tradicionales de hilado.',
+                imageUrl: '/api/media/file/talleres-comunidad-800x1000.webp',
+                isFeatured: true,
+              },
+              {
+                title: 'Primeras Creaciones',
+                category: 'Comunidad Creadora',
+                description:
+                  'La emoción de tejer una joya con tus propias manos y paciencia.',
+                imageUrl:
+                  '/api/media/file/WhatsApp%20Image%202026-07-29%20at%2011.35.55%20PM%20(2)-800x1000.webp',
+              },
+              {
+                title: 'Herramientas & Hilos Calibrados',
+                category: 'Oficio Tradicional',
+                description:
+                  'Compartiendo los secretos de la tensión del hilo y la selección de tonos.',
                 imageUrl: '/api/media/file/Collar%20Naranja-800x1000.webp',
               },
             ],
           },
           {
-            tabTitle: 'Nénufar en Cartagena',
-            tabSubtitle: 'Ferias de diseño, pop-ups y encuentros locales',
+            tabTitle: 'El Taller & Shirley',
+            tabSubtitle: 'El rincón íntimo donde nacen las ideas en Getsemaní',
             images: [
               {
-                title: 'Ferias y Mercados de Autor',
-                category: 'Encuentros',
+                title: 'Shirley en su Espacio Creador',
+                category: 'Manos Creadoras',
                 description:
-                  'Exhibiciones en el Centro Histórico y Getsemaní donde visitantes conocen las piezas en persona.',
-                imageUrl: '/api/media/file/Feria%20y%20talleres-800x1000.webp',
+                  'Dedicación y concentración en cada collar, elaborado de principio a fin por Shirley.',
+                imageUrl: '/api/media/file/shirley-creadora-800x1000.webp',
                 isFeatured: true,
               },
               {
-                title: 'Piezas que Visten la Ciudad',
-                category: 'Estilo Caribeño',
+                title: 'Mesa de Hilado y Texturas',
+                category: 'Detalle de Oficio',
                 description:
-                  'Joyas que complementan atuendos de lino y celebraciones junto al mar.',
-                imageUrl: '/api/media/file/Embera-800x1000.webp',
+                  'Cuentas checas seleccionadas una a una con aguja fina.',
+                imageUrl: '/api/media/file/Collar%20ancestral-800x1000.webp',
               },
               {
-                title: 'Comunidad Tejedora',
-                category: 'Cultura Viva',
+                title: 'Prototipos y Flores Tejidas',
+                category: 'Inspiración Caribe',
                 description:
-                  'Encuentros donde la memoria ancestral se entrelaza con la mujer moderna.',
-                imageUrl: '/api/media/file/talleres-comunidad-800x1000.webp',
+                  'Explorando nuevos patrones botánicos antes de cada feria.',
+                imageUrl: '/api/media/file/Collar-flor-800x1000.webp',
               },
             ],
           },

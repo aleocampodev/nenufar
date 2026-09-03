@@ -4,39 +4,39 @@ export const GalleryBlock: Block = {
   slug: 'gallery',
   interfaceName: 'GalleryBlock',
   labels: {
-    singular: 'Galería de Creaciones (Lookbook)',
-    plural: 'Bloques de Galería / Lookbook',
+    singular: 'Galería de Momentos & Eventos (Clientas, Ferias y Talleres)',
+    plural: 'Bloques de Galería y Comunidad',
   },
   fields: [
     {
       name: 'tagline',
       type: 'text',
       label: 'Subtítulo / Tagline superior',
-      defaultValue: 'MUESTRARIO VISUAL & LOOKBOOK',
+      defaultValue: 'COMUNIDAD & MOMENTOS REALES',
       admin: {
-        description: 'Texto pequeño en mayúsculas sobre el título principal.',
+        description: 'Texto pequeño en mayúsculas sobre el título principal (ej: COMUNIDAD & MOMENTOS REALES).',
       },
     },
     {
       name: 'heading',
       type: 'text',
       label: 'Título de la Sección',
-      defaultValue: 'Nénufar en la Piel: Arte y Color Caribeño',
+      defaultValue: 'Nénufar en la Piel: Ferias, Talleres & Nuestras Clientas',
     },
     {
       name: 'description',
       type: 'textarea',
       label: 'Descripción de la Galería',
       defaultValue:
-        'Explora nuestras piezas tejidas a mano en Cartagena de Indias, el brillo de la micro-mostacilla checa calibrada y la fuerza del diseño ancestral lucido por mujeres reales.',
+        'Fotografías espontáneas de ferias locales en Cartagena, talleres presenciales de tejido y nuestras queridas clientas luciendo sus joyas artesanales en la vida real.',
     },
     {
       name: 'tabs',
       type: 'array',
-      label: 'Colecciones / Pestañas de la Galería',
+      label: 'Pestañas de Momentos & Eventos',
       labels: {
-        singular: 'Colección / Pestaña',
-        plural: 'Colecciones / Pestañas',
+        singular: 'Categoría de Momentos',
+        plural: 'Categorías de Momentos',
       },
       minRows: 1,
       maxRows: 6,
@@ -47,10 +47,10 @@ export const GalleryBlock: Block = {
         {
           name: 'tabTitle',
           type: 'text',
-          label: 'Nombre de la Colección (Pestaña)',
+          label: 'Título de la Pestaña',
           required: true,
           admin: {
-            description: 'Ej: Collares Ceremoniales, Aretes de Autor, El Taller, Momentos en Cartagena',
+            description: 'Ej: Nuestras Clientas, Ferias en Cartagena, Talleres de Tejido, El Taller & Shirley',
           },
         },
         {
@@ -58,7 +58,7 @@ export const GalleryBlock: Block = {
           type: 'text',
           label: 'Subtítulo / Breve descripción del tab',
           admin: {
-            description: 'Ej: Okamas y Otapas de tejido continuo Emberá',
+            description: 'Ej: Mujeres reales que visten y dan vida a cada diseño',
           },
         },
         {

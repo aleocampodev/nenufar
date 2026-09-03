@@ -767,7 +767,7 @@ export interface ImageStripBlock {
  */
 export interface GalleryBlock {
   /**
-   * Texto pequeño en mayúsculas sobre el título principal.
+   * Texto pequeño en mayúsculas sobre el título principal (ej: COMUNIDAD & MOMENTOS REALES).
    */
   tagline?: string | null;
   heading?: string | null;
@@ -775,11 +775,11 @@ export interface GalleryBlock {
   tabs?:
     | {
         /**
-         * Ej: Collares Ceremoniales, Aretes de Autor, El Taller, Momentos en Cartagena
+         * Ej: Nuestras Clientas, Ferias en Cartagena, Talleres de Tejido, El Taller & Shirley
          */
         tabTitle: string;
         /**
-         * Ej: Okamas y Otapas de tejido continuo Emberá
+         * Ej: Mujeres reales que visten y dan vida a cada diseño
          */
         tabSubtitle?: string | null;
         images?:
