@@ -76,14 +76,14 @@ export const RenderBlocks: React.FC<{
                 : defaultBlockIds[blockType] || undefined
 
               return (
-                <ScrollReveal
+                <div
                   key={index}
                   className={shouldApplyMargin ? 'my-16' : ''}
                 >
                   {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                   {/* @ts-ignore - weird type mismatch here */}
                   <Block {...block} id={blockId} />
-                </ScrollReveal>
+                </div>
               )
             }
           }

@@ -5,6 +5,8 @@ import { VideoPlayer } from "./VideoPlayer.client"
 import { CalendarClient, EventItem } from "./Calendar.client"
 import type { Media } from "@/payload-types"
 import { Sparkles } from "lucide-react"
+import { ScrollReveal } from "@/components/Animation/ScrollReveal"
+import { fetchGoogleCalendarEvents } from "@/lib/google-calendar"
 
 interface UpcomingEventsBlockProps {
   tagline?: string | null
@@ -14,6 +16,8 @@ interface UpcomingEventsBlockProps {
   videoUrl?: string | null
   videoCaption?: string | null
   events?: any[] | null
+  googleCalendarIcalUrl?: string | null
+  syncWithGoogleCalendar?: boolean | null
   id?: string
 }
 
@@ -25,23 +29,28 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
   videoUrl,
   videoCaption,
   events,
+  googleCalendarIcalUrl,
+  syncWithGoogleCalendar = true,
   id,
 }) => {
   let eventsList: EventItem[] = []
+  let isGoogleCalendarSynced = false
 
-  if (events && Array.isArray(events) && events.length > 0) {
-    eventsList = events
-      .filter((ev) => ev != null && typeof ev === 'object')
-      .map((ev, idx) => ({
-        id: ev.id || `ev-${idx + 1}`,
-        title: ev.title || '',
-        date: ev.date || '',
-        endDate: ev.endDate || null,
-        location: ev.location || null,
-        description: ev.description || null,
-        type: ev.type || 'feria',
-      }))
-  } else {
+  // 1. Sincronización automática con Google Calendar de Shirley (prioridad)
+  if (syncWithGoogleCalendar !== false) {
+    try {
+      const gcalRes = await fetchGoogleCalendarEvents(googleCalendarIcalUrl)
+      if (gcalRes.events && gcalRes.events.length > 0) {
+        eventsList = gcalRes.events
+        isGoogleCalendarSynced = true
+      }
+    } catch (gcalErr) {
+      console.warn("[UpcomingEvents] Google Calendar sync notice:", gcalErr)
+    }
+  }
+
+  // 2. Si Google Calendar no devolvió eventos, consultar la colección de Payload
+  if (eventsList.length === 0) {
     try {
       const payload = await getPayload({ config: configPromise })
       const result = await payload.find({
@@ -67,8 +76,23 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
         }))
       }
     } catch (err) {
-      console.warn("[UpcomingEvents] Error fetching events:", err)
+      console.warn("[UpcomingEvents] Error fetching events from collection:", err)
     }
+  }
+
+  // Si la colección no tiene eventos, usar los del bloque o fallbacks
+  if (eventsList.length === 0 && events && Array.isArray(events) && events.length > 0) {
+    eventsList = events
+      .filter((ev) => ev != null && typeof ev === 'object')
+      .map((ev, idx) => ({
+        id: ev.id || `ev-${idx + 1}`,
+        title: ev.title || '',
+        date: ev.date || '',
+        endDate: ev.endDate || null,
+        location: ev.location || null,
+        description: ev.description || null,
+        type: ev.type || 'feria',
+      }))
   }
 
   // Fallbacks de ferias y talleres en Cartagena si la base de datos está vacía
@@ -125,38 +149,44 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
   }
 
   return (
-    <section id={id || "talleres"} className="w-full py-20 bg-[#FAF8F5] text-stone-900 border-t border-stone-200/80 scroll-mt-24">
+    <section id={id || "talleres"} className="w-full py-20 bg-[#FAF8F5] text-stone-900 border-t border-stone-200/80 scroll-mt-24 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {/* Encabezado Editorial Claro */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          {tagline && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 text-brand text-[11px] font-sans font-semibold uppercase tracking-[0.25em]">
-              <Sparkles className="w-3 h-3 text-brand" />
-              {tagline}
-            </span>
-          )}
-          {title && (
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-stone-900 font-normal tracking-tight">
-              {title}
-            </h2>
-          )}
-          {description && (
-            <p className="text-sm sm:text-base text-stone-600 font-light leading-relaxed max-w-2xl mx-auto">
-              {description}
-            </p>
-          )}
-        </div>
+        <ScrollReveal variant="fade-up" duration={800}>
+          <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+            {tagline && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 text-brand text-[11px] font-sans font-semibold uppercase tracking-[0.25em]">
+                <Sparkles className="w-3 h-3 text-brand" />
+                {tagline}
+              </span>
+            )}
+            {title && (
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-stone-900 font-normal tracking-tight">
+                {title}
+              </h2>
+            )}
+            {description && (
+              <p className="text-sm sm:text-base text-stone-600 font-light leading-relaxed max-w-2xl mx-auto">
+                {description}
+              </p>
+            )}
+          </div>
+        </ScrollReveal>
 
         {/* Cuadrícula de 2 Columnas Clara: Video 9:16 + Calendario con Dropdown de Texto */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
           {/* Columna Izquierda: Video Vertical 9:16 */}
           <div className="lg:col-span-5 flex justify-center">
-            <VideoPlayer videoUrl={finalVideoUrl} caption={videoCaption} />
+            <ScrollReveal variant="fade-right" delay={150} duration={900}>
+              <VideoPlayer videoUrl={finalVideoUrl} caption={videoCaption} />
+            </ScrollReveal>
           </div>
 
           {/* Columna Derecha: Calendario Interactivo Claro */}
           <div className="lg:col-span-7">
-            <CalendarClient events={eventsList} />
+            <ScrollReveal variant="fade-left" delay={250} duration={900}>
+              <CalendarClient events={eventsList} isGoogleCalendarSynced={isGoogleCalendarSynced} />
+            </ScrollReveal>
           </div>
         </div>
       </div>

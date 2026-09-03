@@ -32,12 +32,12 @@ export const Events: CollectionConfig = {
       required: true,
       defaultValue: 'feria',
       options: [
-        { label: 'Feria', value: 'feria' },
         { label: 'Taller', value: 'taller' },
+        { label: 'Feria', value: 'feria' },
         { label: 'Pop-up', value: 'pop-up' },
       ],
       admin: {
-        description: 'Feria, taller artesanal o pop-up',
+        description: 'Taller artesanal o feria',
         position: 'sidebar',
       },
     },

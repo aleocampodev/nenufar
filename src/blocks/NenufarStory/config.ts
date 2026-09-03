@@ -5,7 +5,7 @@ export const NenufarStory: Block = {
   slug: 'nenufarStory',
   interfaceName: 'NenufarStoryBlock',
   labels: {
-    singular: 'Historia Nenúfar (Shirley en el medio)',
+    singular: '1. Nuestra Historia (Shirley & Taller)',
     plural: 'Historias Nenúfar',
   },
   fields: [

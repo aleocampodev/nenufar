@@ -24,6 +24,7 @@ This directory contains the canonical specifications, requirements, and design d
 | **[`SPEC-001`](./SPEC-001-storefront-checkout.md)** | Storefront & Checkout | Form validation, Ley 1581 Habeas Data, SHA256 idempotency, and Telegram HTML push. |
 | **[`SPEC-002`](./SPEC-002-management-bot-runtime.md)** | Management Bot Runtime | `chat_id` security guard, Claude Agent SDK execution loop, and Zod tool schemas. |
 | **[`SPEC-003`](./SPEC-003-catalog-landing-blocks.md)** | Catalog & Landing Blocks | Payload modular blocks, Masonry layout, and Sharp WebP media optimization. |
+| **[`SPEC-005`](./SPEC-005-landing-refinements-and-google-calendar.md)** | Landing & Calendar Sync | Slider Hero animations, direct WhatsApp closing, and Google Calendar iCal sync. |
 
 ---
 

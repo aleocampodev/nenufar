@@ -142,7 +142,7 @@ export default async function EventosPage() {
             Estamos preparando nuevos eventos. Seguinos en Instagram para enterarte primero.
           </p>
           <a
-            href="/contacto"
+            href="/#contacto"
             className="inline-block mt-6 px-6 py-3 bg-brand text-brand-foreground rounded-md hover:bg-brand-dark transition"
           >
             Contactanos

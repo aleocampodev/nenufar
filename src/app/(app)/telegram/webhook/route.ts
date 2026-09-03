@@ -14,7 +14,7 @@ import { getPayload } from 'payload'
 import { runShirleyAgent } from '@/lib/agent/runShirleyAgent'
 import { sendTelegramChatAction, sendTelegramReply } from '@/lib/telegram'
 
-export const maxDuration = 60
+export const maxDuration = 300
 
 // Dedupe de updates (Telegram reintenta si no recibe 200). Suficiente para
 // instancia única — mismo criterio que src/lib/idempotency.ts.
@@ -37,6 +37,41 @@ interface TelegramPhotoSize {
   file_size?: number
 }
 
+interface TelegramVoice {
+  file_id: string
+  file_unique_id: string
+  duration: number
+  mime_type?: string
+  file_size?: number
+}
+
+interface TelegramAudio {
+  file_id: string
+  file_unique_id: string
+  duration: number
+  mime_type?: string
+  file_size?: number
+  title?: string
+}
+
+interface TelegramVideo {
+  file_id: string
+  file_unique_id: string
+  width?: number
+  height?: number
+  duration?: number
+  mime_type?: string
+  file_size?: number
+}
+
+interface TelegramDocument {
+  file_id: string
+  file_unique_id: string
+  file_name?: string
+  mime_type?: string
+  file_size?: number
+}
+
 interface TelegramUpdate {
   update_id: number
   message?: {
@@ -45,6 +80,11 @@ interface TelegramUpdate {
     text?: string
     caption?: string
     photo?: TelegramPhotoSize[]
+    video?: TelegramVideo
+    video_note?: TelegramVideo
+    document?: TelegramDocument
+    voice?: TelegramVoice
+    audio?: TelegramAudio
   }
 }
 
@@ -73,19 +113,20 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const message = update.message
-  const text = (message?.text ?? message?.caption ?? '')?.trim()
+  let text = (message?.text ?? message?.caption ?? '')?.trim()
   const chatId = message?.chat?.id
-
-  // Updates sin texto ni caption (stickers, joins…) se aceptan sin procesar.
-  if (!text || chatId === undefined) {
-    return Response.json({ ok: true })
-  }
 
   // 2. Guard single-admin: el bot es EXCLUSIVO de Shirley. Cualquier otro
   //    remitente se rechaza en silencio con 200 OK para evitar reintentos
   //    infinitos de Telegram.
-  if (!isAuthorizedAdmin(chatId)) {
+  if (chatId === undefined || !isAuthorizedAdmin(chatId)) {
     return Response.json({ ok: true, ignored: 'unauthorized' })
+  }
+
+  // Updates sin texto, ni media (foto, video, doc), ni audio/voz se aceptan sin procesar.
+  const hasMedia = message?.photo || message?.video || message?.video_note || message?.document
+  if (!text && !hasMedia && !message?.voice && !message?.audio) {
+    return Response.json({ ok: true })
   }
 
   // 3. Dedupe por update_id — un mensaje repetido NUNCA ejecuta tools dos veces.
@@ -104,7 +145,65 @@ export async function POST(request: Request): Promise<Response> {
   try {
     let uploadedMediaId: number | undefined
 
-    // Procesar foto adjunta de Telegram si existe
+    // 4. Si envía nota de voz o audio, indicarle amablemente que use texto
+    const audioObj = message?.voice ?? message?.audio
+    if (audioObj) {
+      clearInterval(typingInterval)
+      await sendTelegramReply({
+        chatId,
+        text: 'Shirley, la tienda ahora opera exclusivamente por mensaje de texto o enviando fotos y videos ✍️. ¡Escríbeme lo que necesitas y te ayudo de inmediato! 💜',
+      })
+      return Response.json({ ok: true })
+    }
+
+    if (!text && !hasMedia) {
+      clearInterval(typingInterval)
+      return Response.json({ ok: true })
+    }
+
+    // 5. Procesar video adjunto de Telegram si existe
+    const videoObj = message?.video ?? message?.video_note
+    if (videoObj?.file_id && process.env.TELEGRAM_BOT_TOKEN) {
+      try {
+        const fileRes = await fetch(
+          `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getFile?file_id=${videoObj.file_id}`,
+        )
+        const fileJson = (await fileRes.json()) as {
+          ok: boolean
+          result?: { file_path?: string }
+        }
+        if (fileJson.ok && fileJson.result?.file_path) {
+          const downloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${fileJson.result.file_path}`
+          const vidRes = await fetch(downloadUrl)
+          const arrayBuffer = await vidRes.arrayBuffer()
+          const buffer = Buffer.from(arrayBuffer)
+          const ext = fileJson.result.file_path.split('.').pop() || 'mp4'
+
+          const mediaDoc = await payload.create({
+            collection: 'media',
+            data: {
+              alt: text || 'Video del taller artesanal Nénufar',
+            },
+            file: {
+              data: buffer,
+              mimetype: videoObj.mime_type || 'video/mp4',
+              name: `taller-${Date.now()}.${ext}`,
+              size: buffer.length,
+            },
+            overrideAccess: true,
+          })
+          uploadedMediaId = mediaDoc.id
+          payload.logger.info({
+            msg: '[telegram] Video descargado y guardado en Media',
+            mediaId: uploadedMediaId,
+          })
+        }
+      } catch (vidErr) {
+        payload.logger.error({ msg: '[telegram] Error descargando video de Telegram', err: vidErr })
+      }
+    }
+
+    // 5. Procesar foto adjunta de Telegram si existe
     if (message?.photo && message.photo.length > 0 && process.env.TELEGRAM_BOT_TOKEN) {
       try {
         const bestPhoto = message.photo[message.photo.length - 1]
@@ -146,7 +245,7 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     const reply = await runShirleyAgent({
-      text,
+      text: text || 'Shirley envió una foto para el catálogo o landing.',
       payload,
       chatId,
       mediaId: uploadedMediaId,

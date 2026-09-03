@@ -38,17 +38,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Default fallback categories if database is empty
-  const defaultCategories: CategoryItem[] = [
-    { id: 'collares', title: 'Collares & Gargantillas', slug: 'collares' },
-    { id: 'pulseras', title: 'Pulseras & Manillas', slug: 'pulseras' },
-    { id: 'aretes', title: 'Aretes & Candongas', slug: 'aretes' },
-    { id: 'ancestrales', title: 'Ancestrales', slug: 'ancestrales' },
-    { id: 'colibries', title: 'Colibríes', slug: 'colibries' },
-    { id: 'especiales', title: 'Ediciones Especiales', slug: 'ediciones-especiales' },
-  ]
-
-  const displayCategories = categories && categories.length > 0 ? categories : defaultCategories
+  const displayCategories = categories || []
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.includes('#')) {

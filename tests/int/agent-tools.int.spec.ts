@@ -11,6 +11,7 @@ const createMockPayload = () => ({
   findByID: vi.fn(async () => null),
   create: vi.fn(async ({ data }: any) => ({ id: 101, ...data })),
   update: vi.fn(async ({ id, data }: any) => ({ id, ...data })),
+  delete: vi.fn(async ({ id }: any) => ({ id, title: 'Taller Mostacilla' })),
 })
 
 describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
@@ -33,13 +34,11 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
         'crearCategoria',
         'listarCategorias',
         'asignarCategoriaProducto',
-        'actualizarFotoLanding',
-        'agregarSlideHero',
-        'listarSlidesHero',
-        'eliminarSlideHero',
         'pedidosPendientes',
         'confirmarPedido',
         'publicarEvento',
+        'listarEventos',
+        'eliminarEvento',
         'crearTestimonio',
         'listarTestimonios',
         'generarCopyProducto',
@@ -68,7 +67,7 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
       expect(res).toContain('Aretes Filigrana Sol')
       expect(res).toContain('$ 45.000')
       expect(res).toContain('(5 disp.)')
-      expect(res).toContain('SIN stock')
+      expect(res).toContain('Sin stock')
     })
 
     it('buscarProducto: mensaje amigable cuando no hay coincidencias', async () => {
@@ -248,93 +247,7 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
     })
   })
 
-  describe('Landing Page & Fotos', () => {
-    it('actualizarFotoLanding: actualiza la foto de seccion tradicion', async () => {
-      mockPayload.find.mockResolvedValueOnce({
-        docs: [
-          {
-            id: 1,
-            slug: 'home',
-            layout: [{ blockType: 'features', centerImage: 10 }],
-          },
-        ],
-      } as any)
 
-      const res = await executeShirleyTool(
-        'actualizarFotoLanding',
-        { seccion: 'tradicion', mediaId: 25 },
-        mockPayload as any,
-      )
-
-      expect(res).toContain('Tradición y Delicadeza')
-      expect(res).toContain('actualizada exitosamente')
-      expect(mockPayload.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({
-            layout: [{ blockType: 'features', centerImage: 25 }],
-          }),
-        }),
-      )
-    })
-
-    it('actualizarFotoLanding: requiere foto adjunta', async () => {
-      const res = await executeShirleyTool('actualizarFotoLanding', { seccion: 'tradicion' }, mockPayload as any)
-      expect(res).toContain('adjúntame la foto por Telegram')
-    })
-
-    it('agregarSlideHero: agrega una nueva diapositiva al carrusel', async () => {
-      mockPayload.find.mockResolvedValueOnce({
-        docs: [
-          {
-            id: 1,
-            hero: { type: 'slider', slides: [{ heading: 'Slide 1' }] },
-          },
-        ],
-      } as any)
-
-      const res = await executeShirleyTool(
-        'agregarSlideHero',
-        {
-          titulo: 'Nueva Colección Caribeña',
-          subtitulo: 'Inspirada en el mar',
-          botonTexto: 'Ver Colección',
-          botonUrl: '/shop',
-          mediaId: 33,
-        },
-        mockPayload as any,
-      )
-
-      expect(res).toContain('Nueva Colección Caribeña')
-      expect(res).toContain('Total slides: 2')
-    })
-
-    it('listarSlidesHero y eliminarSlideHero', async () => {
-      mockPayload.find.mockResolvedValue({
-        docs: [
-          {
-            id: 1,
-            hero: {
-              type: 'slider',
-              slides: [
-                { heading: 'Slide Uno', image: 10 },
-                { heading: 'Slide Dos', image: null },
-              ],
-            },
-          },
-        ],
-      } as any)
-
-      const listRes = await executeShirleyTool('listarSlidesHero', {}, mockPayload as any)
-      expect(listRes).toContain('Slide Uno')
-      expect(listRes).toContain('Slide Dos')
-      expect(listRes).toContain('📸 Con foto')
-      expect(listRes).toContain('⚠️ Sin foto')
-
-      const delRes = await executeShirleyTool('eliminarSlideHero', { posicion: 1 }, mockPayload as any)
-      expect(delRes).toContain('Slide Uno')
-      expect(delRes).toContain('Quedan 1 slides')
-    })
-  })
 
   describe('Pedidos', () => {
     it('pedidosPendientes: lista pedidos en procesamiento con items y total', async () => {
@@ -404,6 +317,29 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
       )
     })
 
+    it('listarEventos y eliminarEvento', async () => {
+      mockPayload.find.mockResolvedValueOnce({
+        docs: [
+          { id: 4, title: 'Feria de Joyas', type: 'feria', date: '2026-08-29T00:00:00.000Z', location: 'Cartagena' },
+          { id: 5, title: 'Taller de Joyas Ancestrales', type: 'taller', date: '2026-09-04T21:00:00.000Z', location: 'Getsemaní' },
+        ],
+      } as any)
+
+      const listRes = await executeShirleyTool('listarEventos', {}, mockPayload as any)
+      expect(listRes).toContain('Tienes 2 actividad(es) programada(s)')
+      expect(listRes).toContain('Feria de Joyas')
+      expect(listRes).toContain('Taller de Joyas Ancestrales')
+
+      const deleteRes = await executeShirleyTool('eliminarEvento', { eventoId: 4 }, mockPayload as any)
+      expect(deleteRes).toContain('Eliminé')
+      expect(mockPayload.delete).toHaveBeenCalledWith(
+        expect.objectContaining({
+          collection: 'events',
+          id: 4,
+        }),
+      )
+    })
+
     it('crearTestimonio y listarTestimonios', async () => {
       const createRes = await executeShirleyTool(
         'crearTestimonio',
@@ -418,7 +354,7 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
       )
 
       expect(createRes).toContain('Valentina P.')
-      expect(createRes).toContain('publicado en la landing exitosamente')
+      expect(createRes).toContain('fue publicado exitosamente')
 
       mockPayload.find.mockResolvedValueOnce({
         docs: [
@@ -427,8 +363,15 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
       } as any)
 
       const listRes = await executeShirleyTool('listarTestimonios', {}, mockPayload as any)
-      expect(listRes).toContain('Testimonios publicados (1)')
+      expect(listRes).toContain('Tienes 1 testimonio(s)')
       expect(listRes).toContain('Valentina P.')
+
+      mockPayload.find.mockResolvedValueOnce({
+        docs: [{ id: 1, authorName: 'Valentina P.' }],
+      } as any)
+
+      const delRes = await executeShirleyTool('eliminarTestimonio', { nombre: 'Valentina' }, mockPayload as any)
+      expect(delRes).toContain('Eliminé el testimonio de "Valentina P."')
     })
   })
 

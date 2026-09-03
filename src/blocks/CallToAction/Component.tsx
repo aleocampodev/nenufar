@@ -4,6 +4,7 @@ import type { CallToActionBlock as CTABlockProps } from '@/payload-types'
 import { RichText } from '@/components/RichText'
 import { CMSLink } from '@/components/Link'
 import { MessageCircle, MapPin, Clock, Sparkles } from 'lucide-react'
+import { ScrollReveal } from '@/components/Animation/ScrollReveal'
 
 export const CallToActionBlock: React.FC<
   CTABlockProps & {
@@ -11,9 +12,16 @@ export const CallToActionBlock: React.FC<
     className?: string
   }
 > = ({ id, links, richText }) => {
+  const whatsappPhone = process.env.NEXT_PUBLIC_SHIRLEY_WHATSAPP?.replace(/\D/g, '') || ''
+  const defaultWhatsappMessage = encodeURIComponent(
+    'Hola Shirley, me gustaría encargar una joya personalizada a mi medida ✨',
+  )
+  const defaultWhatsappUrl = `https://wa.me/${whatsappPhone ? whatsappPhone : ''}?text=${defaultWhatsappMessage}`
+
   return (
-    <section id={String(id || 'contacto')} className="container py-16 lg:py-24 scroll-mt-24">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand/5 via-[#FAF8F5] to-brand/10 dark:from-zinc-900 dark:to-zinc-900/60 border border-brand/15 p-8 sm:p-12 lg:p-16 shadow-sm">
+    <section id={String(id || 'contacto')} className="container py-16 lg:py-24 scroll-mt-24 overflow-hidden">
+      <ScrollReveal variant="scale-up" duration={900}>
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand/5 via-[#FAF8F5] to-brand/10 dark:from-zinc-900 dark:to-zinc-900/60 border border-brand/15 p-8 sm:p-12 lg:p-16 shadow-sm">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Columna Izquierda: Mensaje y Detalles del Taller */}
@@ -65,29 +73,53 @@ export const CallToActionBlock: React.FC<
           {/* Columna Derecha: Acciones de Contacto */}
           <div className="lg:col-span-5 flex flex-col items-start lg:items-end justify-center gap-4">
             <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full sm:w-auto">
-              {(links && links.length > 0) ? (
-                links.map(({ link }, i) => (
-                  <CMSLink
-                    key={i}
-                    size="lg"
-                    className="rounded-full px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(106,27,154,0.25)] hover:shadow-[0_6px_25px_rgba(106,27,154,0.35)] transition-all duration-300 w-full sm:w-auto text-center cursor-pointer"
-                    {...link}
-                  />
-                ))
+              {links && links.length > 0 ? (
+                links.map(({ link }, i) => {
+                  const isPersonalizeOrContact =
+                    link.url === '/contacto' ||
+                    link.url === '#contacto' ||
+                    link.label?.toLowerCase().includes('personalizar')
+
+                  if (isPersonalizeOrContact) {
+                    return (
+                      <a
+                        key={i}
+                        href={defaultWhatsappUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(106,27,154,0.25)] hover:shadow-[0_6px_25px_rgba(106,27,154,0.35)] transition-all duration-300 w-full sm:w-auto text-center cursor-pointer hover:scale-105 active:scale-95"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        {link.label || 'Personalizar mi Joya'}
+                      </a>
+                    )
+                  }
+
+                  return (
+                    <CMSLink
+                      key={i}
+                      size="lg"
+                      className="rounded-full px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(106,27,154,0.25)] hover:shadow-[0_6px_25px_rgba(106,27,154,0.35)] transition-all duration-300 w-full sm:w-auto text-center cursor-pointer"
+                      {...link}
+                    />
+                  )
+                })
               ) : (
                 <a
-                  href="/shop"
-                  className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-xs uppercase tracking-wider font-medium bg-brand hover:bg-brand-dark text-white shadow-md transition-all text-center"
+                  href={defaultWhatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(106,27,154,0.25)] hover:shadow-[0_6px_25px_rgba(106,27,154,0.35)] transition-all duration-300 w-full sm:w-auto text-center cursor-pointer hover:scale-105 active:scale-95"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  Explorar Colección de Autor
+                  Personalizar mi Joya
                 </a>
               )}
             </div>
           </div>
         </div>
-
       </div>
+      </ScrollReveal>
     </section>
   )
 }

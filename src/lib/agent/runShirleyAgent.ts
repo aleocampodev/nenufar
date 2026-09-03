@@ -20,35 +20,56 @@ export const AGENT_FALLBACK =
 /** Límite de rondas agénticas. */
 const MAX_TURNS = 4
 
-/** Timeout total de la consulta. */
-const TIMEOUT_MS = 25_000
+/** Timeout por petición al gateway (2 minutos para operaciones complejas). */
+const TIMEOUT_MS = 120_000
 
 /** Ventana máxima de mensajes previos para memoria conversacional. */
-const MAX_HISTORY_MESSAGES = 10
+const MAX_HISTORY_MESSAGES = 4
+
+/** Herramientas operativas cuyos mensajes de salida ya están formateados en lenguaje natural para Shirley. */
+const DIRECT_REPLY_TOOLS = new Set([
+  'buscarProducto',
+  'crearProductoDraft',
+  'publicarProducto',
+  'actualizarInventario',
+  'destacarProducto',
+  'crearCategoria',
+  'listarCategorias',
+  'asignarCategoriaProducto',
+  'pedidosPendientes',
+  'confirmarPedido',
+  'publicarEvento',
+  'listarEventos',
+  'eliminarEvento',
+  'crearTestimonio',
+  'listarTestimonios',
+  'eliminarTestimonio',
+])
 
 function buildSystemPrompt(): string {
   return [
     'Eres el asistente de gestión de Nénufar, la marca de joyería artesanal en Cartagena, Colombia.',
     'Tu interlocutora es Shirley, dueña, diseñadora artesanal y administradora de la tienda, quien te escribe desde Telegram.',
-    'Dirígete siempre a ella con cariño y respeto como Shirley.',
+    'Dirígete siempre a ella únicamente como Shirley. Está ESTRICTAMENTE PROHIBIDO usar apelativos como "amor", "reina", "mi cielo", "corazón", "cariño", "linda", etc. Siempre trátala con respeto profesional, calidez y solo llamándola Shirley.',
+    'Shirley no tiene conocimientos técnicos: NUNCA menciones IDs internos de bases de datos, números de registro con numeral (#8, ID Evento, etc.), colecciones, slugs o términos de código. Habla siempre de sus joyas, talleres, ferias y pedidos de forma natural y clara.',
     '',
-    'Tono: cálido, cercano y cartagenero, pero eficiente. Respuestas cortas (es Telegram). Español.',
+    'Tono: cálido, respetuoso y cartagenero, pero profesional y eficiente. Respuestas directas para Telegram. Español.',
     '',
     'Reglas de negocio:',
     '- Precios siempre en pesos colombianos (COP) sin decimales.',
-    '- Nunca inventes datos: si necesitas información del catálogo, pedidos o la landing, usa las herramientas.',
+    '- Nunca inventes datos: si necesitas información del catálogo o pedidos, usa las herramientas.',
     '- Si te preguntan qué productos hay, qué joyas vendemos o piden ver el catálogo, USA SIEMPRE la herramienta buscarProducto (con consulta vacía o palabra clave) para obtener la lista real de la base de datos.',
     '- Puedes crear productos en borrador o publicarlos de inmediato en la tienda web (/shop) si te lo pide (incluso asignando su categoría).',
     '- Puedes crear y listar categorías del catálogo con crearCategoria y listarCategorias.',
     '- Puedes asignar categorías a joyas existentes con asignarCategoriaProducto.',
     '- Puedes publicar o despublicar cualquier producto existente con la herramienta publicarProducto.',
-    '- Si Shirley envía una foto y pide cambiar la foto de una sección de la landing (Tradición y Delicadeza o Nuestra Historia), usa actualizarFotoLanding.',
-    '- Si Shirley envía una foto y pide agregar un slide o banner al carrusel de inicio, usa agregarSlideHero.',
-    '- Si Shirley pide ver los slides del carrusel o eliminar uno, usa listarSlidesHero o eliminarSlideHero.',
+    '- La edición de bloques, diseño y fotos de la página de inicio (Landing Page) se realiza exclusivamente desde el panel de administración (/admin). Si Shirley te pide editar la estructura o fotos de la landing, indícale amablemente que puede hacerlo desde el panel /admin en la sección de Páginas.',
     '- Si Shirley pide ideas de texto, descripciones atractivas para una joya o copys para el catálogo web (/products/[slug]), usa generarCopyProducto.',
-    '- Si Shirley pide guardar o actualizar la descripción de un producto en la tienda web, usa actualizarDescripcionProducto.',
-    '- Si Shirley pide ideas de textos para la landing page (hero, carrusel, historia, llamada a la acción), usa generarCopyLanding.',
-    '- Si una herramienta falla, discúlpate brevemente y sugiere revisar /admin. No muestres errores técnicos.',
+    '- Si Shirley pide agendar un taller o feria, USA SIEMPRE publicarEvento.',
+    '- Si Shirley pide ver, consultar o listar los talleres y ferias programados, USA SIEMPRE listarEventos para ver los datos reales.',
+    '- Si Shirley pide eliminar o cancelar un taller o feria, USA SIEMPRE eliminarEvento.',
+    '- Si Shirley pide registrar testimonios de compradoras, USA crearTestimonio o listarTestimonios.',
+    '- Si una herramienta falla, discúlpate brevemente y sugiere intentar en un momento. No muestres errores técnicos ni IDs.',
     '- Si el mensaje es una pregunta general o saludo, responde directo sin usar herramientas.',
     '- Tienes acceso al historial de conversación previo: úsalo para entender referencias a productos, fotos o temas hablados anteriormente.',
   ].join('\n')
@@ -193,6 +214,54 @@ async function recordTrace(
  * Corre una consulta agéntica completa y devuelve el texto final para enviar
  * por Telegram. Nunca lanza: ante cualquier fallo devuelve AGENT_FALLBACK.
  */
+function determineToolChoice(text: string, mediaId?: number): { type: 'tool' | 'auto'; name?: string } | undefined {
+  const t = text.toLowerCase().trim()
+  // 1. Pregunta sobre eventos/talleres programados
+  if (
+    /(taller|talleres|feria|ferias|evento|eventos)/i.test(t) &&
+    /(que|cu[aá]les|hay|ver|lista|listar|muestra|mostrar|consultar|programad)/i.test(t) &&
+    !/(elimina|borra|cancela|agenda|crea|agrega|publica|nuevo)/i.test(t)
+  ) {
+    return { type: 'tool', name: 'listarEventos' }
+  }
+
+  // 2. Pregunta sobre pedidos pendientes
+  if (
+    /(pedido|pedidos|compras|ventas)/i.test(t) &&
+    /(pendiente|pendientes|nuevo|nuevos|hay|cu[aá]ntos|ver|lista)/i.test(t) &&
+    !/(confirma|complet)/i.test(t)
+  ) {
+    return { type: 'tool', name: 'pedidosPendientes' }
+  }
+
+  // 3. Hero / Carrusel / Slider de Inicio
+  if (/(slide|slides|carrusel|banner|banners|slider|portada)/i.test(t)) {
+    if (/(cambia|actualiza|reemplaza|modifica|pon|foto|imagen)/i.test(t) || Boolean(mediaId)) {
+      return { type: 'tool', name: 'actualizarSlideHero' }
+    }
+    if (/(agrega|crea|a[ñn]ade|nuevo)/i.test(t)) {
+      return { type: 'tool', name: 'agregarSlideHero' }
+    }
+    if (/(elimina|borra|quita|cancela)/i.test(t)) {
+      return { type: 'tool', name: 'eliminarSlideHero' }
+    }
+    if (/(que|cu[aá]les|hay|ver|lista|listar|muestra|mostrar)/i.test(t)) {
+      return { type: 'tool', name: 'listarSlidesHero' }
+    }
+  }
+
+  // 4. Pregunta sobre productos / catálogo
+  if (
+    /(joya|joyas|producto|productos|cat[aá]logo|aretes|collares|pulseras|piezas|colecci[oó]n)/i.test(t) &&
+    /(que|cu[aá]les|hay|ver|lista|listar|muestra|mostrar|qu[eé] vendemos|inventario)/i.test(t) &&
+    !/(crea|agrega|publica|elimina|borra|foto)/i.test(t)
+  ) {
+    return { type: 'tool', name: 'buscarProducto' }
+  }
+
+  return undefined
+}
+
 export async function runShirleyAgent({
   text,
   payload,
@@ -244,8 +313,13 @@ export async function runShirleyAgent({
     content: text,
   })
 
+  console.log(`⏱️ [agent] Iniciando consulta (${Date.now() - startTime}ms)`)
+  const forcedToolChoice = determineToolChoice(cleanPrompt, mediaId)
+
   try {
     for (let turn = 0; turn < MAX_TURNS; turn++) {
+      const turnStart = Date.now()
+      console.log(`⏱️ [agent] Llamando a LiteLLM Turno ${turn + 1}...`)
       const response = await fetch(`${baseUrl}/v1/messages`, {
         method: 'POST',
         headers: {
@@ -259,9 +333,11 @@ export async function runShirleyAgent({
           system,
           messages,
           tools: ANTHROPIC_SHIRLEY_TOOLS,
+          ...(turn === 0 && forcedToolChoice ? { tool_choice: forcedToolChoice } : {}),
         }),
         signal: AbortSignal.timeout(TIMEOUT_MS),
       })
+      console.log(`⏱️ [agent] LiteLLM Turno ${turn + 1} respondió en ${Date.now() - turnStart}ms (status: ${response.status})`)
 
       if (!response.ok) {
         const errorText = await response.text()
@@ -321,6 +397,34 @@ export async function runShirleyAgent({
             tool_use_id: toolCall.id,
             content: resultText,
           })
+        }
+
+        const onlyDirectTools = toolCalls.every((tc) => DIRECT_REPLY_TOOLS.has(tc.name))
+        if (onlyDirectTools && toolResults.length > 0) {
+          const directReply = toolResults.map((tr) => tr.content).join('\n\n')
+
+          void persistMessage(payload, {
+            chatId,
+            role: 'assistant',
+            content: directReply,
+            toolName: toolsInvoked.join(', ') || undefined,
+          })
+
+          void recordTrace(payload, {
+            chatId,
+            query: text,
+            responseSummary: directReply,
+            toolsUsed: toolsInvoked.join(', ') || 'ninguna',
+            inputTokens: totalInputTokens,
+            outputTokens: totalOutputTokens,
+            totalTokens: totalInputTokens + totalOutputTokens,
+            cost: '$0 USD (Groq Free Tier)',
+            executionTimeMs: Date.now() - startTime,
+            status: 'success',
+            model,
+          })
+
+          return directReply
         }
 
         messages.push({ role: 'user', content: toolResults })

@@ -96,8 +96,8 @@ export default function TerminosPage() {
           <h2 className="text-2xl font-serif mb-3 text-neutral-900">8. Contacto</h2>
           <p className="text-neutral-700 leading-relaxed">
             Para cualquier consulta sobre estos términos, contáctanos a través de nuestra{' '}
-            <a href="/contacto" className="text-brand hover:underline">
-              página de contacto
+            <a href="/#contacto" className="text-brand hover:underline">
+              sección de contacto
             </a>
             .
           </p>

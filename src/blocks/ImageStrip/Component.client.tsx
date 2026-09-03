@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { Media as PayloadMedia } from "@/components/Media"
 import type { Media } from "@/payload-types"
 import { Sparkles, X, ChevronDown, ChevronUp, Feather, ShieldCheck } from "lucide-react"
+import { ScrollReveal } from "@/components/Animation/ScrollReveal"
 
 interface CardItem {
   id?: string
@@ -110,26 +111,28 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
   const activeItem = expandedIndex !== null ? items[expandedIndex] || DEFAULT_ITEMS[expandedIndex % 4] : null
 
   return (
-    <section id={id || "artesania"} className="w-full bg-[#FAF8F5] pt-16 sm:pt-20 scroll-mt-24">
+    <section id={id || "artesania"} className="w-full bg-[#FAF8F5] pt-16 sm:pt-20 scroll-mt-24 overflow-hidden">
       {/* Encabezado Editorial Superior */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center mb-12">
-        {tagline && (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 text-brand text-[11px] font-sans font-semibold uppercase tracking-[0.25em] mb-3">
-            <Sparkles className="w-3 h-3" />
-            {tagline}
-          </span>
-        )}
-        {heading && (
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-stone-900 tracking-tight mb-4">
-            {heading}
-          </h2>
-        )}
-        {description && (
-          <p className="text-sm sm:text-base text-stone-600 font-light leading-relaxed max-w-2xl mx-auto">
-            {description}
-          </p>
-        )}
-      </div>
+      <ScrollReveal variant="fade-up" duration={800}>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center mb-12">
+          {tagline && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 text-brand text-[11px] font-sans font-semibold uppercase tracking-[0.25em] mb-3">
+              <Sparkles className="w-3 h-3" />
+              {tagline}
+            </span>
+          )}
+          {heading && (
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-stone-900 tracking-tight mb-4">
+              {heading}
+            </h2>
+          )}
+          {description && (
+            <p className="text-sm sm:text-base text-stone-600 font-light leading-relaxed max-w-2xl mx-auto">
+              {description}
+            </p>
+          )}
+        </div>
+      </ScrollReveal>
 
       {/* TIRA DE 4 FOTOS CONTINUA ESTILO KRAFTI (Borde a borde 100% ancho, sin separaciones ni margenes) */}
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 overflow-hidden">
@@ -144,52 +147,59 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
           const imgSrc = hasMedia ? media.url : item.imageUrl || fallback.imageUrl
 
           return (
-            <button
-              type="button"
+            <ScrollReveal
               key={item.id || i}
-              onClick={() => toggleExpand(i)}
-              aria-expanded={isExpanded}
-              aria-controls="historia-expandida"
-              aria-label={`Ver historia de ${title}`}
-              className={`group relative aspect-[4/5] sm:aspect-square lg:aspect-[3/4] overflow-hidden cursor-pointer bg-stone-900 select-none text-left w-full p-0 border-0 transition-all duration-300 ${
-                isExpanded ? "ring-4 ring-inset ring-amber-400 z-10" : ""
-              }`}
+              variant="fade-up"
+              delay={i * 120}
+              duration={800}
+              className="h-full"
             >
-              {/* Foto de fondo */}
-              {hasMedia ? (
-                <PayloadMedia
-                  resource={media}
-                  sizeName="card"
-                  fill
-                  imgClassName="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-stone-800" />
-              )}
-
-              {/* Degradado y Textos de la tarjeta */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-5 sm:p-6 text-white transition-opacity duration-300">
-                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-amber-300 mb-1">
-                  {category}
-                </span>
-                <h3 className="font-serif text-lg sm:text-xl font-medium leading-snug mb-1">
-                  {title}
-                </h3>
-                {excerpt && (
-                  <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed opacity-90">
-                    {excerpt}
-                  </p>
-                )}
-                <div className="mt-3 flex items-center gap-1.5 text-xs text-amber-400 font-medium">
-                  <span>{isExpanded ? "Ocultar historia" : "Descubrir historia"}</span>
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-300 ${
-                      isExpanded ? "rotate-180" : ""
-                    }`}
+              <button
+                type="button"
+                onClick={() => toggleExpand(i)}
+                aria-expanded={isExpanded}
+                aria-controls="historia-expandida"
+                aria-label={`Ver historia de ${title}`}
+                className={`group relative aspect-[4/5] sm:aspect-square lg:aspect-[3/4] overflow-hidden cursor-pointer bg-stone-900 select-none text-left w-full p-0 border-0 transition-all duration-300 ${
+                  isExpanded ? "ring-4 ring-inset ring-amber-400 z-10" : ""
+                }`}
+              >
+                {/* Foto de fondo */}
+                {hasMedia ? (
+                  <PayloadMedia
+                    resource={media}
+                    sizeName="card"
+                    fill
+                    imgClassName="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                   />
+                ) : (
+                  <div className="absolute inset-0 bg-stone-800" />
+                )}
+
+                {/* Degradado y Textos de la tarjeta */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-5 sm:p-6 text-white transition-opacity duration-300">
+                  <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-amber-300 mb-1">
+                    {category}
+                  </span>
+                  <h3 className="font-serif text-lg sm:text-xl font-medium leading-snug mb-1">
+                    {title}
+                  </h3>
+                  {excerpt && (
+                    <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed opacity-90">
+                      {excerpt}
+                    </p>
+                  )}
+                  <div className="mt-3 flex items-center gap-1.5 text-xs text-amber-400 font-medium">
+                    <span>{isExpanded ? "Ocultar historia" : "Descubrir historia"}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform duration-300 ${
+                        isExpanded ? "rotate-180" : ""
+                      }`}
+                    />
+                  </div>
                 </div>
-              </div>
-            </button>
+              </button>
+            </ScrollReveal>
           )
         })}
       </div>

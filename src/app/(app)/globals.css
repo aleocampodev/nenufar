@@ -280,3 +280,91 @@ input,
 button {
   @apply focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:focus-visible:ring-primary/40 dark:focus-visible:ring-offset-card;
 }
+
+/* Prismara Slider Animations */
+@keyframes prismaraMaskUp {
+  0% {
+    transform: translateY(115%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes prismaraFadeScale {
+  0% {
+    transform: scale(0.92) translateY(14px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes prismaraKenBurns {
+  0% {
+    transform: scale(1.09);
+  }
+  100% {
+    transform: scale(1.0);
+  }
+}
+
+@keyframes prismaraProgress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-prismara-mask-up {
+  animation: prismaraMaskUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-prismara-fade-scale {
+  animation: prismaraFadeScale 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-prismara-ken-burns {
+  animation: prismaraKenBurns 7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes prismaraArchIn {
+  0% {
+    opacity: 0;
+    transform: translateY(26px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-prismara-arch-in {
+  animation: prismaraArchIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes prismaraSubtleReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+    letter-spacing: 0.22em;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    letter-spacing: 0.32em;
+  }
+}
+
+.animate-prismara-subtle-reveal {
+  animation: prismaraSubtleReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+
+

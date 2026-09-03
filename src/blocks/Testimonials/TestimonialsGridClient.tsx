@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Star, Quote, X, Sparkles, MapPin, ArrowRight } from 'lucide-react'
+import { ScrollReveal } from '@/components/Animation/ScrollReveal'
 
 export type TestimonialItem = {
   id: number | string
@@ -62,78 +63,85 @@ export function TestimonialsGridClient({ testimonials }: TestimonialsGridClientP
           const rating = t.rating || 5
 
           return (
-            <div
+            <ScrollReveal
               key={t.id || idx}
-              onClick={() => setActiveTestimonial(t)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  setActiveTestimonial(t)
-                }
-              }}
-              className="relative flex flex-col justify-between p-7 sm:p-8 rounded-3xl bg-white border border-neutral-200/70 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(106,27,154,0.08)] hover:border-brand/30 transition-all duration-300 group cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-brand/40"
+              variant="fade-up"
+              delay={idx * 140}
+              duration={800}
+              className="h-full"
             >
-              <div>
-                {/* Comilla Decorativa y Badge de Clic */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-brand/30 group-hover:text-brand/60 transition-colors">
-                    <Quote className="w-7 h-7 rotate-180" />
-                  </div>
-                  <span className="text-[11px] uppercase tracking-wider text-brand/80 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-1">
-                    Ver historia <Sparkles className="w-3 h-3" />
-                  </span>
-                </div>
-
-                {/* Estrellas en Morado de Marca */}
-                <div className="flex gap-1 mb-3">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-3.5 h-3.5 ${
-                        i < rating ? 'fill-brand text-brand' : 'text-neutral-200'
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                {/* Cita en Serif Itálica */}
-                <p className="font-serif italic text-neutral-800 text-[15px] sm:text-base leading-relaxed mb-6">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-              </div>
-
-              {/* Autor y Origen */}
-              <div className="flex items-center gap-3.5 pt-5 border-t border-neutral-100">
-                {t.avatarUrl ? (
-                  <div className="relative w-11 h-11 rounded-full overflow-hidden border border-brand/30 bg-muted flex-shrink-0">
-                    <Image
-                      src={t.avatarUrl}
-                      alt={t.authorName}
-                      className="object-cover"
-                      fill
-                      unoptimized
-                    />
-                  </div>
-                ) : (
-                  <div className="w-11 h-11 rounded-full bg-brand/10 text-brand flex items-center justify-center font-serif font-semibold text-base flex-shrink-0 border border-brand/20">
-                    {t.authorName.charAt(0)}
-                  </div>
-                )}
-
-                <div className="flex flex-col min-w-0">
-                  <span className="font-serif font-medium text-sm text-foreground truncate">
-                    {t.authorName}
-                  </span>
-                  {t.authorRole && (
-                    <span className="text-[11px] uppercase tracking-wider text-[#8B5A2B] truncate font-sans">
-                      {t.authorRole}
+              <div
+                onClick={() => setActiveTestimonial(t)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setActiveTestimonial(t)
+                  }
+                }}
+                className="relative flex flex-col justify-between h-full p-7 sm:p-8 rounded-3xl bg-white border border-neutral-200/70 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(106,27,154,0.08)] hover:border-brand/30 transition-all duration-300 group cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-brand/40"
+              >
+                <div>
+                  {/* Comilla Decorativa y Badge de Clic */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-brand/30 group-hover:text-brand/60 transition-colors">
+                      <Quote className="w-7 h-7 rotate-180" />
+                    </div>
+                    <span className="text-[11px] uppercase tracking-wider text-brand/80 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-1">
+                      Ver historia <Sparkles className="w-3 h-3" />
                     </span>
+                  </div>
+
+                  {/* Estrellas en Morado de Marca */}
+                  <div className="flex gap-1 mb-3">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-3.5 h-3.5 ${
+                          i < rating ? 'fill-brand text-brand' : 'text-neutral-200'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Cita en Serif Itálica */}
+                  <p className="font-serif italic text-neutral-800 text-[15px] sm:text-base leading-relaxed mb-6">
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                </div>
+
+                {/* Autor y Origen */}
+                <div className="flex items-center gap-3.5 pt-5 border-t border-neutral-100">
+                  {t.avatarUrl ? (
+                    <div className="relative w-11 h-11 rounded-full overflow-hidden border border-brand/30 bg-muted flex-shrink-0">
+                      <Image
+                        src={t.avatarUrl}
+                        alt={t.authorName}
+                        className="object-cover"
+                        fill
+                        unoptimized
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-11 h-11 rounded-full bg-brand/10 text-brand flex items-center justify-center font-serif font-semibold text-base flex-shrink-0 border border-brand/20">
+                      {t.authorName.charAt(0)}
+                    </div>
                   )}
+
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-serif font-medium text-sm text-foreground truncate">
+                      {t.authorName}
+                    </span>
+                    {t.authorRole && (
+                      <span className="text-[11px] uppercase tracking-wider text-[#8B5A2B] truncate font-sans">
+                        {t.authorRole}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
           )
         })}
       </div>

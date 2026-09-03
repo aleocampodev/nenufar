@@ -3,8 +3,8 @@ import type { Block } from "payload"
 export const UpcomingEventsBlock: Block = {
   slug: "upcomingEvents",
   labels: {
-    singular: "Talleres & Ferias (Video + Calendario)",
-    plural: "Bloques de Talleres & Ferias",
+    singular: '5. Ferias & Talleres en Cartagena (Video + Calendario)',
+    plural: 'Bloques de Talleres & Ferias',
   },
   admin: {
     description:
@@ -79,6 +79,25 @@ export const UpcomingEventsBlock: Block = {
           label: "Calendario de Ferias & Talleres",
           fields: [
             {
+              name: "googleCalendarIcalUrl",
+              type: "text",
+              label: "Enlace iCal de Google Calendar de Shirley (.ics)",
+              admin: {
+                description:
+                  "Pega aquí el enlace iCal público o secreto de tu Google Calendar. Si lo dejas vacío, se usará la variable GOOGLE_CALENDAR_ICAL_URL del entorno o la lista manual inferior.",
+              },
+            },
+            {
+              name: "syncWithGoogleCalendar",
+              type: "checkbox",
+              label: "Sincronizar automáticamente con Google Calendar de Shirley",
+              defaultValue: true,
+              admin: {
+                description:
+                  "Si está activo y hay un enlace iCal configurado, el calendario se actualizará solo cuando Shirley agregue o edite eventos en Google Calendar.",
+              },
+            },
+            {
               name: "events",
               type: "array",
               label: "Lista de Eventos y Ferias",
@@ -132,9 +151,9 @@ export const UpcomingEventsBlock: Block = {
                       defaultValue: "feria",
                       admin: { width: "30%" },
                       options: [
-                        { label: "🎪 Feria Artesanal", value: "feria" },
                         { label: "🪡 Taller Vivencial", value: "taller" },
-                        { label: "✨ Pop-Up / Muestra", value: "popup" },
+                        { label: "🎪 Feria Artesanal", value: "feria" },
+                        { label: "✨ Pop-Up", value: "popup" },
                       ],
                     },
                   ],

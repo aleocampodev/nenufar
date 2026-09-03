@@ -16,7 +16,7 @@ import { OrderForm } from './OrderForm'
 
 export default function PedidosEnviarPage() {
   return (
-    <main className="min-h-[80vh] bg-neutral-50">
+    <main className="min-h-[80vh] bg-neutral-50 py-10 sm:py-16">
       <Suspense>
         <OrderForm />
       </Suspense>

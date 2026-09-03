@@ -2,6 +2,7 @@ import React from 'react'
 import { Sparkles, Truck, HeartHandshake, Gift, ShieldCheck, Gem } from 'lucide-react'
 import { Media } from '@/components/Media'
 import type { Media as MediaType } from '@/payload-types'
+import { ScrollReveal } from '@/components/Animation/ScrollReveal'
 
 type FeatureItem = {
   icon?: string | null
@@ -201,19 +202,21 @@ export const FeaturesBlock: React.FC<Props> = ({
       <div className="max-w-[1060px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Encabezado Editorial Krafti */}
         {(tagline || heading) && (
-          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 space-y-2.5">
-            {tagline && (
-              <span className="text-xs uppercase tracking-[0.3em] text-[#8B5A2B] font-semibold font-sans block">
-                {tagline}
-              </span>
-            )}
-            {heading && (
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-foreground font-normal tracking-tight">
-                {heading}
-              </h2>
-            )}
-            <div className="w-12 h-0.5 bg-brand mx-auto mt-3.5 rounded-full opacity-60" />
-          </div>
+          <ScrollReveal variant="fade-up" duration={800}>
+            <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 space-y-2.5">
+              {tagline && (
+                <span className="text-xs uppercase tracking-[0.3em] text-[#8B5A2B] font-semibold font-sans block">
+                  {tagline}
+                </span>
+              )}
+              {heading && (
+                <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-foreground font-normal tracking-tight">
+                  {heading}
+                </h2>
+              )}
+              <div className="w-12 h-0.5 bg-brand mx-auto mt-3.5 rounded-full opacity-60" />
+            </div>
+          </ScrollReveal>
         )}
 
         {/* Krafti Item Showcase: Feature cards around a framed artisan jewelry piece */}
@@ -221,48 +224,50 @@ export const FeaturesBlock: React.FC<Props> = ({
           {/* Left Column - Features (Right-aligned on Desktop) */}
           <div className="flex flex-col gap-10 sm:gap-12 lg:gap-16 order-2 lg:order-1">
             {leftItems.map((item, idx) => (
-              <div key={item.id || idx}>
+              <ScrollReveal key={item.id || idx} variant="fade-right" delay={idx * 120} duration={800}>
                 <div className="hidden lg:block">
                   <FeatureCard item={item} align="right" />
                 </div>
                 <div className="lg:hidden">
                   <FeatureCard item={item} align="center" />
                 </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
 
           {/* Center Column - Featured Artisan Piece in Luxury Arch Frame */}
           <div className="flex justify-center order-1 lg:order-2 py-2 lg:py-0">
-            <div className="relative">
-              {/* Outer decorative ring border */}
-              <div className="absolute -inset-3 rounded-t-[154px] rounded-b-[2rem] border border-brand/15 pointer-events-none" />
-              
-              {/* Main arch framed image */}
-              <div className="relative w-[260px] h-[340px] sm:w-[300px] sm:h-[390px] lg:w-[320px] lg:h-[420px] rounded-t-[140px] rounded-b-3xl overflow-hidden border-2 border-[#EADCCF] shadow-[0_15px_35px_rgba(0,0,0,0.06)] bg-[#FAF5ED] p-1.5">
-                <div className="w-full h-full rounded-t-[132px] rounded-b-[1.25rem] overflow-hidden">
-                  <img
-                    src={centerImgSrc}
-                    alt={centerImgAlt}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                    loading="lazy"
-                  />
+            <ScrollReveal variant="scale-up" delay={150} duration={900}>
+              <div className="relative group">
+                {/* Outer decorative ring border */}
+                <div className="absolute -inset-3 rounded-t-[154px] rounded-b-[2rem] border border-brand/15 pointer-events-none group-hover:border-brand/30 transition-colors duration-500" />
+                
+                {/* Main arch framed image */}
+                <div className="relative w-[260px] h-[340px] sm:w-[300px] sm:h-[390px] lg:w-[320px] lg:h-[420px] rounded-t-[140px] rounded-b-3xl overflow-hidden border-2 border-[#EADCCF] shadow-[0_15px_35px_rgba(0,0,0,0.06)] bg-[#FAF5ED] p-1.5">
+                  <div className="w-full h-full rounded-t-[132px] rounded-b-[1.25rem] overflow-hidden">
+                    <img
+                      src={centerImgSrc}
+                      alt={centerImgAlt}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                      loading="lazy"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
 
           {/* Right Column - Features (Left-aligned on Desktop) */}
           <div className="flex flex-col gap-10 sm:gap-12 lg:gap-16 order-3">
             {rightItems.map((item, idx) => (
-              <div key={item.id || idx}>
+              <ScrollReveal key={item.id || idx} variant="fade-left" delay={idx * 120 + 150} duration={800}>
                 <div className="hidden lg:block">
                   <FeatureCard item={item} align="left" />
                 </div>
                 <div className="lg:hidden">
                   <FeatureCard item={item} align="center" />
                 </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>

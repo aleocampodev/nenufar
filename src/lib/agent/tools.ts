@@ -99,22 +99,6 @@ async function findOrCreateCategory(
   return { doc: newDoc as any, created: true }
 }
 
-async function getHomePage(payload: Payload) {
-  const result = await payload.find({
-    collection: 'pages',
-    limit: 1,
-    depth: 1,
-    overrideAccess: true,
-    where: {
-      or: [
-        { slug: { equals: 'home' } },
-        { slug: { equals: 'inicio' } },
-      ],
-    },
-  })
-  return result.docs[0] || null
-}
-
 function textToLexical(text: string) {
   const paragraphs = text.split('\n\n').map((p) => p.trim()).filter(Boolean)
   return {
@@ -305,78 +289,7 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
     },
   },
 
-  // ─── 2. GESTIÓN DE LA LANDING PAGE & FOTOS ────────────────────────────
-  {
-    name: 'actualizarFotoLanding',
-    description:
-      'Cambia la foto de una sección de la landing page (ej. "tradicion" para la pieza central de Tradición y Delicadeza, o "historia" para la foto del taller en Nuestra Historia). ' +
-      'Requiere que Shirley envíe una foto por Telegram.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        seccion: {
-          type: 'string',
-          enum: ['tradicion', 'historia'],
-          description: 'Sección a actualizar: "tradicion" (beneficios) o "historia" (taller Shirley)',
-        },
-      },
-      required: ['seccion'],
-    },
-  },
-  {
-    name: 'agregarSlideHero',
-    description:
-      'Agrega una nueva diapositiva al carrusel principal superior (slider) de la landing page. ' +
-      'Usa la foto enviada por Telegram y los textos indicados.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        titulo: {
-          type: 'string',
-          description: 'Título grande del slide (ej. "Nueva Colección Caribeña")',
-        },
-        subtitulo: {
-          type: 'string',
-          description: 'Texto descriptivo secundario del slide',
-        },
-        botonTexto: {
-          type: 'string',
-          description: 'Texto del botón de acción (ej. "Explorar Colección", por defecto "Ver Catálogo")',
-        },
-        botonUrl: {
-          type: 'string',
-          description: 'Enlace del botón (por defecto "/shop")',
-        },
-      },
-      required: ['titulo'],
-    },
-  },
-  {
-    name: 'listarSlidesHero',
-    description:
-      'Lista todas las diapositivas activas en el carrusel superior de la landing page de inicio.',
-    input_schema: {
-      type: 'object',
-      properties: {},
-    },
-  },
-  {
-    name: 'eliminarSlideHero',
-    description:
-      'Elimina una diapositiva del carrusel superior de la landing page por su número de posición (1, 2, 3...).',
-    input_schema: {
-      type: 'object',
-      properties: {
-        posicion: {
-          type: 'number',
-          description: 'Número de la diapositiva a eliminar (1 para la primera, 2 para la segunda, etc.)',
-        },
-      },
-      required: ['posicion'],
-    },
-  },
-
-  // ─── 3. PEDIDOS ───────────────────────────────────────────────────────
+  // ─── 2. PEDIDOS ───────────────────────────────────────────────────────
   {
     name: 'pedidosPendientes',
     description:
@@ -428,11 +341,38 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
         },
         tipo: {
           type: 'string',
-          enum: ['taller', 'feria', 'pop-up'],
-          description: 'Tipo de evento: taller, feria o pop-up',
+          enum: ['taller', 'feria'],
+          description: 'Tipo de evento: taller o feria',
         },
       },
       required: ['titulo', 'fecha'],
+    },
+  },
+  {
+    name: 'listarEventos',
+    description:
+      'Lista todos los talleres, ferias o pop-ups programados con su ID, título, fecha y ubicación.',
+    input_schema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: 'eliminarEvento',
+    description:
+      'Elimina o cancela un taller o feria de la web por su ID o por su título.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        eventoId: {
+          type: 'number',
+          description: 'ID numérico del evento a eliminar (ej. 4)',
+        },
+        titulo: {
+          type: 'string',
+          description: 'Nombre o parte del nombre del taller/feria a eliminar si no se especifica el ID',
+        },
+      },
     },
   },
   {
@@ -468,6 +408,20 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
     input_schema: {
       type: 'object',
       properties: {},
+    },
+  },
+  {
+    name: 'eliminarTestimonio',
+    description: 'Elimina un testimonio de la página de inicio por el nombre de la clienta.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        nombre: {
+          type: 'string',
+          description: 'Nombre de la clienta cuyo testimonio se quiere eliminar',
+        },
+      },
+      required: ['nombre'],
     },
   },
 
@@ -565,10 +519,10 @@ export async function executeShirleyTool(
           return `No encontré piezas para "${consulta}" en el catálogo.`
         }
         const lines = result.docs.map((p: any) => {
-          const stock = typeof p.inventory === 'number' && p.inventory <= 0 ? ' — (SIN stock)' : ` (${p.inventory ?? 0} disp.)`
-          return `• ${p.title} — ${formatCOP(p.priceInCOP)}${stock} [/products/${p.slug}]`
+          const stock = typeof p.inventory === 'number' && p.inventory <= 0 ? ' (Sin stock)' : ` (${p.inventory ?? 0} disp.)`
+          return `💎 ${p.title} — ${formatCOP(p.priceInCOP)}${stock}`
         })
-        return `Encontré ${result.docs.length} pieza(s) en el catálogo:\n${lines.join('\n')}`
+        return `Encontré ${result.docs.length} pieza(s) en el catálogo:\n\n${lines.join('\n')}`
       }
 
       case 'crearProductoDraft': {
@@ -597,7 +551,7 @@ export async function executeShirleyTool(
         const catMsg = categoryIds.length > 0 ? ` en la categoría "${categoria}"` : ''
         return shouldPublish
           ? `¡Listo Shirley! Joya "${titulo}" creada y publicada exitosamente en el catálogo (/shop)${catMsg} con precio ${formatCOP(precioCOP)} ✨`
-          : `Joya "${titulo}" guardada como borrador (#${doc.id})${catMsg} con precio ${formatCOP(precioCOP)}. Puedes publicarla cuando quieras diciendo "publicar ${titulo}".`
+          : `¡Listo Shirley! Joya "${titulo}" guardada como borrador${catMsg} con precio ${formatCOP(precioCOP)}. Puedes publicarla cuando quieras diciendo "publicar ${titulo}".`
       }
 
       case 'publicarProducto': {
@@ -686,22 +640,26 @@ export async function executeShirleyTool(
           return 'No hay categorías registradas en el catálogo todavía. Puedes crear una diciendo "crea la categoría Aretes".'
         }
 
-        const lines: string[] = []
-        for (const cat of categoriesRes.docs) {
-          const countRes = await payload.find({
-            collection: 'products',
-            limit: 0,
-            depth: 0,
-            overrideAccess: true,
-            where: {
-              categories: {
-                contains: cat.id,
+        const counts = await Promise.all(
+          categoriesRes.docs.map((cat) =>
+            payload.find({
+              collection: 'products',
+              limit: 0,
+              depth: 0,
+              overrideAccess: true,
+              where: {
+                categories: {
+                  contains: cat.id,
+                },
               },
-            },
-          })
-          const count = countRes.totalDocs
-          lines.push(`• ${cat.title} (${count} ${count === 1 ? 'joya' : 'joyas'})`)
-        }
+            }),
+          ),
+        )
+
+        const lines = categoriesRes.docs.map((cat, i) => {
+          const count = counts[i]?.totalDocs ?? 0
+          return `• ${cat.title} (${count} ${count === 1 ? 'joya' : 'joyas'})`
+        })
 
         return `Categorías en el catálogo (${categoriesRes.docs.length}):\n${lines.join('\n')}`
       }
@@ -748,121 +706,7 @@ export async function executeShirleyTool(
         return `¡Listo Shirley! Asocié la categoría "${catDoc.title}" a la joya "${product.title}" ✨`
       }
 
-      // ─── 2. GESTIÓN DE LA LANDING PAGE & FOTOS ────────────────────────────
-      case 'actualizarFotoLanding': {
-        const { seccion, mediaId } = args
-        if (!mediaId) {
-          return 'Shirley, adjúntame la foto por Telegram junto con el mensaje para actualizar la sección.'
-        }
-        const homePage = await getHomePage(payload)
-        if (!homePage) return 'No encontré la página de Inicio en la base de datos.'
-
-        const layout = [...((homePage.layout || []) as any[])]
-        let actualizada = false
-
-        if (seccion === 'tradicion') {
-          const idx = layout.findIndex((b) => b.blockType === 'features')
-          if (idx >= 0) {
-            layout[idx] = { ...layout[idx], centerImage: mediaId }
-            actualizada = true
-          }
-        } else if (seccion === 'historia') {
-          const idx = layout.findIndex((b) => b.blockType === 'nenufarStory')
-          if (idx >= 0) {
-            layout[idx] = { ...layout[idx], image: mediaId }
-            actualizada = true
-          }
-        }
-
-        if (!actualizada) {
-          return `No encontré la sección "${seccion}" en la landing page para actualizar su foto.`
-        }
-
-        await payload.update({
-          collection: 'pages',
-          id: homePage.id,
-          data: { layout, _status: 'published' } as any,
-          overrideAccess: true,
-        })
-
-        return `¡Foto de la sección "${seccion === 'tradicion' ? 'Tradición y Delicadeza' : 'Nuestra Historia'}" actualizada exitosamente en la landing! ✨ Puedes verla en vivo en la web.`
-      }
-
-      case 'agregarSlideHero': {
-        const { titulo, subtitulo, botonTexto, botonUrl, mediaId } = args
-        const homePage = await getHomePage(payload)
-        if (!homePage) return 'No encontré la página de Inicio en la base de datos.'
-
-        const currentHero = (homePage.hero || {}) as any
-        const currentSlides = Array.isArray(currentHero.slides) ? [...currentHero.slides] : []
-
-        const newSlide = {
-          heading: titulo,
-          subheading: subtitulo || '',
-          linkLabel: botonTexto || 'Ver Colección',
-          linkUrl: botonUrl || '/shop',
-          ...(mediaId ? { image: mediaId } : {}),
-        }
-
-        currentSlides.push(newSlide)
-
-        await payload.update({
-          collection: 'pages',
-          id: homePage.id,
-          data: {
-            hero: {
-              ...currentHero,
-              type: 'slider',
-              slides: currentSlides,
-            },
-            _status: 'published',
-          } as any,
-          overrideAccess: true,
-        })
-
-        return `¡Listo Shirley! El nuevo slide "${titulo}" fue agregado al carrusel de la landing page (Total slides: ${currentSlides.length}) ✨`
-      }
-
-      case 'listarSlidesHero': {
-        const homePage = await getHomePage(payload)
-        if (!homePage) return 'No encontré la página de Inicio.'
-        const slides = (homePage.hero as any)?.slides || []
-        if (slides.length === 0) return 'El carrusel principal no tiene diapositivas actualmente.'
-
-        const list = slides.map((s: any, i: number) => {
-          const imgStatus = s.image ? '📸 Con foto' : '⚠️ Sin foto'
-          return `${i + 1}. "${s.heading || 'Sin título'}" — ${imgStatus} (Botón: ${s.linkLabel || 'Ver'})`
-        })
-        return `Carrusel Principal (${slides.length} slides):\n${list.join('\n')}`
-      }
-
-      case 'eliminarSlideHero': {
-        const { posicion } = args
-        const index = Number(posicion) - 1
-        const homePage = await getHomePage(payload)
-        if (!homePage) return 'No encontré la página de Inicio.'
-        const currentHero = (homePage.hero || {}) as any
-        const currentSlides = Array.isArray(currentHero.slides) ? [...currentHero.slides] : []
-
-        if (index < 0 || index >= currentSlides.length) {
-          return `La posición ${posicion} no existe. Actualmente hay ${currentSlides.length} diapositivas.`
-        }
-
-        const removed = currentSlides.splice(index, 1)[0]
-        await payload.update({
-          collection: 'pages',
-          id: homePage.id,
-          data: {
-            hero: { ...currentHero, slides: currentSlides },
-            _status: 'published',
-          } as any,
-          overrideAccess: true,
-        })
-
-        return `Diapositiva "${removed.heading || posicion}" eliminada del carrusel. Quedan ${currentSlides.length} slides.`
-      }
-
-      // ─── 3. PEDIDOS ───────────────────────────────────────────────────────
+      // ─── 2. PEDIDOS ───────────────────────────────────────────────────────
       case 'pedidosPendientes': {
         const result = await payload.find({
           collection: 'orders',
@@ -882,9 +726,9 @@ export async function executeShirleyTool(
               return `${it.quantity ?? 1}x ${titulo}`
             })
             .join(', ')
-          return `• Pedido #${o.id} — ${formatCOP(o.amount)} — ${o.customerEmail || 'Sin email'}\n  📦 ${items || 'Sin items'}`
+          return `📦 Pedido #${o.id} — ${formatCOP(o.amount)} — ${o.customerEmail || 'Sin email'}\n   Detalle: ${items || 'Sin items'}`
         })
-        return `Tienes ${result.docs.length} pedido(s) pendiente(s):\n${lines.join('\n')}`
+        return `Tienes ${result.docs.length} pedido(s) pendiente(s):\n\n${lines.join('\n\n')}`
       }
 
       case 'confirmarPedido': {
@@ -910,7 +754,7 @@ export async function executeShirleyTool(
       case 'publicarEvento': {
         const { titulo, fecha, lugar, descripcion, tipo } = args
         const parsed = new Date(fecha)
-        const event = await payload.create({
+        await payload.create({
           collection: 'events',
           data: {
             title: titulo,
@@ -923,12 +767,87 @@ export async function executeShirleyTool(
           draft: false,
           overrideAccess: true,
         })
-        return `¡Evento publicado! "${titulo}" (${tipo || 'taller'}) ya aparece en la sección de talleres de la landing ✨ (#${event.id})`
+        const tipoLabel = tipo === 'feria' ? 'Feria Artesanal' : 'Taller Artesanal'
+        return `¡Listo Shirley! "${titulo}" (${tipoLabel}) ya está publicado y visible en la sección de talleres de tu tienda ✨`
+      }
+
+      case 'listarEventos': {
+        const { fetchGoogleCalendarEvents } = await import('@/lib/google-calendar')
+        const gcalRes = await fetchGoogleCalendarEvents()
+        if (gcalRes.events && gcalRes.events.length > 0) {
+          const lines = gcalRes.events.map((e) => {
+            const d = e.date
+              ? new Date(e.date).toLocaleDateString('es-CO', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })
+              : 'Sin fecha'
+            const tipo =
+              e.type === 'taller'
+                ? 'Taller Artesanal'
+                : e.type === 'pop-up'
+                ? 'Pop-Up'
+                : 'Feria Artesanal'
+            const emoji = e.type === 'taller' ? '🪡' : e.type === 'pop-up' ? '✨' : '🎪'
+            return `${emoji} ${e.title} (${tipo})\n   📅 ${d}\n   📍 ${e.location || 'Cartagena de Indias'}`
+          })
+          return `Tienes ${gcalRes.events.length} evento(s) sincronizado(s) directamente desde tu Google Calendar:\n\n${lines.join('\n\n')}`
+        }
+
+        const result = await payload.find({
+          collection: 'events',
+          depth: 0,
+          limit: 20,
+          overrideAccess: true,
+          sort: '-date',
+        })
+        if (result.docs.length === 0) {
+          return 'No hay talleres ni ferias programados actualmente en la tienda ni en tu Google Calendar.'
+        }
+        const lines = result.docs.map((e: any) => {
+          const d = e.date ? new Date(e.date).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Sin fecha'
+          const tipo = e.type === 'feria' ? 'Feria Artesanal' : 'Taller Artesanal'
+          const emoji = e.type === 'feria' ? '🎪' : '🪡'
+          return `${emoji} ${e.title} (${tipo})\n   📅 ${d}\n   📍 ${e.location || 'Cartagena de Indias'}`
+        })
+        return `Tienes ${result.docs.length} actividad(es) programada(s) en la tienda:\n\n${lines.join('\n\n')}`
+      }
+
+      case 'eliminarEvento': {
+        const { eventoId, titulo } = args
+        let targetId = eventoId ? Number(eventoId) : null
+
+        if (!targetId && titulo) {
+          const match = await payload.find({
+            collection: 'events',
+            where: {
+              title: { like: titulo },
+            },
+            limit: 1,
+            overrideAccess: true,
+          })
+          if (match.docs.length > 0) {
+            targetId = Number(match.docs[0].id)
+          }
+        }
+
+        if (!targetId) {
+          return `No encontré ningún taller o feria con ${eventoId ? `el número ${eventoId}` : `el nombre "${titulo}"`}.`
+        }
+
+        const deleted = await payload.delete({
+          collection: 'events',
+          id: targetId,
+          overrideAccess: true,
+        })
+
+        return `¡Listo Shirley! Eliminé "${deleted?.title || 'la actividad'}" de tu tienda 🗑️✨`
       }
 
       case 'crearTestimonio': {
         const { nombre, testimonio, rol, calificacion, mediaId } = args
-        const doc = await payload.create({
+        await payload.create({
           collection: 'testimonials',
           data: {
             authorName: nombre,
@@ -941,7 +860,7 @@ export async function executeShirleyTool(
           draft: false,
           overrideAccess: true,
         })
-        return `Testimonio de "${nombre}" publicado en la landing exitosamente ✨ (#${doc.id})`
+        return `¡Listo Shirley! El testimonio de "${nombre}" fue publicado exitosamente en tu página de inicio ✨`
       }
 
       case 'listarTestimonios': {
@@ -952,9 +871,30 @@ export async function executeShirleyTool(
           where: { _status: { equals: 'published' } },
           sort: '-createdAt',
         })
-        if (res.docs.length === 0) return 'Aún no hay testimonios publicados en la landing.'
-        const lines = res.docs.map((d: any) => `• #${d.id} — ${d.authorName}: "${d.quote.slice(0, 60)}..."`)
-        return `Testimonios publicados (${res.docs.length}):\n${lines.join('\n')}`
+        if (res.docs.length === 0) return 'Aún no hay testimonios publicados en la tienda.'
+        const lines = res.docs.map((d: any) => `⭐ ${d.authorName} (${d.authorRole || 'Clienta'}): "${d.quote.slice(0, 70)}..."`)
+        return `Tienes ${res.docs.length} testimonio(s) en la tienda:\n\n${lines.join('\n\n')}`
+      }
+
+      case 'eliminarTestimonio': {
+        const { nombre } = args
+        const match = await payload.find({
+          collection: 'testimonials',
+          where: {
+            authorName: { like: nombre },
+          },
+          limit: 1,
+          overrideAccess: true,
+        })
+        if (match.docs.length === 0) {
+          return `No encontré ningún testimonio a nombre de "${nombre}".`
+        }
+        await payload.delete({
+          collection: 'testimonials',
+          id: match.docs[0].id,
+          overrideAccess: true,
+        })
+        return `¡Listo Shirley! Eliminé el testimonio de "${match.docs[0].authorName}" de tu página de inicio ✨`
       }
 
       // ─── 5. COPYWRITING, CATÁLOGO, LANDING & REDES ─────────────────────────
@@ -1038,12 +978,12 @@ export async function executeShirleyTool(
             `Opción 1:`,
             `• Título: ¿Buscas una joya personalizada a tu medida?`,
             `• Subtítulo: Shirley confecciona piezas por encargo con tus colores, patrones o combinaciones favoritas. Cuéntanos tu idea y la tejemos para ti.`,
-            `• Botón: Personalizar mi Joya → /contacto`,
+            `• Botón: Personalizar mi Joya → WhatsApp de Shirley`,
             ``,
             `Opción 2:`,
             `• Título: Lleva una pieza con historia propia`,
             `• Subtítulo: Diseños exclusivos y ediciones limitadas hechas con amor en Cartagena. Haz tu pedido directo sin intermediarios.`,
-            `• Botón: Escribir a Shirley → /contacto`
+            `• Botón: Escribir a Shirley → WhatsApp de Shirley`,
           ].join('\n')
         }
 

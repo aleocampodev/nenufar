@@ -75,8 +75,8 @@ describe('runShirleyAgent', () => {
       chatId: 123,
     })
 
-    expect(reply).toBe('No tienes pedidos pendientes. Todo al día 💜')
-    expect(globalThis.fetch).toHaveBeenCalledTimes(2)
+    expect(reply).toContain('No tienes pedidos pendientes')
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1)
   })
 
   it('devuelve el fallback de cortesía cuando la API falla o lanza', async () => {
