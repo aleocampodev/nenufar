@@ -176,20 +176,20 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
                   <div className="absolute inset-0 bg-stone-800" />
                 )}
 
-                {/* Degradado y Textos de la tarjeta */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-5 sm:p-6 text-white transition-opacity duration-300">
-                  <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-amber-300 mb-1">
+                {/* Textura oscura opaca SOLO detrás del texto — la imagen queda 100% visible, pura y nítida */}
+                <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-4 sm:p-5 rounded-2xl bg-black/70 backdrop-blur-md border border-white/15 text-white shadow-xl transition-all duration-300 group-hover:bg-black/80">
+                  <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-amber-300 block mb-1">
                     {category}
                   </span>
-                  <h3 className="font-serif text-lg sm:text-xl font-medium leading-snug mb-1">
+                  <h3 className="font-serif text-base sm:text-lg font-medium leading-snug mb-1 text-white">
                     {title}
                   </h3>
                   {excerpt && (
-                    <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed opacity-90">
+                    <p className="text-xs text-stone-200 line-clamp-2 leading-relaxed opacity-90">
                       {excerpt}
                     </p>
                   )}
-                  <div className="mt-3 flex items-center gap-1.5 text-xs text-amber-400 font-medium">
+                  <div className="mt-2.5 flex items-center gap-1.5 text-xs text-amber-400 font-medium">
                     <span>{isExpanded ? "Ocultar historia" : "Descubrir historia"}</span>
                     <ChevronDown
                       className={`w-4 h-4 transition-transform duration-300 ${

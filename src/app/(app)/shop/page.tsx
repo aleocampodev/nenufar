@@ -3,6 +3,7 @@ import { NenufarPagination } from '@/components/Pagination/NenufarPagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
+import { Sparkles, Gift, Gem, HeartHandshake } from 'lucide-react'
 import { ShopFilterBar } from './ShopFilterBar'
 
 export const metadata = {
@@ -105,6 +106,54 @@ export default async function ShopPage({ searchParams }: Props) {
 
   return (
     <div className="w-full pb-20">
+      {/* 1. Header Editorial de Catálogo con Neuromarketing & Paleta Canónica */}
+      <div className="w-full bg-gradient-to-b from-[#FAF8F5] via-[#FAF8F5]/60 to-background border-b border-neutral-200/60 pt-10 sm:pt-14 pb-8 sm:pb-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+          <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.3em] text-[#8B5A2B] font-semibold font-sans">
+            <Sparkles className="w-3.5 h-3.5 text-[#8B5A2B]" />
+            ALTA JOYERÍA ARTESANAL · CARTAGENA DE INDIAS
+          </span>
+
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#1C1917] dark:text-neutral-100 font-normal tracking-tight">
+            Piezas que Enamoran & Cuentan Historias
+          </h1>
+
+          <div className="w-12 h-0.5 bg-brand mx-auto my-3 rounded-full opacity-70" />
+
+          <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-300 font-sans leading-relaxed max-w-2xl mx-auto">
+            Cada collar, arete y pulsera es hilado pacientemente a mano por Shirley durante 10 a 30 horas
+            con micro-mostacillas checas calibradas y herrajes hipoalergénicos.
+          </p>
+
+          {/* 2. Tríada de Confianza / Neuromarketing: Reduce fricción y aumenta deseo de regalo */}
+          <div className="pt-5 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto text-left sm:text-center">
+            <div className="flex items-center sm:flex-col justify-start sm:justify-center gap-2.5 p-3 rounded-2xl bg-white/80 dark:bg-zinc-900/60 border border-brand/15 shadow-sm">
+              <Gift className="w-4 h-4 text-brand shrink-0" />
+              <div className="text-xs">
+                <strong className="block font-medium text-[#1C1917] dark:text-neutral-200">Empaque de Regalo</strong>
+                <span className="text-[11px] text-neutral-500">Listo para fechas especiales</span>
+              </div>
+            </div>
+
+            <div className="flex items-center sm:flex-col justify-start sm:justify-center gap-2.5 p-3 rounded-2xl bg-white/80 dark:bg-zinc-900/60 border border-brand/15 shadow-sm">
+              <Gem className="w-4 h-4 text-brand shrink-0" />
+              <div className="text-xs">
+                <strong className="block font-medium text-[#1C1917] dark:text-neutral-200">Cuentas Calibradas</strong>
+                <span className="text-[11px] text-neutral-500">Brillo y textura inalterable</span>
+              </div>
+            </div>
+
+            <div className="flex items-center sm:flex-col justify-start sm:justify-center gap-2.5 p-3 rounded-2xl bg-white/80 dark:bg-zinc-900/60 border border-brand/15 shadow-sm">
+              <HeartHandshake className="w-4 h-4 text-brand shrink-0" />
+              <div className="text-xs">
+                <strong className="block font-medium text-[#1C1917] dark:text-neutral-200">Atención Personal</strong>
+                <span className="text-[11px] text-neutral-500">Shirley coordina tu pedido</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Barra de Filtros Minimalista en el Encabezado de Shop */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
         <ShopFilterBar

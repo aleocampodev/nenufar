@@ -16,14 +16,14 @@ type Props = {
 }
 
 // Dos únicos colores de fondo estrictamente intercalados en damero 2D uniforme (4 columnas)
-const BG_ARENA = 'bg-[#FAF5ED] dark:bg-zinc-900/60'
+const BG_CREMA_LINO = 'bg-[#FAF8F5] dark:bg-zinc-900/60'
 const BG_BLANCO = 'bg-[#FFFFFF] dark:bg-zinc-900/20'
 
 const getKraftiBg = (index: number): string => {
   const row = Math.floor(index / 4)
   const col = index % 4
-  const isArena = (row + col) % 2 === 0
-  return isArena ? BG_ARENA : BG_BLANCO
+  const isLino = (row + col) % 2 === 0
+  return isLino ? BG_CREMA_LINO : BG_BLANCO
 }
 
 const extractShortDescription = (desc: any, max = 80): string => {
@@ -193,11 +193,11 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index }) => {
         href={`/products/${productSlug}`}
         className="pb-6 sm:pb-7 px-4 sm:px-6 text-center flex flex-col items-center justify-center gap-1.5 z-10 focus:outline-none"
       >
-        <span className="text-[10px] font-sans font-semibold tracking-[0.25em] uppercase text-neutral-400 dark:text-neutral-500">
+        <span className="text-[10px] font-sans font-semibold tracking-[0.25em] uppercase text-[#8B5A2B] dark:text-[#E2AB80]">
           {categoryTitle || 'Joyería en Mostacilla'}
         </span>
 
-        <h3 className="font-serif uppercase tracking-[0.18em] text-[#8B5A2B] dark:text-[#E2AB80] transition-colors duration-300 group-hover:text-brand font-medium text-sm sm:text-base leading-snug line-clamp-1">
+        <h3 className="font-serif tracking-[0.05em] text-[#1C1917] dark:text-neutral-100 transition-colors duration-300 group-hover:text-brand font-medium text-sm sm:text-base leading-snug line-clamp-1">
           {title}
         </h3>
 
@@ -210,7 +210,7 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index }) => {
         )}
 
         {typeof price === 'number' && (
-          <span className="font-serif text-[#8B5A2B] dark:text-amber-200/90 font-medium tracking-wider text-sm sm:text-base mt-1">
+          <span className="font-serif text-brand dark:text-purple-300 font-semibold tracking-wider text-base sm:text-lg mt-1">
             <Price amount={price} currencyCode="COP" />
           </span>
         )}
