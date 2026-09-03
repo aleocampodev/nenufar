@@ -530,6 +530,13 @@ export interface Page {
      */
     slides?:
       | {
+          /**
+           * Foto a pantalla completa para el lado izquierdo. Si la dejas vacía, se usará la foto de Shirley por defecto.
+           */
+          modelImage?: (number | null) | Media;
+          /**
+           * Foto en primer plano de la joya que aparecerá dentro del marco en arco.
+           */
           image?: (number | null) | Media;
           /**
            * Elige "Rostros / Superior" para que al recortar la imagen en pantallas no corte las cabezas.
@@ -627,7 +634,7 @@ export interface Page {
         events?:
           | {
               title: string;
-              type?: ('feria' | 'taller' | 'popup') | null;
+              type?: ('taller' | 'feria' | 'popup') | null;
               date: string;
               location: string;
               description?: string | null;
@@ -1307,9 +1314,9 @@ export interface Address {
 export interface Event {
   id: number;
   /**
-   * Feria, taller artesanal o pop-up
+   * Taller artesanal o feria
    */
-  type: 'feria' | 'taller' | 'pop-up';
+  type: 'taller' | 'feria' | 'pop-up';
   title: string;
   date: string;
   /**
@@ -1672,6 +1679,7 @@ export interface PagesSelect<T extends boolean = true> {
         slides?:
           | T
           | {
+              modelImage?: T;
               image?: T;
               imagePosition?: T;
               badge?: T;
