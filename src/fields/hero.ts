@@ -96,11 +96,24 @@ export const hero: Field = {
       maxRows: 3,
       fields: [
         {
-          name: 'image',
+          name: 'modelImage',
           type: 'upload',
-          label: 'Imagen de fondo',
+          label: 'Foto de Shirley / Modelo (Lado Izquierdo)',
           relationTo: 'media',
           required: false,
+          admin: {
+            description: 'Foto a pantalla completa para el lado izquierdo. Si la dejas vacía, se usará la foto de Shirley por defecto.',
+          },
+        },
+        {
+          name: 'image',
+          type: 'upload',
+          label: 'Foto de la joya (Lado Derecho - Dentro del Arco)',
+          relationTo: 'media',
+          required: false,
+          admin: {
+            description: 'Foto en primer plano de la joya que aparecerá dentro del marco en arco.',
+          },
         },
         {
           name: 'imagePosition',

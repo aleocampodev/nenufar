@@ -220,4 +220,72 @@ function CarouselNext({
   )
 }
 
-export { type CarouselApi, Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext }
+function CarouselDots({ className, ...props }: React.ComponentProps<'div'>) {
+  const { api } = useCarousel()
+  const [selectedIndex, setSelectedIndex] = React.useState(0)
+  const [scrollSnaps, setScrollSnaps] = React.useState<number[]>([])
+
+  const onSelect = React.useCallback((api: CarouselApi) => {
+    if (!api) return
+    setSelectedIndex(api.selectedScrollSnap())
+  }, [])
+
+  React.useEffect(() => {
+    if (!api) return
+    setScrollSnaps(api.scrollSnapList())
+    onSelect(api)
+    api.on('reInit', (api) => {
+      setScrollSnaps(api.scrollSnapList())
+      onSelect(api)
+    })
+    api.on('select', onSelect)
+
+    return () => {
+      api?.off('select', onSelect)
+    }
+  }, [api, onSelect])
+
+  if (scrollSnaps.length <= 1) return null
+
+  return (
+    <div
+      data-slot="carousel-dots"
+      role="tablist"
+      aria-label="Diapositivas"
+      className={cn('flex justify-center items-center gap-1.5 pt-4', className)}
+      {...props}
+    >
+      {scrollSnaps.map((_, i) => {
+        const isActive = i === selectedIndex
+        return (
+          <button
+            key={i}
+            type="button"
+            role="tab"
+            aria-selected={isActive}
+            aria-label={`Ir a la diapositiva ${i + 1} de ${scrollSnaps.length}`}
+            onClick={() => api?.scrollTo(i)}
+            className="p-1 -m-1 flex items-center justify-center cursor-pointer transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full group"
+          >
+            <span
+              className={cn(
+                'block h-2 rounded-full transition-all duration-300',
+                isActive ? 'w-6 bg-brand' : 'w-2 bg-muted-foreground/30 hover:bg-brand/50 group-hover:scale-125',
+              )}
+            />
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+export {
+  type CarouselApi,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  CarouselDots,
+}

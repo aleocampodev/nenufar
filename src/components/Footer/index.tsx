@@ -15,20 +15,20 @@ export async function Footer() {
   const copyrightName = COMPANY_NAME || SITE_NAME || 'Nenúfar'
 
   return (
-    <footer className="bg-[#181615] text-white border-t border-neutral-800/80 mt-auto">
+    <footer className="bg-[#6A1B9A] text-white border-t border-purple-400/30 mt-auto">
       <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 py-16 lg:py-20">
           {/* Columna 1: Marca & Filosofía */}
           <div className="space-y-4">
             <Link className="flex items-center gap-3 group" href="/">
-              <LogoIcon className="w-8 h-8 text-brand transition-transform group-hover:scale-105" />
+              <LogoIcon className="w-8 h-8 text-white transition-transform group-hover:scale-105" />
               <span className="font-serif text-2xl tracking-wide text-white font-medium">Nenúfar</span>
             </Link>
-            <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed font-light">
+            <p className="text-purple-100 text-xs sm:text-sm leading-relaxed font-light">
               Joyería de autor tejida a mano con mostacilla calibrada y filigrana en Cartagena de Indias. Piezas con alma caribeña hechas para perdurar.
             </p>
             <div className="pt-2">
-              <span className="inline-block px-3 py-1 rounded-full bg-neutral-800/80 text-[10px] uppercase tracking-[0.25em] text-purple-200/90 font-medium border border-neutral-700/60">
+              <span className="inline-block px-3 py-1 rounded-full bg-white/15 text-[10px] uppercase tracking-[0.25em] text-white font-medium border border-white/25">
                 100% Hecho a Mano
               </span>
             </div>
@@ -39,7 +39,7 @@ export async function Footer() {
             <h4 className="font-serif text-base text-white font-medium tracking-wider uppercase">
               Colecciones
             </h4>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-neutral-400 font-light">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-purple-100/90 font-light">
               <li>
                 <Link href="/shop?category=collares" className="hover:text-white transition-colors">
                   Collares & Gargantillas
@@ -83,7 +83,7 @@ export async function Footer() {
             <h4 className="font-serif text-base text-white font-medium tracking-wider uppercase">
               Información
             </h4>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-neutral-400 font-light">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-purple-100/90 font-light">
               <li>
                 <Link href="/#contacto" className="hover:text-white transition-colors">
                   Pedidos Personalizados
@@ -112,14 +112,14 @@ export async function Footer() {
             <h4 className="font-serif text-base text-white font-medium tracking-wider uppercase">
               Taller Shirley
             </h4>
-            <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed font-light">
+            <p className="text-purple-100 text-xs sm:text-sm leading-relaxed font-light">
               Cartagena de Indias, Colombia.<br />
               Atención personalizada vía Telegram y WhatsApp para asesorarte en tus piezas únicas.
             </p>
             <div className="pt-1">
               <Link
                 href="/#contacto"
-                className="inline-block text-xs uppercase tracking-widest font-medium text-purple-300 hover:text-white underline underline-offset-4 decoration-purple-300/50 transition-colors"
+                className="inline-block text-xs uppercase tracking-widest font-medium text-white hover:text-purple-200 underline underline-offset-4 decoration-white/60 transition-colors"
               >
                 Escribir a Shirley →
               </Link>
@@ -129,14 +129,14 @@ export async function Footer() {
       </div>
 
       {/* Barra Inferior */}
-      <div className="border-t border-neutral-800/60 py-6 bg-[#131110]">
-        <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500 font-light">
+      <div className="border-t border-purple-400/20 py-6 bg-[#581482]">
+        <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-purple-200/80 font-light">
           <p>
             &copy; {copyrightDate} {copyrightName}. Todos los derechos reservados.
           </p>
           <p className="flex items-center gap-1.5">
             <span>Hecho con dedicación en</span>
-            <span className="text-neutral-300 font-normal">Cartagena de Indias, Colombia</span>
+            <span className="text-white font-normal">Cartagena de Indias, Colombia</span>
           </p>
         </div>
       </div>

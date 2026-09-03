@@ -4,6 +4,7 @@ import React from 'react'
 import { SliderHeroClient } from './Component.client'
 
 type Slide = {
+  modelImage?: number | Media | null
   image: number | Media
   imagePosition?: 'top' | 'center' | 'bottom' | null
   badge?: string | null
@@ -23,5 +24,12 @@ export const SliderHero: React.FC<Page['hero']> = (props: any) => {
     return null
   }
 
-  return <SliderHeroClient slides={slides as Slide[]} fallbackRichText={richText} fallbackLinks={links} />
+  return (
+    <SliderHeroClient
+      slides={slides as Slide[]}
+      fallbackRichText={richText}
+      fallbackLinks={links}
+      authorMedia={props.media}
+    />
+  )
 }
