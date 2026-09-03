@@ -21,9 +21,9 @@ export type Slide = {
 }
 
 const getImagePositionClass = (pos?: string | null) => {
-  if (pos === 'center') return 'object-cover object-center'
-  if (pos === 'bottom') return 'object-cover object-bottom'
-  return 'object-cover object-top'
+  if (pos === 'center') return 'object-center'
+  if (pos === 'bottom') return 'object-bottom'
+  return 'object-top'
 }
 
 const DEFAULT_LEFT_IMAGES = [
@@ -201,6 +201,8 @@ export const SliderHeroClient: React.FC<{
               : null
           const leftImgSrc = DEFAULT_LEFT_IMAGES[i % DEFAULT_LEFT_IMAGES.length]
 
+          const leftPositionClass = getImagePositionClass(slide.imagePosition || 'top')
+
           return (
             <div
               key={i}
@@ -212,7 +214,7 @@ export const SliderHeroClient: React.FC<{
                   sizeName="hero"
                   fill
                   priority={i === 0}
-                  imgClassName="object-cover object-center w-full h-full"
+                  imgClassName={`object-cover ${leftPositionClass} w-full h-full`}
                 />
               ) : authorMediaObj && i === 0 ? (
                 <PayloadMedia
@@ -220,22 +222,22 @@ export const SliderHeroClient: React.FC<{
                   sizeName="hero"
                   fill
                   priority
-                  imgClassName="object-cover object-center w-full h-full"
+                  imgClassName={`object-cover ${leftPositionClass} w-full h-full`}
                 />
               ) : (
                 <img
                   src={leftImgSrc}
                   alt=""
                   role="presentation"
-                  className="w-full h-full object-cover object-center"
+                  className={`w-full h-full object-cover ${leftPositionClass}`}
                 />
               )}
             </div>
           )
         })}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70 z-20 pointer-events-none" />
+        {/* Shading removed per user request: left image remains clean and vibrant */}
         <div
-          className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-6 sm:gap-8 text-white/80"
+          className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-5 sm:gap-6 text-white/90 bg-black/35 backdrop-blur-md px-5 py-2 rounded-full border border-white/15 shadow-md"
           role="navigation"
           aria-label="Redes sociales de Shirley"
         >
@@ -307,7 +309,7 @@ export const SliderHeroClient: React.FC<{
                           sizeName="hero"
                           fill
                           priority={isFirst}
-                          imgClassName={`${positionClass} transition-transform duration-1000 ease-out`}
+                          imgClassName={`object-cover ${positionClass} transition-transform duration-1000 ease-out`}
                         />
                       </div>
                     ) : (

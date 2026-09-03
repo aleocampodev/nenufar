@@ -24,6 +24,9 @@ export const Media: CollectionConfig = {
     group: 'Contenido Web',
     useAsTitle: 'alt',
     defaultColumns: ['alt', 'filename', 'updatedAt'],
+    components: {
+      beforeListTable: ['@/components/Admin/MediaStorageQuota#MediaStorageQuota'],
+    },
   },
   labels: {
     singular: 'Medio / Imagen',
@@ -147,66 +150,82 @@ export const Media: CollectionConfig = {
       },
     ],
     afterChange: [
-      async ({ doc, req }) => {
-        // Sync uploaded image/video and variants to Supabase Storage bucket in background
-        try {
-          const staticDir = path.resolve(mediaDir, '../../public/media')
-          if (doc.filename) {
-            const mainFilePath = path.join(staticDir, doc.filename)
-            if (fs.existsSync(mainFilePath)) {
-              const buffer = await fs.promises.readFile(mainFilePath)
-              await uploadToSupabaseStorage({
-                filename: doc.filename,
-                buffer,
-                mimeType: doc.mimeType || (doc.filename?.match(/\.(mp4|mov)$/i) ? 'video/mp4' : 'image/jpeg'),
-              })
+      ({ doc, req }) => {
+        // Run Supabase Storage sync and cache revalidation in the background so Admin responds instantly (< 200ms)
+        void (async () => {
+          try {
+            const staticDir = path.resolve(mediaDir, '../../public/media')
+            if (doc.filename) {
+              const mainFilePath = path.join(staticDir, doc.filename)
+              if (fs.existsSync(mainFilePath)) {
+                const buffer = await fs.promises.readFile(mainFilePath)
+                await uploadToSupabaseStorage({
+                  filename: doc.filename,
+                  buffer,
+                  mimeType: doc.mimeType || (doc.filename?.match(/\.(mp4|mov)$/i) ? 'video/mp4' : 'image/jpeg'),
+                })
 
-              // If it is a video, automatically extract a poster frame with ffmpeg and upload to Supabase
-              if (doc.mimeType?.startsWith('video/') || doc.filename.match(/\.(mp4|webm|mov|m4v)$/i)) {
-                try {
-                  const { exec } = await import('child_process')
-                  const util = await import('util')
-                  const execPromise = util.promisify(exec)
-                  const base = doc.filename.replace(/\.[^/.]+$/, '')
-                  const posterFilename = `${base}-poster.jpg`
-                  const posterFilePath = path.join(staticDir, posterFilename)
+                // Video poster frame extraction
+                if (doc.mimeType?.startsWith('video/') || doc.filename.match(/\.(mp4|webm|mov|m4v)$/i)) {
+                  try {
+                    const { exec } = await import('child_process')
+                    const util = await import('util')
+                    const execPromise = util.promisify(exec)
+                    const base = doc.filename.replace(/\.[^/.]+$/, '')
+                    const posterFilename = `${base}-poster.jpg`
+                    const posterFilePath = path.join(staticDir, posterFilename)
 
-                  await execPromise(
-                    `ffmpeg -ss 00:00:01.000 -i "${mainFilePath}" -vframes 1 -q:v 2 "${posterFilePath}" -y`
-                  )
+                    await execPromise(
+                      `ffmpeg -ss 00:00:01.000 -i "${mainFilePath}" -vframes 1 -q:v 2 "${posterFilePath}" -y`
+                    )
 
-                  if (fs.existsSync(posterFilePath)) {
-                    const posterBuffer = await fs.promises.readFile(posterFilePath)
-                    await uploadToSupabaseStorage({
-                      filename: posterFilename,
-                      buffer: posterBuffer,
-                      mimeType: 'image/jpeg',
+                    if (fs.existsSync(posterFilePath)) {
+                      const posterBuffer = await fs.promises.readFile(posterFilePath)
+                      await uploadToSupabaseStorage({
+                        filename: posterFilename,
+                        buffer: posterBuffer,
+                        mimeType: 'image/jpeg',
+                      })
+                    }
+                  } catch (ffmpegErr) {
+                    req.payload.logger.warn({ msg: '[Video Poster] Error extracting poster frame', ffmpegErr })
+                  }
+                }
+              }
+            }
+
+            // Upload all WebP variants in parallel
+            if (doc.sizes && typeof doc.sizes === 'object') {
+              const variantUploads = Object.values<any>(doc.sizes)
+                .filter((size) => size?.filename)
+                .map(async (size) => {
+                  const sizeFilePath = path.join(staticDir, size.filename)
+                  if (fs.existsSync(sizeFilePath)) {
+                    const sizeBuffer = await fs.promises.readFile(sizeFilePath)
+                    return uploadToSupabaseStorage({
+                      filename: size.filename,
+                      buffer: sizeBuffer,
+                      mimeType: size.mimeType || 'image/webp',
                     })
                   }
-                } catch (ffmpegErr) {
-                  req.payload.logger.warn({ msg: '[Video Poster] Error extracting poster frame', ffmpegErr })
-                }
-              }
+                })
+              await Promise.allSettled(variantUploads)
             }
-          }
-          if (doc.sizes && typeof doc.sizes === 'object') {
-            for (const size of Object.values<any>(doc.sizes)) {
-              if (size?.filename) {
-                const sizeFilePath = path.join(staticDir, size.filename)
-                if (fs.existsSync(sizeFilePath)) {
-                  const sizeBuffer = await fs.promises.readFile(sizeFilePath)
-                  await uploadToSupabaseStorage({
-                    filename: size.filename,
-                    buffer: sizeBuffer,
-                    mimeType: size.mimeType || 'image/webp',
-                  })
-                }
-              }
+
+            // Safe cache revalidation for home and shop so new images appear immediately
+            try {
+              const { revalidatePath } = await import('next/cache')
+              revalidatePath('/')
+              revalidatePath('/shop')
+            } catch {
+              // Ignore if outside request context
             }
+          } catch (err) {
+            req.payload.logger.warn({ msg: '[Supabase Storage] Background sync error', err })
           }
-        } catch (err) {
-          req.payload.logger.warn({ msg: '[Supabase Storage] Hook sync error', err })
-        }
+        })()
+
+        return doc
       },
     ],
     afterDelete: [
