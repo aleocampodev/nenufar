@@ -27,7 +27,7 @@ import { validateConsent } from '@/lib/consent'
 import { checkIdempotency, markSeen } from '@/lib/idempotency'
 import { formatOrderMessage } from '@/lib/order-formatter'
 import { sendTelegramMessage, sendTelegramPhoto } from '@/lib/telegram'
-import { validateWhatsAppContact } from '@/lib/contact-validation'
+import { validateWhatsAppContact, normalizeWhatsAppContact } from '@/lib/contact-validation'
 
 export interface SubmitOrderState {
   status: 'idle' | 'error' | 'success'
@@ -41,7 +41,7 @@ export async function submitOrderAction(
 ): Promise<SubmitOrderState> {
   // 1. Parse form
   const buyerName = String(formData.get('buyerName') ?? '').trim()
-  const buyerContact = String(formData.get('buyerContact') ?? '').trim()
+  const rawBuyerContact = String(formData.get('buyerContact') ?? '').trim()
   const consent = formData.get('consent')
   const cartId = String(formData.get('cartId') ?? '').trim()
   const note = String(formData.get('note') ?? '').trim()
@@ -54,13 +54,15 @@ export async function submitOrderAction(
     return { status: 'error', errorMessage: 'Por favor ingresá tu nombre completo.' }
   }
 
-  const phoneValidation = validateWhatsAppContact(buyerContact)
+  const phoneValidation = validateWhatsAppContact(rawBuyerContact)
   if (!phoneValidation.ok) {
     return {
       status: 'error',
       errorMessage: phoneValidation.reason || 'Por favor ingresá un número de WhatsApp válido.',
     }
   }
+  const buyerContact = normalizeWhatsAppContact(rawBuyerContact)
+
 
   if (modo === 'personalizado' && (!personalizacion || personalizacion.length < 5)) {
     return {
@@ -175,15 +177,33 @@ export async function submitOrderAction(
   }
 
   // 6. Create the Order FIRST (so we have an orderId for the message)
-  //    Status: pending. Amount: cart.subtotal. Currency: cart.currency.
+  //    Status: processing. Amount: cart.subtotal. Currency: cart.currency.
+  const orderItems = (cart.items ?? [])
+    .map((item) => {
+      const prod = item?.product
+      const prodId = typeof prod === 'object' && prod !== null ? prod.id : prod
+      const variant = item?.variant
+      const varId = typeof variant === 'object' && variant !== null ? variant.id : variant
+
+      const parsedProdId = typeof prodId === 'number' ? prodId : Number(prodId)
+      if (isNaN(parsedProdId) || parsedProdId === 0) return null
+
+      return {
+        product: parsedProdId,
+        variant: varId ? (typeof varId === 'number' ? varId : Number(varId) || null) : null,
+        quantity: item.quantity ?? 1,
+      }
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null)
+
   let order
   try {
     order = await payload.create({
       collection: 'orders',
       data: {
-        items: cart.items ?? [],
+        items: orderItems,
         amount: cart.subtotal ?? null,
-        currency: cart.currency ?? null,
+        currency: cart.currency ?? 'COP',
         status: 'processing',
         customerEmail: null,
         // NOTE: buyerName + buyerContact go into shippingAddress for now
@@ -195,7 +215,8 @@ export async function submitOrderAction(
       },
       overrideAccess: true,
     })
-  } catch (err) {
+  } catch (err: any) {
+    console.error('[submitOrder] Failed to create order:', err?.message || err)
     payload.logger.error({ msg: '[submitOrder] Failed to create order', err })
     return {
       status: 'error',

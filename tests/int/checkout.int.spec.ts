@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { validateWhatsAppContact } from '@/lib/contact-validation'
+import { validateWhatsAppContact, normalizeWhatsAppContact } from '@/lib/contact-validation'
 import { validateConsent } from '@/lib/consent'
 import {
   generateIdempotencyKey,
@@ -13,7 +13,7 @@ describe('Checkout Subsystem Hardening (IP-002 / SPEC-001)', () => {
     _resetForTesting()
   })
 
-  describe('WhatsApp Contact Validation (validateWhatsAppContact)', () => {
+  describe('WhatsApp Contact Validation & Normalization', () => {
     it('accepts valid 10-digit mobile numbers', () => {
       const result = validateWhatsAppContact('3214567890')
       expect(result.ok).toBe(true)
@@ -38,6 +38,13 @@ describe('Checkout Subsystem Hardening (IP-002 / SPEC-001)', () => {
     it('rejects letters and special characters', () => {
       const result = validateWhatsAppContact('no-phone-here')
       expect(result.ok).toBe(false)
+    })
+
+    it('normalizes local 10-digit numbers to E.164 +57 prefix for database storage', () => {
+      expect(normalizeWhatsAppContact('321 456 7890')).toBe('+573214567890')
+      expect(normalizeWhatsAppContact('3214567890')).toBe('+573214567890')
+      expect(normalizeWhatsAppContact('+57 321 456 7890')).toBe('+573214567890')
+      expect(normalizeWhatsAppContact('573214567890')).toBe('+573214567890')
     })
   })
 
