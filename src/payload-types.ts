@@ -594,6 +594,7 @@ export interface Page {
         blockName?: string | null;
         blockType: 'features';
       }
+    | GalleryBlock
     | {
         tagline?: string | null;
         heading?: string | null;
@@ -759,6 +760,48 @@ export interface ImageStripBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'imageStrip';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlock".
+ */
+export interface GalleryBlock {
+  /**
+   * Texto pequeño en mayúsculas sobre el título principal.
+   */
+  tagline?: string | null;
+  heading?: string | null;
+  description?: string | null;
+  tabs?:
+    | {
+        /**
+         * Ej: Collares Ceremoniales, Aretes de Autor, El Taller, Momentos en Cartagena
+         */
+        tabTitle: string;
+        /**
+         * Ej: Okamas y Otapas de tejido continuo Emberá
+         */
+        tabSubtitle?: string | null;
+        images?:
+          | {
+              image?: (number | null) | Media;
+              imageUrl?: string | null;
+              title: string;
+              /**
+               * Ej: Okama Ceremonial, Pieza Única, Taller Shirley
+               */
+              category?: string | null;
+              description?: string | null;
+              isFeatured?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'gallery';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1722,6 +1765,7 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        gallery?: T | GalleryBlockSelect<T>;
         testimonials?:
           | T
           | {
@@ -1820,6 +1864,35 @@ export interface ImageStripBlockSelect<T extends boolean = true> {
         storyCraft?: T;
         storyFeel?: T;
         alt?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlock_select".
+ */
+export interface GalleryBlockSelect<T extends boolean = true> {
+  tagline?: T;
+  heading?: T;
+  description?: T;
+  tabs?:
+    | T
+    | {
+        tabTitle?: T;
+        tabSubtitle?: T;
+        images?:
+          | T
+          | {
+              image?: T;
+              imageUrl?: T;
+              title?: T;
+              category?: T;
+              description?: T;
+              isFeatured?: T;
+              id?: T;
+            };
         id?: T;
       };
   id?: T;

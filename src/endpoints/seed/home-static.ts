@@ -268,6 +268,147 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
         ],
       },
       {
+        blockType: 'gallery' as any,
+        tagline: 'MUESTRARIO VISUAL & LOOKBOOK',
+        heading: 'Nénufar en la Piel: Arte y Color Caribeño',
+        description:
+          'Explora nuestras piezas tejidas a mano en Cartagena de Indias, el brillo de la micro-mostacilla checa calibrada y la fuerza del diseño ancestral lucido por mujeres reales.',
+        tabs: [
+          {
+            tabTitle: 'Collares Ceremoniales',
+            tabSubtitle: 'Okamas y Otapas de tejido continuo Emberá',
+            images: [
+              {
+                title: 'El Okama Ceremonial',
+                category: 'Pieza Ancestral',
+                description:
+                  'Más de 3.200 micro-mostacillas checas hiladas a mano en Cartagena. Caída anatómica sobre el pecho.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Embera.jpeg',
+                isFeatured: true,
+              },
+              {
+                title: 'La Otapa Ancestral Naranja',
+                category: 'Geometría Sagrada',
+                description:
+                  'Patrones en rombo que representan los senderos de la montaña y la protección del linaje.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-narana.jpg',
+              },
+              {
+                title: 'Okama Contemporáneo Flor',
+                category: 'Diseño de Autor',
+                description:
+                  'Elegancia liviana adaptada al uso diario con motivos florales de la naturaleza caribeña.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Collar-flor.jpeg',
+              },
+              {
+                title: 'Collar Ancestral Macro',
+                category: 'Detalle de Oficio',
+                description:
+                  'Micro-mostacilla checa calibrada que garantiza un brillo homogéneo y una textura inalterable.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-ancestral.jpg',
+              },
+            ],
+          },
+          {
+            tabTitle: 'Aretes & Candongas',
+            tabSubtitle: 'Obras de arte textil livianas e hipoalergénicas',
+            images: [
+              {
+                title: 'Candongas de Autor Tricolor',
+                category: 'Piezas de Colección',
+                description:
+                  'Inspiradas en los colores vivos de Cartagena. Caída suave que no pesa ni maltrata el lóbulo.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/colombia-aretes.jpeg',
+                isFeatured: true,
+              },
+              {
+                title: 'Gargantilla & Aretes Geométricos',
+                category: 'Juego de Gala',
+                description:
+                  'Conjunto simétrico en mostacilla tejida con herrajes hipoalergénicos.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Collar-flor.jpeg',
+              },
+              {
+                title: 'Detalle de Hilado en Mostacilla',
+                category: 'Textura & Brillo',
+                description:
+                  'Hilo encerado de alta tenacidad que evita deformaciones con el tiempo.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-ancestral.jpg',
+              },
+            ],
+          },
+          {
+            tabTitle: 'El Taller de Shirley',
+            tabSubtitle: 'Manos pacientes que dan vida a cada historia',
+            images: [
+              {
+                title: 'Shirley en su Taller',
+                category: 'Manos Creadoras',
+                description:
+                  'Concentración y maestría en cada puntada. Shirley elabora cada joya de forma individual en Cartagena.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/shirley-creadora.jpeg',
+                isFeatured: true,
+              },
+              {
+                title: 'Talleres Presenciales',
+                category: 'Comunidad & Oficio',
+                description:
+                  'Transmitiendo el conocimiento ancestral a mujeres que desean aprender este arte tradicional.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/talleres-comunidad.jpeg',
+              },
+              {
+                title: 'Mesa de Trabajo & Calibración',
+                category: 'Herramientas',
+                description:
+                  'Miles de cuentas checas seleccionadas por tono y calibre milimétrico.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-narana.jpg',
+              },
+            ],
+          },
+          {
+            tabTitle: 'Nénufar en Cartagena',
+            tabSubtitle: 'Ferias de diseño, pop-ups y encuentros locales',
+            images: [
+              {
+                title: 'Ferias y Mercados de Autor',
+                category: 'Encuentros',
+                description:
+                  'Exhibiciones en el Centro Histórico y Getsemaní donde visitantes conocen las piezas en persona.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/feria-y-talleres.jpg',
+                isFeatured: true,
+              },
+              {
+                title: 'Piezas que Visten la Ciudad',
+                category: 'Estilo Caribeño',
+                description:
+                  'Joyas que complementan atuendos de lino y celebraciones junto al mar.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Embera.jpeg',
+              },
+              {
+                title: 'Comunidad Tejedora',
+                category: 'Cultura Viva',
+                description:
+                  'Encuentros donde la memoria ancestral se entrelaza con la mujer moderna.',
+                imageUrl:
+                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/talleres-comunidad.jpeg',
+              },
+            ],
+          },
+        ] as any,
+      },
+      {
         blockType: 'testimonials',
         tagline: 'Voces de Nuestra Comunidad',
         heading: 'Lo que dicen quienes lucen Nenúfar',

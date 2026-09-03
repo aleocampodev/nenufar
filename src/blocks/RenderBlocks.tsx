@@ -5,6 +5,7 @@ import { CarouselBlock } from '@/blocks/Carousel/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FeaturesBlock } from '@/blocks/Features/Component'
 import { FormBlock } from '@/blocks/Form/Component'
+import { GalleryBlock } from '@/blocks/Gallery/Component'
 import { ImageStripBlock } from '@/blocks/ImageStrip/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { NenufarStoryBlock } from '@/blocks/NenufarStory/Component'
@@ -25,6 +26,7 @@ const blockComponents = {
   cta: CallToActionBlock,
   features: FeaturesBlock,
   formBlock: FormBlock,
+  gallery: GalleryBlock,
   imageStrip: ImageStripBlock,
   mediaBlock: MediaBlock,
   nenufarStory: NenufarStoryBlock,
@@ -35,6 +37,7 @@ const blockComponents = {
 
 const defaultBlockIds: Record<string, string> = {
   features: 'tradicion',
+  gallery: 'galeria',
   nenufarStory: 'historia',
   upcomingEvents: 'talleres',
   cta: 'contacto',
@@ -52,6 +55,7 @@ export const RenderBlocks: React.FC<{
   if (hasBlocks) {
     const unspacedBlocks = new Set([
       'features',
+      'gallery',
       'imageStrip',
       'testimonials',
       'nenufarStory',

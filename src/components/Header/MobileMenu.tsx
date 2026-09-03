@@ -143,6 +143,16 @@ export function MobileMenu({ menu, categories = [] }: Props) {
 
             <li>
               <Link
+                href="/#galeria"
+                onClick={(e) => handleAnchorClick(e, '/#galeria')}
+                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
+              >
+                Galería de Creaciones
+              </Link>
+            </li>
+
+            <li>
+              <Link
                 href="/#historia"
                 onClick={(e) => handleAnchorClick(e, '/#historia')}
                 className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
