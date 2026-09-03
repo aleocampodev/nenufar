@@ -276,15 +276,14 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
         tabs: [
           {
             tabTitle: 'Collares Ceremoniales',
-            tabSubtitle: 'Okamas y Otapas de tejido continuo Emberá',
+            tabSubtitle: 'Okamas y Otapas inspirados en la cosmovisión Emberá',
             images: [
               {
                 title: 'El Okama Ceremonial',
                 category: 'Pieza Ancestral',
                 description:
                   'Más de 3.200 micro-mostacillas checas hiladas a mano en Cartagena. Caída anatómica sobre el pecho.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Embera.jpeg',
+                imageUrl: '/api/media/file/Embera-800x1000.webp',
                 isFeatured: true,
               },
               {
@@ -292,24 +291,21 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                 category: 'Geometría Sagrada',
                 description:
                   'Patrones en rombo que representan los senderos de la montaña y la protección del linaje.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-narana.jpg',
+                imageUrl: '/api/media/file/Collar%20Naranja-800x1000.webp',
               },
               {
                 title: 'Okama Contemporáneo Flor',
                 category: 'Diseño de Autor',
                 description:
                   'Elegancia liviana adaptada al uso diario con motivos florales de la naturaleza caribeña.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Collar-flor.jpeg',
+                imageUrl: '/api/media/file/Collar-flor-800x1000.webp',
               },
               {
                 title: 'Collar Ancestral Macro',
                 category: 'Detalle de Oficio',
                 description:
                   'Micro-mostacilla checa calibrada que garantiza un brillo homogéneo y una textura inalterable.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-ancestral.jpg',
+                imageUrl: '/api/media/file/Collar%20ancestral-800x1000.webp',
               },
             ],
           },
@@ -322,8 +318,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                 category: 'Piezas de Colección',
                 description:
                   'Inspiradas en los colores vivos de Cartagena. Caída suave que no pesa ni maltrata el lóbulo.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/colombia-aretes.jpeg',
+                imageUrl: '/api/media/file/colombia-aretes-800x1000.webp',
                 isFeatured: true,
               },
               {
@@ -331,16 +326,14 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                 category: 'Juego de Gala',
                 description:
                   'Conjunto simétrico en mostacilla tejida con herrajes hipoalergénicos.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Collar-flor.jpeg',
+                imageUrl: '/api/media/file/Collar-flor-800x1000.webp',
               },
               {
                 title: 'Detalle de Hilado en Mostacilla',
                 category: 'Textura & Brillo',
                 description:
                   'Hilo encerado de alta tenacidad que evita deformaciones con el tiempo.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-ancestral.jpg',
+                imageUrl: '/api/media/file/Collar%20ancestral-800x1000.webp',
               },
             ],
           },
@@ -353,8 +346,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                 category: 'Manos Creadoras',
                 description:
                   'Concentración y maestría en cada puntada. Shirley elabora cada joya de forma individual en Cartagena.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/shirley-creadora.jpeg',
+                imageUrl: '/api/media/file/shirley-creadora-800x1000.webp',
                 isFeatured: true,
               },
               {
@@ -362,16 +354,14 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                 category: 'Comunidad & Oficio',
                 description:
                   'Transmitiendo el conocimiento ancestral a mujeres que desean aprender este arte tradicional.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/talleres-comunidad.jpeg',
+                imageUrl: '/api/media/file/talleres-comunidad-800x1000.webp',
               },
               {
                 title: 'Mesa de Trabajo & Calibración',
                 category: 'Herramientas',
                 description:
                   'Miles de cuentas checas seleccionadas por tono y calibre milimétrico.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-narana.jpg',
+                imageUrl: '/api/media/file/Collar%20Naranja-800x1000.webp',
               },
             ],
           },
@@ -384,8 +374,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                 category: 'Encuentros',
                 description:
                   'Exhibiciones en el Centro Histórico y Getsemaní donde visitantes conocen las piezas en persona.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/feria-y-talleres.jpg',
+                imageUrl: '/api/media/file/Feria%20y%20talleres-800x1000.webp',
                 isFeatured: true,
               },
               {
@@ -393,16 +382,14 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                 category: 'Estilo Caribeño',
                 description:
                   'Joyas que complementan atuendos de lino y celebraciones junto al mar.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Embera.jpeg',
+                imageUrl: '/api/media/file/Embera-800x1000.webp',
               },
               {
                 title: 'Comunidad Tejedora',
                 category: 'Cultura Viva',
                 description:
                   'Encuentros donde la memoria ancestral se entrelaza con la mujer moderna.',
-                imageUrl:
-                  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/talleres-comunidad.jpeg',
+                imageUrl: '/api/media/file/talleres-comunidad-800x1000.webp',
               },
             ],
           },
