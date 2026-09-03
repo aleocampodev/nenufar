@@ -57,7 +57,7 @@ export default function SobreNenufarPage() {
               contacta directamente.
             </p>
             <a
-              href="/contacto"
+              href="/#contacto"
               className="inline-block mt-4 px-6 py-3 bg-brand text-brand-foreground rounded-md hover:bg-brand-dark transition"
             >
               Contactar a Shirley

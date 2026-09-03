@@ -69,7 +69,7 @@ export default function PrivacidadPage() {
             <li>Revocar tu consentimiento</li>
           </ul>
           <p className="text-neutral-700 leading-relaxed">
-            Para ejercer estos derechos, contactanos a través de nuestra página de contacto.
+            Para ejercer estos derechos, contactanos a través de nuestra sección de contacto.
           </p>
         </section>
 
@@ -85,8 +85,8 @@ export default function PrivacidadPage() {
           <h2 className="text-2xl font-serif mb-3 text-neutral-900">7. Contacto</h2>
           <p className="text-neutral-700 leading-relaxed">
             Si tenés preguntas sobre esta política de privacidad, contactanos a través de nuestra{' '}
-            <a href="/contacto" className="text-brand hover:underline">
-              página de contacto
+            <a href="/#contacto" className="text-brand hover:underline">
+              sección de contacto
             </a>.
           </p>
         </section>

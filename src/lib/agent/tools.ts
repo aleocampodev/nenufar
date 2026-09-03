@@ -955,12 +955,12 @@ export async function executeShirleyTool(
             `Opción 1:`,
             `• Título: ¿Buscas una joya personalizada a tu medida?`,
             `• Subtítulo: Shirley confecciona piezas por encargo con tus colores, patrones o combinaciones favoritas. Cuéntanos tu idea y la tejemos para ti.`,
-            `• Botón: Personalizar mi Joya → /contacto`,
+            `• Botón: Personalizar mi Joya → WhatsApp de Shirley`,
             ``,
             `Opción 2:`,
             `• Título: Lleva una pieza con historia propia`,
             `• Subtítulo: Diseños exclusivos y ediciones limitadas hechas con amor en Cartagena. Haz tu pedido directo sin intermediarios.`,
-            `• Botón: Escribir a Shirley → /contacto`
+            `• Botón: Escribir a Shirley → WhatsApp de Shirley`,
           ].join('\n')
         }
 

@@ -556,7 +556,7 @@ export const seed = async ({
             link: {
               type: 'custom',
               label: 'Contacto',
-              url: '/contacto',
+              url: '/#contacto',
             },
           },
         ],
@@ -584,7 +584,7 @@ export const seed = async ({
             link: {
               type: 'custom',
               label: 'Contacto',
-              url: '/contacto',
+              url: '/#contacto',
             },
           },
         ],

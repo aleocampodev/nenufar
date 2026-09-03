@@ -334,7 +334,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
           {
             link: {
               type: 'custom',
-              url: '/contacto',
+              url: 'https://wa.me/?text=Hola%20Shirley%2C%20me%20gustar%C3%ADa%20encargar%20una%20joya%20personalizada%20a%20mi%20medida%20%E2%9C%A8',
               label: 'Personalizar mi Joya',
               appearance: 'default',
             },
