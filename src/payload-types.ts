@@ -631,6 +631,14 @@ export interface Page {
          * Frase descriptiva que acompaña el video vertical en la tienda.
          */
         videoCaption?: string | null;
+        /**
+         * Pega aquí el enlace iCal público o secreto de tu Google Calendar. Si lo dejas vacío, se usará la variable GOOGLE_CALENDAR_ICAL_URL del entorno o la lista manual inferior.
+         */
+        googleCalendarIcalUrl?: string | null;
+        /**
+         * Si está activo y hay un enlace iCal configurado, el calendario se actualizará solo cuando Shirley agregue o edite eventos en Google Calendar.
+         */
+        syncWithGoogleCalendar?: boolean | null;
         events?:
           | {
               title: string;
@@ -1742,6 +1750,8 @@ export interface PagesSelect<T extends boolean = true> {
               video?: T;
               videoUrl?: T;
               videoCaption?: T;
+              googleCalendarIcalUrl?: T;
+              syncWithGoogleCalendar?: T;
               events?:
                 | T
                 | {

@@ -6,6 +6,7 @@ import { CalendarClient, EventItem } from "./Calendar.client"
 import type { Media } from "@/payload-types"
 import { Sparkles } from "lucide-react"
 import { ScrollReveal } from "@/components/Animation/ScrollReveal"
+import { fetchGoogleCalendarEvents } from "@/lib/google-calendar"
 
 interface UpcomingEventsBlockProps {
   tagline?: string | null
@@ -15,6 +16,8 @@ interface UpcomingEventsBlockProps {
   videoUrl?: string | null
   videoCaption?: string | null
   events?: any[] | null
+  googleCalendarIcalUrl?: string | null
+  syncWithGoogleCalendar?: boolean | null
   id?: string
 }
 
@@ -26,36 +29,55 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
   videoUrl,
   videoCaption,
   events,
+  googleCalendarIcalUrl,
+  syncWithGoogleCalendar = true,
   id,
 }) => {
   let eventsList: EventItem[] = []
+  let isGoogleCalendarSynced = false
 
-  try {
-    const payload = await getPayload({ config: configPromise })
-    const result = await payload.find({
-      collection: "events",
-      depth: 1,
-      limit: 12,
-      overrideAccess: true,
-      sort: "date",
-      where: {
-        _status: { equals: "published" },
-      },
-    })
-
-    if (result.docs && result.docs.length > 0) {
-      eventsList = result.docs.map((doc: any) => ({
-        id: doc.id,
-        title: doc.title,
-        date: doc.date,
-        endDate: doc.endDate,
-        location: doc.location,
-        description: doc.description,
-        type: doc.type,
-      }))
+  // 1. Sincronización automática con Google Calendar de Shirley (prioridad)
+  if (syncWithGoogleCalendar !== false) {
+    try {
+      const gcalRes = await fetchGoogleCalendarEvents(googleCalendarIcalUrl)
+      if (gcalRes.events && gcalRes.events.length > 0) {
+        eventsList = gcalRes.events
+        isGoogleCalendarSynced = true
+      }
+    } catch (gcalErr) {
+      console.warn("[UpcomingEvents] Google Calendar sync notice:", gcalErr)
     }
-  } catch (err) {
-    console.warn("[UpcomingEvents] Error fetching events from collection:", err)
+  }
+
+  // 2. Si Google Calendar no devolvió eventos, consultar la colección de Payload
+  if (eventsList.length === 0) {
+    try {
+      const payload = await getPayload({ config: configPromise })
+      const result = await payload.find({
+        collection: "events",
+        depth: 1,
+        limit: 12,
+        overrideAccess: true,
+        sort: "date",
+        where: {
+          _status: { equals: "published" },
+        },
+      })
+
+      if (result.docs && result.docs.length > 0) {
+        eventsList = result.docs.map((doc: any) => ({
+          id: doc.id,
+          title: doc.title,
+          date: doc.date,
+          endDate: doc.endDate,
+          location: doc.location,
+          description: doc.description,
+          type: doc.type,
+        }))
+      }
+    } catch (err) {
+      console.warn("[UpcomingEvents] Error fetching events from collection:", err)
+    }
   }
 
   // Si la colección no tiene eventos, usar los del bloque o fallbacks
@@ -163,7 +185,7 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
           {/* Columna Derecha: Calendario Interactivo Claro */}
           <div className="lg:col-span-7">
             <ScrollReveal variant="fade-left" delay={250} duration={900}>
-              <CalendarClient events={eventsList} />
+              <CalendarClient events={eventsList} isGoogleCalendarSynced={isGoogleCalendarSynced} />
             </ScrollReveal>
           </div>
         </div>

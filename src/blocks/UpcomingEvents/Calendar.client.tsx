@@ -15,6 +15,7 @@ export interface EventItem {
 
 interface CalendarClientProps {
   events: EventItem[]
+  isGoogleCalendarSynced?: boolean
 }
 
 const MONTH_NAMES = [
@@ -24,7 +25,10 @@ const MONTH_NAMES = [
 
 const DAY_NAMES = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
 
-export const CalendarClient: React.FC<CalendarClientProps> = ({ events = [] }) => {
+export const CalendarClient: React.FC<CalendarClientProps> = ({
+  events = [],
+  isGoogleCalendarSynced = false,
+}) => {
   // Siempre el mes actual en curso
   const [currentDate] = useState(() => new Date())
   const [selectedEventId, setSelectedEventId] = useState<string | number | null>(null)
@@ -82,7 +86,7 @@ export const CalendarClient: React.FC<CalendarClientProps> = ({ events = [] }) =
     <div className="w-full bg-white border border-[#EADCCF]/80 rounded-3xl p-5 sm:p-7 lg:p-8 shadow-[0_10px_30px_rgba(0,0,0,0.04)] flex flex-col justify-between">
       <div>
         {/* Encabezado del Calendario (Fijo en el Mes Actual, Sin Flechas) */}
-        <div className="flex items-center justify-between mb-5 pb-4 border-b border-stone-100">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-stone-100">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-full bg-brand/10 flex items-center justify-center text-brand">
               <CalendarIcon className="w-4 h-4" />
@@ -100,9 +104,17 @@ export const CalendarClient: React.FC<CalendarClientProps> = ({ events = [] }) =
               </span>
             </div>
           </div>
-          <span className="text-[10px] uppercase font-sans font-bold tracking-widest text-brand bg-brand/10 px-3 py-1 rounded-full border border-brand/20">
-            Mes en curso
-          </span>
+          <div className="flex items-center gap-2">
+            {isGoogleCalendarSynced && (
+              <span className="inline-flex items-center gap-1.5 text-[10px] uppercase font-sans font-semibold tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Google Calendar
+              </span>
+            )}
+            <span className="text-[10px] uppercase font-sans font-bold tracking-widest text-brand bg-brand/10 px-3 py-1 rounded-full border border-brand/20">
+              Mes en curso
+            </span>
+          </div>
         </div>
 
         {/* Nombres de los Días */}

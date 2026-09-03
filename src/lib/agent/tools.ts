@@ -772,6 +772,29 @@ export async function executeShirleyTool(
       }
 
       case 'listarEventos': {
+        const { fetchGoogleCalendarEvents } = await import('@/lib/google-calendar')
+        const gcalRes = await fetchGoogleCalendarEvents()
+        if (gcalRes.events && gcalRes.events.length > 0) {
+          const lines = gcalRes.events.map((e) => {
+            const d = e.date
+              ? new Date(e.date).toLocaleDateString('es-CO', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })
+              : 'Sin fecha'
+            const tipo =
+              e.type === 'taller'
+                ? 'Taller Artesanal'
+                : e.type === 'pop-up'
+                ? 'Pop-Up'
+                : 'Feria Artesanal'
+            const emoji = e.type === 'taller' ? '🪡' : e.type === 'pop-up' ? '✨' : '🎪'
+            return `${emoji} ${e.title} (${tipo})\n   📅 ${d}\n   📍 ${e.location || 'Cartagena de Indias'}`
+          })
+          return `Tienes ${gcalRes.events.length} evento(s) sincronizado(s) directamente desde tu Google Calendar:\n\n${lines.join('\n\n')}`
+        }
+
         const result = await payload.find({
           collection: 'events',
           depth: 0,
@@ -780,7 +803,7 @@ export async function executeShirleyTool(
           sort: '-date',
         })
         if (result.docs.length === 0) {
-          return 'No hay talleres ni ferias programados actualmente en la tienda.'
+          return 'No hay talleres ni ferias programados actualmente en la tienda ni en tu Google Calendar.'
         }
         const lines = result.docs.map((e: any) => {
           const d = e.date ? new Date(e.date).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Sin fecha'

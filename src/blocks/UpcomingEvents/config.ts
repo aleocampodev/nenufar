@@ -79,6 +79,25 @@ export const UpcomingEventsBlock: Block = {
           label: "Calendario de Ferias & Talleres",
           fields: [
             {
+              name: "googleCalendarIcalUrl",
+              type: "text",
+              label: "Enlace iCal de Google Calendar de Shirley (.ics)",
+              admin: {
+                description:
+                  "Pega aquí el enlace iCal público o secreto de tu Google Calendar. Si lo dejas vacío, se usará la variable GOOGLE_CALENDAR_ICAL_URL del entorno o la lista manual inferior.",
+              },
+            },
+            {
+              name: "syncWithGoogleCalendar",
+              type: "checkbox",
+              label: "Sincronizar automáticamente con Google Calendar de Shirley",
+              defaultValue: true,
+              admin: {
+                description:
+                  "Si está activo y hay un enlace iCal configurado, el calendario se actualizará solo cuando Shirley agregue o edite eventos en Google Calendar.",
+              },
+            },
+            {
               name: "events",
               type: "array",
               label: "Lista de Eventos y Ferias",
