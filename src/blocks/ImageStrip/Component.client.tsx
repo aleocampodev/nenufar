@@ -135,7 +135,7 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
       </ScrollReveal>
 
       {/* TIRA DE 4 FOTOS CONTINUA ESTILO KRAFTI (Borde a borde 100% ancho, sin separaciones ni margenes) */}
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 overflow-hidden">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 overflow-hidden bg-stone-950">
         {items.map((item, i) => {
           const fallback = DEFAULT_ITEMS[i % DEFAULT_ITEMS.length]
           const media = item.image as Media
@@ -152,7 +152,7 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
               variant="fade-up"
               delay={i * 120}
               duration={800}
-              className="h-full"
+              className="w-full h-full block"
             >
               <button
                 type="button"
@@ -160,7 +160,7 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
                 aria-expanded={isExpanded}
                 aria-controls="historia-expandida"
                 aria-label={`Ver historia de ${title}`}
-                className={`group relative aspect-[4/5] sm:aspect-square lg:aspect-[3/4] overflow-hidden cursor-pointer bg-stone-900 select-none text-left w-full p-0 border-0 transition-all duration-300 ${
+                className={`group relative w-full aspect-[4/5] sm:aspect-square lg:aspect-[3/4] overflow-hidden cursor-pointer bg-stone-900 select-none text-left p-0 border-0 transition-all duration-300 block ${
                   isExpanded ? "ring-4 ring-inset ring-amber-400 z-10" : ""
                 }`}
               >
@@ -176,8 +176,8 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
                   <div className="absolute inset-0 bg-stone-800" />
                 )}
 
-                {/* Textura oscura opaca SOLO detrás del texto — la imagen queda 100% visible, pura y nítida */}
-                <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-4 sm:p-5 rounded-2xl bg-black/70 backdrop-blur-md border border-white/15 text-white shadow-xl transition-all duration-300 group-hover:bg-black/80">
+                {/* Textura oscura opaca SOLO al pie detrás del texto — SIN márgenes (de borde a borde) y con foto 100% limpia arriba */}
+                <div className="absolute inset-x-0 bottom-0 pt-12 sm:pt-16 pb-5 sm:pb-6 px-5 sm:px-6 bg-gradient-to-t from-black/90 via-black/70 to-transparent flex flex-col justify-end text-white transition-all duration-300">
                   <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-amber-300 block mb-1">
                     {category}
                   </span>

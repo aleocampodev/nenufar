@@ -95,9 +95,9 @@ export const GalleryClient: React.FC<Props> = ({
       className="py-16 sm:py-20 md:py-24 bg-[#FAF8F5] border-b border-neutral-100 scroll-mt-24 overflow-hidden"
     >
       <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Encabezado Editorial */}
+        {/* Encabezado Editorial con animación bidireccional (subir y bajar) */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12 space-y-3">
-          <ScrollReveal variant="fade-up" duration={800}>
+          <ScrollReveal variant="fade-up" duration={800} once={false} rootMargin="0px 0px -20px 0px">
             {tagline && (
               <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.3em] text-[#8B5A2B] font-semibold font-sans">
                 <Sparkles className="w-3.5 h-3.5 text-[#8B5A2B]" />
@@ -118,9 +118,9 @@ export const GalleryClient: React.FC<Props> = ({
           </ScrollReveal>
         </div>
 
-        {/* 1. TABS SUPERIORES (Centrados con scroll horizontal fluido en móvil) */}
+        {/* 1. TABS SUPERIORES (Animados bidireccionalmente al subir y bajar) */}
         {safeTabs.length > 1 && (
-          <div className="mb-10 sm:mb-12">
+          <ScrollReveal variant="fade-up" delay={120} duration={800} distance={28} once={false} rootMargin="0px 0px -20px 0px" className="mb-10 sm:mb-12">
             <div className="flex items-center justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-none px-2 -mx-2">
               {safeTabs.map((tab, idx) => {
                 const isActive = idx === activeTabIndex
@@ -152,56 +152,60 @@ export const GalleryClient: React.FC<Props> = ({
                 )
               })}
             </div>
-          </div>
+          </ScrollReveal>
         )}
 
-        {/* 2. CARRUSEL HORIZONTAL DE IMÁGENES PURAS (Sin textos superpuestos) */}
-        <div key={activeTabIndex} className="animate-in fade-in duration-500 relative px-2 sm:px-6">
-          <Carousel
-            opts={{
-              align: 'start',
-              loop: currentImages.length > 3,
-            }}
-            className="w-full relative"
-          >
-            <CarouselContent className="-ml-3 sm:-ml-4">
-              {currentImages.map((img, idx) => (
-                <CarouselItem
-                  key={img.id || idx}
-                  className="pl-3 sm:pl-4 basis-[82%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
-                >
-                  <div
-                    onClick={() => setSelectedImageIndex(idx)}
-                    className="relative aspect-[3/4] rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-200/70 group shadow-[0_6px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_16px_36px_rgba(106,27,154,0.18)] transition-all duration-500 cursor-pointer"
+        {/* 2. CARRUSEL HORIZONTAL FLUIDO (Animado bidireccionalmente desde abajo con inercia) */}
+        <ScrollReveal variant="fade-up" delay={240} duration={900} distance={40} once={false} rootMargin="0px 0px -20px 0px">
+          <div key={activeTabIndex} className="animate-in fade-in duration-500 relative px-2 sm:px-6">
+            <Carousel
+              opts={{
+                align: 'start',
+                dragFree: true,
+                containScroll: 'trimSnaps',
+                loop: currentImages.length > 3,
+              }}
+              className="w-full relative select-none"
+            >
+              <CarouselContent className="-ml-3 sm:-ml-4 cursor-grab active:cursor-grabbing">
+                {currentImages.map((img, idx) => (
+                  <CarouselItem
+                    key={img.id || idx}
+                    className="pl-3 sm:pl-4 basis-[82%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
                   >
-                    <Image
-                      src={img.src}
-                      alt={img.alt || img.title || 'Joyería Nénufar'}
-                      fill
-                      sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 25vw"
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      priority={idx < 4}
-                    />
+                    <div
+                      onClick={() => setSelectedImageIndex(idx)}
+                      className="relative aspect-[3/4] rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-200/70 group shadow-[0_6px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_16px_36px_rgba(106,27,154,0.18)] transition-all duration-500 cursor-pointer"
+                    >
+                      <Image
+                        src={img.src}
+                        alt={img.alt || img.title || 'Joyería Nénufar'}
+                        fill
+                        sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 25vw"
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        priority={idx < 4}
+                      />
 
-                    {/* Overlay sutil al hover con botón de expansión */}
-                    <div className="absolute inset-0 bg-black/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                      {/* Overlay sutil al hover con botón de expansión */}
+                      <div className="absolute inset-0 bg-black/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-                    {/* Botón flotante para expandir */}
-                    <div className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-brand opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-md scale-90 group-hover:scale-100">
-                      <Maximize2 className="w-4 h-4" />
+                      {/* Botón flotante para expandir */}
+                      <div className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-brand opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-md scale-90 group-hover:scale-100">
+                        <Maximize2 className="w-4 h-4" />
+                      </div>
                     </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
 
-            {/* Flechas de Navegación del Carrusel */}
-            <div className="flex items-center justify-center gap-3 mt-8">
-              <CarouselPrevious className="relative static translate-y-0 h-10 w-10 rounded-full border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-800 shadow-sm" />
-              <CarouselNext className="relative static translate-y-0 h-10 w-10 rounded-full border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-800 shadow-sm" />
-            </div>
-          </Carousel>
-        </div>
+              {/* Flechas de Navegación del Carrusel */}
+              <div className="flex items-center justify-center gap-3 mt-8">
+                <CarouselPrevious className="relative static translate-y-0 h-10 w-10 rounded-full border-neutral-300 bg-white hover:bg-brand hover:text-white hover:border-brand text-neutral-800 shadow-sm transition-colors cursor-pointer" />
+                <CarouselNext className="relative static translate-y-0 h-10 w-10 rounded-full border-neutral-300 bg-white hover:bg-brand hover:text-white hover:border-brand text-neutral-800 shadow-sm transition-colors cursor-pointer" />
+              </div>
+            </Carousel>
+          </div>
+        </ScrollReveal>
       </div>
 
       {/* 3. LIGHTBOX MODAL: Expansión de Imagen al Seleccionar */}
