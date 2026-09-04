@@ -115,28 +115,6 @@ export const CallToActionBlock: React.FC<
                   Personalizar mi Joya
                 </a>
               )}
-
-              {/* Canales Directos Adicionales (Instagram & Telegram) */}
-              <div className="flex items-center justify-center lg:justify-end gap-3 pt-1">
-                <a
-                  href="https://www.instagram.com/nenufar.co/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/90 dark:bg-zinc-800 border border-brand/20 text-xs font-medium text-foreground hover:text-brand hover:border-brand/40 transition-colors shadow-2xs"
-                >
-                  <span>Instagram</span>
-                  <span className="text-[10px]">↗</span>
-                </a>
-                <a
-                  href="https://t.me/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/90 dark:bg-zinc-800 border border-brand/20 text-xs font-medium text-foreground hover:text-brand hover:border-brand/40 transition-colors shadow-2xs"
-                >
-                  <span>Telegram</span>
-                  <span className="text-[10px]">↗</span>
-                </a>
-              </div>
             </div>
           </div>
         </div>

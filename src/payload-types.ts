@@ -516,6 +516,7 @@ export interface Page {
      */
     socialLinks?: {
       instagramUrl?: string | null;
+      facebookUrl?: string | null;
       whatsappUrl?: string | null;
       telegramUrl?: string | null;
     };
@@ -588,41 +589,6 @@ export interface Page {
   layout: (
     | NenufarStoryBlock
     | ImageStripBlock
-    | {
-        /**
-         * Texto pequeño en mayúsculas sobre el título (ej: Tradición y Delicadeza)
-         */
-        tagline?: string | null;
-        heading?: string | null;
-        /**
-         * Imagen del centro destacada. Si se deja vacía se muestra imagen ilustrativa por defecto.
-         */
-        centerImage?: (number | null) | Media;
-        items?:
-          | {
-              icon?:
-                | (
-                    | 'handmade'
-                    | 'ancestral'
-                    | 'colors'
-                    | 'unique'
-                    | 'design'
-                    | 'quality'
-                    | 'gift'
-                    | 'shipping'
-                    | 'support'
-                    | 'sparkles'
-                  )
-                | null;
-              title: string;
-              description: string;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'features';
-      }
     | GalleryBlock
     | {
         tagline?: string | null;
@@ -1749,6 +1715,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               instagramUrl?: T;
+              facebookUrl?: T;
               whatsappUrl?: T;
               telegramUrl?: T;
             };
@@ -1790,23 +1757,6 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         nenufarStory?: T | NenufarStoryBlockSelect<T>;
         imageStrip?: T | ImageStripBlockSelect<T>;
-        features?:
-          | T
-          | {
-              tagline?: T;
-              heading?: T;
-              centerImage?: T;
-              items?:
-                | T
-                | {
-                    icon?: T;
-                    title?: T;
-                    description?: T;
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
         gallery?: T | GalleryBlockSelect<T>;
         testimonials?:
           | T

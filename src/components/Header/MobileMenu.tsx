@@ -133,18 +133,8 @@ export function MobileMenu({ menu, categories = [] }: Props) {
 
             <li>
               <Link
-                href="/#tradicion"
-                onClick={(e) => handleAnchorClick(e, '/#tradicion')}
-                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
-              >
-                Tradición & Delicadeza
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                href="/#galeria"
-                onClick={(e) => handleAnchorClick(e, '/#galeria')}
+                href="/galeria"
+                onClick={closeMobileMenu}
                 className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
               >
                 Galería de Creaciones

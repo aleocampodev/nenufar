@@ -153,20 +153,12 @@ export function HeaderClient({ header, categories = [] }: Props) {
               </div>
             </div>
 
-            {/* Tradición & Delicadeza (Sección en Landing) */}
+            {/* Galería (Página dedicada) */}
             <Link
-              href="/#tradicion"
-              onClick={(e) => handleAnchorClick(e, '/#tradicion')}
-              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${linkBaseClass}`}
-            >
-              Tradición
-            </Link>
-
-            {/* Galería (Sección en Landing) */}
-            <Link
-              href="/#galeria"
-              onClick={(e) => handleAnchorClick(e, '/#galeria')}
-              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${linkBaseClass}`}
+              href="/galeria"
+              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
+                pathname?.startsWith('/galeria') ? linkActiveClass : linkBaseClass
+              }`}
             >
               Galería
             </Link>

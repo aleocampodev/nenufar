@@ -2,7 +2,6 @@ import type { CollectionConfig } from 'payload'
 
 import { Banner } from '@/blocks/Banner/config'
 import { Carousel } from '@/blocks/Carousel/config'
-import { FeaturesBlock as Features } from '@/blocks/Features/config'
 import { GalleryBlock as Gallery } from '@/blocks/Gallery/config'
 import { ImageStrip } from '@/blocks/ImageStrip/config'
 import { NenufarStory } from '@/blocks/NenufarStory/config'
@@ -102,7 +101,6 @@ export const Pages: CollectionConfig = {
               blocks: [
                 NenufarStory,
                 ImageStrip,
-                Features,
                 Gallery,
                 TestimonialsBlock,
                 UpcomingEventsBlock,

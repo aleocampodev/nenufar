@@ -126,6 +126,12 @@ export const hero: Field = {
           defaultValue: 'https://www.instagram.com/nenufar.co/',
         },
         {
+          name: 'facebookUrl',
+          type: 'text',
+          label: 'URL de Facebook',
+          defaultValue: 'https://www.facebook.com/nenufar.co',
+        },
+        {
           name: 'whatsappUrl',
           type: 'text',
           label: 'URL de WhatsApp',
