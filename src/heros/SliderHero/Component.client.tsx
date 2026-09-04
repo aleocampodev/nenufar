@@ -193,7 +193,7 @@ export const SliderHeroClient: React.FC<{
       ref={containerRef}
       className="relative w-full min-h-screen min-h-[100dvh] -mt-[74px] sm:-mt-[78px] pt-[78px] sm:pt-[88px] lg:pt-[105px] pb-0 bg-[#DBC4AC] border-b border-[#C8AF95]/60 flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
-      <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto pt-2 sm:pt-4 md:pt-6 lg:pt-8 pb-8 sm:pb-12">
+      <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4 sm:pt-6 md:pt-8 lg:pt-8 pb-4 sm:pb-8 lg:my-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start lg:items-center">
           
           {/* ========================================================= */}
@@ -223,18 +223,18 @@ export const SliderHeroClient: React.FC<{
             </h1>
 
             {/* CTA Principal hacia el Catálogo & Redes Sociales */}
-            <div ref={actionsRef} className="flex flex-wrap items-center gap-2.5 sm:gap-4 lg:gap-5">
+            <div ref={actionsRef} className="flex items-center gap-2 sm:gap-3 lg:gap-5">
               <Link
                 href="/shop"
-                className="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-full bg-brand hover:bg-brand-dark active:scale-95 text-white font-sans text-xs sm:text-sm font-bold uppercase tracking-wider shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group"
+                className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-7 py-2.5 sm:py-3.5 rounded-full bg-brand hover:bg-brand-dark active:scale-95 text-white font-sans text-[11px] sm:text-sm font-bold uppercase tracking-wider shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group shrink-0"
               >
                 <span>Conoce la colección</span>
-                <span className="text-base transition-transform duration-300 group-hover:translate-x-1">→</span>
+                <span className="text-sm sm:text-base transition-transform duration-300 group-hover:translate-x-1">→</span>
               </Link>
 
               {/* Redes Sociales */}
               <div
-                className="inline-flex items-center gap-2.5 sm:gap-3 text-neutral-700 bg-[#F4ECE3] backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#C8AF95] shadow-xs"
+                className="inline-flex items-center gap-2 sm:gap-3 text-neutral-700 bg-[#F4ECE3] backdrop-blur-md px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#C8AF95] shadow-xs shrink-0"
                 role="navigation"
                 aria-label="Redes sociales de Nénufar"
               >
@@ -290,13 +290,13 @@ export const SliderHeroClient: React.FC<{
       {/* ========================================================= */}
       <div
         ref={modelRef}
-        className="relative lg:absolute bottom-2 sm:bottom-4 lg:bottom-10 xl:bottom-12 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-8 xl:right-16 h-[38vh] sm:h-[46vh] md:h-[50vh] lg:h-[78vh] xl:h-[84vh] w-full lg:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-hidden lg:overflow-visible"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-8 xl:right-16 lg:bottom-10 xl:bottom-12 h-[58vh] sm:h-[64vh] md:h-[68vh] lg:h-[78vh] xl:h-[84vh] w-full lg:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-hidden lg:overflow-visible"
       >
         <img
           ref={imgRef}
           src="/shirley-sin-fondo.svg"
           alt="Shirley luciendo alta joyería artesanal en micro-mostacilla Nénufar"
-          className="w-auto h-full max-h-[86vh] object-contain object-bottom select-none drop-shadow-none will-change-transform"
+          className="w-auto max-w-none h-full max-h-[86vh] object-contain object-bottom select-none drop-shadow-none will-change-transform"
           loading="eager"
         />
       </div>
