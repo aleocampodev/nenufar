@@ -193,7 +193,7 @@ export const SliderHeroClient: React.FC<{
           if (imgRef.current) {
             gsap.set(imgRef.current, {
               opacity: 1,
-              scale: 1.14,
+              scale: 1,
               y: 0,
               transformOrigin: '51.8% 28%',
             })
@@ -207,15 +207,15 @@ export const SliderHeroClient: React.FC<{
         const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
 
         // 1. Fotografía de autor: Llega sutilmente desde abajo (from below)
-        //    Adaptada dinámicamente a la pantalla sin recortar el sombrero
+        //    Escala armónica (1.0) y altura equilibrada para dar aire editorial a la joyería artesanal
         if (imgRef.current) {
           const isShortMobile = typeof window !== 'undefined' && window.innerHeight < 720
-          const targetY = isShortMobile ? -6 : -22
-          const breathTargetY = isShortMobile ? -11 : -27
-          const startY = targetY + 46 // Entrada suave y sutil desde abajo
+          const targetY = isShortMobile ? 0 : -8
+          const breathTargetY = isShortMobile ? -5 : -13
+          const startY = targetY + 42 // Entrada suave y sutil desde abajo
 
           gsap.set(imgRef.current, {
-            scale: 1.14,
+            scale: 1,
             transformOrigin: '51.8% 25%',
             willChange: 'transform, opacity',
           })
@@ -423,7 +423,7 @@ export const SliderHeroClient: React.FC<{
       {/* ========================================================= */}
       <div
         ref={modelRef}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-8 xl:right-16 lg:bottom-10 xl:bottom-12 h-[57vh] sm:h-[63vh] md:h-[68vh] lg:h-[78vh] xl:h-[84vh] w-full lg:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-visible"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-8 xl:right-16 lg:bottom-10 xl:bottom-12 h-[52vh] sm:h-[58vh] md:h-[64vh] lg:h-[78vh] xl:h-[84vh] w-full lg:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-visible"
       >
         <img
           ref={imgRef}
