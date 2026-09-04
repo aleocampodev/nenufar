@@ -85,13 +85,13 @@ export const SliderHeroClient: React.FC<{
           {/* COLUMNA IZQUIERDA: Titular, Badge, Chips (Elevado)        */}
           {/* ========================================================= */}
           <div className="lg:col-span-7 flex flex-col items-start text-left max-w-2xl pb-24 sm:pb-32 lg:pb-36 pt-6 sm:pt-8">
-            {/* Badge superior (Rosa Acento #FF4FA3) */}
+            {/* Badge superior (Rosa Oscuro de Alto Contraste) */}
             <div
               ref={badgeRef}
-              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#FF4FA3]/10 dark:bg-[#FF4FA3]/15 border border-[#FF4FA3]/30 shadow-xs mb-5 sm:mb-6 backdrop-blur-xs"
+              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#FDF2F8] dark:bg-[#831843]/25 border border-[#E91E8C]/30 dark:border-[#FF4FA3]/30 shadow-2xs mb-5 sm:mb-6"
             >
-              <span className="w-2 h-2 rounded-full bg-[#FF4FA3] animate-pulse shrink-0" />
-              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#FF4FA3]">
+              <span className="w-2 h-2 rounded-full bg-[#B01255] dark:bg-[#FF4FA3] animate-pulse shrink-0" />
+              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#9D174D] dark:text-[#FF80BF]">
                 ALTA JOYERÍA ARTESANAL & EDICIÓN LIMITADA
               </span>
             </div>
