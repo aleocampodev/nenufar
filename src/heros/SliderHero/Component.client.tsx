@@ -1,14 +1,10 @@
 'use client'
 
 import type { Media } from '@/payload-types'
-import React, { useRef } from 'react'
+import React, { useState, useRef } from 'react'
+import Link from 'next/link'
 import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger, useGSAP)
-}
 
 export type Slide = {
   modelImage?: number | Media | null
@@ -23,245 +19,210 @@ export type Slide = {
   linkUrl?: string | null
 }
 
+const closcaSlides = [
+  {
+    number: '01',
+    eyebrow: 'ALTA JOYERÍA ARTESANAL & EDICIÓN LIMITADA',
+    headingPrefix: 'La nobleza del Caribe no se hereda.',
+    headingHighlight: 'Se teje.',
+    narrative:
+      'Micro-mostacilla checa calibrada, tejida a mano con precisión milimétrica y la memoria viva del Caribe. Piezas de autor exclusivas creadas para elevar tu estilo con una joya irrepetible que cuenta una historia viva.',
+    bgGradient: 'from-[#C84E34] via-[#B84028] to-[#9E301B]',
+    image: '/hero-model-closca.webp',
+    imageAlt: 'Mujer luciendo alta joyería artesanal en micro-mostacilla Nénufar',
+    isPortrait: true,
+    linkLabel: 'Explorar Catálogo',
+    linkUrl: '/shop',
+  },
+  {
+    number: '02',
+    eyebrow: 'EXPERIENCIAS & APRENDIZAJE ANCESTRAL',
+    headingPrefix: 'El arte de tejer historias vivas.',
+    headingHighlight: 'En comunidad.',
+    narrative:
+      'Aprende la técnica milenaria de la mostacilla en talleres presenciales de grupos reducidos en Cartagena de Indias. Conéctate con la sabiduría de nuestras raíces a través de tus propias manos.',
+    bgGradient: 'from-[#3D1A5B] via-[#32134C] to-[#250B3A]',
+    image:
+      'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/talleres-comunidad.jpeg',
+    imageAlt: 'Talleres que Tejen Comunidad en Cartagena - Nénufar',
+    isPortrait: false,
+    linkLabel: 'Ver Próximos Talleres',
+    linkUrl: '/eventos',
+  },
+  {
+    number: '03',
+    eyebrow: 'ENCUENTROS & POP-UPS EN CARTAGENA',
+    headingPrefix: 'Encuéntranos en el corazón del Caribe.',
+    headingHighlight: 'En vivo.',
+    narrative:
+      'Descubre nuestras piezas de autor en las ferias artesanales y mercados de diseño más emblemáticos de Cartagena: Centro Histórico y Getsemaní. Siente la textura y el brillo de cada joya de cerca.',
+    bgGradient: 'from-[#6A1B4D] via-[#52133B] to-[#3B0A29]',
+    image:
+      'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/feria-y-talleres.jpg',
+    imageAlt: 'Ferias y Pop-ups de Joyería Artesanal en Cartagena',
+    isPortrait: false,
+    linkLabel: 'Próximas Ferias',
+    linkUrl: '/eventos',
+  },
+]
+
 export const SliderHeroClient: React.FC<{
-  slides: Slide[]
+  slides?: Slide[]
   fallbackRichText?: any
   fallbackLinks?: any
   authorMedia?: number | Media | null
-}> = ({ slides }) => {
+}> = () => {
+  const [activeIndex, setActiveIndex] = useState(0)
   const containerRef = useRef<HTMLElement>(null)
-  const imageWrapperRef = useRef<HTMLDivElement>(null)
-  const imageRef = useRef<HTMLImageElement>(null)
-  const badgeRef = useRef<HTMLDivElement>(null)
-  const headingRef = useRef<HTMLHeadingElement>(null)
-  const subtitleRef = useRef<HTMLParagraphElement>(null)
-  const chipsRef = useRef<HTMLDivElement>(null)
-  const glowRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const modelRef = useRef<HTMLDivElement>(null)
 
-  const activeSlide = slides?.[0]
-
-  const isOldHeading =
-    !activeSlide?.heading ||
-    activeSlide.heading.includes('Mostacilla con Alma') ||
-    activeSlide.heading.includes('Shirley')
-  const rawHeading = isOldHeading
-    ? 'La nobleza del Caribe no se hereda. Se teje.'
-    : activeSlide.heading
-
-  const isOldSubheading =
-    !activeSlide?.subheading ||
-    activeSlide.subheading.includes('dedicación de Shirley') ||
-    activeSlide.subheading.includes('Shirley')
-  const subheadingText = isOldSubheading
-    ? 'Micro-mostacilla checa calibrada, tejida a mano con precisión milimétrica y la vibrante herencia del Caribe. Piezas de autor exclusivas diseñadas para elevar tu estilo con una joya irrepetible que cuenta una historia viva.'
-    : activeSlide.subheading
+  const currentSlide = closcaSlides[activeIndex]
+  const nextIndex = (activeIndex + 1) % closcaSlides.length
+  const nextSlide = closcaSlides[nextIndex]
 
   useGSAP(
     () => {
-      // 1. Animación de entrada refinada al montar
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-
-      if (badgeRef.current) {
-        tl.from(badgeRef.current, {
-          y: 20,
-          opacity: 0,
-          duration: 0.8,
-        })
-      }
-
-      if (headingRef.current) {
-        tl.from(
-          headingRef.current,
-          {
-            y: 35,
-            opacity: 0,
-            duration: 1,
-          },
-          '-=0.5',
+      // Animación al cambiar de slide
+      if (contentRef.current) {
+        gsap.fromTo(
+          contentRef.current,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
         )
       }
-
-      if (subtitleRef.current) {
-        tl.from(
-          subtitleRef.current,
-          {
-            y: 25,
-            opacity: 0,
-            duration: 0.9,
-          },
-          '-=0.6',
+      if (modelRef.current) {
+        gsap.fromTo(
+          modelRef.current,
+          { opacity: 0, scale: 0.96, y: 30 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.9, ease: 'power3.out' },
         )
-      }
-
-      if (chipsRef.current) {
-        tl.from(
-          chipsRef.current.children,
-          {
-            y: 20,
-            opacity: 0,
-            duration: 0.6,
-            stagger: 0.1,
-          },
-          '-=0.5',
-        )
-      }
-
-      if (imageRef.current) {
-        tl.from(
-          imageRef.current,
-          {
-            y: 45,
-            scale: 0.94,
-            opacity: 0,
-            duration: 1.2,
-            ease: 'power2.out',
-          },
-          '-=1.0',
-        )
-      }
-
-      if (glowRef.current) {
-        tl.from(
-          glowRef.current,
-          {
-            scale: 0.7,
-            opacity: 0,
-            duration: 1.5,
-            ease: 'power2.out',
-          },
-          '-=1.2',
-        )
-      }
-
-      // 2. Micro-respiración sutil (flotado continuo de alta gama)
-      if (imageRef.current) {
-        gsap.to(imageRef.current, {
-          y: -8,
-          duration: 3.6,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        })
-      }
-
-      // 3. GSAP ScrollTrigger: Parallax dinámico al hacer scroll
-      if (imageWrapperRef.current && containerRef.current) {
-        gsap.to(imageWrapperRef.current, {
-          yPercent: 18,
-          scale: 1.04,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1.2,
-          },
-        })
-      }
-
-      if (glowRef.current && containerRef.current) {
-        gsap.to(glowRef.current, {
-          yPercent: 28,
-          scale: 1.25,
-          opacity: 0.45,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1.5,
-          },
-        })
       }
     },
-    { scope: containerRef },
+    { dependencies: [activeIndex], scope: containerRef },
   )
 
   return (
     <section
       ref={containerRef}
-      className="relative w-full min-h-[90vh] lg:min-h-[94vh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-12 sm:pb-16 lg:pb-20 bg-[#FAF8FC] dark:bg-[#120A1E] flex items-center overflow-hidden select-none transition-colors duration-500"
+      className={`relative w-full min-h-[92vh] -mt-[74px] sm:-mt-[78px] pt-[74px] sm:pt-[78px] bg-gradient-to-br ${currentSlide.bgGradient} transition-all duration-700 overflow-hidden select-none flex flex-col justify-between`}
     >
-      {/* Resplandor ambiental de fondo cálido / rosa acento suave detrás del vector */}
-      <div
-        ref={glowRef}
-        className="absolute top-1/4 -right-12 sm:-right-20 w-[460px] sm:w-[650px] lg:w-[820px] h-[460px] sm:h-[650px] lg:h-[820px] bg-gradient-to-bl from-[#FF4FA3]/20 via-[#E91E8C]/12 to-transparent rounded-full blur-3xl pointer-events-none"
-      />
-      <div className="absolute -bottom-16 left-1/12 w-[350px] h-[350px] bg-gradient-to-tr from-[#3D1A5B]/8 via-[#FF4FA3]/5 to-transparent rounded-full blur-2xl pointer-events-none" />
+      {/* Halo ambiental orgánico */}
+      <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
-          
-          {/* ========================================================= */}
-          {/* COLUMNA IZQUIERDA: Titular, Badge y Subtítulo             */}
-          {/* ========================================================= */}
-          <div className="lg:col-span-7 z-10 flex flex-col items-start text-left max-w-2xl">
-            {/* Badge superior (Rosa Acento #FF4FA3) */}
-            <div
-              ref={badgeRef}
-              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#FF4FA3]/10 dark:bg-[#FF4FA3]/15 border border-[#FF4FA3]/30 shadow-xs mb-5 sm:mb-6 backdrop-blur-xs"
-            >
-              <span className="w-2 h-2 rounded-full bg-[#FF4FA3] animate-pulse shrink-0" />
-              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#FF4FA3]">
-                {badgeText}
-              </span>
-            </div>
-
-            {/* Titular H1 (Tipografía Serif / Neutro Oscuro #1A0E2E) */}
-            <h1
-              ref={headingRef}
-              className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] text-[#1A0E2E] dark:text-[#FAF8FC] font-normal leading-[1.1] tracking-tight mb-5 sm:mb-6"
-            >
-              {rawHeading}
-            </h1>
-
-            {/* Subtítulo (Contraste cálido, fluido y persuasivo para comprar) */}
-            <p
-              ref={subtitleRef}
-              className="font-sans font-normal text-base sm:text-lg lg:text-[1.125rem] text-[#3D1A5B]/90 dark:text-[#FAF8FC]/85 leading-[1.7] max-w-xl mb-7 sm:mb-8"
-            >
-              {subheadingText}
-            </p>
-
-            {/* Sellos de Confianza y Gatillos de Compra (Sin Botones) */}
-            <div ref={chipsRef} className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 pt-1">
-              <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/85 dark:bg-[#1A0E2E]/80 border border-[#E8E0F0] dark:border-[#2D1A4A] text-xs font-medium text-[#1A0E2E] dark:text-white/90 shadow-2xs backdrop-blur-xs">
-                <span className="text-sm">✦</span>
-                <span>Piezas únicas de autor</span>
-              </div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/85 dark:bg-[#1A0E2E]/80 border border-[#E8E0F0] dark:border-[#2D1A4A] text-xs font-medium text-[#1A0E2E] dark:text-white/90 shadow-2xs backdrop-blur-xs">
-                <span className="text-sm">✨</span>
-                <span>Micro-mostacilla checa calibrada</span>
-              </div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/85 dark:bg-[#1A0E2E]/80 border border-[#E8E0F0] dark:border-[#2D1A4A] text-xs font-medium text-[#1A0E2E] dark:text-white/90 shadow-2xs backdrop-blur-xs">
-                <span className="text-sm">📦</span>
-                <span>Envíos asegurados a Colombia</span>
-              </div>
-            </div>
-          </div>
-
-          {/* ========================================================= */}
-          {/* COLUMNA DERECHA: Vector Palenquera SVG + GSAP Parallax     */}
-          {/* ========================================================= */}
-          <div className="lg:col-span-5 relative flex items-center justify-center lg:justify-end mt-4 lg:mt-0">
-            <div
-              ref={imageWrapperRef}
-              className="relative w-full max-w-[400px] sm:max-w-[500px] md:max-w-[560px] lg:max-w-[640px] flex justify-center will-change-transform [mask-image:linear-gradient(to_bottom,black_78%,transparent_98%)]"
-            >
-              <img
-                ref={imageRef}
-                src="/landing-modify-traced.svg"
-                alt="Mujer palenquera luciendo joyería en micro-mostacilla Nénufar"
-                className="w-full h-auto max-h-[64vh] sm:max-h-[74vh] lg:max-h-[84vh] object-contain drop-shadow-[0_20px_40px_rgba(61,26,91,0.15)] select-none will-change-transform"
-                loading="eager"
-                decoding="async"
-              />
-            </div>
-          </div>
-
+      {/* Contenedor Principal Closca */}
+      <div className="relative max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 w-full h-full min-h-[calc(100vh-78px)] flex flex-col justify-between py-8 sm:py-10 lg:py-14 z-10">
+        
+        {/* FILA SUPERIOR: Párrafo Narrativo (Top Left) */}
+        <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg z-20">
+          <p className="font-sans font-light text-white/90 text-xs sm:text-sm md:text-[15px] leading-relaxed tracking-wide">
+            {currentSlide.narrative}
+          </p>
         </div>
+
+        {/* FILA INTERMEDIA: Navegación Numerada Closca (01 02 03 + Progress Bar) */}
+        <div className="my-auto py-6 sm:py-8 z-20">
+          <div className="flex items-center gap-5 sm:gap-6 text-xs sm:text-sm tracking-widest font-sans mb-3">
+            {closcaSlides.map((s, idx) => (
+              <button
+                key={s.number}
+                onClick={() => setActiveIndex(idx)}
+                className={`transition-all duration-300 cursor-pointer ${
+                  activeIndex === idx
+                    ? 'text-white font-semibold scale-105'
+                    : 'text-white/45 hover:text-white/80'
+                }`}
+              >
+                {s.number}
+              </button>
+            ))}
+          </div>
+
+          {/* Línea de progreso interactiva */}
+          <div className="relative w-32 sm:w-44 h-[2px] bg-white/25 rounded-full overflow-hidden">
+            <div
+              className="absolute top-0 bottom-0 w-1/3 bg-white transition-transform duration-500 ease-out"
+              style={{ transform: `translateX(${activeIndex * 100}%)` }}
+            />
+          </div>
+        </div>
+
+        {/* FILA INFERIOR: Categoría + Titular Editorial H1 (Bottom Left) y CTA (Bottom Right) */}
+        <div
+          ref={contentRef}
+          className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 z-20 pb-2"
+        >
+          <div className="max-w-2xl">
+            {/* Tag / Eyebrow en Versalitas */}
+            <div className="text-[10px] sm:text-xs font-sans font-medium uppercase tracking-[0.25em] text-white/80 mb-2 sm:mb-3">
+              {currentSlide.eyebrow}
+            </div>
+
+            {/* Titular H1 Editorial con énfasis cursivo */}
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[3.8rem] xl:text-[4.5rem] text-white font-normal leading-[1.05] tracking-tight">
+              {currentSlide.headingPrefix}{' '}
+              <span className="italic font-light opacity-95">
+                {currentSlide.headingHighlight}
+              </span>
+            </h1>
+          </div>
+
+          {/* Enlace de Acción Sutil Estilo Closca (Bottom Right) */}
+          <div className="md:self-end pt-2 md:pt-0">
+            <Link
+              href={currentSlide.linkUrl}
+              className="group inline-flex items-center gap-2 text-white/90 hover:text-white text-xs sm:text-sm font-sans font-medium tracking-wider uppercase transition-all"
+            >
+              <span>{currentSlide.linkLabel}</span>
+              <span className="transition-transform duration-300 group-hover:translate-x-1.5">
+                →
+              </span>
+            </Link>
+          </div>
+        </div>
+
       </div>
+
+      {/* ========================================================= */}
+      {/* CENTRO-DERECHA: Fotografía Retrato de la Modelo (Closca) */}
+      {/* ========================================================= */}
+      <div
+        ref={modelRef}
+        className="absolute bottom-0 right-8 sm:right-16 md:right-28 lg:right-40 xl:right-52 h-[75%] sm:h-[84%] lg:h-[92%] max-w-[380px] sm:max-w-[500px] lg:max-w-[640px] flex items-end justify-center pointer-events-none z-15"
+      >
+        <img
+          src={currentSlide.image}
+          alt={currentSlide.imageAlt}
+          className={`w-full h-full object-contain select-none drop-shadow-[0_20px_45px_rgba(0,0,0,0.3)] ${
+            currentSlide.isPortrait
+              ? '[mask-image:linear-gradient(to_bottom,black_82%,transparent_100%)]'
+              : 'rounded-2xl lg:rounded-3xl max-h-[70vh] object-cover [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)]'
+          }`}
+          loading="eager"
+        />
+      </div>
+
+      {/* ========================================================= */}
+      {/* EXTREMO DERECHO: Tarjeta de Arco / Cápsula del Siguiente Slide */}
+      {/* ========================================================= */}
+      <button
+        onClick={() => setActiveIndex(nextIndex)}
+        aria-label="Ver siguiente colección"
+        className="absolute right-0 top-1/2 -translate-y-1/2 w-16 sm:w-24 md:w-32 lg:w-44 xl:w-52 h-[52%] sm:h-[60%] lg:h-[68%] rounded-l-full overflow-hidden border-l-2 border-y-2 border-white/35 bg-black/25 backdrop-blur-xs shadow-2xl cursor-pointer group transition-all duration-500 hover:w-20 sm:hover:w-28 md:hover:w-36 lg:hover:w-48 z-25"
+      >
+        <img
+          src={nextSlide.image}
+          alt="Siguiente diseño"
+          className="w-full h-full object-cover object-center opacity-75 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 text-white/90 text-xs sm:text-sm font-sans tracking-widest font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          {nextSlide.number}
+        </div>
+      </button>
+
     </section>
   )
 }
+
 
