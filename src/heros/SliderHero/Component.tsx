@@ -17,19 +17,32 @@ type Slide = {
 }
 
 export const SliderHero: React.FC<Page['hero']> = (props: any) => {
-  const { richText, links, slides } = props as Page['hero'] & { slides?: Slide[] }
-
-  // Fallback: if no slides configured, render lowImpact-style heading
-  if (!slides || slides.length === 0) {
-    return null
-  }
+  const {
+    modelImage,
+    badge,
+    heading,
+    headingHighlight,
+    linkLabel,
+    linkUrl,
+    socialLinks,
+    richText,
+    links,
+    slides,
+  } = props || {}
 
   return (
     <SliderHeroClient
+      modelImage={modelImage}
+      badge={badge}
+      heading={heading}
+      headingHighlight={headingHighlight}
+      linkLabel={linkLabel}
+      linkUrl={linkUrl}
+      socialLinks={socialLinks}
       slides={slides as Slide[]}
       fallbackRichText={richText}
       fallbackLinks={links}
-      authorMedia={props.media}
+      authorMedia={props?.media}
     />
   )
 }

@@ -66,6 +66,17 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
           },
         },
       ],
+      badge: 'ALTA JOYERÍA ARTESANAL',
+      heading: 'La nobleza del Caribe no se hereda.',
+      headingHighlight: 'Se teje.',
+      linkLabel: 'Conoce la colección',
+      linkUrl: '/shop',
+      socialLinks: {
+        instagramUrl: 'https://www.instagram.com/nenufar.co/',
+        whatsappUrl:
+          'https://wa.me/?text=Hola%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20N%C3%A9nufar',
+        telegramUrl: 'https://t.me/',
+      },
       // Slider slides - Krafti 3 editorial slides with high-res jewelry photography
       slides: [
         {
