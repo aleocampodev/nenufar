@@ -68,10 +68,13 @@ export const SliderHeroClient: React.FC<{
       ref={containerRef}
       className="relative w-full min-h-[90vh] lg:min-h-[94vh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-0 bg-[#FAF8FC] dark:bg-[#120A1E] flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
-      {/* Resplandor ambiental de iluminación suave */}
+      {/* Resplandor ambiental de iluminación suave (Derecha e Izquierda) */}
       <div
         ref={glowRef}
         className="absolute top-1/4 -right-12 sm:-right-20 w-[460px] sm:w-[650px] lg:w-[820px] h-[460px] sm:h-[650px] lg:h-[820px] bg-gradient-to-bl from-[#FF4FA3]/18 via-[#E91E8C]/10 to-transparent rounded-full blur-3xl pointer-events-none"
+      />
+      <div
+        className="absolute top-1/6 -left-16 sm:-left-24 w-[440px] sm:w-[600px] lg:w-[740px] h-[440px] sm:h-[600px] lg:h-[740px] bg-gradient-to-br from-[#FF4FA3]/14 via-[#6A1B9A]/8 to-transparent rounded-full blur-3xl pointer-events-none"
       />
       <div className="absolute -bottom-16 left-1/12 w-[350px] h-[350px] bg-gradient-to-tr from-[#3D1A5B]/8 via-[#FF4FA3]/5 to-transparent rounded-full blur-2xl pointer-events-none" />
 
@@ -79,9 +82,9 @@ export const SliderHeroClient: React.FC<{
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-end">
           
           {/* ========================================================= */}
-          {/* COLUMNA IZQUIERDA: Titular, Badge, Subtítulo, Chips       */}
+          {/* COLUMNA IZQUIERDA: Titular, Badge, Chips (Elevado)        */}
           {/* ========================================================= */}
-          <div className="lg:col-span-7 flex flex-col items-start text-left max-w-2xl pb-12 sm:pb-16 lg:pb-20 pt-4">
+          <div className="lg:col-span-7 flex flex-col items-start text-left max-w-2xl pb-24 sm:pb-32 lg:pb-36 pt-6 sm:pt-8">
             {/* Badge superior (Rosa Acento #FF4FA3) */}
             <div
               ref={badgeRef}
@@ -143,11 +146,11 @@ export const SliderHeroClient: React.FC<{
       </div>
 
       {/* ========================================================= */}
-      {/* REDES SOCIALES FLOTANTES (Estilo anterior hero flotante)  */}
+      {/* REDES SOCIALES FLOTANTES A LA IZQUIERDA                   */}
       {/* ========================================================= */}
       <div
         ref={socialsRef}
-        className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-5 sm:gap-6 text-[#3D1A5B]/85 dark:text-white/90 bg-white/75 dark:bg-black/40 backdrop-blur-md px-5 py-2.5 rounded-full border border-[#E8E0F0] dark:border-white/15 shadow-md"
+        className="absolute bottom-6 sm:bottom-10 left-4 sm:left-6 lg:left-8 xl:left-12 z-30 flex items-center gap-4 sm:gap-5 text-[#3D1A5B]/85 dark:text-white/90 bg-white/75 dark:bg-black/40 backdrop-blur-md px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-[#E8E0F0] dark:border-white/15 shadow-md"
         role="navigation"
         aria-label="Redes sociales de Nénufar"
       >
