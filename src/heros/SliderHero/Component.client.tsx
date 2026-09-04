@@ -61,10 +61,10 @@ export const SliderHeroClient: React.FC<{
           tl.to(
             imgRef.current,
             {
-              scale: 1.45,
-              transformOrigin: '53.3% 20%',
-              x: 60,
-              y: 25,
+              scale: 1.35,
+              transformOrigin: '51.8% 25%',
+              x: 50,
+              y: 20,
               duration: 1.8,
               ease: 'power2.inOut',
             },
@@ -119,9 +119,9 @@ export const SliderHeroClient: React.FC<{
           tl.to(
             imgRef.current,
             {
-              scale: 1.45,
-              transformOrigin: '53.3% 20%',
-              y: 20,
+              scale: 1.35,
+              transformOrigin: '51.8% 25%',
+              y: 15,
               duration: 1.5,
               ease: 'power2.inOut',
             },
@@ -162,8 +162,8 @@ export const SliderHeroClient: React.FC<{
           tl.to(
             imgRef.current,
             {
-              scale: 1.3,
-              transformOrigin: '53.3% 42.2%',
+              scale: 1.25,
+              transformOrigin: '51.8% 30%',
               duration: 1.4,
               ease: 'power2.inOut',
             },
@@ -299,8 +299,8 @@ export const SliderHeroClient: React.FC<{
       >
         <img
           ref={imgRef}
-          src="/hero-woman-uncropped.webp?v=2"
-          alt="Mujer luciendo alta joyería artesanal en micro-mostacilla Nénufar"
+          src="/shirley-sin-fondo.svg"
+          alt="Shirley luciendo alta joyería artesanal en micro-mostacilla Nénufar"
           className="w-auto h-full max-h-[86vh] object-contain object-bottom select-none drop-shadow-none will-change-transform"
           loading="eager"
         />
