@@ -40,13 +40,21 @@ export const SliderHeroClient: React.FC<{
 
   const activeSlide = slides?.[0]
 
-  const badgeText =
-    activeSlide?.badge || 'ALTA JOYERÍA ARTESANAL & EDICIÓN LIMITADA'
-  const rawHeading =
-    activeSlide?.heading || 'La nobleza del Caribe no se hereda. Se teje.'
-  const subheadingText =
-    activeSlide?.subheading ||
-    'Micro-mostacilla checa calibrada, tejida a mano con precisión milimétrica y la vibrante herencia del Caribe. Piezas de autor exclusivas diseñadas para elevar tu estilo con una joya irrepetible que cuenta una historia viva.'
+  const isOldHeading =
+    !activeSlide?.heading ||
+    activeSlide.heading.includes('Mostacilla con Alma') ||
+    activeSlide.heading.includes('Shirley')
+  const rawHeading = isOldHeading
+    ? 'La nobleza del Caribe no se hereda. Se teje.'
+    : activeSlide.heading
+
+  const isOldSubheading =
+    !activeSlide?.subheading ||
+    activeSlide.subheading.includes('dedicación de Shirley') ||
+    activeSlide.subheading.includes('Shirley')
+  const subheadingText = isOldSubheading
+    ? 'Micro-mostacilla checa calibrada, tejida a mano con precisión milimétrica y la vibrante herencia del Caribe. Piezas de autor exclusivas diseñadas para elevar tu estilo con una joya irrepetible que cuenta una historia viva.'
+    : activeSlide.subheading
 
   useGSAP(
     () => {
@@ -238,13 +246,13 @@ export const SliderHeroClient: React.FC<{
           <div className="lg:col-span-5 relative flex items-center justify-center lg:justify-end mt-4 lg:mt-0">
             <div
               ref={imageWrapperRef}
-              className="relative w-full max-w-[380px] sm:max-w-[480px] md:max-w-[540px] lg:max-w-[620px] flex justify-center will-change-transform"
+              className="relative w-full max-w-[400px] sm:max-w-[500px] md:max-w-[560px] lg:max-w-[640px] flex justify-center will-change-transform [mask-image:linear-gradient(to_bottom,black_78%,transparent_98%)]"
             >
               <img
                 ref={imageRef}
                 src="/landing-modify-traced.svg"
                 alt="Mujer palenquera luciendo joyería en micro-mostacilla Nénufar"
-                className="w-full h-auto max-h-[62vh] sm:max-h-[72vh] lg:max-h-[82vh] object-contain drop-shadow-[0_20px_40px_rgba(61,26,91,0.15)] select-none will-change-transform"
+                className="w-full h-auto max-h-[64vh] sm:max-h-[74vh] lg:max-h-[84vh] object-contain drop-shadow-[0_20px_40px_rgba(61,26,91,0.15)] select-none will-change-transform"
                 loading="eager"
                 decoding="async"
               />
