@@ -67,15 +67,15 @@ export const SliderHeroClient: React.FC<{
   return (
     <section
       ref={containerRef}
-      className="relative w-full min-h-[86vh] lg:min-h-[92vh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-0 bg-[#FAF8FC] dark:bg-[#120A1E] flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
+      className="relative w-full min-h-[86vh] lg:min-h-[92vh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-0 bg-gradient-to-r from-[#FAF8FC] via-[#FAF4FC] to-[#FCE7F3]/80 dark:from-[#120A1E] dark:via-[#190C28] dark:to-[#E91E8C]/20 flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
-      {/* Resplandor ambiental y Halo Magenta traslúcido para hacer resaltar a la modelo */}
+      {/* Resplandor ambiental y Halo Magenta claramente visible para hacer resaltar a la modelo */}
       <div
         ref={glowRef}
-        className="absolute top-1/2 -translate-y-1/2 -right-8 sm:right-4 lg:right-12 w-[520px] sm:w-[750px] lg:w-[920px] h-[520px] sm:h-[750px] lg:h-[920px] bg-[radial-gradient(ellipse_at_center,_rgba(233,30,140,0.22)_0%,_rgba(255,79,163,0.12)_45%,_transparent_72%)] blur-3xl pointer-events-none z-0"
+        className="absolute top-1/2 -translate-y-1/2 right-0 md:right-4 lg:right-10 w-[580px] sm:w-[800px] lg:w-[980px] h-[580px] sm:h-[800px] lg:h-[980px] bg-[radial-gradient(ellipse_at_center,_rgba(233,30,140,0.30)_0%,_rgba(255,79,163,0.18)_45%,_transparent_72%)] blur-2xl pointer-events-none z-0"
       />
       <div
-        className="absolute top-1/6 -left-16 sm:-left-24 w-[440px] sm:w-[600px] lg:w-[740px] h-[440px] sm:h-[600px] lg:h-[740px] bg-gradient-to-br from-[#FF4FA3]/12 via-[#6A1B9A]/6 to-transparent rounded-full blur-3xl pointer-events-none"
+        className="absolute top-1/6 -left-16 sm:-left-24 w-[440px] sm:w-[600px] lg:w-[740px] h-[440px] sm:h-[600px] lg:h-[740px] bg-gradient-to-br from-[#FF4FA3]/10 via-[#6A1B9A]/5 to-transparent rounded-full blur-3xl pointer-events-none"
       />
       <div className="absolute -bottom-16 left-1/12 w-[350px] h-[350px] bg-gradient-to-tr from-[#3D1A5B]/8 via-[#FF4FA3]/5 to-transparent rounded-full blur-2xl pointer-events-none" />
 
@@ -93,7 +93,7 @@ export const SliderHeroClient: React.FC<{
             >
               <span className="w-2 h-2 rounded-full bg-[#E91E8C] animate-pulse shrink-0" />
               <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#E91E8C] dark:text-[#FF66B2]">
-                ALTA JOYERÍA ARTESANAL & EDICIÓN LIMITADA
+                ALTA JOYERÍA ARTESANAL
               </span>
             </div>
 
