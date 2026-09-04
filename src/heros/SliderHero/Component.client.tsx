@@ -207,7 +207,7 @@ export const SliderHeroClient: React.FC<{
       >
         <img
           ref={imgRef}
-          src="/hero-woman-uncropped.webp"
+          src="/hero-woman-uncropped.webp?v=2"
           alt="Mujer luciendo alta joyería artesanal en micro-mostacilla Nénufar"
           className="w-auto h-full max-h-[86vh] object-contain object-bottom select-none drop-shadow-none will-change-transform"
           loading="eager"
