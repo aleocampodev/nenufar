@@ -60,16 +60,18 @@ export function HeaderClient({ header, categories = [] }: Props) {
   const isTransparent = isHomePage && !isScrolled
 
   const linkBaseClass = isTransparent
-    ? 'text-white/85 hover:text-white'
+    ? 'text-[#1A0E2E]/90 hover:text-[#E91E8C]'
     : 'text-white/90 hover:text-[#FF4FA3]'
 
-  const linkActiveClass = 'text-white font-semibold'
+  const linkActiveClass = isTransparent
+    ? 'text-[#E91E8C] font-semibold'
+    : 'text-[#FF4FA3] font-semibold'
 
   return (
     <header
       className={`sticky top-0 z-40 transition-all duration-500 ${
         isTransparent
-          ? 'bg-transparent text-white border-b border-white/20'
+          ? 'bg-[#FAF8FC]/80 dark:bg-[#120A1E]/80 backdrop-blur-md text-[#1A0E2E] dark:text-white border-b border-[#E8E0F0]/60'
           : 'bg-[#3D1A5B]/95 dark:bg-[#2E1346]/95 backdrop-blur-md text-white shadow-[0_8px_30px_rgba(61,26,91,0.35)] border-b border-[#4D2472]/40'
       }`}
     >
@@ -77,10 +79,16 @@ export function HeaderClient({ header, categories = [] }: Props) {
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <LogoIcon
-              className="w-8 h-8 transition-transform duration-300 group-hover:scale-105 text-white"
+              className={`w-8 h-8 transition-transform duration-300 group-hover:scale-105 ${
+                isTransparent ? 'text-[#3D1A5B] dark:text-white' : 'text-white'
+              }`}
             />
             <span
-              className="font-serif text-2xl sm:text-3xl tracking-wide font-medium transition-colors text-white group-hover:text-white/80"
+              className={`font-serif text-2xl sm:text-3xl tracking-wide font-medium transition-colors ${
+                isTransparent
+                  ? 'text-[#1A0E2E] dark:text-white group-hover:text-[#E91E8C]'
+                  : 'text-white group-hover:text-[#FF4FA3]'
+              }`}
             >
               Nenúfar
             </span>
