@@ -55,14 +55,14 @@ export const SliderHeroClient: React.FC<{
             0.05,
           )
 
-          // 2. Zoom cinematográfico que mantiene la palenquera completa y la eleva hacia el navbar
+          // 2. Zoom cinematográfico que mantiene la palenquera completa y el turbante 100% intacto
           tl.to(
             imgRef.current,
             {
-              scale: 1.35,
-              transformOrigin: '51.8% 25%',
-              x: 50,
-              y: -155,
+              scale: 1.28,
+              transformOrigin: '51.8% 38%',
+              x: 40,
+              y: -30,
               duration: 1.8,
               ease: 'power2.inOut',
             },
