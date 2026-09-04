@@ -41,12 +41,12 @@ export const SliderHeroClient: React.FC<{
   const activeSlide = slides?.[0]
 
   const badgeText =
-    activeSlide?.badge || 'HERENCIA AFRO-CARIBEÑA & ALTA ARTESANÍA'
+    activeSlide?.badge || 'ALTA JOYERÍA ARTESANAL & EDICIÓN LIMITADA'
   const rawHeading =
     activeSlide?.heading || 'La nobleza del Caribe no se hereda. Se teje.'
   const subheadingText =
     activeSlide?.subheading ||
-    'Micro-mostacilla checa tejida con la dignidad, el color y la memoria viva de nuestras raíces. Piezas de autor creadas por Shirley en Cartagena para mujeres que caminan con la frente en alto.'
+    'Micro-mostacilla checa calibrada, tejida a mano con precisión milimétrica y la vibrante herencia del Caribe. Piezas de autor exclusivas diseñadas para elevar tu estilo con una joya irrepetible que cuenta una historia viva.'
 
   useGSAP(
     () => {
@@ -102,13 +102,13 @@ export const SliderHeroClient: React.FC<{
         tl.from(
           imageRef.current,
           {
-            y: 50,
-            scale: 0.92,
+            y: 45,
+            scale: 0.94,
             opacity: 0,
-            duration: 1.3,
+            duration: 1.2,
             ease: 'power2.out',
           },
-          '-=1.1',
+          '-=1.0',
         )
       }
 
@@ -125,11 +125,11 @@ export const SliderHeroClient: React.FC<{
         )
       }
 
-      // 2. Micro-respiración orgánica sutil (flotado continuo de alta gama)
+      // 2. Micro-respiración sutil (flotado continuo de alta gama)
       if (imageRef.current) {
         gsap.to(imageRef.current, {
-          y: -10,
-          duration: 3.8,
+          y: -8,
+          duration: 3.6,
           repeat: -1,
           yoyo: true,
           ease: 'sine.inOut',
@@ -139,8 +139,8 @@ export const SliderHeroClient: React.FC<{
       // 3. GSAP ScrollTrigger: Parallax dinámico al hacer scroll
       if (imageWrapperRef.current && containerRef.current) {
         gsap.to(imageWrapperRef.current, {
-          yPercent: 22,
-          scale: 1.05,
+          yPercent: 18,
+          scale: 1.04,
           ease: 'none',
           scrollTrigger: {
             trigger: containerRef.current,
@@ -153,9 +153,9 @@ export const SliderHeroClient: React.FC<{
 
       if (glowRef.current && containerRef.current) {
         gsap.to(glowRef.current, {
-          yPercent: 30,
-          scale: 1.3,
-          opacity: 0.5,
+          yPercent: 28,
+          scale: 1.25,
+          opacity: 0.45,
           ease: 'none',
           scrollTrigger: {
             trigger: containerRef.current,
@@ -174,7 +174,7 @@ export const SliderHeroClient: React.FC<{
       ref={containerRef}
       className="relative w-full min-h-[90vh] lg:min-h-[94vh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-12 sm:pb-16 lg:pb-20 bg-[#FAF8FC] dark:bg-[#120A1E] flex items-center overflow-hidden select-none transition-colors duration-500"
     >
-      {/* Resplandor ambiental de fondo cálido / rosa acento suave detrás de la fotografía */}
+      {/* Resplandor ambiental de fondo cálido / rosa acento suave detrás del vector */}
       <div
         ref={glowRef}
         className="absolute top-1/4 -right-12 sm:-right-20 w-[460px] sm:w-[650px] lg:w-[820px] h-[460px] sm:h-[650px] lg:h-[820px] bg-gradient-to-bl from-[#FF4FA3]/20 via-[#E91E8C]/12 to-transparent rounded-full blur-3xl pointer-events-none"
@@ -207,7 +207,7 @@ export const SliderHeroClient: React.FC<{
               {rawHeading}
             </h1>
 
-            {/* Subtítulo (Contraste cálido y fluido) */}
+            {/* Subtítulo (Contraste cálido, fluido y persuasivo para comprar) */}
             <p
               ref={subtitleRef}
               className="font-sans font-normal text-base sm:text-lg lg:text-[1.125rem] text-[#3D1A5B]/90 dark:text-[#FAF8FC]/85 leading-[1.7] max-w-xl mb-7 sm:mb-8"
@@ -215,42 +215,39 @@ export const SliderHeroClient: React.FC<{
               {subheadingText}
             </p>
 
-            {/* Sellos de Calidad y Valor de Marca (Sin Botones) */}
+            {/* Sellos de Confianza y Gatillos de Compra (Sin Botones) */}
             <div ref={chipsRef} className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 pt-1">
               <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/85 dark:bg-[#1A0E2E]/80 border border-[#E8E0F0] dark:border-[#2D1A4A] text-xs font-medium text-[#1A0E2E] dark:text-white/90 shadow-2xs backdrop-blur-xs">
-                <span className="text-sm">🪡</span>
-                <span>100% Hecho a mano</span>
+                <span className="text-sm">✦</span>
+                <span>Piezas únicas de autor</span>
               </div>
               <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/85 dark:bg-[#1A0E2E]/80 border border-[#E8E0F0] dark:border-[#2D1A4A] text-xs font-medium text-[#1A0E2E] dark:text-white/90 shadow-2xs backdrop-blur-xs">
                 <span className="text-sm">✨</span>
-                <span>Micro-mostacilla checa</span>
+                <span>Micro-mostacilla checa calibrada</span>
               </div>
               <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/85 dark:bg-[#1A0E2E]/80 border border-[#E8E0F0] dark:border-[#2D1A4A] text-xs font-medium text-[#1A0E2E] dark:text-white/90 shadow-2xs backdrop-blur-xs">
-                <span className="text-sm">📍</span>
-                <span>Cartagena de Indias</span>
+                <span className="text-sm">📦</span>
+                <span>Envíos asegurados a Colombia</span>
               </div>
             </div>
           </div>
 
           {/* ========================================================= */}
-          {/* COLUMNA DERECHA: Fotografía Real Palenquera + GSAP Parallax */}
+          {/* COLUMNA DERECHA: Vector Palenquera SVG + GSAP Parallax     */}
           {/* ========================================================= */}
           <div className="lg:col-span-5 relative flex items-center justify-center lg:justify-end mt-4 lg:mt-0">
             <div
               ref={imageWrapperRef}
               className="relative w-full max-w-[380px] sm:max-w-[480px] md:max-w-[540px] lg:max-w-[620px] flex justify-center will-change-transform"
             >
-              <picture>
-                <source srcSet="/landing-morena.webp" type="image/webp" />
-                <img
-                  ref={imageRef}
-                  src="/landing-morena.webp"
-                  alt="Mujer palenquera luciendo joyería en micro-mostacilla Nénufar"
-                  className="w-full h-auto max-h-[62vh] sm:max-h-[72vh] lg:max-h-[80vh] object-contain drop-shadow-[0_25px_45px_rgba(61,26,91,0.18)] select-none will-change-transform"
-                  loading="eager"
-                  decoding="async"
-                />
-              </picture>
+              <img
+                ref={imageRef}
+                src="/landing-modify-traced.svg"
+                alt="Mujer palenquera luciendo joyería en micro-mostacilla Nénufar"
+                className="w-full h-auto max-h-[62vh] sm:max-h-[72vh] lg:max-h-[82vh] object-contain drop-shadow-[0_20px_40px_rgba(61,26,91,0.15)] select-none will-change-transform"
+                loading="eager"
+                decoding="async"
+              />
             </div>
           </div>
 

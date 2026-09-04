@@ -69,18 +69,18 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
       // Slider slides - Krafti 3 editorial slides with high-res jewelry photography
       slides: [
         {
-          badge: 'HERENCIA AFRO-CARIBEÑA & ALTA ARTESANÍA',
+          badge: 'ALTA JOYERÍA ARTESANAL & EDICIÓN LIMITADA',
           heading: 'La nobleza del Caribe no se hereda. Se teje.',
           metaText: 'CARTAGENA DE INDIAS • TEJIDO ANCESTRAL • PIEZAS DE AUTOR',
           subheading:
-            'Micro-mostacilla checa tejida con la dignidad, el color y la memoria viva de nuestras raíces. Piezas de autor creadas por Shirley en Cartagena para mujeres que caminan con la frente en alto.',
+            'Micro-mostacilla checa calibrada, tejida a mano con precisión milimétrica y la vibrante herencia del Caribe. Piezas de autor exclusivas diseñadas para elevar tu estilo con una joya irrepetible que cuenta una historia viva.',
           tabTitle: 'Herencia Caribeña',
           linkLabel: '',
           linkUrl: '',
           imagePosition: 'center',
           image: {
-            url: '/landing-morena.webp',
-            alt: 'Mujer palenquera con joyería en mostacilla Nénufar',
+            url: '/landing-modify-traced.svg',
+            alt: 'Mujer palenquera luciendo joyería en mostacilla Nénufar',
           } as any,
         },
         {
