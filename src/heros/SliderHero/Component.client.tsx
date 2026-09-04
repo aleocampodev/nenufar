@@ -204,15 +204,15 @@ export const SliderHeroClient: React.FC<{
           return
         }
 
-        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+        const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
 
-        // 1. Fotografía de autor: Entrada fluida de un solo movimiento a escala perfecta
-        //    Adaptada dinámicamente según la altura de pantalla para no rozar los botones en pantallas bajas (iPhone SE)
-        //    y lucir elevada y sin recortes en pantallas estándar (iPhone 13/14/15/Android)
+        // 1. Fotografía de autor: Llega sutilmente desde abajo (from below)
+        //    Adaptada dinámicamente a la pantalla sin recortar el sombrero
         if (imgRef.current) {
           const isShortMobile = typeof window !== 'undefined' && window.innerHeight < 720
           const targetY = isShortMobile ? -6 : -22
-          const breathTargetY = isShortMobile ? -11 : -28
+          const breathTargetY = isShortMobile ? -11 : -27
+          const startY = targetY + 46 // Entrada suave y sutil desde abajo
 
           gsap.set(imgRef.current, {
             scale: 1.14,
@@ -223,19 +223,19 @@ export const SliderHeroClient: React.FC<{
           tl.fromTo(
             imgRef.current,
             {
-              y: 16,
+              y: startY,
               opacity: 0,
             },
             {
               y: targetY,
               opacity: 1,
-              duration: 1.15,
-              ease: 'power3.out',
+              duration: 1.2,
+              ease: 'power2.out',
               onComplete: () => {
-                // Sutil respiro ambiental (ambient breath): da vida viva y serena a la ilustración
+                // Sutil respiro ambiental (ambient breath): suave y sereno
                 gsap.to(imgRef.current, {
                   y: breathTargetY,
-                  duration: 3.5,
+                  duration: 3.6,
                   ease: 'sine.inOut',
                   yoyo: true,
                   repeat: -1,
@@ -246,36 +246,36 @@ export const SliderHeroClient: React.FC<{
           )
         }
 
-        // 2. Coreografía tipográfica editorial estratificada:
-        //    Badge de autenticidad -> Titular H1 poético -> CTA y Redes
+        // 2. Coreografía tipográfica: Llega sutilmente desde arriba (from above)
+        //    Badge -> Titular H1 -> CTA y Redes descendiendo suavemente
         if (badgeRef.current) {
           tl.fromTo(
             badgeRef.current,
-            { y: 16, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.65, ease: 'power3.out' },
-            0.15,
+            { y: -18, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.65, ease: 'power2.out' },
+            0.12,
           )
         }
 
         if (headingRef.current) {
           tl.fromTo(
             headingRef.current,
-            { y: 26, opacity: 0 },
+            { y: -26, opacity: 0 },
             {
               y: 0,
               opacity: 1,
               duration: 0.85,
-              ease: 'power3.out',
+              ease: 'power2.out',
               clearProps: 'transform,opacity',
             },
-            0.3,
+            0.24,
           )
         }
 
         if (actionsRef.current) {
           tl.fromTo(
             actionsRef.current,
-            { y: 20, opacity: 0, scale: 0.96 },
+            { y: -20, opacity: 0, scale: 0.98 },
             {
               y: 0,
               opacity: 1,
@@ -284,7 +284,7 @@ export const SliderHeroClient: React.FC<{
               ease: 'power2.out',
               clearProps: 'transform,opacity',
             },
-            0.48,
+            0.38,
           )
         }
       })
@@ -429,7 +429,15 @@ export const SliderHeroClient: React.FC<{
           ref={imgRef}
           src={imageSrc}
           alt={imageAlt}
-          className="w-auto max-w-none h-full max-h-[86vh] object-contain object-bottom select-none drop-shadow-none will-change-transform"
+          className="w-auto max-w-none h-full max-h-[86vh] object-contain object-bottom select-none drop-shadow-none will-change-transform subpixel-antialiased"
+          style={{
+            imageRendering: 'auto',
+            WebkitBackfaceVisibility: 'hidden',
+            backfaceVisibility: 'hidden',
+            WebkitTransform: 'translateZ(0)',
+            transform: 'translateZ(0)',
+            shapeRendering: 'geometricPrecision',
+          }}
           loading="eager"
         />
       </div>
