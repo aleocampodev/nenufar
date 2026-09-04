@@ -32,40 +32,34 @@ export const SliderHeroClient: React.FC<{
   const actionsRef = useRef<HTMLDivElement>(null)
   const modelRef = useRef<HTMLDivElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
-  const glowRef = useRef<HTMLDivElement>(null)
 
   useGSAP(
     () => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-      // 1. Resplandor ambiental suave de fondo
-      if (glowRef.current) {
-        tl.from(glowRef.current, { scale: 0.7, opacity: 0, duration: 1.8, ease: 'power2.out' }, 0)
-      }
-
-      // 2. Sutilmente baja la imagen al inicio
+      // 1. Sutilmente baja la imagen al inicio
       if (imgRef.current) {
         tl.fromTo(
           imgRef.current,
-          { y: -50, opacity: 0.6, scale: 1 },
-          { y: 0, opacity: 1, duration: 1.1, ease: 'power2.out' },
+          { y: -45, opacity: 0.85, scale: 1 },
+          { y: 0, opacity: 1, duration: 1.0, ease: 'power2.out' },
           0.1,
         )
 
-        // 3. Luego se hace zoom enfocado en el collar (x: 53.3%, y: 42.2%)
+        // 2. Zoom cinematográfico profundo directo al collar (x: 53.3%, y: 42.2%)
         tl.to(
           imgRef.current,
           {
-            scale: 1.18,
+            scale: 2.35,
             transformOrigin: '53.3% 42.2%',
-            duration: 1.6,
-            ease: 'power2.out',
+            duration: 1.8,
+            ease: 'power2.inOut',
           },
           '+=0.05',
         )
       }
 
-      // 4. Llega de abajo todo el texto con el botón
+      // 3. Llega de abajo todo el texto con el botón
       const textElements = [
         badgeRef.current,
         headingRef.current,
@@ -77,14 +71,14 @@ export const SliderHeroClient: React.FC<{
         tl.from(
           textElements,
           {
-            y: 85,
+            y: 90,
             opacity: 0,
-            duration: 1.15,
+            duration: 1.2,
             stagger: 0.12,
             ease: 'power3.out',
             clearProps: 'transform,opacity',
           },
-          '-=1.2', // Se solapa armoniosamente con el zoom al collar
+          '-=1.3', // Se solapa armónicamente mientras el zoom al collar se asienta
         )
       }
     },
@@ -96,15 +90,6 @@ export const SliderHeroClient: React.FC<{
       ref={containerRef}
       className="relative w-full min-h-screen min-h-[100dvh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-0 bg-[#DBC4AC] border-b border-[#C8AF95]/60 flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
-      {/* Resplandores ambientales de profundidad cálidos */}
-      <div
-        ref={glowRef}
-        className="absolute top-1/2 -translate-y-1/2 right-0 md:right-4 lg:right-10 w-[580px] sm:w-[800px] lg:w-[980px] h-[580px] sm:h-[800px] lg:h-[980px] bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.3)_0%,_rgba(219,196,172,0)_70%)] blur-3xl pointer-events-none z-0"
-      />
-      <div
-        className="absolute top-1/6 -left-16 sm:-left-24 w-[440px] sm:w-[600px] lg:w-[740px] h-[440px] sm:h-[600px] lg:h-[740px] bg-white/20 rounded-full blur-3xl pointer-events-none"
-      />
-
       <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full mt-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-end">
           
@@ -115,7 +100,7 @@ export const SliderHeroClient: React.FC<{
             {/* Badge superior */}
             <div
               ref={badgeRef}
-              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/95 border border-[#C8AF95] shadow-xs mb-5 sm:mb-6 backdrop-blur-xs"
+              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#F4ECE3] border border-[#C8AF95] shadow-xs mb-5 sm:mb-6 backdrop-blur-xs"
             >
               <span className="w-2 h-2 rounded-full bg-[#8B5A2B] animate-pulse shrink-0" />
               <span className="text-[10px] sm:text-[11px] font-sans font-semibold uppercase tracking-[0.25em] text-[#8B5A2B]">
@@ -136,15 +121,15 @@ export const SliderHeroClient: React.FC<{
 
             {/* Tabs / Sellos de Confianza */}
             <div ref={chipsRef} className="flex flex-wrap items-center gap-2 sm:gap-2.5 mb-6 sm:mb-8">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/95 border border-[#C8AF95] text-xs font-medium text-[#1A0E2E] shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#F4ECE3] border border-[#C8AF95] text-xs font-medium text-[#1A0E2E] shadow-xs">
                 <span className="text-[#8B5A2B] text-sm">✦</span>
                 <span>Piezas únicas de autor</span>
               </div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/95 border border-[#C8AF95] text-xs font-medium text-[#1A0E2E] shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#F4ECE3] border border-[#C8AF95] text-xs font-medium text-[#1A0E2E] shadow-xs">
                 <span className="text-[#8B5A2B] text-sm">✨</span>
                 <span>Micro-mostacilla checa calibrada</span>
               </div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/95 border border-[#C8AF95] text-xs font-medium text-[#1A0E2E] shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#F4ECE3] border border-[#C8AF95] text-xs font-medium text-[#1A0E2E] shadow-xs">
                 <span className="text-sm">📦</span>
                 <span>Envíos asegurados a Colombia</span>
               </div>
@@ -162,7 +147,7 @@ export const SliderHeroClient: React.FC<{
 
               {/* Redes Sociales */}
               <div
-                className="inline-flex items-center gap-3 text-neutral-700 bg-white/95 backdrop-blur-md px-3.5 sm:px-4 py-2 sm:py-2 rounded-full border border-[#C8AF95] shadow-xs"
+                className="inline-flex items-center gap-3 text-neutral-700 bg-[#F4ECE3] backdrop-blur-md px-3.5 sm:px-4 py-2 sm:py-2 rounded-full border border-[#C8AF95] shadow-xs"
                 role="navigation"
                 aria-label="Redes sociales de Nénufar"
               >
