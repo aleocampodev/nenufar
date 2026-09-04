@@ -59,7 +59,7 @@ export const SliderHeroClient: React.FC<{
       if (modelRef.current) {
         tl.from(
           modelRef.current,
-          { y: 45, scale: 0.95, opacity: 0, duration: 1.3, ease: 'power2.out' },
+          { y: 55, scale: 0.95, opacity: 0, duration: 1.3, ease: 'power2.out' },
           '-=1.0',
         )
       }
@@ -70,17 +70,6 @@ export const SliderHeroClient: React.FC<{
           '-=1.2',
         )
       }
-
-      // Micro-respiración orgánica sutil
-      if (modelRef.current) {
-        gsap.to(modelRef.current, {
-          y: -8,
-          duration: 3.8,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        })
-      }
     },
     { scope: containerRef },
   )
@@ -88,7 +77,7 @@ export const SliderHeroClient: React.FC<{
   return (
     <section
       ref={containerRef}
-      className="relative w-full min-h-[90vh] lg:min-h-[94vh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-12 sm:pb-16 lg:pb-20 bg-[#FAF8FC] dark:bg-[#120A1E] flex items-center overflow-hidden select-none transition-colors duration-500"
+      className="relative w-full min-h-[90vh] lg:min-h-[94vh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-0 bg-[#FAF8FC] dark:bg-[#120A1E] flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
       {/* Resplandor ambiental de iluminación suave */}
       <div
@@ -97,13 +86,13 @@ export const SliderHeroClient: React.FC<{
       />
       <div className="absolute -bottom-16 left-1/12 w-[350px] h-[350px] bg-gradient-to-tr from-[#3D1A5B]/8 via-[#FF4FA3]/5 to-transparent rounded-full blur-2xl pointer-events-none" />
 
-      <div className="relative max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
+      <div className="relative max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full mt-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-end">
           
           {/* ========================================================= */}
-          {/* COLUMNA IZQUIERDA: Titular, Badge, Subtítulo, Chips & Redes */}
+          {/* COLUMNA IZQUIERDA: Titular, Badge, Subtítulo, Chips       */}
           {/* ========================================================= */}
-          <div className="lg:col-span-7 z-10 flex flex-col items-start text-left max-w-2xl">
+          <div className="lg:col-span-7 z-10 flex flex-col items-start text-left max-w-2xl pb-12 sm:pb-16 lg:pb-20 pt-4">
             {/* Badge superior (Rosa Acento #FF4FA3) */}
             <div
               ref={badgeRef}
@@ -150,17 +139,17 @@ export const SliderHeroClient: React.FC<{
           </div>
 
           {/* ========================================================= */}
-          {/* COLUMNA DERECHA: Fotografía Completa Sin Recortes         */}
+          {/* COLUMNA DERECHA: Fotografía Aterrizada (No Flotante)      */}
           {/* ========================================================= */}
-          <div className="lg:col-span-5 relative flex items-center justify-center lg:justify-end mt-4 lg:mt-0">
+          <div className="lg:col-span-5 relative flex items-end justify-center lg:justify-end">
             <div
               ref={modelRef}
-              className="relative w-full max-w-[440px] sm:max-w-[560px] md:max-w-[640px] lg:max-w-[760px] xl:max-w-[860px] flex justify-center will-change-transform"
+              className="relative w-full max-w-[500px] sm:max-w-[640px] md:max-w-[740px] lg:max-w-[880px] xl:max-w-[1020px] flex items-end justify-center will-change-transform"
             >
               <img
                 src="/hero-woman-uncropped.webp"
                 alt="Mujer luciendo alta joyería artesanal en micro-mostacilla Nénufar"
-                className="w-full h-auto max-h-[66vh] sm:max-h-[76vh] lg:max-h-[86vh] object-contain drop-shadow-[0_25px_45px_rgba(61,26,91,0.18)] select-none will-change-transform scale-105 sm:scale-110 lg:scale-115 origin-bottom"
+                className="w-full h-auto max-h-[75vh] sm:max-h-[84vh] lg:max-h-[92vh] object-contain object-bottom select-none will-change-transform scale-120 sm:scale-130 lg:scale-140 xl:scale-148 origin-bottom"
                 loading="eager"
               />
             </div>
