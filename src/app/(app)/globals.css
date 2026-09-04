@@ -104,6 +104,35 @@
       max-width: var(--breakpoint-2xl);
     }
   }
+
+  /* ══════════════════════════════════════════════════════════════
+     NÉNUFAR SYSTEM DESIGN — UTILITY CLASSES
+     ══════════════════════════════════════════════════════════════ */
+  .bg-primary-magenta { background-color: #E91E8C; }
+  .text-primary-magenta { color: #E91E8C; }
+  .border-primary-magenta { border-color: #E91E8C; }
+  .hover\:bg-primary-magenta:hover { background-color: #E91E8C; }
+  .hover\:text-primary-magenta:hover { color: #E91E8C; }
+
+  .bg-secondary-violet { background-color: #3D1A5B; }
+  .text-secondary-violet { color: #3D1A5B; }
+  .border-secondary-violet { border-color: #3D1A5B; }
+  .hover\:bg-secondary-violet:hover { background-color: #3D1A5B; }
+  .hover\:text-secondary-violet:hover { color: #3D1A5B; }
+
+  .bg-accent-rose { background-color: #FF4FA3; }
+  .text-accent-rose { color: #FF4FA3; }
+  .border-accent-rose { border-color: #FF4FA3; }
+  .hover\:bg-accent-rose:hover { background-color: #FF4FA3; }
+  .hover\:text-accent-rose:hover { color: #FF4FA3; }
+
+  .bg-neutral-dark { background-color: #1A0E2E; }
+  .text-neutral-dark { color: #1A0E2E; }
+  .border-neutral-dark { border-color: #1A0E2E; }
+
+  .bg-neutral-light { background-color: #FAF8FC; }
+  .text-neutral-light { color: #1A0E2E; }
+  .border-neutral-light { border-color: #FAF8FC; }
 }
 
 :root {
