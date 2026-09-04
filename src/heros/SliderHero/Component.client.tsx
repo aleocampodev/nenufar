@@ -132,17 +132,17 @@ export const SliderHeroClient: React.FC<{
           </div>
 
           {/* ========================================================= */}
-          {/* COLUMNA DERECHA: Fotografía en Primer Plano (Más Cerca)   */}
+          {/* COLUMNA DERECHA: Fotografía en Primer Plano Centrada      */}
           {/* ========================================================= */}
-          <div className="lg:col-span-5 relative flex items-end justify-center lg:justify-end">
+          <div className="lg:col-span-5 relative flex items-end justify-center">
             <div
               ref={modelRef}
-              className="relative flex items-end justify-center lg:justify-end"
+              className="relative flex items-end justify-center"
             >
               <img
                 src="/hero-woman-uncropped.webp"
                 alt="Mujer luciendo alta joyería artesanal en micro-mostacilla Nénufar"
-                className="w-auto h-[60vh] sm:h-[72vh] md:h-[78vh] lg:h-[84vh] xl:h-[88vh] max-w-none object-contain object-bottom select-none translate-x-[14%] sm:translate-x-[18%] lg:translate-x-[22%] xl:translate-x-[24%]"
+                className="w-auto h-[60vh] sm:h-[72vh] md:h-[78vh] lg:h-[84vh] xl:h-[88vh] max-w-none object-contain object-bottom select-none"
                 loading="eager"
               />
             </div>
