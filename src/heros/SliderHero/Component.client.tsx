@@ -67,17 +67,16 @@ export const SliderHeroClient: React.FC<{
   return (
     <section
       ref={containerRef}
-      className="relative w-full min-h-[86vh] lg:min-h-[92vh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-0 bg-gradient-to-r from-[#FAF8FC] via-[#FAF4FC] to-[#FCE7F3]/80 dark:from-[#120A1E] dark:via-[#190C28] dark:to-[#E91E8C]/20 flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
+      className="relative w-full min-h-[86vh] lg:min-h-[92vh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-0 bg-gradient-to-br from-[#D81B60] via-[#E91E8C] to-[#C2185B] flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
-      {/* Resplandor ambiental y Halo Magenta claramente visible para hacer resaltar a la modelo */}
+      {/* Resplandores ambientales de profundidad */}
       <div
         ref={glowRef}
-        className="absolute top-1/2 -translate-y-1/2 right-0 md:right-4 lg:right-10 w-[580px] sm:w-[800px] lg:w-[980px] h-[580px] sm:h-[800px] lg:h-[980px] bg-[radial-gradient(ellipse_at_center,_rgba(233,30,140,0.30)_0%,_rgba(255,79,163,0.18)_45%,_transparent_72%)] blur-2xl pointer-events-none z-0"
+        className="absolute top-1/2 -translate-y-1/2 right-0 md:right-4 lg:right-10 w-[580px] sm:w-[800px] lg:w-[980px] h-[580px] sm:h-[800px] lg:h-[980px] bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.18)_0%,_rgba(255,255,255,0.06)_45%,_transparent_72%)] blur-2xl pointer-events-none z-0"
       />
       <div
-        className="absolute top-1/6 -left-16 sm:-left-24 w-[440px] sm:w-[600px] lg:w-[740px] h-[440px] sm:h-[600px] lg:h-[740px] bg-gradient-to-br from-[#FF4FA3]/10 via-[#6A1B9A]/5 to-transparent rounded-full blur-3xl pointer-events-none"
+        className="absolute top-1/6 -left-16 sm:-left-24 w-[440px] sm:w-[600px] lg:w-[740px] h-[440px] sm:h-[600px] lg:h-[740px] bg-white/10 rounded-full blur-3xl pointer-events-none"
       />
-      <div className="absolute -bottom-16 left-1/12 w-[350px] h-[350px] bg-gradient-to-tr from-[#3D1A5B]/8 via-[#FF4FA3]/5 to-transparent rounded-full blur-2xl pointer-events-none" />
 
       <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full mt-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-end">
@@ -86,40 +85,40 @@ export const SliderHeroClient: React.FC<{
           {/* COLUMNA IZQUIERDA: Titular, Badge, Tabs, CTA & Redes      */}
           {/* ========================================================= */}
           <div className="lg:col-span-7 flex flex-col items-start text-left max-w-2xl pb-24 sm:pb-32 lg:pb-36 pt-6 sm:pt-8">
-            {/* Badge superior (Magenta Vibrante #E91E8C) */}
+            {/* Badge superior */}
             <div
               ref={badgeRef}
-              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#FDF2F8] dark:bg-[#E91E8C]/20 border border-[#E91E8C]/40 dark:border-[#E91E8C]/50 shadow-2xs mb-5 sm:mb-6"
+              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/20 border border-white/35 backdrop-blur-md shadow-sm mb-5 sm:mb-6"
             >
-              <span className="w-2 h-2 rounded-full bg-[#E91E8C] animate-pulse shrink-0" />
-              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#E91E8C] dark:text-[#FF66B2]">
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse shrink-0" />
+              <span className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-white">
                 ALTA JOYERÍA ARTESANAL
               </span>
             </div>
 
-            {/* Titular H1 (Tipografía de la página: Serif / Neutro Oscuro #1A0E2E + Acento Magenta Vibrante #E91E8C) */}
+            {/* Titular H1 */}
             <h1
               ref={headingRef}
-              className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] text-[#1A0E2E] dark:text-[#FAF8FC] font-normal leading-[1.1] tracking-tight mb-6 sm:mb-7"
+              className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] text-white font-normal leading-[1.1] tracking-tight mb-6 sm:mb-7 drop-shadow-xs"
             >
               La nobleza del Caribe no se hereda.{' '}
-              <span className="italic font-light text-[#E91E8C] dark:text-[#FF60AB]">
+              <span className="italic font-light text-[#FDE047]">
                 Se teje.
               </span>
             </h1>
 
-            {/* Tabs / Sellos de Confianza (Sin tooltips de navegador) */}
+            {/* Tabs / Sellos de Confianza */}
             <div ref={chipsRef} className="flex flex-wrap items-center gap-2 sm:gap-2.5 mb-6 sm:mb-8">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/85 dark:bg-[#1A0E2E]/80 border border-[#E8E0F0] dark:border-[#2D1A4A] text-xs font-medium text-[#1A0E2E] dark:text-white/90 shadow-2xs backdrop-blur-xs">
-                <span className="text-[#E91E8C] text-sm">✦</span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/15 border border-white/25 text-xs font-medium text-white shadow-xs backdrop-blur-md">
+                <span className="text-[#FDE047] text-sm">✦</span>
                 <span>Piezas únicas de autor</span>
               </div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/85 dark:bg-[#1A0E2E]/80 border border-[#E8E0F0] dark:border-[#2D1A4A] text-xs font-medium text-[#1A0E2E] dark:text-white/90 shadow-2xs backdrop-blur-xs">
-                <span className="text-[#E91E8C] text-sm">✨</span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/15 border border-white/25 text-xs font-medium text-white shadow-xs backdrop-blur-md">
+                <span className="text-[#FDE047] text-sm">✨</span>
                 <span>Micro-mostacilla checa calibrada</span>
               </div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/85 dark:bg-[#1A0E2E]/80 border border-[#E8E0F0] dark:border-[#2D1A4A] text-xs font-medium text-[#1A0E2E] dark:text-white/90 shadow-2xs backdrop-blur-xs">
-                <span className="text-[#E91E8C] text-sm">📦</span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/15 border border-white/25 text-xs font-medium text-white shadow-xs backdrop-blur-md">
+                <span className="text-sm">📦</span>
                 <span>Envíos asegurados a Colombia</span>
               </div>
             </div>
@@ -128,7 +127,7 @@ export const SliderHeroClient: React.FC<{
             <div ref={actionsRef} className="flex flex-wrap items-center gap-4 sm:gap-5">
               <Link
                 href="/shop"
-                className="inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-[#E91E8C] hover:bg-[#D81B60] active:scale-95 text-white font-sans text-xs sm:text-sm font-semibold uppercase tracking-wider shadow-lg shadow-[#E91E8C]/25 hover:shadow-xl hover:shadow-[#E91E8C]/35 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group"
+                className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-white hover:bg-neutral-100 active:scale-95 text-[#E91E8C] font-sans text-xs sm:text-sm font-bold uppercase tracking-wider shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group"
               >
                 <span>Conoce la colección</span>
                 <span className="text-base transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -136,7 +135,7 @@ export const SliderHeroClient: React.FC<{
 
               {/* Redes Sociales */}
               <div
-                className="inline-flex items-center gap-3 text-[#3D1A5B]/85 dark:text-white/90 bg-white/80 dark:bg-black/40 backdrop-blur-md px-3.5 sm:px-4 py-2 sm:py-2 rounded-full border border-[#E8E0F0] dark:border-white/15 shadow-sm"
+                className="inline-flex items-center gap-3 text-white/90 bg-white/15 backdrop-blur-md px-3.5 sm:px-4 py-2 sm:py-2 rounded-full border border-white/25 shadow-sm"
                 role="navigation"
                 aria-label="Redes sociales de Nénufar"
               >
@@ -145,7 +144,7 @@ export const SliderHeroClient: React.FC<{
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram de Nénufar"
-                  className="p-1 text-[#3D1A5B]/70 hover:text-[#1A0E2E] dark:text-white/70 dark:hover:text-white transition-all duration-200 hover:scale-115 cursor-pointer"
+                  className="p-1 text-white/80 hover:text-white transition-all duration-200 hover:scale-115 cursor-pointer"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
@@ -158,7 +157,7 @@ export const SliderHeroClient: React.FC<{
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="WhatsApp de Nénufar"
-                  className="p-1 text-[#3D1A5B]/70 hover:text-[#1A0E2E] dark:text-white/70 dark:hover:text-white transition-all duration-200 hover:scale-115 cursor-pointer"
+                  className="p-1 text-white/80 hover:text-white transition-all duration-200 hover:scale-115 cursor-pointer"
                 >
                   <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                     <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
@@ -169,7 +168,7 @@ export const SliderHeroClient: React.FC<{
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Telegram de Nénufar"
-                  className="p-1 text-[#3D1A5B]/70 hover:text-[#1A0E2E] dark:text-white/70 dark:hover:text-white transition-all duration-200 hover:scale-115 cursor-pointer"
+                  className="p-1 text-white/80 hover:text-white transition-all duration-200 hover:scale-115 cursor-pointer"
                 >
                   <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                     <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-2.02 9.54c-.15.68-.56.84-1.12.52l-3.1-2.28-1.5 1.44c-.17.17-.31.31-.63.31l.22-3.17 5.77-5.21c.25-.22-.05-.35-.39-.12l-7.14 4.5-3.08-.96c-.67-.21-.68-.67.14-.99l12.04-4.64c.56-.2 1.05.14.81 1.06z" />
