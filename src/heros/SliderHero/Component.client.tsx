@@ -50,9 +50,9 @@ export const SliderHeroClient: React.FC<{
         tl.to(
           imgRef.current,
           {
-            scale: 2.35,
+            scale: 3.85,
             transformOrigin: '53.3% 42.2%',
-            duration: 1.8,
+            duration: 2.0,
             ease: 'power2.inOut',
           },
           '+=0.05',
@@ -73,12 +73,12 @@ export const SliderHeroClient: React.FC<{
           {
             y: 90,
             opacity: 0,
-            duration: 1.2,
+            duration: 1.25,
             stagger: 0.12,
             ease: 'power3.out',
             clearProps: 'transform,opacity',
           },
-          '-=1.3', // Se solapa armónicamente mientras el zoom al collar se asienta
+          '-=1.4', // Se sincroniza con el acercamiento cercano al collar
         )
       }
     },
