@@ -182,49 +182,109 @@ export const SliderHeroClient: React.FC<{
         }
       })
 
-      // Mobile (< 768px)
+      // Mobile (< 768px) - Impeccable Motion Design
       mm.add('(max-width: 767px)', () => {
+        // Respeto riguroso a preferencias de accesibilidad (prefers-reduced-motion)
+        const prefersReducedMotion =
+          typeof window !== 'undefined' &&
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+        if (prefersReducedMotion) {
+          if (imgRef.current) {
+            gsap.set(imgRef.current, {
+              opacity: 1,
+              scale: 1.14,
+              y: 0,
+              transformOrigin: '51.8% 28%',
+            })
+          }
+          if (textElements.length > 0) {
+            gsap.set(textElements, { opacity: 1, y: 0 })
+          }
+          return
+        }
+
         const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-        // En móvil el texto entra INMEDIATAMENTE para garantizar visibilidad total
-        if (textElements.length > 0) {
+        // 1. Fotografía de autor: Entrada fluida de un solo movimiento a escala perfecta
+        //    Adaptada dinámicamente según la altura de pantalla para no rozar los botones en pantallas bajas (iPhone SE)
+        //    y lucir elevada y sin recortes en pantallas estándar (iPhone 13/14/15/Android)
+        if (imgRef.current) {
+          const isShortMobile = typeof window !== 'undefined' && window.innerHeight < 720
+          const targetY = isShortMobile ? -6 : -22
+          const breathTargetY = isShortMobile ? -11 : -28
+
+          gsap.set(imgRef.current, {
+            scale: 1.14,
+            transformOrigin: '51.8% 25%',
+            willChange: 'transform, opacity',
+          })
+
           tl.fromTo(
-            textElements,
+            imgRef.current,
             {
-              y: 25,
+              y: 16,
               opacity: 0,
             },
             {
-              y: 0,
+              y: targetY,
               opacity: 1,
-              duration: 0.65,
-              stagger: 0.05,
+              duration: 1.15,
               ease: 'power3.out',
-              clearProps: 'transform,opacity',
+              onComplete: () => {
+                // Sutil respiro ambiental (ambient breath): da vida viva y serena a la ilustración
+                gsap.to(imgRef.current, {
+                  y: breathTargetY,
+                  duration: 3.5,
+                  ease: 'sine.inOut',
+                  yoyo: true,
+                  repeat: -1,
+                })
+              },
             },
             0.05,
           )
         }
 
-        // En móvil zoom suave y proporcionado al collar sin salirse del marco ni tapar textos
-        if (imgRef.current) {
+        // 2. Coreografía tipográfica editorial estratificada:
+        //    Badge de autenticidad -> Titular H1 poético -> CTA y Redes
+        if (badgeRef.current) {
           tl.fromTo(
-            imgRef.current,
-            { y: -12, opacity: 0.9, scale: 1 },
-            { y: 0, opacity: 1, duration: 0.65, ease: 'power2.out' },
-            0.05,
+            badgeRef.current,
+            { y: 16, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.65, ease: 'power3.out' },
+            0.15,
           )
+        }
 
-          tl.to(
-            imgRef.current,
+        if (headingRef.current) {
+          tl.fromTo(
+            headingRef.current,
+            { y: 26, opacity: 0 },
             {
-              scale: 1.25,
-              transformOrigin: '51.8% 30%',
-              y: -25,
-              duration: 1.4,
-              ease: 'power2.inOut',
+              y: 0,
+              opacity: 1,
+              duration: 0.85,
+              ease: 'power3.out',
+              clearProps: 'transform,opacity',
             },
-            '+=0.05',
+            0.3,
+          )
+        }
+
+        if (actionsRef.current) {
+          tl.fromTo(
+            actionsRef.current,
+            { y: 20, opacity: 0, scale: 0.96 },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 0.75,
+              ease: 'power2.out',
+              clearProps: 'transform,opacity',
+            },
+            0.48,
           )
         }
       })
@@ -363,7 +423,7 @@ export const SliderHeroClient: React.FC<{
       {/* ========================================================= */}
       <div
         ref={modelRef}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-8 xl:right-16 lg:bottom-10 xl:bottom-12 h-[58vh] sm:h-[64vh] md:h-[68vh] lg:h-[78vh] xl:h-[84vh] w-full lg:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-hidden lg:overflow-visible"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-8 xl:right-16 lg:bottom-10 xl:bottom-12 h-[57vh] sm:h-[63vh] md:h-[68vh] lg:h-[78vh] xl:h-[84vh] w-full lg:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-visible"
       >
         <img
           ref={imgRef}
