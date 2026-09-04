@@ -69,17 +69,18 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
       // Slider slides - Krafti 3 editorial slides with high-res jewelry photography
       slides: [
         {
-          badge: 'COLECCIÓN DESTACADA',
-          heading: 'Mostacilla con Alma Caribeña',
-          metaText: 'CARTAGENA DE INDIAS • TEJIDO EMBERÁ • PIEZAS DE AUTOR',
-          subheading: 'Piezas únicas tejidas a mano en Cartagena, con la dedicación y maestría de Shirley.',
-          tabTitle: 'Mostacilla Caribeña',
-          linkLabel: 'Explorar Catálogo',
-          linkUrl: '/shop',
-          imagePosition: 'top',
+          badge: 'HERENCIA AFRO-CARIBEÑA & ALTA ARTESANÍA',
+          heading: 'La nobleza del Caribe no se hereda. Se teje.',
+          metaText: 'CARTAGENA DE INDIAS • TEJIDO ANCESTRAL • PIEZAS DE AUTOR',
+          subheading:
+            'Micro-mostacilla checa tejida con la dignidad, el color y la memoria viva de nuestras raíces. Piezas de autor creadas por Shirley en Cartagena para mujeres que caminan con la frente en alto.',
+          tabTitle: 'Herencia Caribeña',
+          linkLabel: '',
+          linkUrl: '',
+          imagePosition: 'center',
           image: {
-            url: 'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-ancestral.jpg',
-            alt: 'Mostacilla con Alma Caribeña - Collar Ancestral',
+            url: '/landing-modify-traced.svg',
+            alt: 'Mujer palenquera con joyería en mostacilla Nénufar',
           } as any,
         },
         {
