@@ -79,7 +79,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
           linkUrl: '',
           imagePosition: 'center',
           image: {
-            url: '/landing-modify-traced.svg',
+            url: '/landing-morena.webp',
             alt: 'Mujer palenquera con joyería en mostacilla Nénufar',
           } as any,
         },
