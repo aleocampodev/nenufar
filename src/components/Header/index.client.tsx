@@ -71,7 +71,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
     <header
       className={`sticky top-0 z-40 transition-all duration-500 ${
         isTransparent
-          ? 'bg-[#DBC4AC]/95 dark:bg-[#120A1E]/80 backdrop-blur-md text-[#1A0E2E] dark:text-white'
+          ? 'bg-transparent text-[#1A0E2E] dark:text-white'
           : 'bg-[#3D1A5B]/95 dark:bg-[#2E1346]/95 backdrop-blur-md text-white shadow-[0_8px_30px_rgba(61,26,91,0.35)] border-b border-[#4D2472]/40'
       }`}
     >
@@ -95,7 +95,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
           </Link>
 
           {/* Desktop Navigation Links - Centered */}
-          <div className="hidden md:flex items-center gap-7 lg:gap-8">
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8">
             {/* Catálogo con Dropdown */}
             <div
               className="relative"
@@ -205,7 +205,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
               <Cart />
             </Suspense>
 
-            <div className="md:hidden flex items-center">
+            <div className="lg:hidden flex items-center">
               <Suspense fallback={null}>
                 <MobileMenu menu={header.navItems} categories={displayCategories} />
               </Suspense>

@@ -28,7 +28,6 @@ export const SliderHeroClient: React.FC<{
   const containerRef = useRef<HTMLElement>(null)
   const badgeRef = useRef<HTMLDivElement>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
-  const chipsRef = useRef<HTMLDivElement>(null)
   const actionsRef = useRef<HTMLDivElement>(null)
   const modelRef = useRef<HTMLDivElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
@@ -40,7 +39,6 @@ export const SliderHeroClient: React.FC<{
       const textElements = [
         badgeRef.current,
         headingRef.current,
-        chipsRef.current,
         actionsRef.current,
       ].filter(Boolean)
 
@@ -57,14 +55,14 @@ export const SliderHeroClient: React.FC<{
             0.05,
           )
 
-          // 2. Zoom cinematográfico que mantiene la palenquera completa y eleva la flor del collar
+          // 2. Zoom cinematográfico que mantiene la palenquera completa y la eleva hacia el navbar
           tl.to(
             imgRef.current,
             {
               scale: 1.35,
               transformOrigin: '51.8% 25%',
               x: 50,
-              y: -45,
+              y: -155,
               duration: 1.8,
               ease: 'power2.inOut',
             },
@@ -74,11 +72,15 @@ export const SliderHeroClient: React.FC<{
 
         // 3. Texto entra elegante desde abajo
         if (textElements.length > 0) {
-          tl.from(
+          tl.fromTo(
             textElements,
             {
               y: 45,
               opacity: 0,
+            },
+            {
+              y: 0,
+              opacity: 1,
               duration: 0.85,
               stagger: 0.08,
               ease: 'power3.out',
@@ -94,11 +96,15 @@ export const SliderHeroClient: React.FC<{
         const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
         if (textElements.length > 0) {
-          tl.from(
+          tl.fromTo(
             textElements,
             {
               y: 35,
               opacity: 0,
+            },
+            {
+              y: 0,
+              opacity: 1,
               duration: 0.75,
               stagger: 0.07,
               ease: 'power3.out',
@@ -121,7 +127,7 @@ export const SliderHeroClient: React.FC<{
             {
               scale: 1.35,
               transformOrigin: '51.8% 25%',
-              y: 15,
+              y: -50,
               duration: 1.5,
               ease: 'power2.inOut',
             },
@@ -136,11 +142,15 @@ export const SliderHeroClient: React.FC<{
 
         // En móvil el texto entra INMEDIATAMENTE para garantizar visibilidad total
         if (textElements.length > 0) {
-          tl.from(
+          tl.fromTo(
             textElements,
             {
               y: 25,
               opacity: 0,
+            },
+            {
+              y: 0,
+              opacity: 1,
               duration: 0.65,
               stagger: 0.05,
               ease: 'power3.out',
@@ -164,6 +174,7 @@ export const SliderHeroClient: React.FC<{
             {
               scale: 1.25,
               transformOrigin: '51.8% 30%',
+              y: -25,
               duration: 1.4,
               ease: 'power2.inOut',
             },
@@ -182,17 +193,17 @@ export const SliderHeroClient: React.FC<{
       ref={containerRef}
       className="relative w-full min-h-screen min-h-[100dvh] -mt-[74px] sm:-mt-[78px] pt-[78px] sm:pt-[88px] lg:pt-[105px] pb-0 bg-[#DBC4AC] border-b border-[#C8AF95]/60 flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
-      <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full mt-0 lg:mt-auto">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-end">
+      <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto pt-2 sm:pt-4 md:pt-6 lg:pt-8 pb-8 sm:pb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start lg:items-center">
           
           {/* ========================================================= */}
-          {/* COLUMNA IZQUIERDA: Titular, Badge, Tabs, CTA & Redes      */}
+          {/* COLUMNA IZQUIERDA: Titular, Badge, CTA & Redes            */}
           {/* ========================================================= */}
-          <div className="md:col-span-7 flex flex-col items-start text-left max-w-2xl pt-2 sm:pt-4 md:py-8 lg:py-16">
+          <div className="lg:col-span-7 flex flex-col items-start text-left max-w-2xl py-0">
             {/* Badge superior */}
             <div
               ref={badgeRef}
-              className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-[#F4ECE3] border border-[#C8AF95] shadow-xs mb-2.5 sm:mb-4 lg:mb-5 backdrop-blur-xs"
+              className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-[#F4ECE3] border border-[#C8AF95] shadow-xs mb-3 sm:mb-4 lg:mb-5 backdrop-blur-xs"
             >
               <span className="w-2 h-2 rounded-full bg-[#8B5A2B] animate-pulse shrink-0" />
               <span className="text-[10px] sm:text-[11px] font-sans font-semibold uppercase tracking-[0.25em] text-[#8B5A2B]">
@@ -203,29 +214,13 @@ export const SliderHeroClient: React.FC<{
             {/* Titular H1 */}
             <h1
               ref={headingRef}
-              className="font-serif text-[1.75rem] leading-[1.12] sm:text-4xl md:text-5xl lg:text-[3.4rem] xl:text-[4rem] text-[#1A0E2E] dark:text-white font-normal tracking-tight mb-2.5 sm:mb-4 lg:mb-6"
+              className="font-serif text-[1.85rem] leading-[1.12] sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[4.1rem] text-[#1A0E2E] dark:text-white font-normal tracking-tight mb-5 sm:mb-7 lg:mb-9"
             >
               La nobleza del Caribe no se hereda.{' '}
               <span className="italic font-light text-brand">
                 Se teje.
               </span>
             </h1>
-
-            {/* Tabs / Sellos de Confianza */}
-            <div ref={chipsRef} className="flex flex-wrap items-center gap-1.5 sm:gap-2.5 mb-3.5 sm:mb-5 lg:mb-8">
-              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-xl bg-[#F4ECE3] border border-[#C8AF95] text-[11px] sm:text-xs font-medium text-[#1A0E2E] shadow-xs">
-                <span className="text-[#8B5A2B] text-xs sm:text-sm">✦</span>
-                <span>Piezas únicas de autor</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-xl bg-[#F4ECE3] border border-[#C8AF95] text-[11px] sm:text-xs font-medium text-[#1A0E2E] shadow-xs">
-                <span className="text-[#8B5A2B] text-xs sm:text-sm">✨</span>
-                <span>Micro-mostacilla checa calibrada</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-xl bg-[#F4ECE3] border border-[#C8AF95] text-[11px] sm:text-xs font-medium text-[#1A0E2E] shadow-xs">
-                <span className="text-xs sm:text-sm">📦</span>
-                <span>Envíos asegurados a Colombia</span>
-              </div>
-            </div>
 
             {/* CTA Principal hacia el Catálogo & Redes Sociales */}
             <div ref={actionsRef} className="flex flex-wrap items-center gap-2.5 sm:gap-4 lg:gap-5">
@@ -283,9 +278,9 @@ export const SliderHeroClient: React.FC<{
           </div>
 
           {/* ========================================================= */}
-          {/* ESPACIO RESERVADO COLUMNA DERECHA (Desktop/Tablet Grid)   */}
+          {/* ESPACIO RESERVADO COLUMNA DERECHA (Desktop Grid >= 1024px)*/}
           {/* ========================================================= */}
-          <div className="hidden md:block md:col-span-5 h-1 pointer-events-none" />
+          <div className="hidden lg:block lg:col-span-5 h-1 pointer-events-none" />
 
         </div>
       </div>
@@ -295,7 +290,7 @@ export const SliderHeroClient: React.FC<{
       {/* ========================================================= */}
       <div
         ref={modelRef}
-        className="relative md:absolute bottom-2 sm:bottom-4 md:bottom-6 lg:bottom-10 xl:bottom-12 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-2 lg:right-8 xl:right-16 h-[38vh] sm:h-[46vh] md:h-[68vh] lg:h-[78vh] xl:h-[84vh] w-full md:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-hidden md:overflow-visible"
+        className="relative lg:absolute bottom-2 sm:bottom-4 lg:bottom-10 xl:bottom-12 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-8 xl:right-16 h-[38vh] sm:h-[46vh] md:h-[50vh] lg:h-[78vh] xl:h-[84vh] w-full lg:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-hidden lg:overflow-visible"
       >
         <img
           ref={imgRef}
