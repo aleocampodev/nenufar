@@ -31,33 +31,60 @@ export const SliderHeroClient: React.FC<{
   const chipsRef = useRef<HTMLDivElement>(null)
   const actionsRef = useRef<HTMLDivElement>(null)
   const modelRef = useRef<HTMLDivElement>(null)
+  const imgRef = useRef<HTMLImageElement>(null)
   const glowRef = useRef<HTMLDivElement>(null)
 
   useGSAP(
     () => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-      if (badgeRef.current) {
-        tl.from(badgeRef.current, { y: 20, opacity: 0, duration: 0.8 })
+      // 1. Resplandor ambiental suave de fondo
+      if (glowRef.current) {
+        tl.from(glowRef.current, { scale: 0.7, opacity: 0, duration: 1.8, ease: 'power2.out' }, 0)
       }
-      if (headingRef.current) {
-        tl.from(headingRef.current, { y: 35, opacity: 0, duration: 1 }, '-=0.5')
-      }
-      if (chipsRef.current) {
-        tl.from(
-          chipsRef.current.children,
-          { y: 15, opacity: 0, duration: 0.5, stagger: 0.08 },
-          '-=0.5',
+
+      // 2. Sutilmente baja la imagen al inicio
+      if (imgRef.current) {
+        tl.fromTo(
+          imgRef.current,
+          { y: -50, opacity: 0.6, scale: 1 },
+          { y: 0, opacity: 1, duration: 1.1, ease: 'power2.out' },
+          0.1,
+        )
+
+        // 3. Luego se hace zoom enfocado en el collar (x: 53.3%, y: 42.2%)
+        tl.to(
+          imgRef.current,
+          {
+            scale: 1.18,
+            transformOrigin: '53.3% 42.2%',
+            duration: 1.6,
+            ease: 'power2.out',
+          },
+          '+=0.05',
         )
       }
-      if (actionsRef.current) {
-        tl.from(actionsRef.current, { y: 20, opacity: 0, duration: 0.6 }, '-=0.3')
-      }
-      if (glowRef.current) {
+
+      // 4. Llega de abajo todo el texto con el botón
+      const textElements = [
+        badgeRef.current,
+        headingRef.current,
+        chipsRef.current,
+        actionsRef.current,
+      ].filter(Boolean)
+
+      if (textElements.length > 0) {
         tl.from(
-          glowRef.current,
-          { scale: 0.7, opacity: 0, duration: 1.5, ease: 'power2.out' },
-          '-=1.2',
+          textElements,
+          {
+            y: 85,
+            opacity: 0,
+            duration: 1.15,
+            stagger: 0.12,
+            ease: 'power3.out',
+            clearProps: 'transform,opacity',
+          },
+          '-=1.2', // Se solapa armoniosamente con el zoom al collar
         )
       }
     },
@@ -194,9 +221,10 @@ export const SliderHeroClient: React.FC<{
         className="relative md:absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-4 lg:right-8 xl:right-16 h-[52vh] sm:h-[62vh] md:h-[70vh] lg:h-[78vh] xl:h-[84vh] flex items-end justify-center pointer-events-none z-10 select-none"
       >
         <img
+          ref={imgRef}
           src="/hero-woman-uncropped.webp"
           alt="Mujer luciendo alta joyería artesanal en micro-mostacilla Nénufar"
-          className="w-auto h-full max-h-[86vh] object-contain object-bottom select-none drop-shadow-none"
+          className="w-auto h-full max-h-[86vh] object-contain object-bottom select-none drop-shadow-none will-change-transform"
           loading="eager"
         />
       </div>
