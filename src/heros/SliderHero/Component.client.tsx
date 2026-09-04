@@ -69,13 +69,13 @@ export const SliderHeroClient: React.FC<{
       ref={containerRef}
       className="relative w-full min-h-[86vh] lg:min-h-[92vh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-0 bg-[#FAF8FC] dark:bg-[#120A1E] flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
-      {/* Resplandor ambiental de iluminación suave (Derecha e Izquierda) */}
+      {/* Resplandor ambiental y Halo Magenta traslúcido para hacer resaltar a la modelo */}
       <div
         ref={glowRef}
-        className="absolute top-1/4 -right-12 sm:-right-20 w-[460px] sm:w-[650px] lg:w-[820px] h-[460px] sm:h-[650px] lg:h-[820px] bg-gradient-to-bl from-[#FF4FA3]/18 via-[#E91E8C]/10 to-transparent rounded-full blur-3xl pointer-events-none"
+        className="absolute top-1/2 -translate-y-1/2 -right-8 sm:right-4 lg:right-12 w-[520px] sm:w-[750px] lg:w-[920px] h-[520px] sm:h-[750px] lg:h-[920px] bg-[radial-gradient(ellipse_at_center,_rgba(233,30,140,0.22)_0%,_rgba(255,79,163,0.12)_45%,_transparent_72%)] blur-3xl pointer-events-none z-0"
       />
       <div
-        className="absolute top-1/6 -left-16 sm:-left-24 w-[440px] sm:w-[600px] lg:w-[740px] h-[440px] sm:h-[600px] lg:h-[740px] bg-gradient-to-br from-[#FF4FA3]/14 via-[#6A1B9A]/8 to-transparent rounded-full blur-3xl pointer-events-none"
+        className="absolute top-1/6 -left-16 sm:-left-24 w-[440px] sm:w-[600px] lg:w-[740px] h-[440px] sm:h-[600px] lg:h-[740px] bg-gradient-to-br from-[#FF4FA3]/12 via-[#6A1B9A]/6 to-transparent rounded-full blur-3xl pointer-events-none"
       />
       <div className="absolute -bottom-16 left-1/12 w-[350px] h-[350px] bg-gradient-to-tr from-[#3D1A5B]/8 via-[#FF4FA3]/5 to-transparent rounded-full blur-2xl pointer-events-none" />
 
