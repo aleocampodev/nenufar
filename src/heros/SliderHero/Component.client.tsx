@@ -56,13 +56,6 @@ export const SliderHeroClient: React.FC<{
       if (socialsRef.current) {
         tl.from(socialsRef.current, { y: 15, opacity: 0, duration: 0.6 }, '-=0.4')
       }
-      if (modelRef.current) {
-        tl.from(
-          modelRef.current,
-          { y: 55, scale: 0.95, opacity: 0, duration: 1.3, ease: 'power2.out' },
-          '-=1.0',
-        )
-      }
       if (glowRef.current) {
         tl.from(
           glowRef.current,
@@ -139,17 +132,17 @@ export const SliderHeroClient: React.FC<{
           </div>
 
           {/* ========================================================= */}
-          {/* COLUMNA DERECHA: Fotografía Aterrizada (No Flotante)      */}
+          {/* COLUMNA DERECHA: Fotografía en Primer Plano (Más Cerca)   */}
           {/* ========================================================= */}
           <div className="lg:col-span-5 relative flex items-end justify-center lg:justify-end">
             <div
               ref={modelRef}
-              className="relative w-full max-w-[500px] sm:max-w-[640px] md:max-w-[740px] lg:max-w-[880px] xl:max-w-[1020px] flex items-end justify-center will-change-transform"
+              className="relative flex items-end justify-center lg:justify-end"
             >
               <img
                 src="/hero-woman-uncropped.webp"
                 alt="Mujer luciendo alta joyería artesanal en micro-mostacilla Nénufar"
-                className="w-full h-auto max-h-[75vh] sm:max-h-[84vh] lg:max-h-[92vh] object-contain object-bottom select-none will-change-transform scale-120 sm:scale-130 lg:scale-140 xl:scale-148 origin-bottom"
+                className="w-auto h-[60vh] sm:h-[72vh] md:h-[78vh] lg:h-[84vh] xl:h-[88vh] max-w-none object-contain object-bottom select-none translate-x-[14%] sm:translate-x-[18%] lg:translate-x-[22%] xl:translate-x-[24%]"
                 loading="eager"
               />
             </div>
