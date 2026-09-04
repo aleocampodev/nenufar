@@ -71,7 +71,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
     <header
       className={`sticky top-0 z-40 transition-all duration-500 ${
         isTransparent
-          ? 'bg-[#FAF8FC]/80 dark:bg-[#120A1E]/80 backdrop-blur-md text-[#1A0E2E] dark:text-white border-b border-[#E8E0F0]/60'
+          ? 'bg-[#FAF8F5]/90 dark:bg-[#120A1E]/80 backdrop-blur-md text-[#1A0E2E] dark:text-white border-b border-[#EADCCF]/60'
           : 'bg-[#3D1A5B]/95 dark:bg-[#2E1346]/95 backdrop-blur-md text-white shadow-[0_8px_30px_rgba(61,26,91,0.35)] border-b border-[#4D2472]/40'
       }`}
     >
@@ -112,7 +112,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
                 <ChevronDown
                   className={`w-3.5 h-3.5 transition-transform duration-200 ${
                     catOpen ? 'rotate-180' : ''
-                  } text-white/80`}
+                  } ${isTransparent ? 'text-[#1A0E2E]/70' : 'text-white/80'}`}
                 />
               </Link>
 
