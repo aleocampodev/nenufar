@@ -193,8 +193,8 @@ export const SliderHeroClient: React.FC<{
           if (imgRef.current) {
             gsap.set(imgRef.current, {
               opacity: 1,
-              scale: 1.06,
-              y: -15,
+              scale: 0.95,
+              y: 0,
               transformOrigin: '51.8% 28%',
             })
           }
@@ -207,15 +207,14 @@ export const SliderHeroClient: React.FC<{
         const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
 
         // 1. Fotografía de autor: Llega sutilmente desde abajo (from below)
-        //    Elevada suavemente para cerrar el espacio con el texto y lucir el collar
+        //    Escala más contenida (0.95) y natural para que no se sienta invasiva ni grande
         if (imgRef.current) {
-          const isShortMobile = typeof window !== 'undefined' && window.innerHeight < 720
-          const targetY = isShortMobile ? -14 : -50
-          const breathTargetY = isShortMobile ? -19 : -55
-          const startY = targetY + 44 // Entrada suave y sutil desde abajo
+          const targetY = 0
+          const breathTargetY = -5
+          const startY = 36 // Entrada suave y sutil desde abajo
 
           gsap.set(imgRef.current, {
-            scale: 1.06,
+            scale: 0.95,
             transformOrigin: '51.8% 25%',
             willChange: 'transform, opacity',
           })
@@ -299,7 +298,7 @@ export const SliderHeroClient: React.FC<{
       ref={containerRef}
       className="relative w-full min-h-screen min-h-[100dvh] -mt-[74px] sm:-mt-[78px] pt-[78px] sm:pt-[88px] lg:pt-[105px] pb-0 bg-[#DBC4AC] border-b border-[#C8AF95]/60 flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
-      <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full pt-8 sm:pt-6 md:pt-8 lg:pt-8 pb-4 sm:pb-8 lg:my-auto">
+      <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full pt-14 sm:pt-6 md:pt-8 lg:pt-8 pb-4 sm:pb-8 lg:my-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start lg:items-center">
           
           {/* ========================================================= */}
@@ -423,7 +422,7 @@ export const SliderHeroClient: React.FC<{
       {/* ========================================================= */}
       <div
         ref={modelRef}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-8 xl:right-16 lg:bottom-10 xl:bottom-12 h-[57vh] sm:h-[63vh] md:h-[68vh] lg:h-[78vh] xl:h-[84vh] w-full lg:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-visible"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-8 xl:right-16 lg:bottom-10 xl:bottom-12 h-[47vh] sm:h-[55vh] md:h-[62vh] lg:h-[78vh] xl:h-[84vh] w-full lg:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-visible"
       >
         <img
           ref={imgRef}
