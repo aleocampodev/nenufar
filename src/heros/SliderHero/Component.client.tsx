@@ -35,31 +35,8 @@ export const SliderHeroClient: React.FC<{
 
   useGSAP(
     () => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+      const mm = gsap.matchMedia(containerRef)
 
-      // 1. Sutilmente baja la imagen al inicio
-      if (imgRef.current) {
-        tl.fromTo(
-          imgRef.current,
-          { y: -45, opacity: 0.85, scale: 1 },
-          { y: 0, opacity: 1, duration: 1.0, ease: 'power2.out' },
-          0.1,
-        )
-
-        // 2. Zoom cinematográfico profundo directo al collar (x: 53.3%, y: 42.2%)
-        tl.to(
-          imgRef.current,
-          {
-            scale: 3.85,
-            transformOrigin: '53.3% 42.2%',
-            duration: 2.0,
-            ease: 'power2.inOut',
-          },
-          '+=0.05',
-        )
-      }
-
-      // 3. Llega de abajo todo el texto con el botón
       const textElements = [
         badgeRef.current,
         headingRef.current,
@@ -67,20 +44,133 @@ export const SliderHeroClient: React.FC<{
         actionsRef.current,
       ].filter(Boolean)
 
-      if (textElements.length > 0) {
-        tl.from(
-          textElements,
-          {
-            y: 90,
-            opacity: 0,
-            duration: 1.25,
-            stagger: 0.12,
-            ease: 'power3.out',
-            clearProps: 'transform,opacity',
-          },
-          '-=1.4', // Se sincroniza con el acercamiento cercano al collar
-        )
-      }
+      // Desktop & Tablet landscape (>= 1024px)
+      mm.add('(min-width: 1024px)', () => {
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+        // 1. Imagen desciende suavemente
+        if (imgRef.current) {
+          tl.fromTo(
+            imgRef.current,
+            { y: -35, opacity: 0.85, scale: 1, x: 0 },
+            { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out' },
+            0.05,
+          )
+
+          // 2. Zoom al collar refinado y desplazado hacia la derecha para mantener limpio el fondo arena
+          tl.to(
+            imgRef.current,
+            {
+              scale: 2.35,
+              transformOrigin: '53.3% 42.2%',
+              x: 160,
+              duration: 1.8,
+              ease: 'power2.inOut',
+            },
+            '+=0.05',
+          )
+        }
+
+        // 3. Texto entra elegante desde abajo
+        if (textElements.length > 0) {
+          tl.from(
+            textElements,
+            {
+              y: 45,
+              opacity: 0,
+              duration: 0.85,
+              stagger: 0.08,
+              ease: 'power3.out',
+              clearProps: 'transform,opacity',
+            },
+            0.25,
+          )
+        }
+      })
+
+      // Tablet portrait (768px - 1023px)
+      mm.add('(min-width: 768px) and (max-width: 1023px)', () => {
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+        if (textElements.length > 0) {
+          tl.from(
+            textElements,
+            {
+              y: 35,
+              opacity: 0,
+              duration: 0.75,
+              stagger: 0.07,
+              ease: 'power3.out',
+              clearProps: 'transform,opacity',
+            },
+            0.1,
+          )
+        }
+
+        if (imgRef.current) {
+          tl.fromTo(
+            imgRef.current,
+            { y: -20, opacity: 0.85, scale: 1 },
+            { y: 0, opacity: 1, duration: 0.75, ease: 'power2.out' },
+            0.05,
+          )
+
+          tl.to(
+            imgRef.current,
+            {
+              scale: 2.0,
+              transformOrigin: '53.3% 42.2%',
+              duration: 1.5,
+              ease: 'power2.inOut',
+            },
+            '+=0.05',
+          )
+        }
+      })
+
+      // Mobile (< 768px)
+      mm.add('(max-width: 767px)', () => {
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+        // En móvil el texto entra INMEDIATAMENTE para garantizar visibilidad total
+        if (textElements.length > 0) {
+          tl.from(
+            textElements,
+            {
+              y: 25,
+              opacity: 0,
+              duration: 0.65,
+              stagger: 0.05,
+              ease: 'power3.out',
+              clearProps: 'transform,opacity',
+            },
+            0.05,
+          )
+        }
+
+        // En móvil zoom suave y proporcionado al collar sin salirse del marco ni tapar textos
+        if (imgRef.current) {
+          tl.fromTo(
+            imgRef.current,
+            { y: -12, opacity: 0.9, scale: 1 },
+            { y: 0, opacity: 1, duration: 0.65, ease: 'power2.out' },
+            0.05,
+          )
+
+          tl.to(
+            imgRef.current,
+            {
+              scale: 1.3,
+              transformOrigin: '53.3% 42.2%',
+              duration: 1.4,
+              ease: 'power2.inOut',
+            },
+            '+=0.05',
+          )
+        }
+      })
+
+      return () => mm.revert()
     },
     { scope: containerRef },
   )
@@ -88,19 +178,19 @@ export const SliderHeroClient: React.FC<{
   return (
     <section
       ref={containerRef}
-      className="relative w-full min-h-screen min-h-[100dvh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-0 bg-[#DBC4AC] border-b border-[#C8AF95]/60 flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
+      className="relative w-full min-h-screen min-h-[100dvh] -mt-[74px] sm:-mt-[78px] pt-[78px] sm:pt-[88px] lg:pt-[105px] pb-0 bg-[#DBC4AC] border-b border-[#C8AF95]/60 flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
-      <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full mt-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-end">
+      <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full mt-0 lg:mt-auto">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-end">
           
           {/* ========================================================= */}
           {/* COLUMNA IZQUIERDA: Titular, Badge, Tabs, CTA & Redes      */}
           {/* ========================================================= */}
-          <div className="lg:col-span-7 flex flex-col items-start text-left max-w-2xl pb-24 sm:pb-32 lg:pb-36 pt-6 sm:pt-8">
+          <div className="md:col-span-7 flex flex-col items-start text-left max-w-2xl pt-2 sm:pt-4 md:py-8 lg:py-16">
             {/* Badge superior */}
             <div
               ref={badgeRef}
-              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#F4ECE3] border border-[#C8AF95] shadow-xs mb-5 sm:mb-6 backdrop-blur-xs"
+              className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-[#F4ECE3] border border-[#C8AF95] shadow-xs mb-2.5 sm:mb-4 lg:mb-5 backdrop-blur-xs"
             >
               <span className="w-2 h-2 rounded-full bg-[#8B5A2B] animate-pulse shrink-0" />
               <span className="text-[10px] sm:text-[11px] font-sans font-semibold uppercase tracking-[0.25em] text-[#8B5A2B]">
@@ -111,7 +201,7 @@ export const SliderHeroClient: React.FC<{
             {/* Titular H1 */}
             <h1
               ref={headingRef}
-              className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] text-[#1A0E2E] dark:text-white font-normal leading-[1.1] tracking-tight mb-6 sm:mb-7"
+              className="font-serif text-[1.75rem] leading-[1.12] sm:text-4xl md:text-5xl lg:text-[3.4rem] xl:text-[4rem] text-[#1A0E2E] dark:text-white font-normal tracking-tight mb-2.5 sm:mb-4 lg:mb-6"
             >
               La nobleza del Caribe no se hereda.{' '}
               <span className="italic font-light text-brand">
@@ -120,26 +210,26 @@ export const SliderHeroClient: React.FC<{
             </h1>
 
             {/* Tabs / Sellos de Confianza */}
-            <div ref={chipsRef} className="flex flex-wrap items-center gap-2 sm:gap-2.5 mb-6 sm:mb-8">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#F4ECE3] border border-[#C8AF95] text-xs font-medium text-[#1A0E2E] shadow-xs">
-                <span className="text-[#8B5A2B] text-sm">✦</span>
+            <div ref={chipsRef} className="flex flex-wrap items-center gap-1.5 sm:gap-2.5 mb-3.5 sm:mb-5 lg:mb-8">
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-xl bg-[#F4ECE3] border border-[#C8AF95] text-[11px] sm:text-xs font-medium text-[#1A0E2E] shadow-xs">
+                <span className="text-[#8B5A2B] text-xs sm:text-sm">✦</span>
                 <span>Piezas únicas de autor</span>
               </div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#F4ECE3] border border-[#C8AF95] text-xs font-medium text-[#1A0E2E] shadow-xs">
-                <span className="text-[#8B5A2B] text-sm">✨</span>
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-xl bg-[#F4ECE3] border border-[#C8AF95] text-[11px] sm:text-xs font-medium text-[#1A0E2E] shadow-xs">
+                <span className="text-[#8B5A2B] text-xs sm:text-sm">✨</span>
                 <span>Micro-mostacilla checa calibrada</span>
               </div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#F4ECE3] border border-[#C8AF95] text-xs font-medium text-[#1A0E2E] shadow-xs">
-                <span className="text-sm">📦</span>
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-xl bg-[#F4ECE3] border border-[#C8AF95] text-[11px] sm:text-xs font-medium text-[#1A0E2E] shadow-xs">
+                <span className="text-xs sm:text-sm">📦</span>
                 <span>Envíos asegurados a Colombia</span>
               </div>
             </div>
 
             {/* CTA Principal hacia el Catálogo & Redes Sociales */}
-            <div ref={actionsRef} className="flex flex-wrap items-center gap-4 sm:gap-5">
+            <div ref={actionsRef} className="flex flex-wrap items-center gap-2.5 sm:gap-4 lg:gap-5">
               <Link
                 href="/shop"
-                className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-brand hover:bg-brand-dark active:scale-95 text-white font-sans text-xs sm:text-sm font-bold uppercase tracking-wider shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group"
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-full bg-brand hover:bg-brand-dark active:scale-95 text-white font-sans text-xs sm:text-sm font-bold uppercase tracking-wider shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group"
               >
                 <span>Conoce la colección</span>
                 <span className="text-base transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -147,7 +237,7 @@ export const SliderHeroClient: React.FC<{
 
               {/* Redes Sociales */}
               <div
-                className="inline-flex items-center gap-3 text-neutral-700 bg-[#F4ECE3] backdrop-blur-md px-3.5 sm:px-4 py-2 sm:py-2 rounded-full border border-[#C8AF95] shadow-xs"
+                className="inline-flex items-center gap-2.5 sm:gap-3 text-neutral-700 bg-[#F4ECE3] backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#C8AF95] shadow-xs"
                 role="navigation"
                 aria-label="Redes sociales de Nénufar"
               >
@@ -191,9 +281,9 @@ export const SliderHeroClient: React.FC<{
           </div>
 
           {/* ========================================================= */}
-          {/* ESPACIO RESERVADO COLUMNA DERECHA (Desktop Grid)         */}
+          {/* ESPACIO RESERVADO COLUMNA DERECHA (Desktop/Tablet Grid)   */}
           {/* ========================================================= */}
-          <div className="hidden lg:block lg:col-span-5 h-1 pointer-events-none" />
+          <div className="hidden md:block md:col-span-5 h-1 pointer-events-none" />
 
         </div>
       </div>
@@ -203,7 +293,7 @@ export const SliderHeroClient: React.FC<{
       {/* ========================================================= */}
       <div
         ref={modelRef}
-        className="relative md:absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-4 lg:right-8 xl:right-16 h-[52vh] sm:h-[62vh] md:h-[70vh] lg:h-[78vh] xl:h-[84vh] flex items-end justify-center pointer-events-none z-10 select-none"
+        className="relative md:absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-2 lg:right-8 xl:right-16 h-[38vh] sm:h-[46vh] md:h-[68vh] lg:h-[78vh] xl:h-[84vh] w-full md:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-hidden md:overflow-visible"
       >
         <img
           ref={imgRef}
@@ -216,6 +306,7 @@ export const SliderHeroClient: React.FC<{
     </section>
   )
 }
+
 
 
 
