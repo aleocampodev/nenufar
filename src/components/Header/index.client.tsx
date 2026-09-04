@@ -163,6 +163,19 @@ export function HeaderClient({ header, categories = [] }: Props) {
               Tradición
             </Link>
 
+            {/* Galería (Sección en Landing) */}
+            <Link
+              href="/#galeria"
+              onClick={(e) => handleAnchorClick(e, '/#galeria')}
+              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
+                isPurple || isTransparent
+                  ? 'text-white/90 hover:text-white'
+                  : 'text-neutral-700 hover:text-brand'
+              }`}
+            >
+              Galería
+            </Link>
+
             {/* Nuestra Historia (Sección en Landing) */}
             <Link
               href="/#historia"

@@ -14,27 +14,37 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
       const isHome = doc.slug === 'home' || doc.slug === 'inicio'
       const path = isHome ? '/' : `/${doc.slug}`
 
-      payload.logger.info(`Revalidating page at path: ${path}`)
-
-      revalidatePath(path)
+      try {
+        payload.logger.info(`Revalidating page at path: ${path}`)
+        revalidatePath(path)
+      } catch (err) {
+        payload.logger.warn({ msg: `Skipped revalidatePath for ${path}: no static store available`, err })
+      }
     }
 
     if (previousDoc?._status === 'published' && doc._status !== 'published' && previousDoc?.slug) {
       const wasHome = previousDoc.slug === 'home' || previousDoc.slug === 'inicio'
       const oldPath = wasHome ? '/' : `/${previousDoc.slug}`
 
-      payload.logger.info(`Revalidating old page at path: ${oldPath}`)
-
-      revalidatePath(oldPath)
+      try {
+        payload.logger.info(`Revalidating old page at path: ${oldPath}`)
+        revalidatePath(oldPath)
+      } catch (err) {
+        payload.logger.warn({ msg: `Skipped revalidatePath for ${oldPath}: no static store available`, err })
+      }
     }
   }
   return doc
 }
 
-export const revalidateDelete: CollectionAfterDeleteHook<Page> = ({ doc, req: { context } }) => {
+export const revalidateDelete: CollectionAfterDeleteHook<Page> = ({ doc, req: { context, payload } }) => {
   if (!context.disableRevalidate && doc?.slug) {
     const path = doc.slug === 'home' ? '/' : `/${doc.slug}`
-    revalidatePath(path)
+    try {
+      revalidatePath(path)
+    } catch (err) {
+      payload.logger.warn({ msg: `Skipped revalidatePath for ${path}: no static store available`, err })
+    }
   }
 
   return doc

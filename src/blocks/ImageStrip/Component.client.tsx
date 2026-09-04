@@ -135,7 +135,7 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
       </ScrollReveal>
 
       {/* TIRA DE 4 FOTOS CONTINUA ESTILO KRAFTI (Borde a borde 100% ancho, sin separaciones ni margenes) */}
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 overflow-hidden">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 overflow-hidden bg-stone-950">
         {items.map((item, i) => {
           const fallback = DEFAULT_ITEMS[i % DEFAULT_ITEMS.length]
           const media = item.image as Media
@@ -152,7 +152,7 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
               variant="fade-up"
               delay={i * 120}
               duration={800}
-              className="h-full"
+              className="w-full h-full block"
             >
               <button
                 type="button"
@@ -160,7 +160,7 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
                 aria-expanded={isExpanded}
                 aria-controls="historia-expandida"
                 aria-label={`Ver historia de ${title}`}
-                className={`group relative aspect-[4/5] sm:aspect-square lg:aspect-[3/4] overflow-hidden cursor-pointer bg-stone-900 select-none text-left w-full p-0 border-0 transition-all duration-300 ${
+                className={`group relative w-full aspect-[4/5] sm:aspect-square lg:aspect-[3/4] overflow-hidden cursor-pointer bg-stone-900 select-none text-left p-0 border-0 transition-all duration-300 block ${
                   isExpanded ? "ring-4 ring-inset ring-amber-400 z-10" : ""
                 }`}
               >
@@ -176,20 +176,20 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
                   <div className="absolute inset-0 bg-stone-800" />
                 )}
 
-                {/* Degradado y Textos de la tarjeta */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-5 sm:p-6 text-white transition-opacity duration-300">
-                  <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-amber-300 mb-1">
+                {/* Textura oscura opaca SOLO al pie detrás del texto — SIN márgenes (de borde a borde) y con foto 100% limpia arriba */}
+                <div className="absolute inset-x-0 bottom-0 pt-12 sm:pt-16 pb-5 sm:pb-6 px-5 sm:px-6 bg-gradient-to-t from-black/90 via-black/70 to-transparent flex flex-col justify-end text-white transition-all duration-300">
+                  <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-amber-300 block mb-1">
                     {category}
                   </span>
-                  <h3 className="font-serif text-lg sm:text-xl font-medium leading-snug mb-1">
+                  <h3 className="font-serif text-base sm:text-lg font-medium leading-snug mb-1 text-white">
                     {title}
                   </h3>
                   {excerpt && (
-                    <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed opacity-90">
+                    <p className="text-xs text-stone-200 line-clamp-2 leading-relaxed opacity-90">
                       {excerpt}
                     </p>
                   )}
-                  <div className="mt-3 flex items-center gap-1.5 text-xs text-amber-400 font-medium">
+                  <div className="mt-2.5 flex items-center gap-1.5 text-xs text-amber-400 font-medium">
                     <span>{isExpanded ? "Ocultar historia" : "Descubrir historia"}</span>
                     <ChevronDown
                       className={`w-4 h-4 transition-transform duration-300 ${

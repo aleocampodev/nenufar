@@ -79,10 +79,10 @@ export function ShopFilterBar({
         <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
           <button
             onClick={() => updateFilters({ category: null, featured: null })}
-            className={`px-5 py-2 rounded-full text-xs uppercase tracking-wider font-medium transition-all whitespace-nowrap ${
+            className={`px-5 py-2 rounded-full text-xs uppercase tracking-wider font-medium transition-all whitespace-nowrap cursor-pointer ${
               !activeCategory && !activeFeatured
-                ? 'bg-brand text-white shadow-sm hover:bg-brand-dark'
-                : 'bg-brand/5 dark:bg-brand/10 text-brand dark:text-brand-light border border-brand/20 hover:bg-brand/15 hover:border-brand/40'
+                ? 'bg-brand text-white shadow-md shadow-brand/20 hover:bg-brand-dark scale-[1.02]'
+                : 'bg-white dark:bg-zinc-900 text-neutral-600 dark:text-neutral-300 border border-neutral-200/90 dark:border-zinc-800 hover:border-brand/50 hover:text-brand shadow-sm'
             }`}
           >
             Todos
@@ -95,13 +95,13 @@ export function ShopFilterBar({
                 category: null,
               })
             }
-            className={`px-5 py-2 rounded-full text-xs uppercase tracking-wider font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${
+            className={`px-5 py-2 rounded-full text-xs uppercase tracking-wider font-medium transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
               activeFeatured
-                ? 'bg-brand text-white shadow-sm hover:bg-brand-dark'
-                : 'bg-brand/5 dark:bg-brand/10 text-brand dark:text-brand-light border border-brand/20 hover:bg-brand/15 hover:border-brand/40'
+                ? 'bg-brand text-white shadow-md shadow-brand/20 hover:bg-brand-dark scale-[1.02]'
+                : 'bg-white dark:bg-zinc-900 text-neutral-600 dark:text-neutral-300 border border-neutral-200/90 dark:border-zinc-800 hover:border-brand/50 hover:text-brand shadow-sm'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-3.5 h-3.5 text-[#8B5A2B]" />
             Destacados
           </button>
 
@@ -116,10 +116,10 @@ export function ShopFilterBar({
                     featured: null,
                   })
                 }
-                className={`px-5 py-2 rounded-full text-xs uppercase tracking-wider font-medium transition-all whitespace-nowrap ${
+                className={`px-5 py-2 rounded-full text-xs uppercase tracking-wider font-medium transition-all whitespace-nowrap cursor-pointer ${
                   isSelected
-                    ? 'bg-brand text-white shadow-sm hover:bg-brand-dark'
-                    : 'bg-brand/5 dark:bg-brand/10 text-brand dark:text-brand-light border border-brand/20 hover:bg-brand/15 hover:border-brand/40'
+                    ? 'bg-brand text-white shadow-md shadow-brand/20 hover:bg-brand-dark scale-[1.02]'
+                    : 'bg-white dark:bg-zinc-900 text-neutral-600 dark:text-neutral-300 border border-neutral-200/90 dark:border-zinc-800 hover:border-brand/50 hover:text-brand shadow-sm'
                 }`}
               >
                 {cat.title}
@@ -133,17 +133,17 @@ export function ShopFilterBar({
           {/* Botón Filtros */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`px-4 py-2 rounded-full text-xs uppercase tracking-wider font-medium border transition-all flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-full text-xs uppercase tracking-wider font-medium border transition-all flex items-center gap-2 cursor-pointer ${
               isOpen || activeFiltersCount > 0
-                ? 'border-brand bg-brand/10 text-brand font-semibold'
-                : 'border-brand/25 bg-brand/5 hover:border-brand/60 text-brand dark:text-brand-light hover:bg-brand/10'
+                ? 'border-brand bg-brand text-white shadow-sm'
+                : 'border-neutral-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-neutral-700 dark:text-neutral-200 hover:border-brand hover:text-brand shadow-sm'
             }`}
             aria-expanded={isOpen}
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
             <span>Filtros</span>
             {activeFiltersCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-brand text-white text-[10px] flex items-center justify-center font-bold">
+              <span className="w-4 h-4 rounded-full bg-white text-brand text-[10px] flex items-center justify-center font-bold">
                 {activeFiltersCount}
               </span>
             )}
@@ -154,14 +154,14 @@ export function ShopFilterBar({
             <select
               value={activeSort}
               onChange={(e) => updateFilters({ sort: e.target.value })}
-              className="appearance-none bg-brand/5 dark:bg-brand/10 border border-brand/25 rounded-full px-4 py-2 pr-8 text-xs uppercase tracking-wider text-brand dark:text-brand-light font-medium hover:border-brand/60 focus:outline-none focus:ring-1 focus:ring-brand cursor-pointer"
+              className="appearance-none bg-white dark:bg-zinc-900 border border-neutral-200/90 dark:border-zinc-800 rounded-full px-4 py-2 pr-8 text-xs uppercase tracking-wider text-neutral-700 dark:text-neutral-200 font-medium hover:border-brand focus:outline-none focus:ring-1 focus:ring-brand shadow-sm cursor-pointer"
             >
               <option value="-createdAt" className="bg-background text-foreground">Más Recientes</option>
               <option value="priceInCOP" className="bg-background text-foreground">Precio: Menor a Mayor</option>
               <option value="-priceInCOP" className="bg-background text-foreground">Precio: Mayor a Menor</option>
               <option value="title" className="bg-background text-foreground">Nombre: A-Z</option>
             </select>
-            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-brand/70">
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500">
               ▾
             </span>
           </div>

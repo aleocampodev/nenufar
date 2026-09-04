@@ -268,6 +268,136 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
         ],
       },
       {
+        blockType: 'gallery' as any,
+        tagline: 'COMUNIDAD & MOMENTOS REALES',
+        heading: 'Nénufar en la Piel: Ferias, Talleres & Nuestras Clientas',
+        description:
+          'Fotografías espontáneas de ferias locales en Cartagena, talleres presenciales de tejido y nuestras queridas clientas luciendo sus joyas artesanales en la vida real.',
+        tabs: [
+          {
+            tabTitle: 'Nuestras Clientas',
+            tabSubtitle: 'Mujeres reales que visten y dan vida a cada diseño',
+            images: [
+              {
+                title: 'Clienta luciendo Okama Ceremonial',
+                category: 'Clientas Felices',
+                description:
+                  'Una pieza tejida con más de 3.200 micro-mostacillas checas sobre atuendo de lino en Cartagena.',
+                imageUrl: '/api/media/file/Embera-800x1000.webp',
+                isFeatured: true,
+              },
+              {
+                title: 'Aretes Tricolor en Celebración',
+                category: 'Momentos Especiales',
+                description:
+                  'Candongas livianas tejidas a mano complementando una ocasión inolvidable.',
+                imageUrl: '/api/media/file/colombia-aretes-800x1000.webp',
+                isFeatured: true,
+              },
+              {
+                title: 'Joya de Autor en la Piel',
+                category: 'Diseño Vivo',
+                description:
+                  'La textura y el brillo de la mostacilla calibrada acompañando el día a día.',
+                imageUrl: '/api/media/file/joya-1788320703397-800x1000.webp',
+              },
+              {
+                title: 'Aretes Inspiración Café',
+                category: 'Estilo Caribeño',
+                description:
+                  'Joyas con identidad de nuestra tierra colombiana.',
+                imageUrl: '/api/media/file/cafe-aretes-1-800x1000.webp',
+              },
+            ],
+          },
+          {
+            tabTitle: 'Ferias en Cartagena',
+            tabSubtitle: 'Encuentros presenciales en ferias de diseño y pop-ups',
+            images: [
+              {
+                title: 'Stand de Nénufar en Feria Artesanal',
+                category: 'Ferias & Pop-Ups',
+                description:
+                  'Encuentro con cartageneras y visitantes en el Parque de la Independencia.',
+                imageUrl: '/api/media/file/Feria%20y%20talleres-800x1000.webp',
+                isFeatured: true,
+              },
+              {
+                title: 'Shirley Compartiendo su Oficio',
+                category: 'Encuentros Locales',
+                description:
+                  'Conversaciones cercanas con quienes aprecian la joyería tejida a mano.',
+                imageUrl: '/api/media/file/shirley-nenufar-1-800x1000.webp',
+              },
+              {
+                title: 'Muestra de Piezas en Vivo',
+                category: 'Mercados de Autor',
+                description:
+                  'Exhibición de nuevas combinaciones de color y diseños de temporada.',
+                imageUrl: '/api/media/file/joya-1788385407531-800x1000.webp',
+              },
+            ],
+          },
+          {
+            tabTitle: 'Talleres de Tejido',
+            tabSubtitle: 'Aprender juntas el arte ancestral de la mostacilla',
+            images: [
+              {
+                title: 'Taller Vivencial de Comunidad',
+                category: 'Talleres Presenciales',
+                description:
+                  'Mujeres reunidas en Getsemaní aprendiendo puntadas tradicionales de hilado.',
+                imageUrl: '/api/media/file/talleres-comunidad-800x1000.webp',
+                isFeatured: true,
+              },
+              {
+                title: 'Primeras Creaciones',
+                category: 'Comunidad Creadora',
+                description:
+                  'La emoción de tejer una joya con tus propias manos y paciencia.',
+                imageUrl:
+                  '/api/media/file/WhatsApp%20Image%202026-07-29%20at%2011.35.55%20PM%20(2)-800x1000.webp',
+              },
+              {
+                title: 'Herramientas & Hilos Calibrados',
+                category: 'Oficio Tradicional',
+                description:
+                  'Compartiendo los secretos de la tensión del hilo y la selección de tonos.',
+                imageUrl: '/api/media/file/Collar%20Naranja-800x1000.webp',
+              },
+            ],
+          },
+          {
+            tabTitle: 'El Taller & Shirley',
+            tabSubtitle: 'El rincón íntimo donde nacen las ideas en Getsemaní',
+            images: [
+              {
+                title: 'Shirley en su Espacio Creador',
+                category: 'Manos Creadoras',
+                description:
+                  'Dedicación y concentración en cada collar, elaborado de principio a fin por Shirley.',
+                imageUrl: '/api/media/file/shirley-creadora-800x1000.webp',
+                isFeatured: true,
+              },
+              {
+                title: 'Mesa de Hilado y Texturas',
+                category: 'Detalle de Oficio',
+                description:
+                  'Cuentas checas seleccionadas una a una con aguja fina.',
+                imageUrl: '/api/media/file/Collar%20ancestral-800x1000.webp',
+              },
+              {
+                title: 'Prototipos y Flores Tejidas',
+                category: 'Inspiración Caribe',
+                description:
+                  'Explorando nuevos patrones botánicos antes de cada feria.',
+                imageUrl: '/api/media/file/Collar-flor-800x1000.webp',
+              },
+            ],
+          },
+        ] as any,
+      },
+      {
         blockType: 'testimonials',
         tagline: 'Voces de Nuestra Comunidad',
         heading: 'Lo que dicen quienes lucen Nenúfar',
