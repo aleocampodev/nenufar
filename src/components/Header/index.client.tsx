@@ -71,7 +71,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
     <header
       className={`sticky top-0 z-40 transition-all duration-500 ${
         isTransparent
-          ? 'bg-[#FAF8F5]/90 dark:bg-[#120A1E]/80 backdrop-blur-md text-[#1A0E2E] dark:text-white border-b border-[#EADCCF]/60'
+          ? 'bg-[#EADCCF]/95 dark:bg-[#120A1E]/80 backdrop-blur-md text-[#1A0E2E] dark:text-white border-b border-[#D8C4B2]/60'
           : 'bg-[#3D1A5B]/95 dark:bg-[#2E1346]/95 backdrop-blur-md text-white shadow-[0_8px_30px_rgba(61,26,91,0.35)] border-b border-[#4D2472]/40'
       }`}
     >

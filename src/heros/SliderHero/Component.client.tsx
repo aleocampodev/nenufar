@@ -67,15 +67,15 @@ export const SliderHeroClient: React.FC<{
   return (
     <section
       ref={containerRef}
-      className="relative w-full min-h-[86vh] lg:min-h-[92vh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-0 bg-[#FAF8F5] border-b border-[#EADCCF]/60 flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
+      className="relative w-full min-h-screen min-h-[100dvh] -mt-[74px] sm:-mt-[78px] pt-[95px] sm:pt-[105px] lg:pt-[110px] pb-0 bg-[#EADCCF] border-b border-[#D8C4B2]/60 flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
       {/* Resplandores ambientales de profundidad cálidos */}
       <div
         ref={glowRef}
-        className="absolute top-1/2 -translate-y-1/2 right-0 md:right-4 lg:right-10 w-[580px] sm:w-[800px] lg:w-[980px] h-[580px] sm:h-[800px] lg:h-[980px] bg-[radial-gradient(ellipse_at_center,_rgba(234,220,207,0.45)_0%,_rgba(250,248,245,0)_70%)] blur-3xl pointer-events-none z-0"
+        className="absolute top-1/2 -translate-y-1/2 right-0 md:right-4 lg:right-10 w-[580px] sm:w-[800px] lg:w-[980px] h-[580px] sm:h-[800px] lg:h-[980px] bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.3)_0%,_rgba(234,220,207,0)_70%)] blur-3xl pointer-events-none z-0"
       />
       <div
-        className="absolute top-1/6 -left-16 sm:-left-24 w-[440px] sm:w-[600px] lg:w-[740px] h-[440px] sm:h-[600px] lg:h-[740px] bg-[#FAF0E6]/60 rounded-full blur-3xl pointer-events-none"
+        className="absolute top-1/6 -left-16 sm:-left-24 w-[440px] sm:w-[600px] lg:w-[740px] h-[440px] sm:h-[600px] lg:h-[740px] bg-white/20 rounded-full blur-3xl pointer-events-none"
       />
 
       <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full mt-auto">
@@ -88,7 +88,7 @@ export const SliderHeroClient: React.FC<{
             {/* Badge superior */}
             <div
               ref={badgeRef}
-              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/90 border border-[#EADCCF] shadow-xs mb-5 sm:mb-6 backdrop-blur-xs"
+              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/90 border border-[#D8C4B2] shadow-xs mb-5 sm:mb-6 backdrop-blur-xs"
             >
               <span className="w-2 h-2 rounded-full bg-[#8B5A2B] animate-pulse shrink-0" />
               <span className="text-[10px] sm:text-[11px] font-sans font-semibold uppercase tracking-[0.25em] text-[#8B5A2B]">
@@ -109,15 +109,15 @@ export const SliderHeroClient: React.FC<{
 
             {/* Tabs / Sellos de Confianza */}
             <div ref={chipsRef} className="flex flex-wrap items-center gap-2 sm:gap-2.5 mb-6 sm:mb-8">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/85 border border-[#EADCCF] text-xs font-medium text-[#1A0E2E] shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/90 border border-[#D8C4B2] text-xs font-medium text-[#1A0E2E] shadow-xs">
                 <span className="text-[#8B5A2B] text-sm">✦</span>
                 <span>Piezas únicas de autor</span>
               </div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/85 border border-[#EADCCF] text-xs font-medium text-[#1A0E2E] shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/90 border border-[#D8C4B2] text-xs font-medium text-[#1A0E2E] shadow-xs">
                 <span className="text-[#8B5A2B] text-sm">✨</span>
                 <span>Micro-mostacilla checa calibrada</span>
               </div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/85 border border-[#EADCCF] text-xs font-medium text-[#1A0E2E] shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/90 border border-[#D8C4B2] text-xs font-medium text-[#1A0E2E] shadow-xs">
                 <span className="text-sm">📦</span>
                 <span>Envíos asegurados a Colombia</span>
               </div>
@@ -135,7 +135,7 @@ export const SliderHeroClient: React.FC<{
 
               {/* Redes Sociales */}
               <div
-                className="inline-flex items-center gap-3 text-neutral-700 bg-white/85 backdrop-blur-md px-3.5 sm:px-4 py-2 sm:py-2 rounded-full border border-[#EADCCF] shadow-xs"
+                className="inline-flex items-center gap-3 text-neutral-700 bg-white/90 backdrop-blur-md px-3.5 sm:px-4 py-2 sm:py-2 rounded-full border border-[#D8C4B2] shadow-xs"
                 role="navigation"
                 aria-label="Redes sociales de Nénufar"
               >
@@ -191,12 +191,12 @@ export const SliderHeroClient: React.FC<{
       {/* ========================================================= */}
       <div
         ref={modelRef}
-        className="relative md:absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-4 lg:right-8 xl:right-16 h-[50vh] sm:h-[60vh] md:h-[68vh] lg:h-[75vh] xl:h-[78vh] flex items-end justify-center pointer-events-none z-10 select-none"
+        className="relative md:absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-4 lg:right-8 xl:right-16 h-[52vh] sm:h-[62vh] md:h-[70vh] lg:h-[78vh] xl:h-[84vh] flex items-end justify-center pointer-events-none z-10 select-none"
       >
         <img
           src="/hero-woman-uncropped.webp"
           alt="Mujer luciendo alta joyería artesanal en micro-mostacilla Nénufar"
-          className="w-auto h-full max-h-[82vh] object-contain object-bottom select-none drop-shadow-none"
+          className="w-auto h-full max-h-[86vh] object-contain object-bottom select-none drop-shadow-none"
           loading="eager"
         />
       </div>
