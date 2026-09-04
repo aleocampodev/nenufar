@@ -57,13 +57,14 @@ export const SliderHeroClient: React.FC<{
             0.05,
           )
 
-          // 2. Zoom al collar refinado y desplazado hacia la derecha para mantener limpio el fondo arena
+          // 2. Zoom cinematográfico que mantiene la palenquera completa (turbante, rostro, collar y brazos) visible
           tl.to(
             imgRef.current,
             {
-              scale: 2.35,
-              transformOrigin: '53.3% 42.2%',
-              x: 160,
+              scale: 1.45,
+              transformOrigin: '53.3% 20%',
+              x: 60,
+              y: 25,
               duration: 1.8,
               ease: 'power2.inOut',
             },
@@ -118,8 +119,9 @@ export const SliderHeroClient: React.FC<{
           tl.to(
             imgRef.current,
             {
-              scale: 2.0,
-              transformOrigin: '53.3% 42.2%',
+              scale: 1.45,
+              transformOrigin: '53.3% 20%',
+              y: 20,
               duration: 1.5,
               ease: 'power2.inOut',
             },
