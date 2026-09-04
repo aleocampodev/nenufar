@@ -27,7 +27,6 @@ export const SliderHeroClient: React.FC<{
   const containerRef = useRef<HTMLElement>(null)
   const badgeRef = useRef<HTMLDivElement>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
-  const subtitleRef = useRef<HTMLParagraphElement>(null)
   const chipsRef = useRef<HTMLDivElement>(null)
   const socialsRef = useRef<HTMLDivElement>(null)
   const modelRef = useRef<HTMLDivElement>(null)
@@ -42,9 +41,6 @@ export const SliderHeroClient: React.FC<{
       }
       if (headingRef.current) {
         tl.from(headingRef.current, { y: 35, opacity: 0, duration: 1 }, '-=0.5')
-      }
-      if (subtitleRef.current) {
-        tl.from(subtitleRef.current, { y: 25, opacity: 0, duration: 0.9 }, '-=0.6')
       }
       if (chipsRef.current) {
         tl.from(
@@ -79,13 +75,13 @@ export const SliderHeroClient: React.FC<{
       />
       <div className="absolute -bottom-16 left-1/12 w-[350px] h-[350px] bg-gradient-to-tr from-[#3D1A5B]/8 via-[#FF4FA3]/5 to-transparent rounded-full blur-2xl pointer-events-none" />
 
-      <div className="relative max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full mt-auto">
+      <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full mt-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-end">
           
           {/* ========================================================= */}
           {/* COLUMNA IZQUIERDA: Titular, Badge, Subtítulo, Chips       */}
           {/* ========================================================= */}
-          <div className="lg:col-span-7 z-10 flex flex-col items-start text-left max-w-2xl pb-12 sm:pb-16 lg:pb-20 pt-4">
+          <div className="lg:col-span-7 flex flex-col items-start text-left max-w-2xl pb-12 sm:pb-16 lg:pb-20 pt-4">
             {/* Badge superior (Rosa Acento #FF4FA3) */}
             <div
               ref={badgeRef}
@@ -100,19 +96,11 @@ export const SliderHeroClient: React.FC<{
             {/* Titular H1 (Tipografía de la página: Serif / Neutro Oscuro #1A0E2E) */}
             <h1
               ref={headingRef}
-              className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] text-[#1A0E2E] dark:text-[#FAF8FC] font-normal leading-[1.1] tracking-tight mb-5 sm:mb-6"
+              className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[3.6rem] xl:text-[4.2rem] text-[#1A0E2E] dark:text-[#FAF8FC] font-normal leading-[1.1] tracking-tight mb-6 sm:mb-8"
             >
               La nobleza del Caribe no se hereda.{' '}
               <span className="italic font-light opacity-95">Se teje.</span>
             </h1>
-
-            {/* Subtítulo (Tipografía de la página: Sans / Contraste cálido y fluido) */}
-            <p
-              ref={subtitleRef}
-              className="font-sans font-normal text-base sm:text-lg lg:text-[1.125rem] text-[#3D1A5B]/90 dark:text-[#FAF8FC]/85 leading-[1.7] max-w-xl mb-7 sm:mb-8"
-            >
-              Micro-mostacilla checa calibrada, tejida a mano con precisión milimétrica y la vibrante herencia del Caribe. Piezas de autor exclusivas diseñadas para elevar tu estilo con una joya irrepetible que cuenta una historia viva.
-            </p>
 
             {/* Sellos de Confianza y Gatillos de Compra (Sin Botones) */}
             <div ref={chipsRef} className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 pt-1">
@@ -132,23 +120,26 @@ export const SliderHeroClient: React.FC<{
           </div>
 
           {/* ========================================================= */}
-          {/* COLUMNA DERECHA: Fotografía en Primer Plano Centrada      */}
+          {/* ESPACIO RESERVADO COLUMNA DERECHA (Desktop Grid)         */}
           {/* ========================================================= */}
-          <div className="lg:col-span-5 relative flex items-end justify-center">
-            <div
-              ref={modelRef}
-              className="relative flex items-end justify-center"
-            >
-              <img
-                src="/hero-woman-uncropped.webp"
-                alt="Mujer luciendo alta joyería artesanal en micro-mostacilla Nénufar"
-                className="w-auto h-[60vh] sm:h-[72vh] md:h-[78vh] lg:h-[84vh] xl:h-[88vh] max-w-none object-contain object-bottom select-none"
-                loading="eager"
-              />
-            </div>
-          </div>
+          <div className="hidden lg:block lg:col-span-5 h-1 pointer-events-none" />
 
         </div>
+      </div>
+
+      {/* ========================================================= */}
+      {/* FOTOGRAFÍA EN PRIMER PLANO (Sin recortes en las manos)    */}
+      {/* ========================================================= */}
+      <div
+        ref={modelRef}
+        className="relative md:absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-4 lg:right-8 xl:right-16 h-[50vh] sm:h-[60vh] md:h-[68vh] lg:h-[75vh] xl:h-[78vh] flex items-end justify-center pointer-events-none z-10 select-none"
+      >
+        <img
+          src="/hero-woman-uncropped.webp"
+          alt="Mujer luciendo alta joyería artesanal en micro-mostacilla Nénufar"
+          className="w-auto h-full max-h-[82vh] object-contain object-bottom select-none drop-shadow-none"
+          loading="eager"
+        />
       </div>
 
       {/* ========================================================= */}
