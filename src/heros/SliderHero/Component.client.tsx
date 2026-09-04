@@ -57,14 +57,14 @@ export const SliderHeroClient: React.FC<{
             0.05,
           )
 
-          // 2. Zoom cinematográfico que mantiene la palenquera completa (turbante, rostro, collar y brazos) visible
+          // 2. Zoom cinematográfico que mantiene la palenquera completa y eleva la flor del collar
           tl.to(
             imgRef.current,
             {
               scale: 1.35,
               transformOrigin: '51.8% 25%',
               x: 50,
-              y: 20,
+              y: -45,
               duration: 1.8,
               ease: 'power2.inOut',
             },
@@ -295,7 +295,7 @@ export const SliderHeroClient: React.FC<{
       {/* ========================================================= */}
       <div
         ref={modelRef}
-        className="relative md:absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-2 lg:right-8 xl:right-16 h-[38vh] sm:h-[46vh] md:h-[68vh] lg:h-[78vh] xl:h-[84vh] w-full md:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-hidden md:overflow-visible"
+        className="relative md:absolute bottom-2 sm:bottom-4 md:bottom-6 lg:bottom-10 xl:bottom-12 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-2 lg:right-8 xl:right-16 h-[38vh] sm:h-[46vh] md:h-[68vh] lg:h-[78vh] xl:h-[84vh] w-full md:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-hidden md:overflow-visible"
       >
         <img
           ref={imgRef}
