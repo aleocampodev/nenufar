@@ -11,7 +11,7 @@ export const metadata = {
   title: 'Catálogo de Joyería Artesanal & Regalos de Autor | Nenúfar Cartagena',
 }
 
-const PAGE_SIZE = 4
+const PAGE_SIZE = 8
 
 type SearchParams = { [key: string]: string | string[] | undefined }
 
@@ -143,15 +143,16 @@ export default async function ShopPage({ searchParams }: Props) {
         </div>
       )}
 
-      {/* Grilla Impecable y Uniforme de Catálogo (Misma medida en todas las joyas) */}
+      {/* Grilla Irregular Masonry Estilo Krafti con Tile Oscura Footer (#3B032F) */}
       {docs.length > 0 && (
         <div className="w-full border-t border-l border-border/40">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
             {docs.map((product, index) => (
               <KraftiProductTile
                 key={product.id}
                 product={product}
                 index={index}
+                layoutMode="masonry"
               />
             ))}
           </div>
@@ -165,6 +166,7 @@ export default async function ShopPage({ searchParams }: Props) {
         totalDocs={totalDocs}
         limit={PAGE_SIZE}
         buildPageUrl={buildPageUrl}
+        showAlways={true}
       />
     </div>
   )
