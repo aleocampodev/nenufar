@@ -86,6 +86,43 @@ export function HeaderClient({ header, categories = [] }: Props) {
 
           {/* Desktop Navigation Links - Centered */}
           <div className="hidden lg:flex items-center gap-6 xl:gap-8">
+            {/* Mi Historia (Sección en Landing) */}
+            <Link
+              href="/#historia"
+              onClick={(e) => handleAnchorClick(e, '/#historia')}
+              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${linkBaseClass}`}
+            >
+              Mi Historia
+            </Link>
+
+            {/* Testimonios (Sección en Landing) */}
+            <Link
+              href="/#testimonios"
+              onClick={(e) => handleAnchorClick(e, '/#testimonios')}
+              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${linkBaseClass}`}
+            >
+              Testimonios
+            </Link>
+
+            {/* Talleres & Ferias (Sección en Landing) */}
+            <Link
+              href="/#talleres"
+              onClick={(e) => handleAnchorClick(e, '/#talleres')}
+              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${linkBaseClass}`}
+            >
+              Talleres & Ferias
+            </Link>
+
+            {/* Galería (Página dedicada) */}
+            <Link
+              href="/galeria"
+              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
+                pathname?.startsWith('/galeria') ? linkActiveClass : linkBaseClass
+              }`}
+            >
+              Galería
+            </Link>
+
             {/* Catálogo con Dropdown */}
             <div
               className="relative"
@@ -142,34 +179,6 @@ export function HeaderClient({ header, categories = [] }: Props) {
                 </div>
               </div>
             </div>
-
-            {/* Galería (Página dedicada) */}
-            <Link
-              href="/galeria"
-              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
-                pathname?.startsWith('/galeria') ? linkActiveClass : linkBaseClass
-              }`}
-            >
-              Galería
-            </Link>
-
-            {/* Nuestra Historia (Sección en Landing) */}
-            <Link
-              href="/#historia"
-              onClick={(e) => handleAnchorClick(e, '/#historia')}
-              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${linkBaseClass}`}
-            >
-              Mi Historia
-            </Link>
-
-            {/* Talleres & Ferias (Sección en Landing) */}
-            <Link
-              href="/#talleres"
-              onClick={(e) => handleAnchorClick(e, '/#talleres')}
-              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${linkBaseClass}`}
-            >
-              Talleres & Ferias
-            </Link>
 
             {/* Contacto (Sección en Landing) */}
             <Link

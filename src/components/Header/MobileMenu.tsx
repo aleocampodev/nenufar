@@ -94,6 +94,46 @@ export function MobileMenu({ menu, categories = [] }: Props) {
         <div className="py-5 space-y-4">
           <ul className="flex flex-col space-y-2">
 
+            <li>
+              <Link
+                href="/#historia"
+                onClick={(e) => handleAnchorClick(e, '/#historia')}
+                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
+              >
+                Mi Historia
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="/#testimonios"
+                onClick={(e) => handleAnchorClick(e, '/#testimonios')}
+                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
+              >
+                Testimonios
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="/#talleres"
+                onClick={(e) => handleAnchorClick(e, '/#talleres')}
+                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
+              >
+                Talleres & Ferias
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="/galeria"
+                onClick={closeMobileMenu}
+                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
+              >
+                Galería
+              </Link>
+            </li>
+
             {/* Catálogo con categorías */}
             <li className="border-y border-neutral-100 py-2">
               <div className="flex items-center justify-between">
@@ -138,36 +178,6 @@ export function MobileMenu({ menu, categories = [] }: Props) {
                   </li>
                 </ul>
               )}
-            </li>
-
-            <li>
-              <Link
-                href="/galeria"
-                onClick={closeMobileMenu}
-                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
-              >
-                Galería de Creaciones
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                href="/#historia"
-                onClick={(e) => handleAnchorClick(e, '/#historia')}
-                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
-              >
-                Mi Historia
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                href="/#talleres"
-                onClick={(e) => handleAnchorClick(e, '/#talleres')}
-                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
-              >
-                Talleres & Ferias
-              </Link>
             </li>
 
             <li>
