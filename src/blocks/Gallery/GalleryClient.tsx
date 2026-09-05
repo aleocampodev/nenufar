@@ -170,13 +170,13 @@ export const GalleryClient: React.FC<Props> = ({
                       key={idx}
                       type="button"
                       onClick={() => handleTabChange(idx)}
-                      className={`text-left transition-all duration-300 flex items-center justify-between cursor-pointer shrink-0 lg:shrink group px-3.5 py-2 lg:px-4 lg:py-3 rounded-full lg:rounded-2xl w-auto lg:w-full ${
+                      className={`text-left transition-all duration-300 flex items-center cursor-pointer shrink-0 lg:shrink group px-3.5 py-2 lg:px-4 lg:py-3 rounded-full lg:rounded-2xl w-auto lg:w-full ${
                         isActive
                           ? 'bg-brand text-white shadow-md shadow-brand/20 font-medium translate-x-0 lg:translate-x-1'
                           : 'bg-white hover:bg-neutral-50 text-neutral-700 border border-neutral-200/80 hover:border-brand/30'
                       }`}
                     >
-                      <div className="flex flex-col pr-1 lg:pr-2">
+                      <div className="flex flex-col">
                         <span className="text-xs lg:text-sm font-medium leading-snug whitespace-nowrap lg:whitespace-normal">
                           {tab.tabTitle}
                         </span>
@@ -190,15 +190,6 @@ export const GalleryClient: React.FC<Props> = ({
                           </span>
                         )}
                       </div>
-                      <span
-                        className={`text-[10px] lg:text-xs px-2 py-0.5 rounded-full font-mono shrink-0 ml-2 ${
-                          isActive
-                            ? 'bg-white/20 text-white'
-                            : 'bg-neutral-100 text-neutral-600 group-hover:bg-brand/10 group-hover:text-brand'
-                        }`}
-                      >
-                        {tab.images?.length || 0}
-                      </span>
                     </button>
                   )
                 })}
@@ -250,15 +241,6 @@ export const GalleryClient: React.FC<Props> = ({
                     {/* Gradient Overlay al hover */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-                    {/* Badge de Categoría superior */}
-                    {img.category && (
-                      <div className="absolute top-3.5 left-3.5 z-10">
-                        <span className="text-[10px] uppercase tracking-wider font-semibold font-sans px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md text-neutral-800 shadow-xs">
-                          {img.category}
-                        </span>
-                      </div>
-                    )}
-
                     {/* Botón Flotante para expandir */}
                     <div className="absolute bottom-3.5 right-3.5 z-10 w-9 h-9 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center text-brand opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-md scale-90 group-hover:scale-100">
                       <Maximize2 className="w-4 h-4" />
@@ -266,14 +248,9 @@ export const GalleryClient: React.FC<Props> = ({
 
                     {/* Título de la imagen */}
                     <div className="absolute bottom-3.5 left-3.5 right-14 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                      <p className="text-xs text-white font-medium line-clamp-1 drop-shadow-xs">
+                      <p className="text-xs sm:text-sm text-white font-medium line-clamp-1 drop-shadow-xs">
                         {img.title}
                       </p>
-                      {img.description && (
-                        <p className="text-[10px] text-white/80 line-clamp-1 mt-0.5">
-                          {img.description}
-                        </p>
-                      )}
                     </div>
                   </div>
                 )
@@ -420,11 +397,6 @@ export const GalleryClient: React.FC<Props> = ({
               <p className="text-white font-serif text-lg sm:text-xl drop-shadow-sm">
                 {selectedImage.title}
               </p>
-              {selectedImage.description && (
-                <p className="text-neutral-300 text-xs sm:text-sm mt-1 leading-relaxed line-clamp-2">
-                  {selectedImage.description}
-                </p>
-              )}
               <span className="inline-block text-[11px] text-neutral-400 font-mono mt-1.5">
                 {(selectedImageIndex ?? 0) + 1} de {currentImages.length}
               </span>
