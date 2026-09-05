@@ -494,8 +494,9 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
   {
     name: 'generarCopyProducto',
     description:
-      'Genera propuestas de textos persuasivos y atractivos para una joya (título llamativo, historia artesanal en Cartagena, descripción de materiales y llamado a la acción). ' +
-      'Puede basarse en un producto existente por su slug o en los detalles que Shirley indique.',
+      'Genera la ficha de descripción persuasiva para la página web del producto (/products/[slug]): ' +
+      'descripción artesanal, beneficios concretos de la pieza y texto de pedido/envío. ' +
+      'Solo para el catálogo web de Nénufar. Puede basarse en un producto existente por su slug o en los detalles que Shirley indique.',
     input_schema: {
       type: 'object',
       properties: {
@@ -1157,15 +1158,13 @@ export async function executeShirleyTool(
         const precio = product ? formatCOP(product.priceInCOP) : ''
         const tecnica = materialesOTecnica || 'micro-mostacilla checa calibrada e hilo técnico resistente a la humedad'
         const estilo = ocasionOEstilo || 'impacto visual protagónico pero ultra liviano, cómodo para usar de la mañana a la noche'
+        const productSlug = product?.slug || slugify(titulo)
 
         const propuesta = [
-          `🛍️ Propuesta de Copywriting para Ventas y Marketing (Alta Conversión · Sin Clichés):`,
+          `📄 Ficha de descripción para /products/${productSlug}:`,
           `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-          `💎 Pieza: ${titulo}`,
-          ...(precio ? [`🏷️ Valor: ${precio}`] : []),
           ``,
-          `🛒 1. FICHA DE VENTA PARA LA TIENDA WEB (/products/${product?.slug || slugify(titulo)}):`,
-          `"${titulo} está tejida a mano punto por punto por Shirley en su taller de Cartagena utilizando ${tecnica}. Diseñada para ${estilo}, sus terminaciones cuidadas aseguran que la pieza conserve su forma, color y brillo intacto con el paso del tiempo.`,
+          `${titulo} está tejida a mano punto por punto por Shirley en su taller de Cartagena utilizando ${tecnica}. Diseñada para ${estilo}, sus terminaciones cuidadas aseguran que la pieza conserve su forma, color y brillo intacto con el paso del tiempo.`,
           ``,
           `✨ Por qué te va a encantar:`,
           `• Comodidad total: ultraliviana (menos de 15 gramos), olvídate del dolor de orejas al final de tu evento o jornada.`,
@@ -1174,24 +1173,11 @@ export async function executeShirleyTool(
           `• Exclusividad artesanal: producida en tirajes cortos de 3 a 5 piezas por lote.`,
           `• Origen local: joyería de autor confeccionada en Cartagena de Indias.`,
           ``,
-          `📦 Despacho seguro: empacada para regalo con tarjeta de origen. Haz tu pedido en la web y Shirley coordinará directamente contigo el pago (Nequi, Daviplata o Bancolombia) y el despacho a tu ciudad."`,
+          `📦 Haz tu pedido desde la tienda web y Shirley coordinará contigo el pago (Nequi, Daviplata o Bancolombia) y el despacho seguro a tu ciudad. Cada pieza sale empacada para regalo con tarjeta de origen artesanal.`,
+          ...(precio ? [``, `🏷️ Valor: ${precio}`] : []),
           ``,
           `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-          `📱 2. COPY DE VENTA PARA INSTAGRAM / WHATSAPP:`,
-          `"¿Aretes grandes que NO pesan? Sí existen. ✨`,
-          ``,
-          `Estos son los ${titulo}: más de 6 horas de tejido paciente a mano en Cartagena, combinando ${tecnica} en una estructura flexible que puedes lucir todo el día.`,
-          ``,
-          `Llévalos con una blusa blanca básica o un vestido para una ocasión especial: transforman cualquier conjunto al instante con color y técnica artesanal auténtica.`,
-          ``,
-          `⚠️ Lote limitado: solo confeccionamos pocas unidades de este diseño.`,
-          `👉 Pídelos directo en la web o escríbenos por mensaje para apartar los tuyos hoy."`,
-          ``,
-          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-          `💬 3. GATILLO DE CIERRE RÁPIDO PARA CHAT:`,
-          `"¡Hola! Sí, aún tenemos disponibles los ${titulo}${precio ? ` en ${precio}` : ''}. Son súper livianitos, hipoalergénicos y vienen listos para regalo. ¿A qué ciudad te los enviamos?"`,
-          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-          `💡 Di: "actualiza la descripción de ${product?.slug || slug || titulo} con este texto" para publicarla en el catálogo.`
+          `💡 Di: "actualiza la descripción de ${productSlug} con este texto" para publicarla en el catálogo.`,
         ].join('\n')
 
         return propuesta
