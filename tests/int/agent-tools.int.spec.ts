@@ -36,6 +36,9 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
         'asignarCategoriaProducto',
         'pedidosPendientes',
         'confirmarPedido',
+        'agregarFotoGaleria',
+        'listarFotosGaleria',
+        'eliminarFotoGaleria',
         'publicarEvento',
         'listarEventos',
         'eliminarEvento',
@@ -428,6 +431,102 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
 
       const ctaRes = await executeShirleyTool('generarCopyLanding', { seccion: 'cta' }, mockPayload as any)
       expect(ctaRes).toContain('Personalizar mi Joya')
+    })
+
+    it('agregarFotoGaleria: agrega foto a la categoría indicada en el CMS', async () => {
+      mockPayload.find.mockResolvedValueOnce({
+        docs: [
+          {
+            id: 3,
+            slug: 'home',
+            layout: [
+              {
+                blockType: 'gallery',
+                tabs: [
+                  { tabTitle: 'Nuestras Clientas', images: [] },
+                  { tabTitle: 'Ferias en Cartagena', images: [] },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const res = await executeShirleyTool(
+        'agregarFotoGaleria',
+        {
+          categoria: 'clientas',
+          titulo: 'Clienta con aretes café en Getsemaní',
+          mediaId: 42,
+        },
+        mockPayload as any,
+      )
+
+      expect(res).toContain('agregada exitosamente a la galería')
+      expect(mockPayload.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          collection: 'pages',
+          id: 3,
+        }),
+      )
+    })
+
+    it('listarFotosGaleria: lista fotos agrupadas por pestañas', async () => {
+      mockPayload.find.mockResolvedValueOnce({
+        docs: [
+          {
+            id: 3,
+            slug: 'home',
+            layout: [
+              {
+                blockType: 'gallery',
+                tabs: [
+                  {
+                    tabTitle: 'Nuestras Clientas',
+                    images: [{ title: 'Aretes Coral' }, { title: 'Collar Okama' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const res = await executeShirleyTool('listarFotosGaleria', {}, mockPayload as any)
+      expect(res).toContain('Nuestras Clientas (2 fotos)')
+      expect(res).toContain('Aretes Coral')
+      expect(res).toContain('Collar Okama')
+    })
+
+    it('eliminarFotoGaleria: elimina foto por título', async () => {
+      mockPayload.find.mockResolvedValueOnce({
+        docs: [
+          {
+            id: 3,
+            slug: 'home',
+            layout: [
+              {
+                blockType: 'gallery',
+                tabs: [
+                  {
+                    tabTitle: 'Nuestras Clientas',
+                    images: [{ title: 'Foto a borrar' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      const res = await executeShirleyTool('eliminarFotoGaleria', { titulo: 'Foto a borrar' }, mockPayload as any)
+      expect(res).toContain('Eliminé "Foto a borrar"')
+      expect(mockPayload.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          collection: 'pages',
+          id: 3,
+        }),
+      )
     })
 
     it('manejo de tool no reconocida y excepciones', async () => {

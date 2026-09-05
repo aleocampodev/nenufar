@@ -12,6 +12,8 @@ const heroes: Record<string, React.FC<any>> = {
   lowImpact: LowImpactHero,
   mediumImpact: MediumImpactHero,
   slider: SliderHero,
+  hero: SliderHero,
+  principal: SliderHero,
 }
 
 export const RenderHero: React.FC<Page['hero']> = (props) => {

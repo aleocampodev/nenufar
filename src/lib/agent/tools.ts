@@ -315,6 +315,71 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
     },
   },
 
+  // ─── 3. GALERÍA DE MOMENTOS, CLIENTAS & FERIAS ─────────────────────────
+  {
+    name: 'agregarFotoGaleria',
+    description:
+      'Agrega una nueva fotografía a la subpágina de galería de Nénufar (/galeria). ' +
+      'Permite subir fotos enviadas por Shirley en Telegram de clientas luciendo joyas, ferias de diseño, talleres de tejido o del espacio de creación.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        categoria: {
+          type: 'string',
+          enum: ['clientas', 'ferias', 'talleres', 'shirley'],
+          description:
+            'Categoría o pestaña de la galería: "clientas" (Nuestras Clientas), "ferias" (Ferias en Cartagena), "talleres" (Talleres de Tejido) o "shirley" (El Taller & Shirley)',
+        },
+        titulo: {
+          type: 'string',
+          description: 'Título o pie descriptivo de la fotografía (ej. "Clienta luciendo Collar Okama en Getsemaní", "Stand en Feria Centro Histórico")',
+        },
+        descripcion: {
+          type: 'string',
+          description: 'Descripción breve u observación adicional de la pieza o momento (opcional)',
+        },
+        esDestacada: {
+          type: 'boolean',
+          description: 'true para que la foto tenga mayor tamaño destacado en la cuadrícula de la galería',
+        },
+      },
+      required: ['categoria', 'titulo'],
+    },
+  },
+  {
+    name: 'listarFotosGaleria',
+    description:
+      'Lista las fotos y momentos publicados en cada pestaña de la galería interactiva (/galeria).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        categoria: {
+          type: 'string',
+          description: 'Filtro opcional por categoría: "clientas", "ferias", "talleres" o "shirley"',
+        },
+      },
+    },
+  },
+  {
+    name: 'eliminarFotoGaleria',
+    description:
+      'Elimina una fotografía de la galería web de autor por su título o nombre.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        titulo: {
+          type: 'string',
+          description: 'Título o parte del título de la foto que Shirley desea retirar de la galería',
+        },
+        categoria: {
+          type: 'string',
+          description: 'Categoría opcional para afinar la búsqueda ("clientas", "ferias", "talleres", "shirley")',
+        },
+      },
+      required: ['titulo'],
+    },
+  },
+
   // ─── 4. TALLERES, FERIAS & TESTIMONIOS ────────────────────────────────
   {
     name: 'publicarEvento',
@@ -748,6 +813,193 @@ export async function executeShirleyTool(
           overrideAccess: true,
         })
         return `Pedido #${pedidoId} confirmado exitosamente ✅ (${formatCOP(order.amount)}).`
+      }
+
+      // ─── 3. GALERÍA DE MOMENTOS, CLIENTAS & FERIAS ─────────────────────────
+      case 'agregarFotoGaleria': {
+        const { categoria, titulo, descripcion, esDestacada, mediaId, urlFoto } = args
+        const cleanTitle = String(titulo || '').trim()
+        if (!cleanTitle) {
+          return 'Shirley, por favor indícame un título o nombre para la foto de la galería.'
+        }
+
+        const homeRes = await payload.find({
+          collection: 'pages',
+          where: {
+            or: [{ slug: { equals: 'home' } }, { slug: { equals: 'inicio' } }],
+          },
+          depth: 1,
+          overrideAccess: true,
+          limit: 1,
+        })
+
+        if (!homeRes.docs.length) {
+          return 'No encontré la página principal en la base de datos para guardar la foto.'
+        }
+
+        const page = homeRes.docs[0]
+        const currentLayout = [...((page.layout as any[]) || [])]
+        let galleryBlockIdx = currentLayout.findIndex((b) => b.blockType === 'gallery')
+
+        const defaultTabs = [
+          { tabTitle: 'Nuestras Clientas', tabSubtitle: 'Mujeres reales vistiendo cada diseño', images: [] },
+          { tabTitle: 'Ferias en Cartagena', tabSubtitle: 'Encuentros presenciales y pop-ups', images: [] },
+          { tabTitle: 'Talleres de Tejido', tabSubtitle: 'El arte ancestral de la mostacilla', images: [] },
+          { tabTitle: 'El Taller & Shirley', tabSubtitle: 'El espacio íntimo de creación en Getsemaní', images: [] },
+        ]
+
+        if (galleryBlockIdx === -1) {
+          currentLayout.push({
+            blockType: 'gallery',
+            tagline: 'COMUNIDAD & MOMENTOS REALES',
+            heading: 'Nénufar en la Piel: Ferias, Talleres & Nuestras Clientas',
+            description: 'Fotografías de ferias locales en Cartagena, talleres presenciales y nuestras clientas.',
+            tabs: defaultTabs,
+          })
+          galleryBlockIdx = currentLayout.length - 1
+        }
+
+        const galleryBlock = { ...currentLayout[galleryBlockIdx] }
+        const tabs: any[] = galleryBlock.tabs && galleryBlock.tabs.length > 0 ? [...galleryBlock.tabs] : defaultTabs
+
+        const catLower = String(categoria || '').toLowerCase()
+        let targetTabIdx = 0
+        if (catLower.includes('feri') || catLower.includes('evento') || catLower.includes('pop')) {
+          targetTabIdx = tabs.findIndex((t) => t.tabTitle?.toLowerCase().includes('feri'))
+        } else if (catLower.includes('taller') && !catLower.includes('shirley')) {
+          targetTabIdx = tabs.findIndex((t) => t.tabTitle?.toLowerCase().includes('talleres'))
+        } else if (catLower.includes('shirley') || catLower.includes('cread') || catLower.includes('espacio')) {
+          targetTabIdx = tabs.findIndex((t) => t.tabTitle?.toLowerCase().includes('shirley'))
+        } else {
+          targetTabIdx = tabs.findIndex((t) => t.tabTitle?.toLowerCase().includes('client'))
+        }
+
+        if (targetTabIdx === -1) targetTabIdx = 0
+        const targetTab = { ...tabs[targetTabIdx] }
+        targetTab.images = [...(targetTab.images || [])]
+
+        const newImageItem: Record<string, any> = {
+          title: cleanTitle,
+          category: targetTab.tabTitle,
+          isFeatured: Boolean(esDestacada),
+          ...(descripcion ? { description: String(descripcion).trim() } : {}),
+          ...(mediaId ? { image: mediaId } : {}),
+          ...(urlFoto ? { imageUrl: urlFoto } : {}),
+        }
+
+        targetTab.images.push(newImageItem)
+        tabs[targetTabIdx] = targetTab
+        galleryBlock.tabs = tabs
+        currentLayout[galleryBlockIdx] = galleryBlock
+
+        await payload.update({
+          collection: 'pages',
+          id: page.id,
+          data: { layout: currentLayout },
+          overrideAccess: true,
+        })
+
+        return `¡Listo Shirley! La foto "${cleanTitle}" fue agregada exitosamente a la galería en la sección "${targetTab.tabTitle}" y ya se puede ver en la web (/galeria) ✨📸`
+      }
+
+      case 'listarFotosGaleria': {
+        const homeRes = await payload.find({
+          collection: 'pages',
+          where: {
+            or: [{ slug: { equals: 'home' } }, { slug: { equals: 'inicio' } }],
+          },
+          depth: 1,
+          overrideAccess: true,
+          limit: 1,
+        })
+
+        const page = homeRes.docs[0]
+        const galleryBlock = (page?.layout as any[])?.find((b) => b.blockType === 'gallery')
+        const tabs = galleryBlock?.tabs || []
+
+        if (!tabs.length) {
+          return 'No hay fotografías registradas aún en la galería del CMS. Puedes agregar una enviándome una foto y diciendo "agrega esta foto a clientas con título..." 📸'
+        }
+
+        const catFilter = String(args.categoria || '').toLowerCase()
+        const sections: string[] = []
+
+        for (const tab of tabs) {
+          const tabTitle = tab.tabTitle || 'Sin título'
+          if (catFilter && !tabTitle.toLowerCase().includes(catFilter)) continue
+
+          const images = tab.images || []
+          const imgList = images.length > 0
+            ? images.map((img: any, i: number) => `   ${i + 1}. 📷 ${img.title || 'Momento'}${img.isFeatured ? ' (Destacada)' : ''}`).join('\n')
+            : '   (Sin fotos cargadas)'
+
+          sections.push(`📌 ${tabTitle} (${images.length} fotos):\n${imgList}`)
+        }
+
+        return `Galería Nénufar (/galeria):\n\n${sections.join('\n\n')}`
+      }
+
+      case 'eliminarFotoGaleria': {
+        const { titulo, categoria } = args
+        const cleanTitle = String(titulo || '').toLowerCase().trim()
+        if (!cleanTitle) {
+          return 'Shirley, por favor indícame el título de la foto que deseas eliminar de la galería.'
+        }
+
+        const homeRes = await payload.find({
+          collection: 'pages',
+          where: {
+            or: [{ slug: { equals: 'home' } }, { slug: { equals: 'inicio' } }],
+          },
+          depth: 0,
+          overrideAccess: true,
+          limit: 1,
+        })
+
+        const page = homeRes.docs[0]
+        if (!page) return 'No encontré la página principal en la base de datos.'
+
+        const currentLayout = [...((page.layout as any[]) || [])]
+        const galleryBlockIdx = currentLayout.findIndex((b) => b.blockType === 'gallery')
+        if (galleryBlockIdx === -1) return 'No hay galería configurada en la página principal.'
+
+        const galleryBlock = { ...currentLayout[galleryBlockIdx] }
+        const tabs = [...(galleryBlock.tabs || [])]
+        let removedTitle = ''
+        let tabFound = ''
+
+        for (let tIdx = 0; tIdx < tabs.length; tIdx++) {
+          const tab = { ...tabs[tIdx] }
+          const images = [...(tab.images || [])]
+          const imgIdx = images.findIndex((img: any) =>
+            (img.title || '').toLowerCase().includes(cleanTitle),
+          )
+
+          if (imgIdx !== -1) {
+            removedTitle = images[imgIdx].title || 'la foto'
+            tabFound = tab.tabTitle
+            images.splice(imgIdx, 1)
+            tab.images = images
+            tabs[tIdx] = tab
+            break
+          }
+        }
+
+        if (!removedTitle) {
+          return `No encontré ninguna foto en la galería con el título "${titulo}".`
+        }
+
+        galleryBlock.tabs = tabs
+        currentLayout[galleryBlockIdx] = galleryBlock
+
+        await payload.update({
+          collection: 'pages',
+          id: page.id,
+          data: { layout: currentLayout },
+          overrideAccess: true,
+        })
+
+        return `¡Listo Shirley! Eliminé "${removedTitle}" de la sección "${tabFound}" de tu galería 🗑️✨`
       }
 
       // ─── 4. TALLERES & TESTIMONIOS ────────────────────────────────────────

@@ -231,33 +231,48 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({
   id,
 }) => {
   // Procesar las pestañas recibidas de Payload o usar el catálogo enriquecido por defecto
-  const processedTabs: GalleryTabItem[] =
-    tabs && Array.isArray(tabs) && tabs.length > 0
-      ? tabs.map((tab, tIdx) => {
-          const fallbackTab = DEFAULT_GALLERY_TABS[tIdx % DEFAULT_GALLERY_TABS.length]
-          const tabImages: GalleryImageItem[] =
-            tab.images && Array.isArray(tab.images) && tab.images.length > 0
-              ? tab.images.map((img, iIdx) => {
-                  const src = resolveImageUrl(img.image, img.imageUrl)
-                  return {
-                    id: img.id || `${tIdx}-${iIdx}`,
-                    title: img.title || `Pieza ${iIdx + 1}`,
-                    category: img.category || tab.tabTitle,
-                    description: img.description || undefined,
-                    src,
-                    alt: img.title || 'Joyería artesanal Nénufar',
-                    isFeatured: Boolean(img.isFeatured),
-                  }
-                })
-              : fallbackTab.images
+  let processedTabs: GalleryTabItem[] = DEFAULT_GALLERY_TABS
 
-          return {
-            tabTitle: tab.tabTitle || fallbackTab.tabTitle,
-            tabSubtitle: tab.tabSubtitle || fallbackTab.tabSubtitle,
-            images: tabImages,
-          }
-        })
-      : DEFAULT_GALLERY_TABS
+  if (tabs && Array.isArray(tabs) && tabs.length > 0) {
+    const parsedTabs: GalleryTabItem[] = tabs.map((tab, tIdx) => {
+      const fallbackTab = DEFAULT_GALLERY_TABS[(tIdx + 1) % DEFAULT_GALLERY_TABS.length]
+      const tabImages: GalleryImageItem[] =
+        tab.images && Array.isArray(tab.images) && tab.images.length > 0
+          ? tab.images.map((img, iIdx) => {
+              const src = resolveImageUrl(img.image, img.imageUrl)
+              return {
+                id: img.id || `${tIdx}-${iIdx}`,
+                title: img.title || `Pieza ${iIdx + 1}`,
+                category: img.category || tab.tabTitle,
+                description: img.description || undefined,
+                src,
+                alt: img.title || 'Joyería artesanal Nénufar',
+                isFeatured: Boolean(img.isFeatured),
+              }
+            })
+          : fallbackTab.images
+
+      return {
+        tabTitle: tab.tabTitle || fallbackTab.tabTitle,
+        tabSubtitle: tab.tabSubtitle || fallbackTab.tabSubtitle,
+        images: tabImages,
+      }
+    })
+
+    const hasAllTab = parsedTabs.some((t) => t.tabTitle?.toLowerCase().includes('todas'))
+    const allCombined = parsedTabs.flatMap((t) => t.images)
+
+    processedTabs = hasAllTab
+      ? parsedTabs
+      : [
+          {
+            tabTitle: 'Todas las Fotos',
+            tabSubtitle: 'Colección visual completa de Nénufar',
+            images: allCombined,
+          },
+          ...parsedTabs,
+        ]
+  }
 
   return (
     <GalleryClient

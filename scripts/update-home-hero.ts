@@ -31,10 +31,11 @@ async function main() {
 
   const updatedHero = {
     ...(page.hero as any),
-    type: 'slider',
+    type: 'hero',
+    badge: '',
     slides: [
       {
-        badge: 'ALTA JOYERÍA ARTESANAL & EDICIÓN LIMITADA',
+        badge: '',
         heading: 'La nobleza del Caribe no se hereda. Se teje.',
         metaText: 'CARTAGENA DE INDIAS • TEJIDO ANCESTRAL • PIEZAS DE AUTOR',
         subheading:
@@ -57,6 +58,7 @@ async function main() {
     data: {
       hero: updatedHero as any,
     },
+    overrideAccess: true,
   })
 
   console.log('✅ Página actualizada con éxito. Nuevo hero:')

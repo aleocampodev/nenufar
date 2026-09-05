@@ -76,15 +76,15 @@ async function queryHomePage(): Promise<Page | null> {
 export default async function HomePage() {
   const page = await queryHomePage()
   const { hero, layout } = page || (homeStaticData() as Page)
-  const isSlider = (hero as any)?.type === 'slider'
+  const isHero = (hero as any)?.type === 'slider' || (hero as any)?.type === 'hero'
 
-  // Garantizar que 'features' (Tradición & Delicadeza) y 'gallery' no se muestren en la landing
+  // Galería va en la subpágina dedicada /galeria, no en la landing
   const filteredBlocks = layout?.filter(
     (block) => block.blockType !== 'features' && block.blockType !== 'gallery',
   )
 
   return (
-    <article className={isSlider ? 'pb-16' : 'pt-8 pb-16'}>
+    <article className={isHero ? 'pb-16' : 'pt-8 pb-16'}>
       <RenderHero {...hero} />
       <RenderBlocks blocks={filteredBlocks} />
     </article>

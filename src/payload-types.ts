@@ -489,13 +489,13 @@ export interface Page {
     /**
      * Elige "Hero Principal Nénufar" para la página de Inicio.
      */
-    type: 'slider' | 'lowImpact' | 'mediumImpact' | 'highImpact' | 'none';
+    type: 'hero' | 'slider' | 'lowImpact' | 'mediumImpact' | 'highImpact' | 'none';
     /**
      * Foto en primer plano con fondo transparente (SVG o PNG). Si la dejas vacía, se usará por defecto la foto oficial procesada en alta definición (/shirley-hdr-sin-fondo.svg).
      */
     modelImage?: (number | null) | Media;
     /**
-     * Texto pequeño con punto indicador que aparece sobre el titular.
+     * Texto opcional con punto indicador que aparece sobre el titular.
      */
     badge?: string | null;
     /**

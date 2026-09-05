@@ -66,7 +66,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
           },
         },
       ],
-      badge: 'ALTA JOYERÍA ARTESANAL',
+      badge: '',
       heading: 'La nobleza del Caribe no se hereda.',
       headingHighlight: 'Se teje.',
       linkLabel: 'Conoce la colección',
@@ -81,7 +81,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
       // Slider slides - Krafti 3 editorial slides with high-res jewelry photography
       slides: [
         {
-          badge: 'ALTA JOYERÍA ARTESANAL',
+          badge: '',
           heading: 'La nobleza del Caribe no se hereda. Se teje.',
           metaText: 'CARTAGENA DE INDIAS • TEJIDO ANCESTRAL • PIEZAS DE AUTOR',
           subheading:
