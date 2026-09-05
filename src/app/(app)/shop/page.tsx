@@ -158,7 +158,7 @@ export default async function ShopPage({ searchParams }: Props) {
 
             {/* Tarjeta Editorial de Taller Shirley para completar armónicamente la grilla de 3 columnas */}
             {docs.length === 8 && (
-              <div className="group relative flex flex-col justify-between overflow-hidden border-r border-b border-border/40 p-8 sm:p-10 bg-[#FAF8F5] text-center col-span-1 row-span-1 min-h-[380px] h-full justify-center items-center">
+              <div className="group relative flex flex-col justify-between overflow-hidden border-r border-b border-border/40 p-8 sm:p-10 bg-[#F5F2EC] text-center col-span-1 row-span-1 min-h-[380px] h-full justify-center items-center">
                 <div className="flex flex-col items-center justify-center my-auto space-y-3.5">
                   <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-sans font-semibold tracking-[0.25em] uppercase text-[#8B5A2B]">
                     ✦ Taller Shirley · Cartagena
