@@ -47,6 +47,9 @@ const DIRECT_REPLY_TOOLS = new Set([
   'agregarFotoGaleria',
   'listarFotosGaleria',
   'eliminarFotoGaleria',
+  'generarCopyProducto',
+  'actualizarDescripcionProducto',
+  'generarCopyLanding',
 ])
 
 function buildSystemPrompt(): string {
@@ -78,6 +81,11 @@ function buildSystemPrompt(): string {
     '- Si una herramienta falla, discúlpate brevemente y sugiere intentar en un momento. No muestres errores técnicos ni IDs.',
     '- Si el mensaje es una pregunta general o saludo, responde directo sin usar herramientas.',
     '- Tienes acceso al historial de conversación previo: úsalo para entender referencias a productos, fotos o temas hablados anteriormente.',
+    '',
+    'Reglas estrictas de Copywriting y Comunicación (ANTI-AI-SLOP & ANTI-SYCOPHANCY):',
+    '- PROHIBIDO EL AI SLOP Y CLICHÉS DE IA: No uses fórmulas vacías como "eleva tu estilo al siguiente nivel", "un tapiz de emociones", "sinfonía de colores", "en un mundo donde...", "déjate cautivar", "fusión mágica de lo ancestral y lo contemporáneo" ni adjetivos inflados.',
+    '- PROHIBIDO EL SYCOPHANCY (adulación servil o complaciente): Jamás adules a Shirley ni a las clientas con lisonjas exageradas ("¡maravillosa reina!", "¡obra maestra divina!", "¡eres genial!"). El tono debe ser cálido pero sobrio, profesional y con la dignidad de quien domina un oficio manual.',
+    '- REDACTA DESDE EL OFICIO REAL: Basa cada texto en hechos tangibles: micro-mostacilla checa calibrada Preciosa Ornela, tejido punto por punto con hilo técnico resistente a la humedad del Caribe, ligereza extrema (menos de 20g que no jala las orejas ni cansa el cuello), remates limpios hipoalergénicos y confección pausada en Getsemaní, Cartagena.',
   ].join('\n')
 }
 
@@ -253,11 +261,26 @@ function determineToolChoice(text: string, mediaId?: number): { type: 'tool' | '
     }
   }
 
-  // 4. Pregunta sobre productos / catálogo
+  // 4. Actualizar descripción de producto existente
+  if (/(actualiza|cambia|modifica|guarda).*descripci[oó]n/i.test(t)) {
+    return { type: 'tool', name: 'actualizarDescripcionProducto' }
+  }
+
+  // 5. Redacción de copys comerciales (Anti-Slop / Oficio Real)
+  if (/(copy|copys|redacta|redactar|propuesta|escribe|escribir|texto)/i.test(t)) {
+    if (/(landing|inicio|hero|home|web|portada|cta|secci[oó]n)/i.test(t)) {
+      return { type: 'tool', name: 'generarCopyLanding' }
+    }
+    if (/(producto|joya|aretes|collar|pulsera|pieza|colecci[oó]n|descripci[oó]n)/i.test(t) || /(para|de)\s+/i.test(t)) {
+      return { type: 'tool', name: 'generarCopyProducto' }
+    }
+  }
+
+  // 6. Pregunta sobre productos / catálogo
   if (
     /(joya|joyas|producto|productos|cat[aá]logo|aretes|collares|pulseras|piezas|colecci[oó]n)/i.test(t) &&
     /(que|cu[aá]les|hay|ver|lista|listar|muestra|mostrar|qu[eé] vendemos|inventario)/i.test(t) &&
-    !/(crea|agrega|publica|elimina|borra|foto)/i.test(t)
+    !/(crea|agrega|publica|elimina|borra|foto|copy|redacta|descripci[oó]n)/i.test(t)
   ) {
     return { type: 'tool', name: 'buscarProducto' }
   }

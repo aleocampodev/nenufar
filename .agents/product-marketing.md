@@ -76,9 +76,26 @@
 - Fast fashion, masivo, industrial, bisutería barata, producción en serie, tecnicismos corporativos fríos, la palabra "COP" en texto visible (usar símbolo $ con formato colombiano, ej. $ 45.000).
 
 ## Brand Voice
-**Tone:** Cercano, cálido, femenino, acogedor, alegre y auténtico (como hablar con una amiga que diseña con el corazón).
-**Style:** Conversacional en español colombiano (`es-CO`), tuteo natural, fluido, emotivo y persuasivo sin exagerar ni usar clichés huecos.
-**Personality:** Talentosa, apasionada, creativa, atenta, artesanal, radiante.
+**Tone:** Cercano, cálido, femenino, acogedor, sobrio y auténtico. Respeto absoluto por el oficio artesanal.
+**Style:** Conversacional en español colombiano (`es-CO`), tuteo natural, fluido, sensorial y persuasivo sin exagerar ni usar clichés huecos.
+**Personality:** Artesanal, atenta, creativa, sobria y digna.
+
+## Anti-AI-Slop & Anti-Sycophancy Guidelines (CRITICAL)
+- **Cero adulación servil (Anti-Sycophancy):** Prohibido el servilismo, la lisonja exagerada o los halagos vacíos hacia las clientas o hacia Shirley ("¡maravillosa reina!", "¡obra divina!", "¡eres increíble!"). Trato cercano, profesional y con la dignidad de quien domina un oficio.
+- **Cero clichés de IA (Anti-AI-Slop):** Prohibido usar fórmulas trilladas de ChatGPT/Claude como:
+  - *"Eleva tu estilo al siguiente nivel"*
+  - *"Un tapiz de emociones / cultura"*
+  - *"Una sinfonía de colores y texturas"*
+  - *"En un mundo donde..." / "Déjate cautivar"*
+  - *"La fusión perfecta entre lo ancestral y lo contemporáneo"*
+  - *"Magia pura / arte que enamora"*
+- **Enfoque en hechos tangibles del oficio:** Hablar siempre de realidades físicas:
+  - Micro-mostacilla checa calibrada Preciosa Ornela seleccionada por uniformidad y resistencia.
+  - Hilado punto por punto con hilo técnico encerado que no se deshilacha con el sudor ni la humedad del Caribe.
+  - Peso pluma: joyas ultralivianas (menos de 20 gramos) que no tiran de la oreja ni cansan el cuello.
+  - Caída anatómica suave sobre la clavícula o el pecho.
+  - Acabados hipoalergénicos limpios y cierres seguros.
+  - Origen real: confección pausada por Shirley en su taller de Getsemaní, Cartagena.
 
 ## Proof Points
 **Metrics:** Cientos de piezas creadas a mano y clientes felices en toda Colombia.

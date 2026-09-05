@@ -427,10 +427,10 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
 
     it('generarCopyLanding: genera textos para hero y cta', async () => {
       const heroRes = await executeShirleyTool('generarCopyLanding', { seccion: 'hero' }, mockPayload as any)
-      expect(heroRes).toContain('Carrusel Principal')
+      expect(heroRes).toContain('Hero Principal')
 
       const ctaRes = await executeShirleyTool('generarCopyLanding', { seccion: 'cta' }, mockPayload as any)
-      expect(ctaRes).toContain('Personalizar mi Joya')
+      expect(ctaRes).toContain('Pedidos Personalizados')
     })
 
     it('agregarFotoGaleria: agrega foto a la categoría indicada en el CMS', async () => {
@@ -450,7 +450,7 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
             ],
           },
         ],
-      })
+      } as any)
 
       const res = await executeShirleyTool(
         'agregarFotoGaleria',
@@ -490,7 +490,7 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
             ],
           },
         ],
-      })
+      } as any)
 
       const res = await executeShirleyTool('listarFotosGaleria', {}, mockPayload as any)
       expect(res).toContain('Nuestras Clientas (2 fotos)')
@@ -517,7 +517,7 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
             ],
           },
         ],
-      })
+      } as any)
 
       const res = await executeShirleyTool('eliminarFotoGaleria', { titulo: 'Foto a borrar' }, mockPayload as any)
       expect(res).toContain('Eliminé "Foto a borrar"')

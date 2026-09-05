@@ -1149,35 +1149,35 @@ export async function executeShirleyTool(
         return `¡Listo Shirley! Eliminé el testimonio de "${match.docs[0].authorName}" de tu página de inicio ✨`
       }
 
-      // ─── 5. COPYWRITING, CATÁLOGO, LANDING & REDES ─────────────────────────
+      // ─── 5. COPYWRITING, CATÁLOGO, LANDING & REDES (ANTI-SLOP · OFICIO REAL) ──
       case 'generarCopyProducto': {
         const { slug, nombrePieza, materialesOTecnica, ocasionOEstilo } = args
         let product: ProductWithSlug | null = null
         if (slug) {
           product = await findProductBySlug(payload, slug)
         }
-        const titulo = product?.title || nombrePieza || 'Joya Artesanal Nénufar'
+        const titulo = product?.title || nombrePieza || 'Joya de Autor Nénufar'
         const precio = product ? formatCOP(product.priceInCOP) : ''
-        const tecnica = materialesOTecnica || 'mostacilla checa calibrada e hilos de alta resistencia tejidos a mano'
-        const estilo = ocasionOEstilo || 'ideal para lucir con elegancia y autenticidad en cualquier ocasión'
+        const tecnica = materialesOTecnica || 'micro-mostacilla checa calibrada e hilo técnico resistente a la humedad'
+        const estilo = ocasionOEstilo || 'estructura flexible y ligera, pensada para uso cómodo y prolongado'
 
         const propuesta = [
-          `✨ Propuesta de Copy para Catálogo & Web:`,
+          `✨ Propuesta de Redacción Artesanal (Anti-slop · Hechos Tangibles):`,
           `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-          `💎 Título sugerido: ${titulo}`,
-          ...(precio ? [`🏷️ Precio: ${precio}`] : []),
+          `💎 Pieza: ${titulo}`,
+          ...(precio ? [`🏷️ Valor: ${precio}`] : []),
           ``,
-          `📖 Descripción para la ficha del producto:`,
-          `"${titulo} es una pieza única elaborada 100% a mano por Shirley en Cartagena de Indias. Creada mediante ${tecnica}, combina la tradición artesanal colombiana con un diseño contemporáneo, ${estilo}.`,
+          `📖 Ficha descriptiva para la tienda (/products/${product?.slug || slugify(titulo)}):`,
+          `"${titulo} está tejida a mano por Shirley en su taller de Cartagena utilizando ${tecnica}. Diseñada con ${estilo}, sus terminaciones cuidadas aseguran que la pieza conserve su forma y color sin añadir peso.`,
           ``,
-          `• Ultraliviana y cómoda para llevar todo el día.`,
-          `• Acabados hipoalergénicos pensados para proteger tu piel.`,
-          `• Cada detalle cuenta una historia irrepetible y llena de calidez caribeña."`,
+          `• Técnica: enfilado manual punto por punto con tensión uniforme y remates reforzados.`,
+          `• Comodidad: peso pluma sobre la piel, acabados hipoalergénicos y libre de cierres que maltraten.`,
+          `• Origen: joyería de autor confeccionada en Cartagena de Indias."`,
           ``,
-          `🎯 Llamado a la acción (CTA):`,
-          `"Haz tu pedido por la web y Shirley coordinará personalmente el pago y envío a tu ciudad."`,
+          `🎯 Llamado a la acción:`,
+          `"Haz tu pedido en la web y Shirley coordinará directamente contigo el pago y despacho a tu ciudad."`,
           `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-          `💡 Si te gusta esta descripción, puedes decirme: "actualiza la descripción de ${slug || titulo} con este texto" para publicarla de inmediato.`
+          `💡 Di: "actualiza la descripción de ${product?.slug || slug || titulo} con este texto" para publicarla.`
         ].join('\n')
 
         return propuesta
@@ -1203,47 +1203,46 @@ export async function executeShirleyTool(
 
       case 'generarCopyLanding': {
         const { seccion = 'hero', enfoque } = args
-        const motivo = enfoque || 'nueva colección de joyas artesanales'
+        const motivo = enfoque || 'joyería tejida a mano en Cartagena'
 
         if (seccion === 'hero') {
           return [
-            `🎨 Opciones de Copy para el Carrusel Principal (Hero Slider):`,
+            `🎨 Propuestas de Titular y Bajada para el Hero Principal (Directo y sin clichés):`,
             `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-            `Opción 1 (Emotiva & Ancestral):`,
-            `• Título: Joyas Tejidas con Alma Caribeña`,
-            `• Subtítulo: Piezas únicas elaboradas pacientemente a mano en Cartagena de Indias para resaltar tu esencia.`,
-            `• Botón: Explorar Colección → /shop`,
+            `Opción 1 (Materialidad & Territorio):`,
+            `• Titular: Joyería en mostacilla tejida a mano en Cartagena`,
+            `• Bajada: Diseños de autor ligeros y resistentes, tejidos punto a punto con micro-mostacilla checa calibrada por Shirley.`,
+            `• Botón: Ver catálogo disponible → /shop`,
             ``,
-            `Opción 2 (Enfocada en ${motivo}):`,
-            `• Título: Arte Textil & Filigrana de Autor`,
-            `• Subtítulo: Descubre diseños exclusivos inspirados en los colores y la magia del Caribe colombiano.`,
-            `• Botón: Ver Catálogo → /shop`,
+            `Opción 2 (Oficio & Precisión):`,
+            `• Titular: El arte del tejido artesanal en la piel`,
+            `• Bajada: Piezas singulares elaboradas pacientemente en el taller de Getsemaní con acabados hipoalergénicos.`,
+            `• Botón: Explorar joyas → /shop`,
             `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-            `💡 Puedes decirme: "agrega un slide con el título X y subtítulo Y" junto a una foto para publicarlo.`
           ].join('\n')
         }
 
         if (seccion === 'cta') {
           return [
-            `🎨 Opciones para Bloque de Pedido Personalizado (CTA):`,
+            `🎨 Mensajes para Pedidos Personalizados (Claro, honesto y sin falsas promesas):`,
             `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-            `Opción 1:`,
-            `• Título: ¿Buscas una joya personalizada a tu medida?`,
-            `• Subtítulo: Shirley confecciona piezas por encargo con tus colores, patrones o combinaciones favoritas. Cuéntanos tu idea y la tejemos para ti.`,
-            `• Botón: Personalizar mi Joya → WhatsApp de Shirley`,
+            `Opción 1 (Ajuste de medidas y tonos):`,
+            `• Titular: ¿Buscas una combinación de color o largo específico?`,
+            `• Bajada: Shirley confecciona piezas por encargo adaptando tonos, cierres y proporciones a tu gusto.`,
+            `• Botón: Escribir a Shirley por WhatsApp`,
             ``,
-            `Opción 2:`,
-            `• Título: Lleva una pieza con historia propia`,
-            `• Subtítulo: Diseños exclusivos y ediciones limitadas hechas con amor en Cartagena. Haz tu pedido directo sin intermediarios.`,
-            `• Botón: Escribir a Shirley → WhatsApp de Shirley`,
+            `Opción 2 (Piezas únicas por encargo):`,
+            `• Titular: Joyas tejidas por encargo a tu medida`,
+            `• Bajada: Cuéntanos la idea que tienes en mente y la elaboramos con la técnica y calma del taller.`,
+            `• Botón: Coordinar encargo`,
           ].join('\n')
         }
 
         return [
-          `🎨 Copy para la sección "${seccion}" (${motivo}):`,
-          `• Título: Manos que Tejen Tradición e Identidad`,
-          `• Cuerpo: Cada pieza de Nénufar nace en el corazón de Cartagena de Indias. Shirley entrelaza hilos y mostacillas creando obras de autor que honran el legado cultural de Colombia.`,
-          `• Cierre: Joyería liviana, hipoalergénica y llena de significado.`
+          `🎨 Mensaje para sección "${seccion}" (${motivo}):`,
+          `• Titular: Paciencia, técnica y color local`,
+          `• Cuerpo: En Nénufar cada joya se teje despacio. Usamos micro-mostacilla checa seleccionada por su uniformidad de corte y brillo constante, unida con hilo encerado técnico que no se deforma con el clima cálido.`,
+          `• Cierre: Joyería honesta, elaborada en Cartagena de Indias.`
         ].join('\n')
       }
 

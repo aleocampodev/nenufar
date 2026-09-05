@@ -101,7 +101,7 @@ describe('runShirleyAgent', () => {
 
     expect(res).toContain('Aretes Filigrana Atardecer')
     expect(res).toContain('Cartagena')
-    expect(res).toContain('100% a mano')
+    expect(res).toContain('tejida a mano')
   })
 
   it('ejecuta generarCopyLanding para hero y cta', async () => {
@@ -111,15 +111,15 @@ describe('runShirleyAgent', () => {
       { seccion: 'hero', enfoque: 'colección caribeña' },
       fakePayload,
     )
-    expect(heroRes).toContain('Carrusel Principal')
-    expect(heroRes).toContain('Joyas Tejidas con Alma Caribeña')
+    expect(heroRes).toContain('Hero Principal')
+    expect(heroRes).toContain('Joyería en mostacilla tejida a mano en Cartagena')
 
     const ctaRes = await executeShirleyTool(
       'generarCopyLanding',
       { seccion: 'cta' },
       fakePayload,
     )
-    expect(ctaRes).toContain('Personalizar mi Joya')
+    expect(ctaRes).toContain('Pedidos Personalizados')
   })
 
   it('ejecuta crearCategoria y listarCategorias correctamente', async () => {
