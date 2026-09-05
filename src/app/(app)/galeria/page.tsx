@@ -23,7 +23,7 @@ export default function GaleriaPage() {
   return (
     <main className="w-full pb-20">
       {/* 1. Header Editorial de la Galería */}
-      <section className="w-full bg-gradient-to-b from-[#FAF8F5] via-[#FAF8F5]/60 to-background border-b border-neutral-200/60 pt-10 sm:pt-14 pb-8 sm:pb-12">
+      <section className="w-full bg-gradient-to-b from-[#FAF8F5] via-[#FAF8F5]/60 to-background border-b border-neutral-200/60 pt-10 sm:pt-14 pb-8 sm:pb-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
           {/* Breadcrumbs sutiles */}
           <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-2 text-xs text-neutral-500 mb-2">
@@ -34,29 +34,21 @@ export default function GaleriaPage() {
             <span className="text-neutral-800 font-medium">Galería</span>
           </nav>
 
-          <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.3em] text-[#8B5A2B] font-semibold font-sans">
-            <Sparkles className="w-3.5 h-3.5 text-[#8B5A2B]" />
-            MUESTRARIO VISUAL & COMUNIDAD · CARTAGENA DE INDIAS
+          <span className="inline-flex items-center justify-center gap-1.5 text-[10px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] text-[#8B5A2B] font-semibold font-sans text-center">
+            <Sparkles className="w-3.5 h-3.5 text-[#8B5A2B] shrink-0" />
+            GALERÍA DE AUTOR · CARTAGENA DE INDIAS
           </span>
 
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#1C1917] dark:text-neutral-100 font-normal tracking-tight">
-            Nénufar en la Piel: Historias & Momentos Reales
+            Historias y Momentos <span className="italic font-light text-brand">Tejidos en la Piel</span>
           </h1>
-
-          <p className="font-sans text-sm sm:text-base text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto leading-relaxed">
-            Fotografías auténticas de nuestras piezas en la vida cotidiana de mujeres reales,
-            encuentros en ferias locales de Cartagena y la magia de nuestros talleres de tejido en comunidad.
-          </p>
         </div>
       </section>
 
-      {/* 2. Bloque Interactivo de Galería con pestañas, categorías y lightbox */}
+      {/* 2. Bloque Interactivo de Galería con pestañas a la izquierda, cuadrícula y paginado */}
       <GalleryBlock
         blockType="gallery"
         id="galeria-principal"
-        tagline="MOMENTOS & CREACIONES"
-        heading="Colección Visual de Oficio & Piel"
-        description="Selecciona una de las categorías para ver detalles fotográficos, el trabajo de Shirley y cómo lucen nuestras piezas en personas reales."
       />
 
       {/* 3. Banner CTA inferior hacia el Catálogo y Personalización */}

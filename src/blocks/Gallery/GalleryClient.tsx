@@ -1,16 +1,9 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
-import { Sparkles, Maximize2, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Sparkles, Maximize2, X, ChevronLeft, ChevronRight, Layers } from 'lucide-react'
 import { ScrollReveal } from '@/components/Animation/ScrollReveal'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel'
 
 export type GalleryImageItem = {
   id?: string
@@ -36,21 +29,48 @@ type Props = {
   id?: string
 }
 
+const ITEMS_PER_PAGE = 6
+
 export const GalleryClient: React.FC<Props> = ({
-  tagline = 'MUESTRARIO VISUAL & LOOKBOOK',
-  heading = 'Nénufar en la Piel: Arte y Color Caribeño',
-  description = 'Explora nuestras piezas tejidas a mano en Cartagena de Indias, el brillo de la micro-mostacilla checa calibrada y la fuerza del diseño ancestral lucido por mujeres reales.',
+  tagline = null,
+  heading = null,
+  description = null,
   tabs = [],
   id = 'galeria',
 }) => {
   const [activeTabIndex, setActiveTabIndex] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
+  const gridTopRef = useRef<HTMLDivElement>(null)
 
   const safeTabs = tabs.length > 0 ? tabs : []
   const activeTab = safeTabs[activeTabIndex] || safeTabs[0]
   const currentImages = activeTab?.images || []
 
-  // Manejo de teclado (Escape para cerrar, flechas para navegar en lightbox)
+  // Cálculo de paginación
+  const totalPages = Math.max(1, Math.ceil(currentImages.length / ITEMS_PER_PAGE))
+  const paginatedImages = currentImages.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  )
+
+  const handleTabChange = (idx: number) => {
+    setActiveTabIndex(idx)
+    setCurrentPage(1)
+    setSelectedImageIndex(null)
+  }
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages) return
+    setCurrentPage(newPage)
+    if (gridTopRef.current) {
+      const yOffset = -120
+      const y = gridTopRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset
+      window.scrollTo({ top: y, behavior: 'smooth' })
+    }
+  }
+
+  // Manejo de teclado para el visor Lightbox
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (selectedImageIndex === null) return
@@ -92,123 +112,242 @@ export const GalleryClient: React.FC<Props> = ({
   return (
     <section
       id={id}
-      className="py-16 sm:py-20 md:py-24 bg-[#FAF8F5] border-b border-neutral-100 scroll-mt-24 overflow-hidden"
+      className="py-10 sm:py-14 md:py-16 bg-[#FAF8F5] border-b border-neutral-100 scroll-mt-24 overflow-hidden"
     >
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Encabezado Editorial con animación bidireccional (subir y bajar) */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12 space-y-3">
-          <ScrollReveal variant="fade-up" duration={800} once={false} rootMargin="0px 0px -20px 0px">
-            {tagline && (
-              <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.3em] text-[#8B5A2B] font-semibold font-sans">
-                <Sparkles className="w-3.5 h-3.5 text-[#8B5A2B]" />
-                {tagline}
-              </span>
-            )}
-            {heading && (
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-foreground font-normal tracking-tight mt-2">
-                {heading}
-              </h2>
-            )}
-            <div className="w-12 h-0.5 bg-brand mx-auto my-3 rounded-full opacity-70" />
-            {description && (
-              <p className="text-sm sm:text-base text-neutral-600 font-sans leading-relaxed max-w-2xl mx-auto">
-                {description}
-              </p>
-            )}
-          </ScrollReveal>
-        </div>
+      <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Encabezado Editorial opcional (solo si se pasa explícitamente) */}
+        {(heading || tagline || description) && (
+          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12 space-y-3">
+            <ScrollReveal variant="fade-up" duration={800} once={false}>
+              {tagline && (
+                <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.3em] text-[#8B5A2B] font-semibold font-sans">
+                  <Sparkles className="w-3.5 h-3.5 text-[#8B5A2B]" />
+                  {tagline}
+                </span>
+              )}
+              {heading && (
+                <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-foreground font-normal tracking-tight mt-2">
+                  {heading}
+                </h2>
+              )}
+              {description && (
+                <p className="text-sm sm:text-base text-neutral-600 font-sans leading-relaxed max-w-2xl mx-auto mt-2">
+                  {description}
+                </p>
+              )}
+            </ScrollReveal>
+          </div>
+        )}
 
-        {/* 1. TABS SUPERIORES (Animados bidireccionalmente al subir y bajar) */}
-        {safeTabs.length > 1 && (
-          <ScrollReveal variant="fade-up" delay={120} duration={800} distance={28} once={false} rootMargin="0px 0px -20px 0px" className="mb-10 sm:mb-12">
-            <div className="flex items-center justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-none px-2 -mx-2">
-              {safeTabs.map((tab, idx) => {
-                const isActive = idx === activeTabIndex
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => {
-                      setActiveTabIndex(idx)
-                      setSelectedImageIndex(null)
-                    }}
-                    className={`shrink-0 px-5 py-2.5 rounded-full text-xs uppercase tracking-wider font-medium transition-all duration-300 flex items-center gap-2 cursor-pointer ${
-                      isActive
-                        ? 'bg-brand text-white shadow-lg shadow-brand/25 scale-[1.03]'
-                        : 'bg-white text-neutral-600 border border-neutral-200/80 hover:border-brand/40 hover:text-brand shadow-sm'
-                    }`}
-                  >
-                    <span>{tab.tabTitle}</span>
-                    <span
-                      className={`text-[11px] px-2 py-0.5 rounded-full font-mono ${
+        {/* ========================================================= */}
+        {/* LAYOUT 2 COLUMNAS: TABS A LA IZQUIERDA - FOTOS A LA DERECHA */}
+        {/* ========================================================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          
+          {/* ========================================================= */}
+          {/* COLUMNA IZQUIERDA: Pestañas / Sidebar de Categorías       */}
+          {/* ========================================================= */}
+          <aside className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-28 space-y-3">
+            {/* Contenedor: En desktop tarjeta sólida, en móvil barra limpia horizontal */}
+            <div className="bg-white/80 lg:bg-white rounded-2xl lg:rounded-3xl p-2.5 sm:p-3 lg:p-4 border border-neutral-200/80 shadow-xs">
+              <div className="hidden lg:flex items-center justify-between px-2 pb-3 mb-2 border-b border-neutral-100">
+                <span className="text-[11px] uppercase tracking-[0.2em] text-[#8B5A2B] font-semibold font-sans flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-[#8B5A2B]" />
+                  CATEGORÍAS
+                </span>
+                <span className="text-[11px] text-neutral-500 font-mono">
+                  {safeTabs.length} colecciones
+                </span>
+              </div>
+
+              {/* Lista vertical en Desktop, scroll horizontal de píldoras en Mobile */}
+              <div className="flex lg:flex-col gap-1.5 lg:gap-2 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0 scrollbar-none px-0.5">
+                {safeTabs.map((tab, idx) => {
+                  const isActive = idx === activeTabIndex
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleTabChange(idx)}
+                      className={`text-left transition-all duration-300 flex items-center justify-between cursor-pointer shrink-0 lg:shrink group px-3.5 py-2 lg:px-4 lg:py-3 rounded-full lg:rounded-2xl w-auto lg:w-full ${
                         isActive
-                          ? 'bg-white/20 text-white'
-                          : 'bg-neutral-100 text-neutral-500'
+                          ? 'bg-brand text-white shadow-md shadow-brand/20 font-medium translate-x-0 lg:translate-x-1'
+                          : 'bg-white hover:bg-neutral-50 text-neutral-700 border border-neutral-200/80 hover:border-brand/30'
                       }`}
                     >
-                      {tab.images?.length || 0}
-                    </span>
-                  </button>
+                      <div className="flex flex-col pr-1 lg:pr-2">
+                        <span className="text-xs lg:text-sm font-medium leading-snug whitespace-nowrap lg:whitespace-normal">
+                          {tab.tabTitle}
+                        </span>
+                        {tab.tabSubtitle && (
+                          <span
+                            className={`hidden lg:block text-[11px] line-clamp-1 mt-0.5 ${
+                              isActive ? 'text-white/80' : 'text-neutral-500'
+                            }`}
+                          >
+                            {tab.tabSubtitle}
+                          </span>
+                        )}
+                      </div>
+                      <span
+                        className={`text-[10px] lg:text-xs px-2 py-0.5 rounded-full font-mono shrink-0 ml-2 ${
+                          isActive
+                            ? 'bg-white/20 text-white'
+                            : 'bg-neutral-100 text-neutral-600 group-hover:bg-brand/10 group-hover:text-brand'
+                        }`}
+                      >
+                        {tab.images?.length || 0}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </aside>
+
+          {/* ========================================================= */}
+          {/* COLUMNA DERECHA: Cuadrícula de Fotos + Paginación         */}
+          {/* ========================================================= */}
+          <div className="lg:col-span-8 xl:col-span-9 space-y-6">
+            
+            {/* Header de la categoría activa */}
+            <div ref={gridTopRef} className="flex items-center justify-between pb-3 border-b border-neutral-200/80">
+              <div>
+                <h2 className="font-serif text-2xl sm:text-3xl text-[#1C1917] font-normal">
+                  {activeTab?.tabTitle}
+                </h2>
+                {activeTab?.tabSubtitle && (
+                  <p className="text-xs sm:text-sm text-neutral-600 mt-0.5">
+                    {activeTab.tabSubtitle}
+                  </p>
+                )}
+              </div>
+              <span className="text-xs font-mono text-neutral-600 bg-white px-3 py-1 rounded-full border border-neutral-200/80 shadow-2xs">
+                Pág. {currentPage} de {totalPages}
+              </span>
+            </div>
+
+            {/* Cuadrícula de Fotografías */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
+              {paginatedImages.map((img, idx) => {
+                const globalIndex = (currentPage - 1) * ITEMS_PER_PAGE + idx
+                return (
+                  <div
+                    key={img.id || idx}
+                    onClick={() => setSelectedImageIndex(globalIndex)}
+                    className="group relative aspect-[3/4] rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-200/70 shadow-xs hover:shadow-[0_16px_36px_rgba(106,27,154,0.18)] transition-all duration-500 cursor-pointer border border-neutral-200/60"
+                  >
+                    <Image
+                      src={img.src}
+                      alt={img.alt || img.title || 'Joyería Nénufar'}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      priority={idx < 3}
+                    />
+
+                    {/* Gradient Overlay al hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+                    {/* Badge de Categoría superior */}
+                    {img.category && (
+                      <div className="absolute top-3.5 left-3.5 z-10">
+                        <span className="text-[10px] uppercase tracking-wider font-semibold font-sans px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md text-neutral-800 shadow-xs">
+                          {img.category}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Botón Flotante para expandir */}
+                    <div className="absolute bottom-3.5 right-3.5 z-10 w-9 h-9 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center text-brand opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-md scale-90 group-hover:scale-100">
+                      <Maximize2 className="w-4 h-4" />
+                    </div>
+
+                    {/* Título de la imagen */}
+                    <div className="absolute bottom-3.5 left-3.5 right-14 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <p className="text-xs text-white font-medium line-clamp-1 drop-shadow-xs">
+                        {img.title}
+                      </p>
+                      {img.description && (
+                        <p className="text-[10px] text-white/80 line-clamp-1 mt-0.5">
+                          {img.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 )
               })}
             </div>
-          </ScrollReveal>
-        )}
 
-        {/* 2. CARRUSEL HORIZONTAL FLUIDO (Animado bidireccionalmente desde abajo con inercia) */}
-        <ScrollReveal variant="fade-up" delay={240} duration={900} distance={40} once={false} rootMargin="0px 0px -20px 0px">
-          <div key={activeTabIndex} className="animate-in fade-in duration-500 relative px-2 sm:px-6">
-            <Carousel
-              opts={{
-                align: 'start',
-                dragFree: true,
-                containScroll: 'trimSnaps',
-                loop: currentImages.length > 3,
-              }}
-              className="w-full relative select-none"
-            >
-              <CarouselContent className="-ml-3 sm:-ml-4 cursor-grab active:cursor-grabbing">
-                {currentImages.map((img, idx) => (
-                  <CarouselItem
-                    key={img.id || idx}
-                    className="pl-3 sm:pl-4 basis-[82%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+            {/* Controles de Paginación */}
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-neutral-200/70">
+                <span className="text-xs text-neutral-500 font-sans order-2 sm:order-1">
+                  Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1}–
+                  {Math.min(currentPage * ITEMS_PER_PAGE, currentImages.length)} de{' '}
+                  {currentImages.length} fotos
+                </span>
+
+                <div className="flex items-center gap-2 order-1 sm:order-2">
+                  <button
+                    type="button"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    aria-label="Página anterior"
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer ${
+                      currentPage === 1
+                        ? 'border-neutral-200 text-neutral-300 cursor-not-allowed bg-neutral-50'
+                        : 'border-neutral-200 text-neutral-700 bg-white hover:bg-neutral-50 hover:text-brand hover:border-brand/40 shadow-2xs'
+                    }`}
                   >
-                    <div
-                      onClick={() => setSelectedImageIndex(idx)}
-                      className="relative aspect-[3/4] rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-200/70 group shadow-[0_6px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_16px_36px_rgba(106,27,154,0.18)] transition-all duration-500 cursor-pointer"
-                    >
-                      <Image
-                        src={img.src}
-                        alt={img.alt || img.title || 'Joyería Nénufar'}
-                        fill
-                        sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 25vw"
-                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                        priority={idx < 4}
-                      />
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                    <span>Anterior</span>
+                  </button>
 
-                      {/* Overlay sutil al hover con botón de expansión */}
-                      <div className="absolute inset-0 bg-black/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                      <button
+                        key={pageNum}
+                        type="button"
+                        onClick={() => handlePageChange(pageNum)}
+                        aria-label={`Ir a la página ${pageNum}`}
+                        className={`w-8 h-8 rounded-full text-xs font-mono font-medium transition-all duration-200 cursor-pointer ${
+                          pageNum === currentPage
+                            ? 'bg-brand text-white shadow-xs scale-105'
+                            : 'bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200/80'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+                  </div>
 
-                      {/* Botón flotante para expandir */}
-                      <div className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-brand opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-md scale-90 group-hover:scale-100">
-                        <Maximize2 className="w-4 h-4" />
-                      </div>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-
-              {/* Flechas de Navegación del Carrusel */}
-              <div className="flex items-center justify-center gap-3 mt-8">
-                <CarouselPrevious className="relative static translate-y-0 h-10 w-10 rounded-full border-neutral-300 bg-white hover:bg-brand hover:text-white hover:border-brand text-neutral-800 shadow-sm transition-colors cursor-pointer" />
-                <CarouselNext className="relative static translate-y-0 h-10 w-10 rounded-full border-neutral-300 bg-white hover:bg-brand hover:text-white hover:border-brand text-neutral-800 shadow-sm transition-colors cursor-pointer" />
+                  <button
+                    type="button"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    aria-label="Página siguiente"
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer ${
+                      currentPage === totalPages
+                        ? 'border-neutral-200 text-neutral-300 cursor-not-allowed bg-neutral-50'
+                        : 'border-neutral-200 text-neutral-700 bg-white hover:bg-neutral-50 hover:text-brand hover:border-brand/40 shadow-2xs'
+                    }`}
+                  >
+                    <span>Siguiente</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
-            </Carousel>
+            )}
+
           </div>
-        </ScrollReveal>
+        </div>
       </div>
 
-      {/* 3. LIGHTBOX MODAL: Expansión de Imagen al Seleccionar */}
+      {/* ========================================================= */}
+      {/* 3. LIGHTBOX MODAL: Expansión de Imagen al Seleccionar     */}
+      {/* ========================================================= */}
       {selectedImage && (
         <div
           role="dialog"
@@ -260,19 +399,36 @@ export const GalleryClient: React.FC<Props> = ({
             </button>
           )}
 
-          {/* Contenedor de la Imagen Expandida */}
+          {/* Contenedor de la Imagen Expandida y descripción */}
           <div
-            className="relative max-w-4xl max-h-[85vh] w-full h-[75vh] flex items-center justify-center animate-in zoom-in-95 duration-200"
+            className="relative max-w-4xl max-h-[88vh] w-full flex flex-col items-center justify-center animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
-              src={selectedImage.src}
-              alt={selectedImage.alt || selectedImage.title || 'Joyería Nénufar'}
-              fill
-              className="object-contain rounded-2xl shadow-2xl"
-              sizes="90vw"
-              priority
-            />
+            <div className="relative w-full h-[65vh] sm:h-[72vh] flex items-center justify-center">
+              <Image
+                src={selectedImage.src}
+                alt={selectedImage.alt || selectedImage.title || 'Joyería Nénufar'}
+                fill
+                className="object-contain rounded-2xl shadow-2xl"
+                sizes="95vw"
+                priority
+              />
+            </div>
+
+            {/* Pie de foto en el visor */}
+            <div className="w-full max-w-xl text-center mt-3 px-4">
+              <p className="text-white font-serif text-lg sm:text-xl drop-shadow-sm">
+                {selectedImage.title}
+              </p>
+              {selectedImage.description && (
+                <p className="text-neutral-300 text-xs sm:text-sm mt-1 leading-relaxed line-clamp-2">
+                  {selectedImage.description}
+                </p>
+              )}
+              <span className="inline-block text-[11px] text-neutral-400 font-mono mt-1.5">
+                {(selectedImageIndex ?? 0) + 1} de {currentImages.length}
+              </span>
+            </div>
           </div>
         </div>
       )}
