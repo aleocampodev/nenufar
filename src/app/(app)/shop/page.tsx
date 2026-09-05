@@ -156,30 +156,6 @@ export default async function ShopPage({ searchParams }: Props) {
               />
             ))}
 
-            {/* Tarjeta Editorial de Taller Shirley para completar armónicamente la grilla de 3 columnas */}
-            {docs.length === 8 && (
-              <div className="group relative flex flex-col justify-between overflow-hidden border-r border-b border-border/40 p-8 sm:p-10 bg-[#F5F2EC] text-center col-span-1 row-span-1 min-h-[380px] h-full justify-center items-center">
-                <div className="flex flex-col items-center justify-center my-auto space-y-3.5">
-                  <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-sans font-semibold tracking-[0.25em] uppercase text-[#8B5A2B]">
-                    ✦ Taller Shirley · Cartagena
-                  </span>
-                  <h3 className="font-serif text-xl sm:text-2xl text-[#1C1917] font-normal tracking-tight leading-snug">
-                    ¿Buscas una Joya Personalizada?
-                  </h3>
-                  <p className="text-xs text-neutral-600 font-light leading-relaxed max-w-[240px] mx-auto">
-                    Tejemos diseños exclusivos con los colores, formas y medidas que elijas.
-                  </p>
-                  <div className="pt-2">
-                    <a
-                      href="/#contacto"
-                      className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold bg-brand text-white hover:bg-brand-dark transition-all duration-300 shadow-sm"
-                    >
-                      Hablar con Shirley
-                    </a>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}
