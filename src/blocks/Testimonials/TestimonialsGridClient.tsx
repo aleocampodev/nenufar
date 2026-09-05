@@ -80,7 +80,7 @@ export function TestimonialsGridClient({ testimonials }: TestimonialsGridClientP
                     setActiveTestimonial(t)
                   }
                 }}
-                className="relative flex flex-col justify-between h-full p-7 sm:p-8 rounded-3xl bg-white border border-neutral-200/70 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(106,27,154,0.08)] hover:border-brand/30 transition-all duration-300 group cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-brand/40"
+                className="relative flex flex-col justify-between h-full p-7 sm:p-8 rounded-3xl bg-white border border-neutral-200/70 shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(233,30,140,0.08)] hover:border-brand/30 transition-all duration-300 group cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-brand/40"
               >
                 <div>
                   {/* Comilla Decorativa y Badge de Clic */}

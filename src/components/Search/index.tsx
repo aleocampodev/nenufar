@@ -33,16 +33,17 @@ export const Search: React.FC<Props> = ({ className }) => {
   return (
     <form className={cn('relative w-full', className)} onSubmit={onSubmit}>
       <input
+        aria-label="Buscar joyas"
         autoComplete="off"
-        className="w-full rounded-lg border bg-white px-4 py-2 text-sm text-black placeholder:text-neutral-500 dark:border-neutral-800 dark:bg-black dark:text-white dark:placeholder:text-neutral-400"
+        className="w-full rounded-full border border-neutral-200/90 bg-white py-2 pl-4 pr-10 text-sm text-neutral-700 shadow-sm placeholder:text-neutral-400 hover:border-brand/50 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-200"
         defaultValue={searchParams?.get('q') || ''}
         key={searchParams?.get('q')}
         name="search"
-        placeholder="Buscar productos..."
-        type="text"
+        placeholder="Buscar joyas…"
+        type="search"
       />
-      <div className="absolute right-0 top-0 mr-3 flex h-full items-center">
-        <SearchIcon className="h-4" />
+      <div className="pointer-events-none absolute right-0 top-0 mr-3 flex h-full items-center">
+        <SearchIcon aria-hidden="true" className="h-4 w-4 text-neutral-400" />
       </div>
     </form>
   )

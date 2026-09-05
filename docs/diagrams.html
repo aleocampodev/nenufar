@@ -17,9 +17,9 @@
     --muted:      #6C6478;
     --faint:      #928AA0;
     --rule:       #E4DEEC;
-    --brand:      #6A1B9A;
-    --brand-dark: #4A148C;
-    --brand-tint: #EEE6F6;
+    --brand:      #E91E8C;
+    --brand-dark: #AD1457;
+    --brand-tint: #FCE4F1;
     --gold:       #8F6F1E;
     --gold-tint:  #F1EAD7;
     --green:      #15803D;
@@ -34,9 +34,9 @@
       --muted:      #A99FB6;
       --faint:      #7C7388;
       --rule:       #322A3C;
-      --brand:      #B98BE0;
-      --brand-dark: #CBA6EA;
-      --brand-tint: #291E35;
+      --brand:      #FF4FA3;
+      --brand-dark: #F48BC0;
+      --brand-tint: #2A0E1E;
       --gold:       #CBAA57;
       --gold-tint:  #2A2417;
       --green:      #4ADE80;
@@ -715,7 +715,7 @@ flowchart TB
   LiteLLM -->|OpenAI format<br/>GROQ_API_KEY| Groq2
   App -.->|ANTHROPIC_BASE_URL<br/>http://litellm:4000| LiteLLM
 
-  style App fill:#EEE6F6,stroke:#6A1B9A,stroke-width:2px
+  style App fill:#FCE4F1,stroke:#E91E8C,stroke-width:2px
   style LiteLLM fill:#DCFCE7,stroke:#15803D,stroke-width:2px
   style PG fill:#EFF6FF,stroke:#1E40AF,stroke-width:2px
   style Groq2 fill:#FEF3C7,stroke:#D97706,stroke-width:2px
@@ -773,11 +773,11 @@ TELEGRAM_ADMIN_CHAT_ID=...
     theme: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'neutral',
     securityLevel: 'loose',
     themeVariables: {
-      primaryColor: '#6A1B9A',
+      primaryColor: '#E91E8C',
       primaryTextColor: '#fff',
-      primaryBorderColor: '#4A148C',
-      lineColor: '#6A1B9A',
-      secondaryColor: '#EEE6F6',
+      primaryBorderColor: '#AD1457',
+      lineColor: '#E91E8C',
+      secondaryColor: '#FCE4F1',
       tertiaryColor: '#F1EAD7'
     }
   });

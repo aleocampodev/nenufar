@@ -87,7 +87,7 @@ export const CallToActionBlock: React.FC<
                         href={defaultWhatsappUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(106,27,154,0.25)] hover:shadow-[0_6px_25px_rgba(106,27,154,0.35)] transition-all duration-300 w-full sm:w-auto text-center cursor-pointer hover:scale-105 active:scale-95"
+                        className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(233,30,140,0.25)] hover:shadow-[0_6px_25px_rgba(233,30,140,0.35)] transition-all duration-300 w-full sm:w-auto text-center cursor-pointer hover:scale-105 active:scale-95"
                       >
                         <MessageCircle className="w-4 h-4" />
                         {link.label || 'Personalizar mi Joya'}
@@ -99,7 +99,7 @@ export const CallToActionBlock: React.FC<
                     <CMSLink
                       key={i}
                       size="lg"
-                      className="rounded-full px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(106,27,154,0.25)] hover:shadow-[0_6px_25px_rgba(106,27,154,0.35)] transition-all duration-300 w-full sm:w-auto text-center cursor-pointer"
+                      className="rounded-full px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(233,30,140,0.25)] hover:shadow-[0_6px_25px_rgba(233,30,140,0.35)] transition-all duration-300 w-full sm:w-auto text-center cursor-pointer"
                       {...link}
                     />
                   )
@@ -109,7 +109,7 @@ export const CallToActionBlock: React.FC<
                   href={defaultWhatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(106,27,154,0.25)] hover:shadow-[0_6px_25px_rgba(106,27,154,0.35)] transition-all duration-300 w-full sm:w-auto text-center cursor-pointer hover:scale-105 active:scale-95"
+                  className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(233,30,140,0.25)] hover:shadow-[0_6px_25px_rgba(233,30,140,0.35)] transition-all duration-300 w-full sm:w-auto text-center cursor-pointer hover:scale-105 active:scale-95"
                 >
                   <MessageCircle className="w-4 h-4" />
                   Personalizar mi Joya

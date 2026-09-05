@@ -60,7 +60,7 @@ export const BeforeLogin: React.FC = () => {
         style={{
           fontSize: '1.5rem',
           fontWeight: 700,
-          color: '#6A1B9A',
+          color: '#E91E8C',
           marginBottom: '0.5rem',
           letterSpacing: '-0.02em',
         }}
@@ -74,7 +74,7 @@ export const BeforeLogin: React.FC = () => {
           ¿Eres comprador?{' '}
           <a
             href={`${process.env.NEXT_PUBLIC_SERVER_URL}/login`}
-            style={{ color: '#6A1B9A', textDecoration: 'underline' }}
+            style={{ color: '#E91E8C', textDecoration: 'underline' }}
           >
             Accede a tu cuenta aquí
           </a>

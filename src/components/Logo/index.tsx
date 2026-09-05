@@ -26,7 +26,7 @@ export const Logo = () => {
           fontFamily: 'Playfair Display, Georgia, serif',
           fontSize: '1.45rem',
           fontWeight: 700,
-          color: '#6A1B9A',
+          color: '#E91E8C',
           letterSpacing: '-0.01em',
         }}
       >

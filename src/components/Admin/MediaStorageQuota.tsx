@@ -47,9 +47,9 @@ export const MediaStorageQuota: React.FC<{ compact?: boolean }> = ({ compact = f
 
   if (!stats) return null
 
-  const barColor = stats.status === 'danger' ? '#dc2626' : stats.status === 'warning' ? '#f59e0b' : '#6a1b9a'
-  const badgeBg = stats.status === 'danger' ? '#fee2e2' : stats.status === 'warning' ? '#fef3c7' : '#f3e8ff'
-  const badgeText = stats.status === 'danger' ? '#991b1b' : stats.status === 'warning' ? '#92400e' : '#6a1b9a'
+  const barColor = stats.status === 'danger' ? '#dc2626' : stats.status === 'warning' ? '#f59e0b' : '#e91e8c'
+  const badgeBg = stats.status === 'danger' ? '#fee2e2' : stats.status === 'warning' ? '#fef3c7' : '#fce4f1'
+  const badgeText = stats.status === 'danger' ? '#991b1b' : stats.status === 'warning' ? '#92400e' : '#e91e8c'
 
   return (
     <div style={{

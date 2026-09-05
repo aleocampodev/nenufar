@@ -307,7 +307,7 @@ export const GalleryClient: React.FC<Props> = ({
                     type="button"
                     onClick={() => handleOpenImage(globalIndex, idx)}
                     aria-label={`Ver fotografía ampliada: ${img.title}`}
-                    className="group relative aspect-[3/4] w-full p-0 text-left rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-200/70 shadow-xs hover:shadow-[0_16px_36px_rgba(106,27,154,0.18)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 transition-all duration-500 cursor-pointer border border-neutral-200/60"
+                    className="group relative aspect-[3/4] w-full p-0 text-left rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-200/70 shadow-xs hover:shadow-[0_16px_36px_rgba(233,30,140,0.18)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 transition-all duration-500 cursor-pointer border border-neutral-200/60"
                   >
                     <Image
                       src={img.src}

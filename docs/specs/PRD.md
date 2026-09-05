@@ -156,7 +156,7 @@ El bot es **exclusivamente de Shirley** (autenticado por `chat_id`). Le permite 
 | Privacidad | Ley 1581 de 2012 — consentimiento explícito + minimización de datos + aviso público. |
 | Idempotencia | El formulario de pedido deduplica por `cartId` en una ventana de 10 minutos. |
 | Disponibilidad | Sitio autopropelido; el formulario de pedido es un server action de Next.js. |
-| Color de marca | Violeta Nénufar `#6A1B9A` = token `bg-brand` / `text-brand` en todo el sitio. |
+| Color de marca | Magenta Nénufar `#E91E8C` (secundario `#3B032F`) = token `bg-brand` / `text-brand` en todo el sitio. |
 | Fuentes | Playfair Display (serif, títulos) + Inter (sans, cuerpo) + Geist Mono (precios). |
 
 ---
@@ -209,8 +209,10 @@ Ver en admin → nenufar.co/admin/collections/orders/42
 
 | Token | Valor | Uso |
 |-------|-------|-----|
-| `--brand` | `oklch(38% 0.2 307deg)` ≈ `#6A1B9A` | Botones CTA, links de marca |
-| `--brand-dark` | `oklch(28% 0.18 307deg)` ≈ `#4A148C` | Hover de botones |
+| `--brand` | `#E91E8C` (magenta, primario) | Botones CTA, links de marca |
+| `--brand-dark` | `#1A0E2E` (índigo negro) | Texto principal, hover de botones |
+| `--brand-secondary` | `#3B032F` (violeta profundo) | Footer, tile oscura |
+| `--brand-accent` | `#FF4FA3` (rosa claro) | Badges, hovers secundarios |
 | `--primary` | `oklch(32% 0.14 45deg)` | Color principal (warm brown) |
 | `--accent` | `oklch(58% 0.22 25deg)` | Acento terracota |
 | `--background` | `oklch(98.5% 0.003 45deg)` | Fondo off-white cálido |

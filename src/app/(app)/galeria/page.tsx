@@ -98,7 +98,7 @@ export default async function GaleriaPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <Link
                 href="/shop"
-                className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-3 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(106,27,154,0.25)] transition-all duration-300 w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-3 text-xs uppercase tracking-[0.2em] font-medium bg-brand hover:bg-brand-dark text-white shadow-[0_4px_20px_rgba(233,30,140,0.25)] transition-all duration-300 w-full sm:w-auto"
               >
                 Ver Catálogo Disponible
                 <ArrowRight className="w-4 h-4" />

@@ -37,8 +37,10 @@
 ### Brand Colors (CSS tokens)
 
 ```css
---brand:          oklch(38% 0.2 307deg)   /* Violet Nénufar — #6A1B9A */
---brand-dark:     oklch(28% 0.18 307deg)  /* Hover state — #4A148C */
+--brand-primary:  #E91E8C                 /* Magenta Nénufar (primary) */
+--brand-secondary: #3B032F                /* Deep violet (footer, dark tile) */
+--brand-accent:   #FF4FA3                 /* Light pink (hover states, badges) */
+--brand-dark:     #1A0E2E                 /* Indigo black (main text) */
 --brand-foreground: oklch(99% 0 0deg)     /* White text on brand bg */
 ```
 
