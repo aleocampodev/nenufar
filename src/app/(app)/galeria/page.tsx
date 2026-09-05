@@ -4,22 +4,48 @@ import { Sparkles, ArrowRight, Camera } from 'lucide-react'
 import { GalleryBlock } from '@/blocks/Gallery/Component'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 
-export const dynamic = 'force-static'
-export const revalidate = 3600
+import configPromise from '@payload-config'
+import { getPayload } from 'payload'
+import type { Page } from '@/payload-types'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Galería de Creaciones & Momentos Reales | Nénufar',
+  title: 'Galería de Creaciones & Momentos Reales | Nenúfar',
   description:
     'Explora nuestra galería de joyas artesanales en mostacilla tejidas a mano en Cartagena: clientas reales, ferias locales, talleres de tejido y el espacio de Shirley.',
   openGraph: mergeOpenGraph({
-    title: 'Galería de Creaciones | Nénufar Cartagena',
+    title: 'Galería de Creaciones | Nenúfar Cartagena',
     description:
       'Muestrario fotográfico de joyería artesanal tejida a mano: clientas felices, ferias de diseño y talleres de comunidad en Cartagena.',
     url: '/galeria',
   }),
 }
 
-export default function GaleriaPage() {
+async function queryGalleryData() {
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const res = await payload.find({
+      collection: 'pages',
+      depth: 2,
+      limit: 1,
+      overrideAccess: true,
+      where: {
+        or: [{ slug: { equals: 'home' } }, { slug: { equals: 'inicio' } }],
+      },
+    })
+
+    const page = res.docs[0] as Page | undefined
+    const galleryBlock = page?.layout?.find((b) => b.blockType === 'gallery') as any
+    return galleryBlock || null
+  } catch {
+    return null
+  }
+}
+
+export default async function GaleriaPage() {
+  const galleryData = await queryGalleryData()
+
   return (
     <main className="w-full pb-20">
       {/* 1. Header Editorial de la Galería */}
@@ -47,6 +73,10 @@ export default function GaleriaPage() {
 
       {/* 2. Bloque Interactivo de Galería con pestañas a la izquierda, cuadrícula y paginado */}
       <GalleryBlock
+        {...(galleryData || {})}
+        tagline={null}
+        heading={null}
+        description={null}
         blockType="gallery"
         id="galeria-principal"
       />

@@ -72,4 +72,30 @@ Branch: `feature/catalog/modular-blocks`
 - [x] **3.1** Create `tests/int/landing-blocks.int.spec.ts` to verify landing page block querying, COP currency formatting rules, and fallback stability.
 - [x] **3.2** Run `pnpm test:int` and verify quality gates (30/30 tests passed).
 
+---
+
+## ✨ IP-004: Storefront UI/UX, Accessibility and Performance Improvements
+
+Reference: [`tasks/IP-004-storefront-ui-ux-accessibility-improvements.md`](file:///home/ale/Work/nenufar/tasks/IP-004-storefront-ui-ux-accessibility-improvements.md)  
+Branch: `feat/storefront/audit-ui-ux-improvements`  
+
+### Phase 1: Catalog Editorial Polish & Mobile Touch Conversion (`/shop`)
+- [x] **1.1** Implement mobile-first quick add-to-cart action on `KraftiProductTile.tsx` and tactile press `active:scale-[0.96]`.
+- [x] **1.2** Add accessible `aria-label` to order sort select and category navigation in `ShopFilterBar.tsx`.
+- [x] **1.3** Replace blanket `transition-all` with targeted CSS transitions.
+
+### Phase 2: Gallery Touch Targets & Lightbox Polish (`/galeria`)
+- [x] **2.1** Ensure mobile category tabs meet WCAG minimum 44px hit target in `GalleryClient.tsx`.
+- [x] **2.2** Add keyboard focus trap to the fullscreen Lightbox modal in `GalleryClient.tsx`.
+- [x] **2.3** Gate image `priority` only on the initial page view.
+
+### Phase 3: Landing Page Motion Restraint & TTFB Resilience (`/`)
+- [x] **3.1** Respect `prefers-reduced-motion: reduce` in `SliderHero/Component.client.tsx`.
+- [x] **3.2** Add 3s timeout resilience to Google Calendar fetch in `UpcomingEvents/Component.tsx` and `google-calendar.ts`.
+- [x] **3.3** Optimize `src/app/(app)/page.tsx` with ISR caching (`revalidate = 300`) and fix null doc metadata.
+
+### Phase 4: Quality Gates & Verification
+- [x] **4.1** Verify `tsc --noEmit` clean of regressions.
+- [x] **4.2** Verify responsive display across mobile and desktop.
+
 

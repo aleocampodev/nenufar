@@ -315,6 +315,71 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
     },
   },
 
+  // ─── 3. GALERÍA DE MOMENTOS, CLIENTAS & FERIAS ─────────────────────────
+  {
+    name: 'agregarFotoGaleria',
+    description:
+      'Agrega una nueva fotografía a la subpágina de galería de Nénufar (/galeria). ' +
+      'Permite subir fotos enviadas por Shirley en Telegram de clientas luciendo joyas, ferias de diseño, talleres de tejido o del espacio de creación.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        categoria: {
+          type: 'string',
+          enum: ['clientas', 'ferias', 'talleres', 'shirley'],
+          description:
+            'Categoría o pestaña de la galería: "clientas" (Nuestras Clientas), "ferias" (Ferias en Cartagena), "talleres" (Talleres de Tejido) o "shirley" (El Taller & Shirley)',
+        },
+        titulo: {
+          type: 'string',
+          description: 'Título o pie descriptivo de la fotografía (ej. "Clienta luciendo Collar Okama en Getsemaní", "Stand en Feria Centro Histórico")',
+        },
+        descripcion: {
+          type: 'string',
+          description: 'Descripción breve u observación adicional de la pieza o momento (opcional)',
+        },
+        esDestacada: {
+          type: 'boolean',
+          description: 'true para que la foto tenga mayor tamaño destacado en la cuadrícula de la galería',
+        },
+      },
+      required: ['categoria', 'titulo'],
+    },
+  },
+  {
+    name: 'listarFotosGaleria',
+    description:
+      'Lista las fotos y momentos publicados en cada pestaña de la galería interactiva (/galeria).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        categoria: {
+          type: 'string',
+          description: 'Filtro opcional por categoría: "clientas", "ferias", "talleres" o "shirley"',
+        },
+      },
+    },
+  },
+  {
+    name: 'eliminarFotoGaleria',
+    description:
+      'Elimina una fotografía de la galería web de autor por su título o nombre.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        titulo: {
+          type: 'string',
+          description: 'Título o parte del título de la foto que Shirley desea retirar de la galería',
+        },
+        categoria: {
+          type: 'string',
+          description: 'Categoría opcional para afinar la búsqueda ("clientas", "ferias", "talleres", "shirley")',
+        },
+      },
+      required: ['titulo'],
+    },
+  },
+
   // ─── 4. TALLERES, FERIAS & TESTIMONIOS ────────────────────────────────
   {
     name: 'publicarEvento',
@@ -750,6 +815,190 @@ export async function executeShirleyTool(
         return `Pedido #${pedidoId} confirmado exitosamente ✅ (${formatCOP(order.amount)}).`
       }
 
+      // ─── 3. GALERÍA DE MOMENTOS, CLIENTAS & FERIAS ─────────────────────────
+      case 'agregarFotoGaleria': {
+        const { categoria, titulo, descripcion, esDestacada, mediaId, urlFoto } = args
+        const cleanTitle = String(titulo || '').trim()
+        if (!cleanTitle) {
+          return 'Shirley, por favor indícame un título o nombre para la foto de la galería.'
+        }
+
+        const homeRes = await payload.find({
+          collection: 'pages',
+          where: {
+            or: [{ slug: { equals: 'home' } }, { slug: { equals: 'inicio' } }],
+          },
+          depth: 1,
+          overrideAccess: true,
+          limit: 1,
+        })
+
+        if (!homeRes.docs.length) {
+          return 'No encontré la página principal en la base de datos para guardar la foto.'
+        }
+
+        const page = homeRes.docs[0]
+        const currentLayout = [...((page.layout as any[]) || [])]
+        let galleryBlockIdx = currentLayout.findIndex((b) => b.blockType === 'gallery')
+
+        const defaultTabs = [
+          { tabTitle: 'Nuestras Clientas', tabSubtitle: 'Mujeres reales vistiendo cada diseño', images: [] },
+          { tabTitle: 'Ferias en Cartagena', tabSubtitle: 'Encuentros presenciales y pop-ups', images: [] },
+          { tabTitle: 'Talleres de Tejido', tabSubtitle: 'El arte ancestral de la mostacilla', images: [] },
+          { tabTitle: 'El Taller & Shirley', tabSubtitle: 'El espacio íntimo de creación en Getsemaní', images: [] },
+        ]
+
+        if (galleryBlockIdx === -1) {
+          currentLayout.push({
+            blockType: 'gallery',
+            tabs: defaultTabs,
+          })
+          galleryBlockIdx = currentLayout.length - 1
+        }
+
+        const galleryBlock = { ...currentLayout[galleryBlockIdx] }
+        const tabs: any[] = galleryBlock.tabs && galleryBlock.tabs.length > 0 ? [...galleryBlock.tabs] : defaultTabs
+
+        const catLower = String(categoria || '').toLowerCase()
+        let targetTabIdx = 0
+        if (catLower.includes('feri') || catLower.includes('evento') || catLower.includes('pop')) {
+          targetTabIdx = tabs.findIndex((t) => t.tabTitle?.toLowerCase().includes('feri'))
+        } else if (catLower.includes('taller') && !catLower.includes('shirley')) {
+          targetTabIdx = tabs.findIndex((t) => t.tabTitle?.toLowerCase().includes('talleres'))
+        } else if (catLower.includes('shirley') || catLower.includes('cread') || catLower.includes('espacio')) {
+          targetTabIdx = tabs.findIndex((t) => t.tabTitle?.toLowerCase().includes('shirley'))
+        } else {
+          targetTabIdx = tabs.findIndex((t) => t.tabTitle?.toLowerCase().includes('client'))
+        }
+
+        if (targetTabIdx === -1) targetTabIdx = 0
+        const targetTab = { ...tabs[targetTabIdx] }
+        targetTab.images = [...(targetTab.images || [])]
+
+        const newImageItem: Record<string, any> = {
+          title: cleanTitle,
+          category: targetTab.tabTitle,
+          isFeatured: Boolean(esDestacada),
+          ...(descripcion ? { description: String(descripcion).trim() } : {}),
+          ...(mediaId ? { image: mediaId } : {}),
+          ...(urlFoto ? { imageUrl: urlFoto } : {}),
+        }
+
+        targetTab.images.push(newImageItem)
+        tabs[targetTabIdx] = targetTab
+        galleryBlock.tabs = tabs
+        currentLayout[galleryBlockIdx] = galleryBlock
+
+        await payload.update({
+          collection: 'pages',
+          id: page.id,
+          data: { layout: currentLayout },
+          overrideAccess: true,
+        })
+
+        return `¡Listo Shirley! La foto "${cleanTitle}" fue agregada exitosamente a la galería en la sección "${targetTab.tabTitle}" y ya se puede ver en la web (/galeria) ✨📸`
+      }
+
+      case 'listarFotosGaleria': {
+        const homeRes = await payload.find({
+          collection: 'pages',
+          where: {
+            or: [{ slug: { equals: 'home' } }, { slug: { equals: 'inicio' } }],
+          },
+          depth: 1,
+          overrideAccess: true,
+          limit: 1,
+        })
+
+        const page = homeRes.docs[0]
+        const galleryBlock = (page?.layout as any[])?.find((b) => b.blockType === 'gallery')
+        const tabs = galleryBlock?.tabs || []
+
+        if (!tabs.length) {
+          return 'No hay fotografías registradas aún en la galería del CMS. Puedes agregar una enviándome una foto y diciendo "agrega esta foto a clientas con título..." 📸'
+        }
+
+        const catFilter = String(args.categoria || '').toLowerCase()
+        const sections: string[] = []
+
+        for (const tab of tabs) {
+          const tabTitle = tab.tabTitle || 'Sin título'
+          if (catFilter && !tabTitle.toLowerCase().includes(catFilter)) continue
+
+          const images = tab.images || []
+          const imgList = images.length > 0
+            ? images.map((img: any, i: number) => `   ${i + 1}. 📷 ${img.title || 'Momento'}${img.isFeatured ? ' (Destacada)' : ''}`).join('\n')
+            : '   (Sin fotos cargadas)'
+
+          sections.push(`📌 ${tabTitle} (${images.length} fotos):\n${imgList}`)
+        }
+
+        return `Galería Nénufar (/galeria):\n\n${sections.join('\n\n')}`
+      }
+
+      case 'eliminarFotoGaleria': {
+        const { titulo, categoria } = args
+        const cleanTitle = String(titulo || '').toLowerCase().trim()
+        if (!cleanTitle) {
+          return 'Shirley, por favor indícame el título de la foto que deseas eliminar de la galería.'
+        }
+
+        const homeRes = await payload.find({
+          collection: 'pages',
+          where: {
+            or: [{ slug: { equals: 'home' } }, { slug: { equals: 'inicio' } }],
+          },
+          depth: 0,
+          overrideAccess: true,
+          limit: 1,
+        })
+
+        const page = homeRes.docs[0]
+        if (!page) return 'No encontré la página principal en la base de datos.'
+
+        const currentLayout = [...((page.layout as any[]) || [])]
+        const galleryBlockIdx = currentLayout.findIndex((b) => b.blockType === 'gallery')
+        if (galleryBlockIdx === -1) return 'No hay galería configurada en la página principal.'
+
+        const galleryBlock = { ...currentLayout[galleryBlockIdx] }
+        const tabs = [...(galleryBlock.tabs || [])]
+        let removedTitle = ''
+        let tabFound = ''
+
+        for (let tIdx = 0; tIdx < tabs.length; tIdx++) {
+          const tab = { ...tabs[tIdx] }
+          const images = [...(tab.images || [])]
+          const imgIdx = images.findIndex((img: any) =>
+            (img.title || '').toLowerCase().includes(cleanTitle),
+          )
+
+          if (imgIdx !== -1) {
+            removedTitle = images[imgIdx].title || 'la foto'
+            tabFound = tab.tabTitle
+            images.splice(imgIdx, 1)
+            tab.images = images
+            tabs[tIdx] = tab
+            break
+          }
+        }
+
+        if (!removedTitle) {
+          return `No encontré ninguna foto en la galería con el título "${titulo}".`
+        }
+
+        galleryBlock.tabs = tabs
+        currentLayout[galleryBlockIdx] = galleryBlock
+
+        await payload.update({
+          collection: 'pages',
+          id: page.id,
+          data: { layout: currentLayout },
+          overrideAccess: true,
+        })
+
+        return `¡Listo Shirley! Eliminé "${removedTitle}" de la sección "${tabFound}" de tu galería 🗑️✨`
+      }
+
       // ─── 4. TALLERES & TESTIMONIOS ────────────────────────────────────────
       case 'publicarEvento': {
         const { titulo, fecha, lugar, descripcion, tipo } = args
@@ -897,35 +1146,52 @@ export async function executeShirleyTool(
         return `¡Listo Shirley! Eliminé el testimonio de "${match.docs[0].authorName}" de tu página de inicio ✨`
       }
 
-      // ─── 5. COPYWRITING, CATÁLOGO, LANDING & REDES ─────────────────────────
+      // ─── 5. COPYWRITING DE VENTAS & MARKETING (ALTA CONVERSIÓN · ANTI-SLOP) ──
       case 'generarCopyProducto': {
         const { slug, nombrePieza, materialesOTecnica, ocasionOEstilo } = args
         let product: ProductWithSlug | null = null
         if (slug) {
           product = await findProductBySlug(payload, slug)
         }
-        const titulo = product?.title || nombrePieza || 'Joya Artesanal Nénufar'
+        const titulo = product?.title || nombrePieza || 'Joya de Autor Nénufar'
         const precio = product ? formatCOP(product.priceInCOP) : ''
-        const tecnica = materialesOTecnica || 'mostacilla checa calibrada e hilos de alta resistencia tejidos a mano'
-        const estilo = ocasionOEstilo || 'ideal para lucir con elegancia y autenticidad en cualquier ocasión'
+        const tecnica = materialesOTecnica || 'micro-mostacilla checa calibrada e hilo técnico resistente a la humedad'
+        const estilo = ocasionOEstilo || 'impacto visual protagónico pero ultra liviano, cómodo para usar de la mañana a la noche'
 
         const propuesta = [
-          `✨ Propuesta de Copy para Catálogo & Web:`,
+          `🛍️ Propuesta de Copywriting para Ventas y Marketing (Alta Conversión · Sin Clichés):`,
           `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-          `💎 Título sugerido: ${titulo}`,
-          ...(precio ? [`🏷️ Precio: ${precio}`] : []),
+          `💎 Pieza: ${titulo}`,
+          ...(precio ? [`🏷️ Valor: ${precio}`] : []),
           ``,
-          `📖 Descripción para la ficha del producto:`,
-          `"${titulo} es una pieza única elaborada 100% a mano por Shirley en Cartagena de Indias. Creada mediante ${tecnica}, combina la tradición artesanal colombiana con un diseño contemporáneo, ${estilo}.`,
+          `🛒 1. FICHA DE VENTA PARA LA TIENDA WEB (/products/${product?.slug || slugify(titulo)}):`,
+          `"${titulo} está tejida a mano punto por punto por Shirley en su taller de Cartagena utilizando ${tecnica}. Diseñada para ${estilo}, sus terminaciones cuidadas aseguran que la pieza conserve su forma, color y brillo intacto con el paso del tiempo.`,
           ``,
-          `• Ultraliviana y cómoda para llevar todo el día.`,
-          `• Acabados hipoalergénicos pensados para proteger tu piel.`,
-          `• Cada detalle cuenta una historia irrepetible y llena de calidez caribeña."`,
+          `✨ Por qué te va a encantar:`,
+          `• Comodidad total: ultraliviana (menos de 15 gramos), olvídate del dolor de orejas al final de tu evento o jornada.`,
+          `• Cero alergias: postes y herrajes 100% libres de níquel, aptos para pieles reactivas y sensibles.`,
+          `• Resistencia real: tejida con hilo técnico que no se deforma ni se altera con el calor ni la humedad.`,
+          `• Exclusividad artesanal: producida en tirajes cortos de 3 a 5 piezas por lote.`,
+          `• Origen local: joyería de autor confeccionada en Cartagena de Indias.`,
           ``,
-          `🎯 Llamado a la acción (CTA):`,
-          `"Haz tu pedido por la web y Shirley coordinará personalmente el pago y envío a tu ciudad."`,
+          `📦 Despacho seguro: empacada para regalo con tarjeta de origen. Haz tu pedido en la web y Shirley coordinará directamente contigo el pago (Nequi, Daviplata o Bancolombia) y el despacho a tu ciudad."`,
+          ``,
           `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-          `💡 Si te gusta esta descripción, puedes decirme: "actualiza la descripción de ${slug || titulo} con este texto" para publicarla de inmediato.`
+          `📱 2. COPY DE VENTA PARA INSTAGRAM / WHATSAPP:`,
+          `"¿Aretes grandes que NO pesan? Sí existen. ✨`,
+          ``,
+          `Estos son los ${titulo}: más de 6 horas de tejido paciente a mano en Cartagena, combinando ${tecnica} en una estructura flexible que puedes lucir todo el día.`,
+          ``,
+          `Llévalos con una blusa blanca básica o un vestido para una ocasión especial: transforman cualquier conjunto al instante con color y técnica artesanal auténtica.`,
+          ``,
+          `⚠️ Lote limitado: solo confeccionamos pocas unidades de este diseño.`,
+          `👉 Pídelos directo en la web o escríbenos por mensaje para apartar los tuyos hoy."`,
+          ``,
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+          `💬 3. GATILLO DE CIERRE RÁPIDO PARA CHAT:`,
+          `"¡Hola! Sí, aún tenemos disponibles los ${titulo}${precio ? ` en ${precio}` : ''}. Son súper livianitos, hipoalergénicos y vienen listos para regalo. ¿A qué ciudad te los enviamos?"`,
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+          `💡 Di: "actualiza la descripción de ${product?.slug || slug || titulo} con este texto" para publicarla en el catálogo.`
         ].join('\n')
 
         return propuesta
@@ -951,47 +1217,46 @@ export async function executeShirleyTool(
 
       case 'generarCopyLanding': {
         const { seccion = 'hero', enfoque } = args
-        const motivo = enfoque || 'nueva colección de joyas artesanales'
+        const motivo = enfoque || 'joyería tejida a mano en Cartagena'
 
         if (seccion === 'hero') {
           return [
-            `🎨 Opciones de Copy para el Carrusel Principal (Hero Slider):`,
+            `🎯 Propuestas de Ventas para el Hero Principal (Enfocadas en Conversión & Beneficio):`,
             `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-            `Opción 1 (Emotiva & Ancestral):`,
-            `• Título: Joyas Tejidas con Alma Caribeña`,
-            `• Subtítulo: Piezas únicas elaboradas pacientemente a mano en Cartagena de Indias para resaltar tu esencia.`,
-            `• Botón: Explorar Colección → /shop`,
+            `Opción 1 (Impacto Visual + Confort Insuperable):`,
+            `• Titular: Joyería en mostacilla tejida a mano en Cartagena`,
+            `• Bajada: Diseños llamativos que no pesan. Aretes y collares de autor confeccionados punto por punto con micro-mostacilla checa y acabados que cuidan tu piel.`,
+            `• Botón: Comprar joyas disponibles → /shop`,
             ``,
-            `Opción 2 (Enfocada en ${motivo}):`,
-            `• Título: Arte Textil & Filigrana de Autor`,
-            `• Subtítulo: Descubre diseños exclusivos inspirados en los colores y la magia del Caribe colombiano.`,
-            `• Botón: Ver Catálogo → /shop`,
+            `Opción 2 (Diferenciación & Exclusividad de Lote):`,
+            `• Titular: El arte del tejido artesanal en la piel`,
+            `• Bajada: Piezas singulares elaboradas pacientemente en el taller de Getsemaní en lotes limitados que transforman cualquier atuendo.`,
+            `• Botón: Explorar piezas de edición limitada → /shop`,
             `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-            `💡 Puedes decirme: "agrega un slide con el título X y subtítulo Y" junto a una foto para publicarlo.`
           ].join('\n')
         }
 
         if (seccion === 'cta') {
           return [
-            `🎨 Opciones para Bloque de Pedido Personalizado (CTA):`,
+            `🎯 Copys de Ventas para Pedidos Personalizados (Generar Lead & Encargo):`,
             `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-            `Opción 1:`,
-            `• Título: ¿Buscas una joya personalizada a tu medida?`,
-            `• Subtítulo: Shirley confecciona piezas por encargo con tus colores, patrones o combinaciones favoritas. Cuéntanos tu idea y la tejemos para ti.`,
-            `• Botón: Personalizar mi Joya → WhatsApp de Shirley`,
+            `Opción 1 (Combinación a tu medida):`,
+            `• Titular: ¿Buscas el accesorio exacto para tu vestido?`,
+            `• Bajada: Shirley confecciona piezas por encargo adaptando medidas, tonos y cierres según tu ocasión o evento.`,
+            `• Botón: Diseñar mi joya con Shirley → WhatsApp`,
             ``,
-            `Opción 2:`,
-            `• Título: Lleva una pieza con historia propia`,
-            `• Subtítulo: Diseños exclusivos y ediciones limitadas hechas con amor en Cartagena. Haz tu pedido directo sin intermediarios.`,
-            `• Botón: Escribir a Shirley → WhatsApp de Shirley`,
+            `Opción 2 (Regalos memorables con historia):`,
+            `• Titular: Joyas tejidas por encargo a tu medida`,
+            `• Bajada: Un detalle irrepetible tejido especialmente para ti o para quien más quieres, con empaque especial listo para sorprender.`,
+            `• Botón: Cotizar pedido personalizado`,
           ].join('\n')
         }
 
         return [
-          `🎨 Copy para la sección "${seccion}" (${motivo}):`,
-          `• Título: Manos que Tejen Tradición e Identidad`,
-          `• Cuerpo: Cada pieza de Nénufar nace en el corazón de Cartagena de Indias. Shirley entrelaza hilos y mostacillas creando obras de autor que honran el legado cultural de Colombia.`,
-          `• Cierre: Joyería liviana, hipoalergénica y llena de significado.`
+          `🎯 Mensaje de Venta para sección "${seccion}" (${motivo}):`,
+          `• Titular: Hechas para acompañarte todo el día sin incomodar`,
+          `• Cuerpo: Combinamos la paciencia del tejido tradicional con materiales técnicos modernos. Cada joya se teje con micro-mostacilla checa calibrada e hilo ultrarresistente que no se vence ni despinta. Una joya protagonista que pesa menos de una moneda.`,
+          `• Cierre: Haz tu pedido online sin intermediarios y recíbelo asegurado en tu puerta.`
         ].join('\n')
       }
 

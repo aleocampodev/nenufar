@@ -5,50 +5,50 @@ export type GalleryBlockProps = GalleryBlockType & {
   id?: string
 }
 
-// Fotografías auténticas organizadas por categorías temáticas de Nénufar
+// Fotografías auténticas organizadas por categorías temáticas de Nenúfar
 const CLIENTAS_IMAGES: GalleryImageItem[] = [
   {
     id: 'clienta-1',
     title: 'Okama Ceremonial en Lino',
     src: '/media/Embera-800x1000.webp',
-    alt: 'Clienta de Nénufar luciendo collar Okama en Cartagena',
+    alt: 'Clienta de Nenúfar luciendo collar Okama en Cartagena',
     isFeatured: true,
   },
   {
     id: 'clienta-2',
     title: 'Aretes Tricolor en Celebración',
     src: '/media/colombia-aretes-800x1000.webp',
-    alt: 'Clienta luciendo aretes artesanales tricolor de Nénufar',
+    alt: 'Clienta luciendo aretes artesanales tricolor de Nenúfar',
   },
   {
     id: 'clienta-3',
     title: 'Joya de Autor en la Piel',
     src: '/media/joya-1788320703397-800x1000.webp',
-    alt: 'Clienta con pieza exclusiva de Shirley - Nénufar',
+    alt: 'Clienta con pieza exclusiva de Shirley - Nenúfar',
   },
   {
     id: 'clienta-4',
     title: 'Aretes Inspiración Café',
     src: '/media/cafe-aretes-1-800x1000.webp',
-    alt: 'Clienta con aretes de café Nénufar',
+    alt: 'Clienta con aretes de café Nenúfar',
   },
   {
     id: 'clienta-5',
     title: 'Candongas de Mostacilla Calibrada',
     src: '/media/colombia-aretes-2-800x1000.webp',
-    alt: 'Clienta con candongas Nénufar',
+    alt: 'Clienta con candongas Nenúfar',
   },
   {
     id: 'clienta-6',
     title: 'Collar Colibrí en Ocasión Especial',
     src: '/media/colibri-1-800x1000.webp',
-    alt: 'Clienta con collar de colibrí Nénufar',
+    alt: 'Clienta con collar de colibrí Nenúfar',
   },
   {
     id: 'clienta-7',
     title: 'Diseño Ancestral en Celebración',
     src: '/media/joya-1788320381292-800x1000.webp',
-    alt: 'Aretes de autor en clienta Nénufar',
+    alt: 'Aretes de autor en clienta Nenúfar',
   },
 ]
 
@@ -231,33 +231,48 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({
   id,
 }) => {
   // Procesar las pestañas recibidas de Payload o usar el catálogo enriquecido por defecto
-  const processedTabs: GalleryTabItem[] =
-    tabs && Array.isArray(tabs) && tabs.length > 0
-      ? tabs.map((tab, tIdx) => {
-          const fallbackTab = DEFAULT_GALLERY_TABS[tIdx % DEFAULT_GALLERY_TABS.length]
-          const tabImages: GalleryImageItem[] =
-            tab.images && Array.isArray(tab.images) && tab.images.length > 0
-              ? tab.images.map((img, iIdx) => {
-                  const src = resolveImageUrl(img.image, img.imageUrl)
-                  return {
-                    id: img.id || `${tIdx}-${iIdx}`,
-                    title: img.title || `Pieza ${iIdx + 1}`,
-                    category: img.category || tab.tabTitle,
-                    description: img.description || undefined,
-                    src,
-                    alt: img.title || 'Joyería artesanal Nénufar',
-                    isFeatured: Boolean(img.isFeatured),
-                  }
-                })
-              : fallbackTab.images
+  let processedTabs: GalleryTabItem[] = DEFAULT_GALLERY_TABS
 
-          return {
-            tabTitle: tab.tabTitle || fallbackTab.tabTitle,
-            tabSubtitle: tab.tabSubtitle || fallbackTab.tabSubtitle,
-            images: tabImages,
-          }
-        })
-      : DEFAULT_GALLERY_TABS
+  if (tabs && Array.isArray(tabs) && tabs.length > 0) {
+    const parsedTabs: GalleryTabItem[] = tabs.map((tab, tIdx) => {
+      const fallbackTab = DEFAULT_GALLERY_TABS[(tIdx + 1) % DEFAULT_GALLERY_TABS.length]
+      const tabImages: GalleryImageItem[] =
+        tab.images && Array.isArray(tab.images) && tab.images.length > 0
+          ? tab.images.map((img, iIdx) => {
+              const src = resolveImageUrl(img.image, img.imageUrl)
+              return {
+                id: img.id || `${tIdx}-${iIdx}`,
+                title: img.title || `Pieza ${iIdx + 1}`,
+                category: img.category || tab.tabTitle,
+                description: img.description || undefined,
+                src,
+                alt: img.title || 'Joyería artesanal Nenúfar',
+                isFeatured: Boolean(img.isFeatured),
+              }
+            })
+          : fallbackTab.images
+
+      return {
+        tabTitle: tab.tabTitle || fallbackTab.tabTitle,
+        tabSubtitle: tab.tabSubtitle || fallbackTab.tabSubtitle,
+        images: tabImages,
+      }
+    })
+
+    const hasAllTab = parsedTabs.some((t) => t.tabTitle?.toLowerCase().includes('todas'))
+    const allCombined = parsedTabs.flatMap((t) => t.images)
+
+    processedTabs = hasAllTab
+      ? parsedTabs
+      : [
+          {
+            tabTitle: 'Todas las Fotos',
+            tabSubtitle: 'Colección visual completa de Nenúfar',
+            images: allCombined,
+          },
+          ...parsedTabs,
+        ]
+  }
 
   return (
     <GalleryClient

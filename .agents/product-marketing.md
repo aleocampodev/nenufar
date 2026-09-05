@@ -76,9 +76,41 @@
 - Fast fashion, masivo, industrial, bisutería barata, producción en serie, tecnicismos corporativos fríos, la palabra "COP" en texto visible (usar símbolo $ con formato colombiano, ej. $ 45.000).
 
 ## Brand Voice
-**Tone:** Cercano, cálido, femenino, acogedor, alegre y auténtico (como hablar con una amiga que diseña con el corazón).
-**Style:** Conversacional en español colombiano (`es-CO`), tuteo natural, fluido, emotivo y persuasivo sin exagerar ni usar clichés huecos.
-**Personality:** Talentosa, apasionada, creativa, atenta, artesanal, radiante.
+**Tone:** Cercano, cálido, femenino, acogedor, sobrio y auténtico. Respeto absoluto por el oficio artesanal.
+**Style:** Conversacional en español colombiano (`es-CO`), tuteo natural, fluido, sensorial y persuasivo sin exagerar ni usar clichés huecos.
+**Personality:** Artesanal, atenta, creativa, sobria y digna.
+
+## Anti-AI-Slop & Anti-Sycophancy Guidelines (CRITICAL)
+- **Cero adulación servil (Anti-Sycophancy):** Prohibido el servilismo, la lisonja exagerada o los halagos vacíos hacia las clientas o hacia Shirley ("¡maravillosa reina!", "¡obra divina!", "¡eres increíble!"). Trato cercano, profesional y con la dignidad de quien domina un oficio.
+- **Cero clichés de IA (Anti-AI-Slop):** Prohibido usar fórmulas trilladas de ChatGPT/Claude como:
+  - *"Eleva tu estilo al siguiente nivel"*
+  - *"Un tapiz de emociones / cultura"*
+  - *"Una sinfonía de colores y texturas"*
+  - *"En un mundo donde..." / "Déjate cautivar"*
+  - *"La fusión perfecta entre lo ancestral y lo contemporáneo"*
+  - *"Magia pura / arte que enamora"*
+- **Enfoque en hechos tangibles del oficio:** Hablar siempre de realidades físicas:
+  - Micro-mostacilla checa calibrada Preciosa Ornela seleccionada por uniformidad y resistencia.
+  - Hilado punto por punto con hilo técnico encerado que no se deshilacha con el sudor ni la humedad del Caribe.
+  - Peso pluma: joyas ultralivianas (menos de 15 gramos) que no tiran de la oreja ni cansan el cuello.
+  - Caída anatómica suave sobre la clavícula o el pecho.
+  - Acabados hipoalergénicos limpios (postes libres de níquel).
+  - Origen real: confección pausada por Shirley en su taller de Getsemaní, Cartagena.
+
+## Conversion Copywriting Framework (Marketing & Ventas de Alta Conversión)
+El objetivo de todo copy comercial de Nénufar es **vender piezas y cerrar pedidos** sin caer en humo ni clichés:
+1. **El Gancho (Scroll-stopper / Hook de Deseo):** Resuelve un dolor real (aretes llamativos que no jalan la oreja ni cansan después de 2 horas; accesorios que transforman un conjunto básico).
+2. **Transformación & Valor:** Demostrar por qué vale cada peso: horas de enfilado manual paciente, diseño irrepetible que atrae miradas y cumplidos sin esfuerzo.
+3. **Desactivación Preventiva de Objeciones:**
+   - *¿Pesan?* Menos de 15 g: no estiran el lóbulo ni obligan a quitárselos en medio de una fiesta.
+   - *¿Alergias?* Herrajes 100% libres de níquel garantizados para piel sensible.
+   - *¿Se deforman?* Hilo técnico de alta tenacidad que soporta el calor y la humedad del Caribe.
+   - *¿Cómo pago?* Compra sin fricción: sin pasarelas engorrosas; pedido web + pago directo por Nequi, Daviplata o Bancolombia.
+4. **Escasez Ética y Exclusividad Real:** Cada joya toma de 4 a 8 horas de confección manual. Shirley produce lotes muy reducidos (3 a 5 piezas por modelo).
+5. **Entregables Comerciales Multicanal para Shirley:**
+   - **Ficha Web de Catálogo:** Deseo + Beneficios anatómicos + Garantía de confort + CTA.
+   - **Copy para Redes (Instagram / WhatsApp):** Gancho + Historia breve + Gatillo de stock corto + Llamado al DM o web.
+   - **Frase de Cierre Inmediato por Chat:** Respuesta rápida y cálida para cerrar la venta cuando la clienta pregunte precio.
 
 ## Proof Points
 **Metrics:** Cientos de piezas creadas a mano y clientes felices en toda Colombia.

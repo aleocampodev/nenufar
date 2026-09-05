@@ -44,6 +44,12 @@ const DIRECT_REPLY_TOOLS = new Set([
   'crearTestimonio',
   'listarTestimonios',
   'eliminarTestimonio',
+  'agregarFotoGaleria',
+  'listarFotosGaleria',
+  'eliminarFotoGaleria',
+  'generarCopyProducto',
+  'actualizarDescripcionProducto',
+  'generarCopyLanding',
 ])
 
 function buildSystemPrompt(): string {
@@ -63,7 +69,10 @@ function buildSystemPrompt(): string {
     '- Puedes crear y listar categorías del catálogo con crearCategoria y listarCategorias.',
     '- Puedes asignar categorías a joyas existentes con asignarCategoriaProducto.',
     '- Puedes publicar o despublicar cualquier producto existente con la herramienta publicarProducto.',
-    '- La edición de bloques, diseño y fotos de la página de inicio (Landing Page) se realiza exclusivamente desde el panel de administración (/admin). Si Shirley te pide editar la estructura o fotos de la landing, indícale amablemente que puede hacerlo desde el panel /admin en la sección de Páginas.',
+    '- Puedes gestionar la subpágina de galería de Nénufar (/galeria) con agregarFotoGaleria, listarFotosGaleria y eliminarFotoGaleria.',
+    '- Si Shirley envía una foto con texto indicando una categoría (clientas, ferias, talleres, shirley) o diciendo que es para la galería, USA SIEMPRE agregarFotoGaleria para publicarla de inmediato.',
+    '- Si Shirley pide ver o listar las fotos de la galería, USA SIEMPRE listarFotosGaleria.',
+    '- Si Shirley pide retirar o borrar una foto de la galería, USA SIEMPRE eliminarFotoGaleria.',
     '- Si Shirley pide ideas de texto, descripciones atractivas para una joya o copys para el catálogo web (/products/[slug]), usa generarCopyProducto.',
     '- Si Shirley pide agendar un taller o feria, USA SIEMPRE publicarEvento.',
     '- Si Shirley pide ver, consultar o listar los talleres y ferias programados, USA SIEMPRE listarEventos para ver los datos reales.',
@@ -72,6 +81,13 @@ function buildSystemPrompt(): string {
     '- Si una herramienta falla, discúlpate brevemente y sugiere intentar en un momento. No muestres errores técnicos ni IDs.',
     '- Si el mensaje es una pregunta general o saludo, responde directo sin usar herramientas.',
     '- Tienes acceso al historial de conversación previo: úsalo para entender referencias a productos, fotos o temas hablados anteriormente.',
+    '',
+    'Reglas de Copywriting para Marketing y Ventas (ALTA CONVERSIÓN · ANTI-SLOP · ANTI-SYCOPHANCY):',
+    '- ENFOQUE DE MARKETING Y VENTAS DIRECTAS: El objetivo de cada texto comercial es convertir visitantes en compradoras. Despierta deseo genuino, vincula características técnicas a beneficios tangibles (ej. ligereza extrema que permite usar aretes de impacto 10 horas seguidas sin dolor), derriba objeciones (cero níquel para pieles reactivas, resistencia al sudor, empaque de regalo) y cierra con llamados a la acción claros.',
+    '- FORMATO COMERCIAL INTEGRAL: Entrega propuestas útiles para los canales de Shirley: ficha para la tienda web, copy persuasivo para Instagram/WhatsApp con gancho scroll-stopper, y frase de cierre directo para cuando una clienta pregunte por chat.',
+    '- PROHIBIDO EL AI SLOP Y CLICHÉS DE IA: No uses fórmulas vacías como "eleva tu estilo al siguiente nivel", "un tapiz de emociones", "sinfonía de colores", "en un mundo donde...", "déjate cautivar", "fusión mágica de lo ancestral y lo contemporáneo" ni adjetivos inflados.',
+    '- PROHIBIDO EL SYCOPHANCY (adulación servil o complaciente): Jamás adules a Shirley ni a las clientas con lisonjas exageradas ("¡maravillosa reina!", "¡obra maestra divina!", "¡eres genial!"). El tono debe ser cálido pero sobrio, profesional y con la dignidad de quien domina un oficio manual.',
+    '- ANCLADO EN EL OFICIO REAL: Basa cada argumento de venta en hechos tangibles: micro-mostacilla checa calibrada Preciosa Ornela que conserva su brillo, tejido punto por punto con hilo técnico resistente a la humedad del Caribe, ligereza extrema (menos de 15g que no jala las orejas ni cansa el cuello), remates limpios hipoalergénicos y confección pausada en Getsemaní, Cartagena.',
   ].join('\n')
 }
 
@@ -234,27 +250,39 @@ function determineToolChoice(text: string, mediaId?: number): { type: 'tool' | '
     return { type: 'tool', name: 'pedidosPendientes' }
   }
 
-  // 3. Hero / Carrusel / Slider de Inicio
-  if (/(slide|slides|carrusel|banner|banners|slider|portada)/i.test(t)) {
-    if (/(cambia|actualiza|reemplaza|modifica|pon|foto|imagen)/i.test(t) || Boolean(mediaId)) {
-      return { type: 'tool', name: 'actualizarSlideHero' }
+  // 3. Galería de Fotos / Momentos / Clientas (subpágina /galeria)
+  if (/(galer[ií]a|foto|fotos|fotograf[ií]a|momentos|clienta|clientas)/i.test(t)) {
+    if (/(elimina|borra|quita|retira|cancela)/i.test(t)) {
+      return { type: 'tool', name: 'eliminarFotoGaleria' }
     }
-    if (/(agrega|crea|a[ñn]ade|nuevo)/i.test(t)) {
-      return { type: 'tool', name: 'agregarSlideHero' }
+    if (/(agrega|sube|guarda|pon|nueva|nuevo|publica)/i.test(t) || Boolean(mediaId)) {
+      return { type: 'tool', name: 'agregarFotoGaleria' }
     }
-    if (/(elimina|borra|quita|cancela)/i.test(t)) {
-      return { type: 'tool', name: 'eliminarSlideHero' }
-    }
-    if (/(que|cu[aá]les|hay|ver|lista|listar|muestra|mostrar)/i.test(t)) {
-      return { type: 'tool', name: 'listarSlidesHero' }
+    if (/(ver|que|cu[aá]les|hay|lista|listar|muestra|mostrar)/i.test(t)) {
+      return { type: 'tool', name: 'listarFotosGaleria' }
     }
   }
 
-  // 4. Pregunta sobre productos / catálogo
+  // 4. Actualizar descripción de producto existente
+  if (/(actualiza|cambia|modifica|guarda).*descripci[oó]n/i.test(t)) {
+    return { type: 'tool', name: 'actualizarDescripcionProducto' }
+  }
+
+  // 5. Redacción de copys comerciales (Anti-Slop / Oficio Real)
+  if (/(copy|copys|redacta|redactar|propuesta|escribe|escribir|texto)/i.test(t)) {
+    if (/(landing|inicio|hero|home|web|portada|cta|secci[oó]n)/i.test(t)) {
+      return { type: 'tool', name: 'generarCopyLanding' }
+    }
+    if (/(producto|joya|aretes|collar|pulsera|pieza|colecci[oó]n|descripci[oó]n)/i.test(t) || /(para|de)\s+/i.test(t)) {
+      return { type: 'tool', name: 'generarCopyProducto' }
+    }
+  }
+
+  // 6. Pregunta sobre productos / catálogo
   if (
     /(joya|joyas|producto|productos|cat[aá]logo|aretes|collares|pulseras|piezas|colecci[oó]n)/i.test(t) &&
     /(que|cu[aá]les|hay|ver|lista|listar|muestra|mostrar|qu[eé] vendemos|inventario)/i.test(t) &&
-    !/(crea|agrega|publica|elimina|borra|foto)/i.test(t)
+    !/(crea|agrega|publica|elimina|borra|foto|copy|redacta|descripci[oó]n)/i.test(t)
   ) {
     return { type: 'tool', name: 'buscarProducto' }
   }

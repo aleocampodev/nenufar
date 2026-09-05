@@ -55,10 +55,13 @@ export function ShopFilterBar({
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-2">
         
         {/* Pills de Categorías Rápidas con Paleta de Marca Nenúfar */}
-        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+        <nav
+          aria-label="Filtros de categoría del catálogo"
+          className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none"
+        >
           <button
             onClick={() => updateFilters({ category: null, featured: null })}
-            className={`px-5 py-2 rounded-full text-xs uppercase tracking-wider font-medium transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-5 py-2 min-h-[38px] rounded-full text-xs uppercase tracking-wider font-medium active:scale-[0.96] transition-all whitespace-nowrap cursor-pointer ${
               !activeCategory && !activeFeatured
                 ? 'bg-brand text-white shadow-md shadow-brand/20 hover:bg-brand-dark scale-[1.02]'
                 : 'bg-white dark:bg-zinc-900 text-neutral-600 dark:text-neutral-300 border border-neutral-200/90 dark:border-zinc-800 hover:border-brand/50 hover:text-brand shadow-sm'
@@ -74,7 +77,7 @@ export function ShopFilterBar({
                 category: null,
               })
             }
-            className={`px-5 py-2 rounded-full text-xs uppercase tracking-wider font-medium transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+            className={`px-5 py-2 min-h-[38px] rounded-full text-xs uppercase tracking-wider font-medium active:scale-[0.96] transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
               activeFeatured
                 ? 'bg-brand text-white shadow-md shadow-brand/20 hover:bg-brand-dark scale-[1.02]'
                 : 'bg-white dark:bg-zinc-900 text-neutral-600 dark:text-neutral-300 border border-neutral-200/90 dark:border-zinc-800 hover:border-brand/50 hover:text-brand shadow-sm'
@@ -95,7 +98,7 @@ export function ShopFilterBar({
                     featured: null,
                   })
                 }
-                className={`px-5 py-2 rounded-full text-xs uppercase tracking-wider font-medium transition-all whitespace-nowrap cursor-pointer ${
+                className={`px-5 py-2 min-h-[38px] rounded-full text-xs uppercase tracking-wider font-medium active:scale-[0.96] transition-all whitespace-nowrap cursor-pointer ${
                   isSelected
                     ? 'bg-brand text-white shadow-md shadow-brand/20 hover:bg-brand-dark scale-[1.02]'
                     : 'bg-white dark:bg-zinc-900 text-neutral-600 dark:text-neutral-300 border border-neutral-200/90 dark:border-zinc-800 hover:border-brand/50 hover:text-brand shadow-sm'
@@ -105,7 +108,7 @@ export function ShopFilterBar({
               </button>
             )
           })}
-        </div>
+        </nav>
 
         {/* Selector de Orden con Estilo Nenúfar */}
         <div className="flex items-center justify-end w-full md:w-auto gap-3 self-end md:self-auto">
@@ -114,6 +117,7 @@ export function ShopFilterBar({
             <select
               value={activeSort}
               onChange={(e) => updateFilters({ sort: e.target.value })}
+              aria-label="Ordenar joyas por"
               className="appearance-none bg-white dark:bg-zinc-900 border border-neutral-200/90 dark:border-zinc-800 rounded-full px-4 py-2 pr-8 text-xs uppercase tracking-wider text-neutral-700 dark:text-neutral-200 font-medium hover:border-brand focus:outline-none focus:ring-1 focus:ring-brand shadow-sm cursor-pointer"
             >
               <option value="-createdAt" className="bg-background text-foreground">Más Recientes</option>

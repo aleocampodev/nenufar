@@ -20,9 +20,9 @@ export async function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 py-16 lg:py-20">
           {/* Columna 1: Marca & Filosofía */}
           <div className="space-y-4">
-            <Link className="flex items-center gap-3 group" href="/">
-              <LogoIcon variant="blanco" className="w-8 h-8 transition-transform group-hover:scale-105" />
-              <span className="font-serif text-2xl tracking-wide text-white font-medium group-hover:text-[#FF4FA3] transition-colors">Nenúfar</span>
+            <Link className="flex items-center gap-2.5 sm:gap-3 group" href="/">
+              <LogoIcon variant="blanco" className="w-8 h-8 shrink-0 transition-transform group-hover:scale-105" />
+              <span className="font-serif text-2xl sm:text-3xl tracking-wide text-white font-medium leading-none select-none group-hover:text-[#FF4FA3] transition-colors">Nenúfar</span>
             </Link>
             <p className="text-purple-100/90 text-xs sm:text-sm leading-relaxed font-light">
               Joyería de autor tejida a mano con mostacilla calibrada y filigrana en Cartagena de Indias. Piezas con alma caribeña hechas para perdurar.

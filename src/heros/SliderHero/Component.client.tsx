@@ -56,14 +56,16 @@ export const SliderHeroClient: React.FC<{
   const imageSrc =
     typeof modelImage === 'object' && modelImage && 'url' in modelImage && modelImage.url
       ? (modelImage.url as string)
-      : '/shirley-hdr-sin-fondo.svg'
+      : '/shirley-hdr-sin-fondo.svg?v=2'
 
   const imageAlt =
     typeof modelImage === 'object' && modelImage && 'alt' in modelImage && modelImage.alt
       ? (modelImage.alt as string)
-      : 'Shirley luciendo alta joyería artesanal en micro-mostacilla Nénufar'
+      : 'Shirley luciendo joyería artesanal de autor en micro-mostacilla Nénufar'
 
-  const badgeText = badge || slides?.[0]?.badge || 'ALTA JOYERÍA ARTESANAL'
+  const rawBadge = badge || slides?.[0]?.badge || null
+  const badgeText =
+    rawBadge && !rawBadge.toUpperCase().includes('ALTA JOYER') ? rawBadge : null
   const mainHeading = heading || 'La nobleza del Caribe no se hereda.'
   const highlightText =
     headingHighlight !== undefined && headingHighlight !== null ? headingHighlight : 'Se teje.'
@@ -80,13 +82,24 @@ export const SliderHeroClient: React.FC<{
 
   useGSAP(
     () => {
-      const mm = gsap.matchMedia(containerRef)
-
       const textElements = [
         badgeRef.current,
         headingRef.current,
         actionsRef.current,
       ].filter(Boolean)
+
+      // Respeto estricto a accesibilidad y reducción de movimiento (WCAG 2.3.3)
+      if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (imgRef.current) {
+          gsap.set(imgRef.current, { opacity: 1, y: 0, scale: 1.28, x: 40, transformOrigin: '51.8% 38%' })
+        }
+        if (textElements.length > 0) {
+          gsap.set(textElements, { opacity: 1, y: 0 })
+        }
+        return
+      }
+
+      const mm = gsap.matchMedia(containerRef)
 
       // Desktop & Tablet landscape (>= 1024px)
       mm.add('(min-width: 1024px)', () => {

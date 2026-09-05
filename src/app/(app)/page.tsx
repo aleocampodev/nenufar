@@ -9,11 +9,12 @@ import { homeStaticData } from '@/endpoints/seed/home-static'
 import React from 'react'
 import type { Page } from '@/payload-types'
 
-export const dynamic = 'force-dynamic'
+// Revalidación ISR cada 5 minutos (300s) para máximo rendimiento, compatible con draftMode
+export const revalidate = 300
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await queryHomePage()
-  return generateMeta({ doc: page })
+  return generateMeta({ doc: page || (homeStaticData() as Page) })
 }
 
 async function queryHomePage(): Promise<Page | null> {
@@ -76,15 +77,13 @@ async function queryHomePage(): Promise<Page | null> {
 export default async function HomePage() {
   const page = await queryHomePage()
   const { hero, layout } = page || (homeStaticData() as Page)
-  const isSlider = (hero as any)?.type === 'slider'
+  const isHero = (hero as any)?.type === 'slider' || (hero as any)?.type === 'hero'
 
-  // Garantizar que 'features' (Tradición & Delicadeza) y 'gallery' no se muestren en la landing
-  const filteredBlocks = layout?.filter(
-    (block) => block.blockType !== 'features' && block.blockType !== 'gallery',
-  )
+  // Galería va en la subpágina dedicada /galeria, no en la landing
+  const filteredBlocks = layout?.filter((block) => block.blockType !== 'gallery')
 
   return (
-    <article className={isSlider ? 'pb-16' : 'pt-8 pb-16'}>
+    <article className={isHero ? 'pb-16' : 'pt-8 pb-16'}>
       <RenderHero {...hero} />
       <RenderBlocks blocks={filteredBlocks} />
     </article>

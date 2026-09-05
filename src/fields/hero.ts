@@ -28,6 +28,10 @@ export const hero: Field = {
       options: [
         {
           label: '✅ Hero Principal Nénufar (Foto de Shirley, Redes Sociales y Titular) — (Inicio)',
+          value: 'hero',
+        },
+        {
+          label: '✅ Hero Principal Nénufar (Legado)',
           value: 'slider',
         },
         {
@@ -56,7 +60,7 @@ export const hero: Field = {
       relationTo: 'media',
       required: false,
       admin: {
-        condition: (_, { type } = {}) => type === 'slider',
+        condition: (_, { type } = {}) => type === 'slider' || type === 'hero',
         description:
           'Foto en primer plano con fondo transparente (SVG o PNG). Si la dejas vacía, se usará por defecto la foto oficial procesada en alta definición (/shirley-hdr-sin-fondo.svg).',
       },
@@ -65,10 +69,10 @@ export const hero: Field = {
       name: 'badge',
       type: 'text',
       label: 'Etiqueta superior (Badge)',
-      defaultValue: 'ALTA JOYERÍA ARTESANAL',
+      defaultValue: '',
       admin: {
-        condition: (_, { type } = {}) => type === 'slider',
-        description: 'Texto pequeño con punto indicador que aparece sobre el titular.',
+        condition: (_, { type } = {}) => type === 'slider' || type === 'hero',
+        description: 'Texto opcional con punto indicador que aparece sobre el titular.',
       },
     },
     {
@@ -77,7 +81,7 @@ export const hero: Field = {
       label: 'Titular H1 (Texto principal)',
       defaultValue: 'La nobleza del Caribe no se hereda.',
       admin: {
-        condition: (_, { type } = {}) => type === 'slider',
+        condition: (_, { type } = {}) => type === 'slider' || type === 'hero',
         description: 'Frase principal del encabezado (sin la parte resaltada en cursiva violeta).',
       },
     },
@@ -87,7 +91,7 @@ export const hero: Field = {
       label: 'Texto resaltado (Cursiva violeta)',
       defaultValue: 'Se teje.',
       admin: {
-        condition: (_, { type } = {}) => type === 'slider',
+        condition: (_, { type } = {}) => type === 'slider' || type === 'hero',
         description: 'Frase o palabra destacada al final del titular con estilo en cursiva y color violeta.',
       },
     },
@@ -97,7 +101,7 @@ export const hero: Field = {
       label: 'Texto del botón principal',
       defaultValue: 'Conoce la colección',
       admin: {
-        condition: (_, { type } = {}) => type === 'slider',
+        condition: (_, { type } = {}) => type === 'slider' || type === 'hero',
       },
     },
     {
@@ -106,7 +110,7 @@ export const hero: Field = {
       label: 'Enlace del botón principal (URL)',
       defaultValue: '/shop',
       admin: {
-        condition: (_, { type } = {}) => type === 'slider',
+        condition: (_, { type } = {}) => type === 'slider' || type === 'hero',
         description: 'Ej: /shop, /eventos',
       },
     },
@@ -115,7 +119,7 @@ export const hero: Field = {
       type: 'group',
       label: 'Redes Sociales del Hero',
       admin: {
-        condition: (_, { type } = {}) => type === 'slider',
+        condition: (_, { type } = {}) => type === 'slider' || type === 'hero',
         description: 'Canales oficiales mostrados junto al botón principal.',
       },
       fields: [
@@ -149,7 +153,7 @@ export const hero: Field = {
       name: 'richText',
       type: 'richText',
       admin: {
-        condition: (_, { type } = {}) => type !== 'slider' && type !== 'none',
+        condition: (_, { type } = {}) => type !== 'slider' && type !== 'hero' && type !== 'none',
       },
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
@@ -161,13 +165,13 @@ export const hero: Field = {
           ]
         },
       }),
-      label: 'Texto (solo si NO usas carrusel)',
+      label: 'Texto (solo si NO usas hero principal)',
     },
     linkGroup({
       overrides: {
         maxRows: 2,
         admin: {
-          condition: (_, { type } = {}) => type !== 'slider' && type !== 'none',
+          condition: (_, { type } = {}) => type !== 'slider' && type !== 'hero' && type !== 'none',
         },
       },
     }),

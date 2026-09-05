@@ -12,23 +12,19 @@ export const GalleryBlock: Block = {
       name: 'tagline',
       type: 'text',
       label: 'Subtítulo / Tagline superior',
-      defaultValue: 'COMUNIDAD & MOMENTOS REALES',
       admin: {
-        description: 'Texto pequeño en mayúsculas sobre el título principal (ej: COMUNIDAD & MOMENTOS REALES).',
+        description: 'Texto opcional en mayúsculas sobre el título principal.',
       },
     },
     {
       name: 'heading',
       type: 'text',
       label: 'Título de la Sección',
-      defaultValue: 'Nénufar en la Piel: Ferias, Talleres & Nuestras Clientas',
     },
     {
       name: 'description',
       type: 'textarea',
       label: 'Descripción de la Galería',
-      defaultValue:
-        'Fotografías espontáneas de ferias locales en Cartagena, talleres presenciales de tejido y nuestras queridas clientas luciendo sus joyas artesanales en la vida real.',
     },
     {
       name: 'tabs',
