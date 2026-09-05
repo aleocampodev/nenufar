@@ -84,12 +84,9 @@ export function MobileMenu({ menu, categories = [] }: Props) {
             <Link
               href="/"
               onClick={closeMobileMenu}
-              className="flex items-center gap-2.5 group"
+              className="flex items-center group py-1"
             >
-              <LogoIcon variant="negro" className="w-7 h-7 shrink-0 inline-block" />
-              <span className="font-serif text-2xl tracking-wide font-medium text-[#1A0E2E] leading-none select-none">
-                Nenúfar
-              </span>
+              <LogoIcon variant="color" className="h-8 w-auto shrink-0 inline-block" />
             </Link>
           </SheetTitle>
         </SheetHeader>
@@ -159,7 +156,7 @@ export function MobileMenu({ menu, categories = [] }: Props) {
                 onClick={(e) => handleAnchorClick(e, '/#historia')}
                 className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
               >
-                Nuestra Historia
+                Mi Historia
               </Link>
             </li>
 
@@ -179,7 +176,7 @@ export function MobileMenu({ menu, categories = [] }: Props) {
                 onClick={(e) => handleAnchorClick(e, '/#contacto')}
                 className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
               >
-                Contacto & Pedidos
+                Contáctame
               </Link>
             </li>
           </ul>

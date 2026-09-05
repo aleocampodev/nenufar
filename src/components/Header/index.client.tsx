@@ -77,20 +77,11 @@ export function HeaderClient({ header, categories = [] }: Props) {
     >
         <nav className="flex items-center justify-between max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 h-[74px] sm:h-[78px]">
           {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group">
+          <Link href="/" className="flex items-center group py-1">
             <LogoIcon
-              variant={isTransparent ? 'negro' : 'blanco'}
-              className="w-8 h-8 shrink-0 transition-transform duration-300 group-hover:scale-105"
+              variant={isTransparent ? 'color' : 'blanco'}
+              className="h-9 sm:h-10 w-auto max-h-[42px] shrink-0 transition-transform duration-300 group-hover:scale-105"
             />
-            <span
-              className={`font-serif text-2xl sm:text-3xl tracking-wide font-medium leading-none select-none transition-colors ${
-                isTransparent
-                  ? 'text-[#1A0E2E] dark:text-white group-hover:text-[#E91E8C]'
-                  : 'text-white group-hover:text-[#FF4FA3]'
-              }`}
-            >
-              Nenúfar
-            </span>
           </Link>
 
           {/* Desktop Navigation Links - Centered */}
@@ -168,7 +159,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
               onClick={(e) => handleAnchorClick(e, '/#historia')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${linkBaseClass}`}
             >
-              Historia
+              Mi Historia
             </Link>
 
             {/* Talleres & Ferias (Sección en Landing) */}
@@ -186,8 +177,9 @@ export function HeaderClient({ header, categories = [] }: Props) {
               onClick={(e) => handleAnchorClick(e, '/#contacto')}
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${linkBaseClass}`}
             >
-              Contacto
+              Contáctame
             </Link>
+
           </div>
 
           {/* Right side actions: Cart + Mobile menu */}
