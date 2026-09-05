@@ -46,7 +46,7 @@ export function ScrollToTop() {
         onClick={scrollToTop}
         aria-label="Volver arriba"
         title="Volver arriba"
-        className="relative group w-12 h-12 rounded-full bg-[#5f0092] hover:bg-[#4a0072] backdrop-blur-md border border-white/20 shadow-[0_8px_30px_rgba(95,0,146,0.4)] hover:shadow-[0_12px_35px_rgba(95,0,146,0.6)] flex items-center justify-center text-white transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+        className="relative group w-12 h-12 rounded-full bg-[#3B032F] hover:bg-[#520541] backdrop-blur-md border border-white/20 shadow-[0_8px_30px_rgba(59,3,47,0.45)] hover:shadow-[0_12px_35px_rgba(59,3,47,0.65)] flex items-center justify-center text-white transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
       >
         {/* Anillo sutil de progreso de scroll en blanco brillante */}
         <svg className="absolute inset-0 w-full h-full -rotate-90 p-0.5 pointer-events-none" viewBox="0 0 48 48">
