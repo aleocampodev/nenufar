@@ -298,7 +298,7 @@ export const SliderHeroClient: React.FC<{
       ref={containerRef}
       className="relative w-full min-h-screen min-h-[100dvh] -mt-[74px] sm:-mt-[78px] pt-[78px] sm:pt-[88px] lg:pt-[105px] pb-0 bg-[#DBC4AC] border-b border-[#C8AF95]/60 flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
-      <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24 sm:pt-6 md:pt-8 lg:pt-8 pb-4 sm:pb-8 lg:my-auto">
+      <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full pt-[clamp(3.5rem,calc(52vh-255px),14rem)] sm:pt-6 md:pt-8 lg:pt-8 pb-4 sm:pb-8 lg:my-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start lg:items-center">
           
           {/* ========================================================= */}
