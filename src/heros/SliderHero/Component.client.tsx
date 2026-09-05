@@ -311,8 +311,8 @@ export const SliderHeroClient: React.FC<{
                 ref={badgeRef}
                 className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-[#F4ECE3] border border-[#C8AF95] shadow-xs mb-3 sm:mb-4 lg:mb-5 backdrop-blur-xs"
               >
-                <span className="w-2 h-2 rounded-full bg-[#8B5A2B] animate-pulse shrink-0" />
-                <span className="text-[10px] sm:text-[11px] font-sans font-semibold uppercase tracking-[0.25em] text-[#8B5A2B]">
+                <span className="w-2 h-2 rounded-full bg-[#E91E8C] animate-pulse shrink-0" />
+                <span className="text-[10px] sm:text-[11px] font-sans font-semibold uppercase tracking-[0.25em] text-[#E91E8C]">
                   {badgeText}
                 </span>
               </div>

@@ -114,11 +114,11 @@
   .hover\:bg-primary-magenta:hover { background-color: #E91E8C; }
   .hover\:text-primary-magenta:hover { color: #E91E8C; }
 
-  .bg-secondary-violet { background-color: #3D1A5B; }
-  .text-secondary-violet { color: #3D1A5B; }
-  .border-secondary-violet { border-color: #3D1A5B; }
-  .hover\:bg-secondary-violet:hover { background-color: #3D1A5B; }
-  .hover\:text-secondary-violet:hover { color: #3D1A5B; }
+  .bg-secondary-violet { background-color: #3B032F; }
+  .text-secondary-violet { color: #3B032F; }
+  .border-secondary-violet { border-color: #3B032F; }
+  .hover\:bg-secondary-violet:hover { background-color: #3B032F; }
+  .hover\:text-secondary-violet:hover { color: #3B032F; }
 
   .bg-accent-rose { background-color: #FF4FA3; }
   .text-accent-rose { color: #FF4FA3; }
@@ -141,7 +141,7 @@
      ══════════════════════════════════════════════════════════════
      1. Primario – Magenta vibrante:   #E91E8C
         Botones principales, CTAs, elementos de marca
-     2. Secundario – Violeta profundo: #3D1A5B
+     2. Secundario – Violeta profundo: #3B032F
         Headers, navegación, texto destacado, footer
      3. Acento – Rosa/fucsia claro:    #FF4FA3
         Hover states, badges, elementos interactivos secundarios
@@ -151,7 +151,7 @@
         Fondos, espacios en blanco, tarjetas
      ══════════════════════════════════════════════════════════════ */
   --brand-primary: #E91E8C;
-  --brand-secondary: #3D1A5B;
+  --brand-secondary: #3B032F;
   --brand-accent: #FF4FA3;
   --brand-dark: #1A0E2E;
   --brand-light: #FAF8FC;
@@ -189,7 +189,7 @@
   --ring: #E91E8C;
 
   --chart-1: #E91E8C;
-  --chart-2: #3D1A5B;
+  --chart-2: #3B032F;
   --chart-3: #FF4FA3;
   --chart-4: #8A4BAF;
   --chart-5: #E8A4C8;
@@ -201,7 +201,7 @@
   --sidebar-primary: #E91E8C;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #F4EFF8;
-  --sidebar-accent-foreground: #3D1A5B;
+  --sidebar-accent-foreground: #3B032F;
   --sidebar-border: #E8E0F0;
   --sidebar-ring: #E91E8C;
 
@@ -212,7 +212,7 @@
 
 [data-theme='dark'] {
   --brand-primary: #E91E8C;
-  --brand-secondary: #3D1A5B;
+  --brand-secondary: #3B032F;
   --brand-accent: #FF4FA3;
   --brand-dark: #1A0E2E;
   --brand-light: #FAF8FC;

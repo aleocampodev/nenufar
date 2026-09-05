@@ -109,8 +109,8 @@ export default async function ShopPage({ searchParams }: Props) {
       {/* 1. Header Editorial de Catálogo con Neuromarketing & Paleta Canónica */}
       <div className="w-full bg-gradient-to-b from-[#FAF8F5] via-[#FAF8F5]/60 to-background border-b border-neutral-200/60 pt-10 sm:pt-14 pb-8 sm:pb-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-          <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.3em] text-[#8B5A2B] font-semibold font-sans">
-            <Sparkles className="w-3.5 h-3.5 text-[#8B5A2B]" />
+          <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.3em] text-[#E91E8C] font-semibold font-sans">
+            <Sparkles className="w-3.5 h-3.5 text-[#E91E8C]" />
             ALTA JOYERÍA ARTESANAL · CARTAGENA DE INDIAS
           </span>
 

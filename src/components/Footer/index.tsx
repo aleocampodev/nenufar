@@ -15,7 +15,7 @@ export async function Footer() {
   const copyrightName = COMPANY_NAME || SITE_NAME || 'Nenúfar'
 
   return (
-    <footer className="bg-[#3D1A5B] text-white border-t border-[#4D2472]/60 mt-auto">
+    <footer className="bg-[#3B032F] text-white border-t border-[#4D2472]/60 mt-auto">
       <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 py-16 lg:py-20">
           {/* Columna 1: Marca & Filosofía */}

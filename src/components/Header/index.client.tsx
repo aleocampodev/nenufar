@@ -72,7 +72,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
       className={`sticky top-0 z-40 transition-all duration-500 ${
         isTransparent
           ? 'bg-transparent text-[#1A0E2E] dark:text-white'
-          : 'bg-[#3D1A5B]/95 dark:bg-[#2E1346]/95 backdrop-blur-md text-white shadow-[0_8px_30px_rgba(61,26,91,0.35)] border-b border-[#4D2472]/40'
+          : 'bg-[#3B032F]/95 dark:bg-[#2E1346]/95 backdrop-blur-md text-white shadow-[0_8px_30px_rgba(59,3,47,0.35)] border-b border-[#4D2472]/40'
       }`}
     >
         <nav className="flex items-center justify-between max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 h-[74px] sm:h-[78px]">
@@ -80,7 +80,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
           <Link href="/" className="flex items-center gap-3 group">
             <LogoIcon
               className={`w-8 h-8 transition-transform duration-300 group-hover:scale-105 ${
-                isTransparent ? 'text-[#3D1A5B] dark:text-white' : 'text-white'
+                isTransparent ? 'text-[#3B032F] dark:text-white' : 'text-white'
               }`}
             />
             <span
