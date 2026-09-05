@@ -13,7 +13,7 @@ export const Logo = () => {
     >
       <img
         alt="Nenúfar Logo"
-        src="/nenufar-logo.png"
+        src="/nenufar-negro.svg"
         style={{
           height: '42px',
           width: 'auto',
@@ -36,4 +36,15 @@ export const Logo = () => {
   )
 }
 
-export const Icon = () => null
+export const Icon = () => (
+  /* eslint-disable @next/next/no-img-element */
+  <img
+    alt="Nenúfar Icon"
+    src="/nenufar-negro.svg"
+    style={{
+      height: '28px',
+      width: '28px',
+      objectFit: 'contain',
+    }}
+  />
+)

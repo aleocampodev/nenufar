@@ -21,7 +21,7 @@ export async function Footer() {
           {/* Columna 1: Marca & Filosofía */}
           <div className="space-y-4">
             <Link className="flex items-center gap-3 group" href="/">
-              <LogoIcon className="w-8 h-8 text-white transition-transform group-hover:scale-105" />
+              <LogoIcon variant="blanco" className="w-8 h-8 transition-transform group-hover:scale-105" />
               <span className="font-serif text-2xl tracking-wide text-white font-medium group-hover:text-[#FF4FA3] transition-colors">Nenúfar</span>
             </Link>
             <p className="text-purple-100/90 text-xs sm:text-sm leading-relaxed font-light">

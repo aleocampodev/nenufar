@@ -79,9 +79,8 @@ export function HeaderClient({ header, categories = [] }: Props) {
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <LogoIcon
-              className={`w-8 h-8 transition-transform duration-300 group-hover:scale-105 ${
-                isTransparent ? 'text-[#3B032F] dark:text-white' : 'text-white'
-              }`}
+              variant={isTransparent ? 'negro' : 'blanco'}
+              className="w-8 h-8 transition-transform duration-300 group-hover:scale-105"
             />
             <span
               className={`font-serif text-2xl sm:text-3xl tracking-wide font-medium transition-colors ${

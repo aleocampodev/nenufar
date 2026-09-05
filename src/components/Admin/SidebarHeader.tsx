@@ -24,7 +24,7 @@ export const SidebarHeader: React.FC = () => {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         alt="Nenúfar Logo"
-        src="/nenufar-logo.png"
+        src="/nenufar-negro.svg"
         style={{
           height: '42px',
           width: 'auto',
