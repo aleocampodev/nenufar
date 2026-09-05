@@ -762,7 +762,7 @@ export interface ImageStripBlock {
  */
 export interface GalleryBlock {
   /**
-   * Texto pequeño en mayúsculas sobre el título principal (ej: COMUNIDAD & MOMENTOS REALES).
+   * Texto opcional en mayúsculas sobre el título principal.
    */
   tagline?: string | null;
   heading?: string | null;

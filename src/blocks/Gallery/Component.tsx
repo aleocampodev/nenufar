@@ -5,50 +5,50 @@ export type GalleryBlockProps = GalleryBlockType & {
   id?: string
 }
 
-// Fotografías auténticas organizadas por categorías temáticas de Nénufar
+// Fotografías auténticas organizadas por categorías temáticas de Nenúfar
 const CLIENTAS_IMAGES: GalleryImageItem[] = [
   {
     id: 'clienta-1',
     title: 'Okama Ceremonial en Lino',
     src: '/media/Embera-800x1000.webp',
-    alt: 'Clienta de Nénufar luciendo collar Okama en Cartagena',
+    alt: 'Clienta de Nenúfar luciendo collar Okama en Cartagena',
     isFeatured: true,
   },
   {
     id: 'clienta-2',
     title: 'Aretes Tricolor en Celebración',
     src: '/media/colombia-aretes-800x1000.webp',
-    alt: 'Clienta luciendo aretes artesanales tricolor de Nénufar',
+    alt: 'Clienta luciendo aretes artesanales tricolor de Nenúfar',
   },
   {
     id: 'clienta-3',
     title: 'Joya de Autor en la Piel',
     src: '/media/joya-1788320703397-800x1000.webp',
-    alt: 'Clienta con pieza exclusiva de Shirley - Nénufar',
+    alt: 'Clienta con pieza exclusiva de Shirley - Nenúfar',
   },
   {
     id: 'clienta-4',
     title: 'Aretes Inspiración Café',
     src: '/media/cafe-aretes-1-800x1000.webp',
-    alt: 'Clienta con aretes de café Nénufar',
+    alt: 'Clienta con aretes de café Nenúfar',
   },
   {
     id: 'clienta-5',
     title: 'Candongas de Mostacilla Calibrada',
     src: '/media/colombia-aretes-2-800x1000.webp',
-    alt: 'Clienta con candongas Nénufar',
+    alt: 'Clienta con candongas Nenúfar',
   },
   {
     id: 'clienta-6',
     title: 'Collar Colibrí en Ocasión Especial',
     src: '/media/colibri-1-800x1000.webp',
-    alt: 'Clienta con collar de colibrí Nénufar',
+    alt: 'Clienta con collar de colibrí Nenúfar',
   },
   {
     id: 'clienta-7',
     title: 'Diseño Ancestral en Celebración',
     src: '/media/joya-1788320381292-800x1000.webp',
-    alt: 'Aretes de autor en clienta Nénufar',
+    alt: 'Aretes de autor en clienta Nenúfar',
   },
 ]
 
@@ -246,7 +246,7 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({
                 category: img.category || tab.tabTitle,
                 description: img.description || undefined,
                 src,
-                alt: img.title || 'Joyería artesanal Nénufar',
+                alt: img.title || 'Joyería artesanal Nenúfar',
                 isFeatured: Boolean(img.isFeatured),
               }
             })
@@ -267,7 +267,7 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({
       : [
           {
             tabTitle: 'Todas las Fotos',
-            tabSubtitle: 'Colección visual completa de Nénufar',
+            tabSubtitle: 'Colección visual completa de Nenúfar',
             images: allCombined,
           },
           ...parsedTabs,

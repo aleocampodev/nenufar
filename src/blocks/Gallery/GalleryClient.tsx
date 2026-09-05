@@ -311,7 +311,7 @@ export const GalleryClient: React.FC<Props> = ({
                   >
                     <Image
                       src={img.src}
-                      alt={img.alt || img.title || 'Joyería Nénufar'}
+                      alt={img.alt || img.title || 'Joyería Nenúfar'}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
@@ -337,7 +337,7 @@ export const GalleryClient: React.FC<Props> = ({
               })}
             </div>
 
-            {/* Paginación Innovadora y Cohesiva de Nénufar */}
+            {/* Paginación Innovadora y Cohesiva de Nenúfar */}
             <NenufarPagination
               page={currentPage}
               totalPages={totalPages}
@@ -422,7 +422,7 @@ export const GalleryClient: React.FC<Props> = ({
             <div className="relative w-full h-[65vh] sm:h-[72vh] flex items-center justify-center">
               <Image
                 src={selectedImage.src}
-                alt={selectedImage.alt || selectedImage.title || 'Joyería Nénufar'}
+                alt={selectedImage.alt || selectedImage.title || 'Joyería Nenúfar'}
                 fill
                 className="object-contain rounded-2xl shadow-2xl"
                 sizes="95vw"

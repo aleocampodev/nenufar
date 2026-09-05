@@ -851,9 +851,6 @@ export async function executeShirleyTool(
         if (galleryBlockIdx === -1) {
           currentLayout.push({
             blockType: 'gallery',
-            tagline: 'COMUNIDAD & MOMENTOS REALES',
-            heading: 'Nénufar en la Piel: Ferias, Talleres & Nuestras Clientas',
-            description: 'Fotografías de ferias locales en Cartagena, talleres presenciales y nuestras clientas.',
             tabs: defaultTabs,
           })
           galleryBlockIdx = currentLayout.length - 1

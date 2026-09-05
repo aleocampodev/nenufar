@@ -11,11 +11,11 @@ import type { Page } from '@/payload-types'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Galería de Creaciones & Momentos Reales | Nénufar',
+  title: 'Galería de Creaciones & Momentos Reales | Nenúfar',
   description:
     'Explora nuestra galería de joyas artesanales en mostacilla tejidas a mano en Cartagena: clientas reales, ferias locales, talleres de tejido y el espacio de Shirley.',
   openGraph: mergeOpenGraph({
-    title: 'Galería de Creaciones | Nénufar Cartagena',
+    title: 'Galería de Creaciones | Nenúfar Cartagena',
     description:
       'Muestrario fotográfico de joyería artesanal tejida a mano: clientas felices, ferias de diseño y talleres de comunidad en Cartagena.',
     url: '/galeria',
@@ -74,6 +74,9 @@ export default async function GaleriaPage() {
       {/* 2. Bloque Interactivo de Galería con pestañas a la izquierda, cuadrícula y paginado */}
       <GalleryBlock
         {...(galleryData || {})}
+        tagline={null}
+        heading={null}
+        description={null}
         blockType="gallery"
         id="galeria-principal"
       />
