@@ -8,13 +8,13 @@ export const BeforeDashboard: React.FC = () => {
   return (
     <>
       <MediaStorageQuota />
-      <div className={baseClass} style={{
-        background: 'linear-gradient(135deg, rgba(106, 27, 154, 0.05) 0%, rgba(247, 244, 250, 0.9) 100%)',
+      <div className={`${baseClass} ${baseClass}__welcome`} style={{
+        background: 'linear-gradient(135deg, rgba(233, 30, 140, 0.05) 0%, rgba(247, 244, 250, 0.9) 100%)',
         borderRadius: '20px',
-        border: '1px solid rgba(106, 27, 154, 0.15)',
+        border: '1px solid rgba(233, 30, 140, 0.15)',
         padding: '24px 28px',
         marginBottom: '32px',
-        boxShadow: '0 4px 20px -2px rgba(106, 27, 154, 0.04)'
+        boxShadow: '0 4px 20px -2px rgba(233, 30, 140, 0.04)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
           <span style={{ fontSize: '24px' }}>🌸</span>

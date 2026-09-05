@@ -13,9 +13,23 @@ type QuotaStats = {
   status: 'healthy' | 'warning' | 'danger'
 }
 
+// Se compacta sola en pantallas angostas (el prop `compact` la fuerza siempre)
+function useIsNarrow(breakpoint = 640): boolean {
+  const [isNarrow, setIsNarrow] = React.useState(false)
+  React.useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
+    const onChange = () => setIsNarrow(mq.matches)
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [breakpoint])
+  return isNarrow
+}
+
 export const MediaStorageQuota: React.FC<{ compact?: boolean }> = ({ compact = false }) => {
   const [stats, setStats] = useState<QuotaStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const isCompact = compact || useIsNarrow()
 
   useEffect(() => {
     fetch('/api/media-quota')
@@ -35,7 +49,7 @@ export const MediaStorageQuota: React.FC<{ compact?: boolean }> = ({ compact = f
         padding: '12px 18px',
         backgroundColor: '#ffffff',
         borderRadius: '12px',
-        border: '1px solid rgba(106, 27, 154, 0.15)',
+        border: '1px solid rgba(233, 30, 140, 0.15)',
         marginBottom: '20px',
         fontSize: '13px',
         color: '#666',
@@ -55,10 +69,10 @@ export const MediaStorageQuota: React.FC<{ compact?: boolean }> = ({ compact = f
     <div style={{
       backgroundColor: '#ffffff',
       borderRadius: '16px',
-      border: '1px solid rgba(106, 27, 154, 0.18)',
-      padding: compact ? '16px 20px' : '20px 24px',
+      border: '1px solid rgba(233, 30, 140, 0.18)',
+      padding: isCompact ? '16px' : '20px 24px',
       marginBottom: '24px',
-      boxShadow: '0 4px 18px -4px rgba(106, 27, 154, 0.06)',
+      boxShadow: '0 4px 18px -4px rgba(233, 30, 140, 0.06)',
       display: 'flex',
       flexDirection: 'column',
       gap: '12px',
