@@ -78,13 +78,13 @@ export const KRAFTI_MASONRY_PATTERN: KraftiTileConfig[] = [
     bgClass: 'bg-[#FAF0E6] dark:bg-zinc-900/60',
     isDark: false,
   },
-  // 7: Rectangular horizontal 2 columnas x 1 fila
+  // 7: Cuadrado 1x1 armónico para joyería
   {
-    colSpan: 'col-span-1 md:col-span-2',
+    colSpan: 'col-span-1 md:col-span-1',
     rowSpan: 'row-span-1 md:row-span-1',
     bgClass: 'bg-[#EDE6DC] dark:bg-zinc-900/30',
     isDark: false,
-    isWide: true,
+    isWide: false,
   },
 ]
 
