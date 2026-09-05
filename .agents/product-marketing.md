@@ -92,10 +92,25 @@
 - **Enfoque en hechos tangibles del oficio:** Hablar siempre de realidades físicas:
   - Micro-mostacilla checa calibrada Preciosa Ornela seleccionada por uniformidad y resistencia.
   - Hilado punto por punto con hilo técnico encerado que no se deshilacha con el sudor ni la humedad del Caribe.
-  - Peso pluma: joyas ultralivianas (menos de 20 gramos) que no tiran de la oreja ni cansan el cuello.
+  - Peso pluma: joyas ultralivianas (menos de 15 gramos) que no tiran de la oreja ni cansan el cuello.
   - Caída anatómica suave sobre la clavícula o el pecho.
-  - Acabados hipoalergénicos limpios y cierres seguros.
+  - Acabados hipoalergénicos limpios (postes libres de níquel).
   - Origen real: confección pausada por Shirley en su taller de Getsemaní, Cartagena.
+
+## Conversion Copywriting Framework (Marketing & Ventas de Alta Conversión)
+El objetivo de todo copy comercial de Nénufar es **vender piezas y cerrar pedidos** sin caer en humo ni clichés:
+1. **El Gancho (Scroll-stopper / Hook de Deseo):** Resuelve un dolor real (aretes llamativos que no jalan la oreja ni cansan después de 2 horas; accesorios que transforman un conjunto básico).
+2. **Transformación & Valor:** Demostrar por qué vale cada peso: horas de enfilado manual paciente, diseño irrepetible que atrae miradas y cumplidos sin esfuerzo.
+3. **Desactivación Preventiva de Objeciones:**
+   - *¿Pesan?* Menos de 15 g: no estiran el lóbulo ni obligan a quitárselos en medio de una fiesta.
+   - *¿Alergias?* Herrajes 100% libres de níquel garantizados para piel sensible.
+   - *¿Se deforman?* Hilo técnico de alta tenacidad que soporta el calor y la humedad del Caribe.
+   - *¿Cómo pago?* Compra sin fricción: sin pasarelas engorrosas; pedido web + pago directo por Nequi, Daviplata o Bancolombia.
+4. **Escasez Ética y Exclusividad Real:** Cada joya toma de 4 a 8 horas de confección manual. Shirley produce lotes muy reducidos (3 a 5 piezas por modelo).
+5. **Entregables Comerciales Multicanal para Shirley:**
+   - **Ficha Web de Catálogo:** Deseo + Beneficios anatómicos + Garantía de confort + CTA.
+   - **Copy para Redes (Instagram / WhatsApp):** Gancho + Historia breve + Gatillo de stock corto + Llamado al DM o web.
+   - **Frase de Cierre Inmediato por Chat:** Respuesta rápida y cálida para cerrar la venta cuando la clienta pregunte precio.
 
 ## Proof Points
 **Metrics:** Cientos de piezas creadas a mano y clientes felices en toda Colombia.

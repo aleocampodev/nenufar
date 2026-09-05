@@ -168,6 +168,7 @@ export async function fetchGoogleCalendarEvents(
   try {
     const res = await fetch(targetUrl, {
       next: { revalidate: 300 }, // Cache 5 min
+      signal: AbortSignal.timeout(3000), // Evita bloqueos de TTFB si Google Calendar no responde
       headers: {
         Accept: 'text/calendar, text/plain, */*',
         'User-Agent': 'Nenufar-Web/3.3 (Cartagena, Colombia)',

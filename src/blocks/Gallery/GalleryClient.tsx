@@ -44,6 +44,7 @@ export const GalleryClient: React.FC<Props> = ({
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
   const gridTopRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const modalRef = useRef<HTMLDivElement>(null)
   const triggerCardRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
   const [touchEndX, setTouchEndX] = useState<number | null>(null)
@@ -75,7 +76,7 @@ export const GalleryClient: React.FC<Props> = ({
     }
   }
 
-  // Manejo de teclado para el visor Lightbox
+  // Manejo de teclado para el visor Lightbox con Focus Trap
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (selectedImageIndex === null) return
@@ -90,6 +91,22 @@ export const GalleryClient: React.FC<Props> = ({
         setSelectedImageIndex((prev) =>
           prev !== null ? (prev - 1 + currentImages.length) % currentImages.length : null,
         )
+      } else if (e.key === 'Tab' && modalRef.current) {
+        // Focus trap dentro del modal Lightbox
+        const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusable.length > 0) {
+          const first = focusable[0]
+          const last = focusable[focusable.length - 1]
+          if (e.shiftKey && document.activeElement === first) {
+            last.focus()
+            e.preventDefault()
+          } else if (!e.shiftKey && document.activeElement === last) {
+            first.focus()
+            e.preventDefault()
+          }
+        }
       }
     },
     [selectedImageIndex, currentImages.length],
@@ -221,7 +238,7 @@ export const GalleryClient: React.FC<Props> = ({
                       aria-controls={`gallery-panel-${idx}`}
                       type="button"
                       onClick={() => handleTabChange(idx)}
-                      className={`text-left transition-all duration-300 flex items-center cursor-pointer shrink-0 lg:shrink group px-3.5 py-2 lg:px-4 lg:py-3 rounded-full lg:rounded-2xl w-auto lg:w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 ${
+                      className={`text-left transition-all duration-200 flex items-center cursor-pointer shrink-0 lg:shrink group px-4 py-2.5 min-h-[44px] lg:min-h-0 lg:py-3 rounded-full lg:rounded-2xl w-auto lg:w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 active:scale-[0.98] ${
                         isActive
                           ? 'bg-brand text-white shadow-md shadow-brand/20 font-medium translate-x-0 lg:translate-x-1'
                           : 'bg-white hover:bg-neutral-50 text-neutral-700 border border-neutral-200/80 hover:border-brand/30'
@@ -298,7 +315,7 @@ export const GalleryClient: React.FC<Props> = ({
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      priority={idx < 3}
+                      priority={currentPage === 1 && idx < 3}
                     />
 
                     {/* Gradient Overlay: visible en móvil para legibilidad de títulos, en desktop al hover */}
@@ -342,6 +359,7 @@ export const GalleryClient: React.FC<Props> = ({
       {/* ========================================================= */}
       {selectedImage && (
         <div
+          ref={modalRef}
           role="dialog"
           aria-modal="true"
           aria-labelledby="lightbox-image-title"

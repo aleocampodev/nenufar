@@ -11,6 +11,7 @@ Documento índice de planes de implementación de la Fase 04 (Coding & Implement
 | **IP-001** | **Migración Bot Shirley a Claude Agent SDK + LiteLLM** | `feature/bot/claude-agent-sdk-migration` | `../nenufar-bot-sdk` | [`tasks/IP-001-bot-claude-agent-sdk.md`](file:///home/ale/Work/nenufar/tasks/IP-001-bot-claude-agent-sdk.md) | 🟢 **Completado (PR #14)** |
 | **IP-002** | **Storefront & Checkout Hardening** | `feature/storefront/checkout-hardening` | `../nenufar-checkout` | [`tasks/IP-002-storefront-checkout-hardening.md`](file:///home/ale/Work/nenufar/tasks/IP-002-storefront-checkout-hardening.md) | 🟢 **Completado (PR #16)** |
 | **IP-003** | **Bloques Modulares Landing y Catálogo** | `feature/catalog/modular-blocks` | `../nenufar-catalog` | [`tasks/IP-003-catalog-landing-modular-blocks.md`](file:///home/ale/Work/nenufar/tasks/IP-003-catalog-landing-modular-blocks.md) | 🟢 **Completado** |
+| **IP-004** | **Mejoras UI/UX, Accesibilidad y Rendimiento Storefront** | `feat/storefront/audit-ui-ux-improvements` | `/home/ale/Work/nenufar` | [`tasks/IP-004-storefront-ui-ux-accessibility-improvements.md`](file:///home/ale/Work/nenufar/tasks/IP-004-storefront-ui-ux-accessibility-improvements.md) | 🟢 **Completado** |
 
 ---
 

@@ -82,13 +82,24 @@ export const SliderHeroClient: React.FC<{
 
   useGSAP(
     () => {
-      const mm = gsap.matchMedia(containerRef)
-
       const textElements = [
         badgeRef.current,
         headingRef.current,
         actionsRef.current,
       ].filter(Boolean)
+
+      // Respeto estricto a accesibilidad y reducción de movimiento (WCAG 2.3.3)
+      if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (imgRef.current) {
+          gsap.set(imgRef.current, { opacity: 1, y: 0, scale: 1.28, x: 40, transformOrigin: '51.8% 38%' })
+        }
+        if (textElements.length > 0) {
+          gsap.set(textElements, { opacity: 1, y: 0 })
+        }
+        return
+      }
+
+      const mm = gsap.matchMedia(containerRef)
 
       // Desktop & Tablet landscape (>= 1024px)
       mm.add('(min-width: 1024px)', () => {

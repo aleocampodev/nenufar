@@ -1149,7 +1149,7 @@ export async function executeShirleyTool(
         return `¡Listo Shirley! Eliminé el testimonio de "${match.docs[0].authorName}" de tu página de inicio ✨`
       }
 
-      // ─── 5. COPYWRITING, CATÁLOGO, LANDING & REDES (ANTI-SLOP · OFICIO REAL) ──
+      // ─── 5. COPYWRITING DE VENTAS & MARKETING (ALTA CONVERSIÓN · ANTI-SLOP) ──
       case 'generarCopyProducto': {
         const { slug, nombrePieza, materialesOTecnica, ocasionOEstilo } = args
         let product: ProductWithSlug | null = null
@@ -1159,25 +1159,42 @@ export async function executeShirleyTool(
         const titulo = product?.title || nombrePieza || 'Joya de Autor Nénufar'
         const precio = product ? formatCOP(product.priceInCOP) : ''
         const tecnica = materialesOTecnica || 'micro-mostacilla checa calibrada e hilo técnico resistente a la humedad'
-        const estilo = ocasionOEstilo || 'estructura flexible y ligera, pensada para uso cómodo y prolongado'
+        const estilo = ocasionOEstilo || 'impacto visual protagónico pero ultra liviano, cómodo para usar de la mañana a la noche'
 
         const propuesta = [
-          `✨ Propuesta de Redacción Artesanal (Anti-slop · Hechos Tangibles):`,
+          `🛍️ Propuesta de Copywriting para Ventas y Marketing (Alta Conversión · Sin Clichés):`,
           `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
           `💎 Pieza: ${titulo}`,
           ...(precio ? [`🏷️ Valor: ${precio}`] : []),
           ``,
-          `📖 Ficha descriptiva para la tienda (/products/${product?.slug || slugify(titulo)}):`,
-          `"${titulo} está tejida a mano por Shirley en su taller de Cartagena utilizando ${tecnica}. Diseñada con ${estilo}, sus terminaciones cuidadas aseguran que la pieza conserve su forma y color sin añadir peso.`,
+          `🛒 1. FICHA DE VENTA PARA LA TIENDA WEB (/products/${product?.slug || slugify(titulo)}):`,
+          `"${titulo} está tejida a mano punto por punto por Shirley en su taller de Cartagena utilizando ${tecnica}. Diseñada para ${estilo}, sus terminaciones cuidadas aseguran que la pieza conserve su forma, color y brillo intacto con el paso del tiempo.`,
           ``,
-          `• Técnica: enfilado manual punto por punto con tensión uniforme y remates reforzados.`,
-          `• Comodidad: peso pluma sobre la piel, acabados hipoalergénicos y libre de cierres que maltraten.`,
-          `• Origen: joyería de autor confeccionada en Cartagena de Indias."`,
+          `✨ Por qué te va a encantar:`,
+          `• Comodidad total: ultraliviana (menos de 15 gramos), olvídate del dolor de orejas al final de tu evento o jornada.`,
+          `• Cero alergias: postes y herrajes 100% libres de níquel, aptos para pieles reactivas y sensibles.`,
+          `• Resistencia real: tejida con hilo técnico que no se deforma ni se altera con el calor ni la humedad.`,
+          `• Exclusividad artesanal: producida en tirajes cortos de 3 a 5 piezas por lote.`,
+          `• Origen local: joyería de autor confeccionada en Cartagena de Indias.`,
           ``,
-          `🎯 Llamado a la acción:`,
-          `"Haz tu pedido en la web y Shirley coordinará directamente contigo el pago y despacho a tu ciudad."`,
+          `📦 Despacho seguro: empacada para regalo con tarjeta de origen. Haz tu pedido en la web y Shirley coordinará directamente contigo el pago (Nequi, Daviplata o Bancolombia) y el despacho a tu ciudad."`,
+          ``,
           `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-          `💡 Di: "actualiza la descripción de ${product?.slug || slug || titulo} con este texto" para publicarla.`
+          `📱 2. COPY DE VENTA PARA INSTAGRAM / WHATSAPP:`,
+          `"¿Aretes grandes que NO pesan? Sí existen. ✨`,
+          ``,
+          `Estos son los ${titulo}: más de 6 horas de tejido paciente a mano en Cartagena, combinando ${tecnica} en una estructura flexible que puedes lucir todo el día.`,
+          ``,
+          `Llévalos con una blusa blanca básica o un vestido para una ocasión especial: transforman cualquier conjunto al instante con color y técnica artesanal auténtica.`,
+          ``,
+          `⚠️ Lote limitado: solo confeccionamos pocas unidades de este diseño.`,
+          `👉 Pídelos directo en la web o escríbenos por mensaje para apartar los tuyos hoy."`,
+          ``,
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+          `💬 3. GATILLO DE CIERRE RÁPIDO PARA CHAT:`,
+          `"¡Hola! Sí, aún tenemos disponibles los ${titulo}${precio ? ` en ${precio}` : ''}. Son súper livianitos, hipoalergénicos y vienen listos para regalo. ¿A qué ciudad te los enviamos?"`,
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+          `💡 Di: "actualiza la descripción de ${product?.slug || slug || titulo} con este texto" para publicarla en el catálogo.`
         ].join('\n')
 
         return propuesta
@@ -1207,42 +1224,42 @@ export async function executeShirleyTool(
 
         if (seccion === 'hero') {
           return [
-            `🎨 Propuestas de Titular y Bajada para el Hero Principal (Directo y sin clichés):`,
+            `🎯 Propuestas de Ventas para el Hero Principal (Enfocadas en Conversión & Beneficio):`,
             `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-            `Opción 1 (Materialidad & Territorio):`,
+            `Opción 1 (Impacto Visual + Confort Insuperable):`,
             `• Titular: Joyería en mostacilla tejida a mano en Cartagena`,
-            `• Bajada: Diseños de autor ligeros y resistentes, tejidos punto a punto con micro-mostacilla checa calibrada por Shirley.`,
-            `• Botón: Ver catálogo disponible → /shop`,
+            `• Bajada: Diseños llamativos que no pesan. Aretes y collares de autor confeccionados punto por punto con micro-mostacilla checa y acabados que cuidan tu piel.`,
+            `• Botón: Comprar joyas disponibles → /shop`,
             ``,
-            `Opción 2 (Oficio & Precisión):`,
+            `Opción 2 (Diferenciación & Exclusividad de Lote):`,
             `• Titular: El arte del tejido artesanal en la piel`,
-            `• Bajada: Piezas singulares elaboradas pacientemente en el taller de Getsemaní con acabados hipoalergénicos.`,
-            `• Botón: Explorar joyas → /shop`,
+            `• Bajada: Piezas singulares elaboradas pacientemente en el taller de Getsemaní en lotes limitados que transforman cualquier atuendo.`,
+            `• Botón: Explorar piezas de edición limitada → /shop`,
             `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
           ].join('\n')
         }
 
         if (seccion === 'cta') {
           return [
-            `🎨 Mensajes para Pedidos Personalizados (Claro, honesto y sin falsas promesas):`,
+            `🎯 Copys de Ventas para Pedidos Personalizados (Generar Lead & Encargo):`,
             `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-            `Opción 1 (Ajuste de medidas y tonos):`,
-            `• Titular: ¿Buscas una combinación de color o largo específico?`,
-            `• Bajada: Shirley confecciona piezas por encargo adaptando tonos, cierres y proporciones a tu gusto.`,
-            `• Botón: Escribir a Shirley por WhatsApp`,
+            `Opción 1 (Combinación a tu medida):`,
+            `• Titular: ¿Buscas el accesorio exacto para tu vestido?`,
+            `• Bajada: Shirley confecciona piezas por encargo adaptando medidas, tonos y cierres según tu ocasión o evento.`,
+            `• Botón: Diseñar mi joya con Shirley → WhatsApp`,
             ``,
-            `Opción 2 (Piezas únicas por encargo):`,
+            `Opción 2 (Regalos memorables con historia):`,
             `• Titular: Joyas tejidas por encargo a tu medida`,
-            `• Bajada: Cuéntanos la idea que tienes en mente y la elaboramos con la técnica y calma del taller.`,
-            `• Botón: Coordinar encargo`,
+            `• Bajada: Un detalle irrepetible tejido especialmente para ti o para quien más quieres, con empaque especial listo para sorprender.`,
+            `• Botón: Cotizar pedido personalizado`,
           ].join('\n')
         }
 
         return [
-          `🎨 Mensaje para sección "${seccion}" (${motivo}):`,
-          `• Titular: Paciencia, técnica y color local`,
-          `• Cuerpo: En Nénufar cada joya se teje despacio. Usamos micro-mostacilla checa seleccionada por su uniformidad de corte y brillo constante, unida con hilo encerado técnico que no se deforma con el clima cálido.`,
-          `• Cierre: Joyería honesta, elaborada en Cartagena de Indias.`
+          `🎯 Mensaje de Venta para sección "${seccion}" (${motivo}):`,
+          `• Titular: Hechas para acompañarte todo el día sin incomodar`,
+          `• Cuerpo: Combinamos la paciencia del tejido tradicional con materiales técnicos modernos. Cada joya se teje con micro-mostacilla checa calibrada e hilo ultrarresistente que no se vence ni despinta. Una joya protagonista que pesa menos de una moneda.`,
+          `• Cierre: Haz tu pedido online sin intermediarios y recíbelo asegurado en tu puerta.`
         ].join('\n')
       }
 

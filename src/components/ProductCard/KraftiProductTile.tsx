@@ -204,9 +204,9 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, layoutMode 
     <div
       className={`group relative flex flex-col justify-between overflow-hidden border-r border-b ${
         isDark ? 'border-[#4D0A3F]/60' : 'border-border/40'
-      } transition-all duration-300 ${bgClass} ${colSpan} ${rowSpan} h-full min-h-[380px]`}
+      } transition-[border-color,background-color] duration-300 ${bgClass} ${colSpan} ${rowSpan} h-full min-h-[380px]`}
     >
-      {/* Badges superiores sutiles (Destacado / Agotado) */}
+      {/* Badges superiores sutiles (Destacado / Agotado) + Botón móvil rápido */}
       <div className="absolute top-3.5 left-3.5 right-3.5 z-20 flex items-center justify-between pointer-events-none">
         {featured ? (
           <span
@@ -221,10 +221,25 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, layoutMode 
           <span />
         )}
 
-        {isOutOfStock && (
+        {isOutOfStock ? (
           <span className="bg-neutral-900/85 text-white text-[9px] uppercase font-medium tracking-widest px-2.5 py-0.5 rounded-full shadow-sm">
             Agotado
           </span>
+        ) : (
+          /* Botón de compra rápida visible en móvil sin depender de hover */
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={isLoading || isPending}
+            aria-label={`Agregar ${title} al carrito`}
+            className={`sm:hidden pointer-events-auto w-9 h-9 min-w-[36px] min-h-[36px] rounded-full flex items-center justify-center shadow-md active:scale-[0.96] transition-transform duration-150 cursor-pointer ${
+              isDark
+                ? 'bg-white text-[#3B032F] active:bg-[#DFC188]'
+                : 'bg-brand text-white active:bg-brand-dark'
+            }`}
+          >
+            {added ? <Check className="w-4 h-4" /> : <ShoppingBag className="w-4 h-4" />}
+          </button>
         )}
       </div>
 
@@ -266,8 +281,8 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, layoutMode 
           )}
         </Link>
 
-        {/* Botón flotante interactivo al hacer hover */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 backdrop-blur-[1px] z-30 pointer-events-none group-hover:pointer-events-auto">
+        {/* Botón flotante interactivo al hacer hover (Desktop) */}
+        <div className="hidden sm:flex absolute inset-0 items-center justify-center bg-black/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 backdrop-blur-[1px] z-30 pointer-events-none group-hover:pointer-events-auto">
           {isOutOfStock ? (
             <button
               type="button"
@@ -281,7 +296,7 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, layoutMode 
               type="button"
               onClick={handleAddToCart}
               disabled={isLoading || isPending}
-              className={`px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[11px] uppercase tracking-wider font-medium shadow-md border transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 flex items-center gap-1.5 cursor-pointer pointer-events-auto ${
+              className={`px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[11px] uppercase tracking-wider font-medium shadow-md border transform translate-y-2 group-hover:translate-y-0 active:scale-[0.96] transition-all duration-300 flex items-center gap-1.5 cursor-pointer pointer-events-auto ${
                 isDark
                   ? 'bg-white text-[#3B032F] hover:bg-[#DFC188] hover:text-[#3B032F] border-transparent'
                   : 'bg-brand hover:bg-brand-dark text-white border-white/20'
