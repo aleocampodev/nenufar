@@ -26,63 +26,64 @@ export type KraftiTileConfig = {
 }
 
 // Patrón irregular de Masonry idéntico a Krafti (3 columnas)
-// con tile oscura usando exactamente el color del footer (#3B032F)
+// con paleta editorial: Lino crudo (#FAF8F5), Blanco nácar (#FFFFFF), Arena suave (#F5F2EC)
+// y tile oscura nocturna con el color noble del footer (#3B032F)
 export const KRAFTI_MASONRY_PATTERN: KraftiTileConfig[] = [
-  // 0: Gran pieza protagonista 2 columnas x 2 filas
+  // 0: Gran pieza protagonista 2 columnas x 2 filas (Arena suave pedestal)
   {
     colSpan: 'col-span-1 md:col-span-2',
     rowSpan: 'row-span-1 md:row-span-2',
-    bgClass: 'bg-[#F4EFEA] dark:bg-zinc-900/80',
+    bgClass: 'bg-[#F5F2EC] dark:bg-zinc-900/80',
     isDark: false,
     isLarge: true,
   },
-  // 1: Cuadrado 1x1
+  // 1: Cuadrado 1x1 (Lino crudo)
   {
     colSpan: 'col-span-1 md:col-span-1',
     rowSpan: 'row-span-1 md:row-span-1',
-    bgClass: 'bg-[#FAF0E6] dark:bg-zinc-900/40',
+    bgClass: 'bg-[#FAF8F5] dark:bg-zinc-900/40',
     isDark: false,
   },
-  // 2: Cuadrado 1x1
+  // 2: Cuadrado 1x1 (Blanco nácar luminoso)
   {
     colSpan: 'col-span-1 md:col-span-1',
     rowSpan: 'row-span-1 md:row-span-1',
     bgClass: 'bg-[#FFFFFF] dark:bg-zinc-900/20',
     isDark: false,
   },
-  // 3: Cuadrado 1x1
+  // 3: Cuadrado 1x1 (Blanco nácar luminoso)
   {
     colSpan: 'col-span-1 md:col-span-1',
     rowSpan: 'row-span-1 md:row-span-1',
-    bgClass: 'bg-[#F8F5EE] dark:bg-zinc-900/50',
+    bgClass: 'bg-[#FFFFFF] dark:bg-zinc-900/20',
     isDark: false,
   },
-  // 4: TILE OSCURA CON EL COLOR EXACTO DEL FOOTER (#3B032F)
+  // 4: TILE OSCURA NOCTURNA (#3B032F) - Punto focal central
   {
     colSpan: 'col-span-1 md:col-span-1',
     rowSpan: 'row-span-1 md:row-span-1',
     bgClass: 'bg-[#3B032F]',
     isDark: true,
   },
-  // 5: Cuadrado 1x1
+  // 5: Cuadrado 1x1 (Lino crudo)
+  {
+    colSpan: 'col-span-1 md:col-span-1',
+    rowSpan: 'row-span-1 md:row-span-1',
+    bgClass: 'bg-[#FAF8F5] dark:bg-zinc-900/40',
+    isDark: false,
+  },
+  // 6: Cuadrado 1x1 (Lino crudo)
+  {
+    colSpan: 'col-span-1 md:col-span-1',
+    rowSpan: 'row-span-1 md:row-span-1',
+    bgClass: 'bg-[#FAF8F5] dark:bg-zinc-900/40',
+    isDark: false,
+  },
+  // 7: Cuadrado 1x1 (Blanco nácar luminoso)
   {
     colSpan: 'col-span-1 md:col-span-1',
     rowSpan: 'row-span-1 md:row-span-1',
     bgClass: 'bg-[#FFFFFF] dark:bg-zinc-900/20',
-    isDark: false,
-  },
-  // 6: Cuadrado 1x1
-  {
-    colSpan: 'col-span-1 md:col-span-1',
-    rowSpan: 'row-span-1 md:row-span-1',
-    bgClass: 'bg-[#FAF0E6] dark:bg-zinc-900/60',
-    isDark: false,
-  },
-  // 7: Cuadrado 1x1 armónico para joyería
-  {
-    colSpan: 'col-span-1 md:col-span-1',
-    rowSpan: 'row-span-1 md:row-span-1',
-    bgClass: 'bg-[#EDE6DC] dark:bg-zinc-900/30',
     isDark: false,
     isWide: false,
   },
@@ -234,7 +235,7 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, layoutMode 
             aria-label={`Agregar ${title} al carrito`}
             className={`sm:hidden pointer-events-auto w-9 h-9 min-w-[36px] min-h-[36px] rounded-full flex items-center justify-center shadow-md active:scale-[0.96] transition-transform duration-150 cursor-pointer ${
               isDark
-                ? 'bg-white text-[#3B032F] active:bg-[#DFC188]'
+                ? 'bg-[#DFC188] text-[#3B032F] active:bg-white'
                 : 'bg-brand text-white active:bg-brand-dark'
             }`}
           >
@@ -262,8 +263,8 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, layoutMode 
               fill
               imgClassName={`object-contain p-2 transition-transform duration-500 ease-out group-hover:scale-105 ${
                 isDark
-                  ? 'drop-shadow-[0_15px_30px_rgba(0,0,0,0.55)]'
-                  : 'drop-shadow-[0_10px_25px_rgba(0,0,0,0.07)]'
+                  ? 'drop-shadow-[0_18px_38px_rgba(0,0,0,0.65)]'
+                  : 'drop-shadow-[0_12px_28px_rgba(28,25,23,0.07)]'
               }`}
               resource={image}
               priority={index < 4}
@@ -298,7 +299,7 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, layoutMode 
               disabled={isLoading || isPending}
               className={`px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[11px] uppercase tracking-wider font-medium shadow-md border transform translate-y-2 group-hover:translate-y-0 active:scale-[0.96] transition-all duration-300 flex items-center gap-1.5 cursor-pointer pointer-events-auto ${
                 isDark
-                  ? 'bg-white text-[#3B032F] hover:bg-[#DFC188] hover:text-[#3B032F] border-transparent'
+                  ? 'bg-[#DFC188] text-[#3B032F] hover:bg-white hover:text-[#3B032F] border-transparent font-semibold shadow-lg'
                   : 'bg-brand hover:bg-brand-dark text-white border-white/20'
               }`}
             >
