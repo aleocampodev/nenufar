@@ -10,6 +10,7 @@
  * - Moneda COP sin decimales.
  */
 import type { Payload } from 'payload'
+import { getMediaStorageStats, formatStorageReport } from '@/lib/storageAlerts'
 
 export interface ToolDefinition {
   name: string
@@ -556,6 +557,20 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
         },
       },
       required: ['seccion'],
+    },
+  },
+  {
+    name: 'consultarAlmacenamientoFotos',
+    description:
+      'Consulta el estado del almacenamiento en la nube de Supabase (1 GB gratuito), porcentaje ocupado, espacio libre disponible y las fotos más pesadas de la tienda para que Shirley decida cuáles eliminar si necesita liberar espacio.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        limiteFotos: {
+          type: 'number',
+          description: 'Número de fotos más pesadas a listar (por defecto 5)',
+        },
+      },
     },
   },
 ]
@@ -1244,6 +1259,13 @@ export async function executeShirleyTool(
           `• Cuerpo: Combinamos la paciencia del tejido tradicional con materiales técnicos modernos. Cada joya se teje con micro-mostacilla checa calibrada e hilo ultrarresistente que no se vence ni despinta. Una joya protagonista que pesa menos de una moneda.`,
           `• Cierre: Haz tu pedido online sin intermediarios y recíbelo asegurado en tu puerta.`
         ].join('\n')
+      }
+
+      // ─── 6. MONITOREO DE ALMACENAMIENTO (SUPABASE 1 GB GRATIS) ─────────────
+      case 'consultarAlmacenamientoFotos': {
+        const limite = Number(args?.limiteFotos) || 5
+        const stats = await getMediaStorageStats(payload, limite)
+        return formatStorageReport(stats)
       }
 
       default:

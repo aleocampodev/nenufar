@@ -50,6 +50,7 @@ const DIRECT_REPLY_TOOLS = new Set([
   'generarCopyProducto',
   'actualizarDescripcionProducto',
   'generarCopyLanding',
+  'consultarAlmacenamientoFotos',
 ])
 
 function buildSystemPrompt(): string {
@@ -78,6 +79,7 @@ function buildSystemPrompt(): string {
     '- Si Shirley pide ver, consultar o listar los talleres y ferias programados, USA SIEMPRE listarEventos para ver los datos reales.',
     '- Si Shirley pide eliminar o cancelar un taller o feria, USA SIEMPRE eliminarEvento.',
     '- Si Shirley pide registrar testimonios de compradoras, USA crearTestimonio o listarTestimonios.',
+    '- Si Shirley pregunta por el espacio, almacenamiento de fotos en Supabase o qué fotos pesan más para eliminar y liberar espacio, USA SIEMPRE consultarAlmacenamientoFotos.',
     '- Si una herramienta falla, discúlpate brevemente y sugiere intentar en un momento. No muestres errores técnicos ni IDs.',
     '- Si el mensaje es una pregunta general o saludo, responde directo sin usar herramientas.',
     '- Tienes acceso al historial de conversación previo: úsalo para entender referencias a productos, fotos o temas hablados anteriormente.',
@@ -250,7 +252,16 @@ function determineToolChoice(text: string, mediaId?: number): { type: 'tool' | '
     return { type: 'tool', name: 'pedidosPendientes' }
   }
 
-  // 3. Galería de Fotos / Momentos / Clientas (subpágina /galeria)
+  // 3. Almacenamiento en la nube de Supabase / Espacio / Cuota / Fotos pesadas
+  if (
+    /(almacenamiento|espacio|memoria|cuota|giga|gigas|mega|megas|peso.*foto|foto.*pesad|pesadas|cu[aá]nto.*queda|disco|supabase|liberar.*espacio)/i.test(
+      t,
+    )
+  ) {
+    return { type: 'tool', name: 'consultarAlmacenamientoFotos' }
+  }
+
+  // 4. Galería de Fotos / Momentos / Clientas (subpágina /galeria)
   if (/(galer[ií]a|foto|fotos|fotograf[ií]a|momentos|clienta|clientas)/i.test(t)) {
     if (/(elimina|borra|quita|retira|cancela)/i.test(t)) {
       return { type: 'tool', name: 'eliminarFotoGaleria' }
@@ -263,12 +274,12 @@ function determineToolChoice(text: string, mediaId?: number): { type: 'tool' | '
     }
   }
 
-  // 4. Actualizar descripción de producto existente
+  // 5. Actualizar descripción de producto existente
   if (/(actualiza|cambia|modifica|guarda).*descripci[oó]n/i.test(t)) {
     return { type: 'tool', name: 'actualizarDescripcionProducto' }
   }
 
-  // 5. Redacción de copys comerciales (Anti-Slop / Oficio Real)
+  // 6. Redacción de copys comerciales (Anti-Slop / Oficio Real)
   if (/(copy|copys|redacta|redactar|propuesta|escribe|escribir|texto)/i.test(t)) {
     if (/(landing|inicio|hero|home|web|portada|cta|secci[oó]n)/i.test(t)) {
       return { type: 'tool', name: 'generarCopyLanding' }
@@ -278,7 +289,7 @@ function determineToolChoice(text: string, mediaId?: number): { type: 'tool' | '
     }
   }
 
-  // 6. Pregunta sobre productos / catálogo
+  // 7. Pregunta sobre productos / catálogo
   if (
     /(joya|joyas|producto|productos|cat[aá]logo|aretes|collares|pulseras|piezas|colecci[oó]n)/i.test(t) &&
     /(que|cu[aá]les|hay|ver|lista|listar|muestra|mostrar|qu[eé] vendemos|inventario)/i.test(t) &&

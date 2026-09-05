@@ -529,6 +529,27 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
       )
     })
 
+    it('consultarAlmacenamientoFotos: devuelve reporte de espacio y fotos pesadas', async () => {
+      mockPayload.find
+        .mockResolvedValueOnce({
+          docs: [
+            { id: 1, alt: 'Foto heavy 1', filename: 'heavy1.jpg', filesize: 2048000 },
+            { id: 2, alt: 'Foto heavy 2', filename: 'heavy2.jpg', filesize: 1024000 },
+          ],
+        } as any)
+        .mockResolvedValueOnce({
+          docs: [
+            { id: 1, alt: 'Foto heavy 1', filename: 'heavy1.jpg', filesize: 2048000 },
+            { id: 2, alt: 'Foto heavy 2', filename: 'heavy2.jpg', filesize: 1024000 },
+          ],
+        } as any)
+
+      const res = await executeShirleyTool('consultarAlmacenamientoFotos', { limiteFotos: 2 }, mockPayload as any)
+      expect(res).toContain('Almacenamiento de Fotos Nénufar')
+      expect(res).toContain('Supabase $0/mes')
+      expect(res).toContain('heavy1.jpg')
+    })
+
     it('manejo de tool no reconocida y excepciones', async () => {
       const unkRes = await executeShirleyTool('herramientaInexistente', {}, mockPayload as any)
       expect(unkRes).toContain('no reconocida')

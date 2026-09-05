@@ -15,6 +15,7 @@ import {
   deleteFromSupabaseStorage,
   getSupabasePublicUrl,
 } from '@/lib/supabaseStorage'
+import { checkAndSendStorageAlert } from '@/lib/storageAlerts'
 
 const filePath = fileURLToPath(import.meta.url)
 const mediaDir = path.dirname(filePath)
@@ -220,6 +221,8 @@ export const Media: CollectionConfig = {
             } catch {
               // Ignore if outside request context
             }
+            // Check storage threshold and alert Shirley on Telegram if in danger zone (>= 85%)
+            await checkAndSendStorageAlert(req.payload)
           } catch (err) {
             req.payload.logger.warn({ msg: '[Supabase Storage] Background sync error', err })
           }
