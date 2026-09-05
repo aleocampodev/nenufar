@@ -11,7 +11,7 @@ export const metadata = {
   title: 'Catálogo de Joyería Artesanal & Regalos de Autor | Nenúfar Cartagena',
 }
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 4
 
 type SearchParams = { [key: string]: string | string[] | undefined }
 
@@ -105,7 +105,20 @@ export default async function ShopPage({ searchParams }: Props) {
 
   return (
     <div className="w-full pb-20">
-      <h1 className="sr-only">Catálogo de Joyería Artesanal Nenúfar</h1>
+      {/* Encabezado Editorial del Catálogo */}
+      <div className="w-full bg-[#FAF8F5] border-b border-neutral-200/60 pt-10 sm:pt-14 pb-8 sm:pb-10">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2.5">
+          <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.25em] text-[#8B5A2B] font-semibold font-sans">
+            Alta Joyería Artesanal · Cartagena de Indias
+          </span>
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#1C1917] font-normal tracking-tight">
+            Catálogo de Joyas
+          </h1>
+          <p className="text-sm sm:text-base text-neutral-600 font-sans font-light leading-relaxed max-w-xl mx-auto">
+            Piezas únicas tejidas a mano en mostacilla checa calibrada y filigrana. Diseños con alma caribeña creados por Shirley para perdurar.
+          </p>
+        </div>
+      </div>
 
       {/* Barra de Filtros Minimalista en el Encabezado de Shop */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
