@@ -56,14 +56,16 @@ export const SliderHeroClient: React.FC<{
   const imageSrc =
     typeof modelImage === 'object' && modelImage && 'url' in modelImage && modelImage.url
       ? (modelImage.url as string)
-      : '/shirley-hdr-sin-fondo.svg'
+      : '/shirley-hdr-sin-fondo.svg?v=2'
 
   const imageAlt =
     typeof modelImage === 'object' && modelImage && 'alt' in modelImage && modelImage.alt
       ? (modelImage.alt as string)
-      : 'Shirley luciendo alta joyería artesanal en micro-mostacilla Nénufar'
+      : 'Shirley luciendo joyería artesanal de autor en micro-mostacilla Nénufar'
 
-  const badgeText = badge || slides?.[0]?.badge || 'ALTA JOYERÍA ARTESANAL'
+  const rawBadge = badge || slides?.[0]?.badge || null
+  const badgeText =
+    rawBadge && !rawBadge.toUpperCase().includes('ALTA JOYER') ? rawBadge : null
   const mainHeading = heading || 'La nobleza del Caribe no se hereda.'
   const highlightText =
     headingHighlight !== undefined && headingHighlight !== null ? headingHighlight : 'Se teje.'
