@@ -42,6 +42,10 @@ export const GalleryClient: React.FC<Props> = ({
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
   const gridTopRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const triggerCardRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const [touchStartX, setTouchStartX] = useState<number | null>(null)
+  const [touchEndX, setTouchEndX] = useState<number | null>(null)
 
   const safeTabs = tabs.length > 0 ? tabs : []
   const activeTab = safeTabs[activeTabIndex] || safeTabs[0]
@@ -90,10 +94,35 @@ export const GalleryClient: React.FC<Props> = ({
     [selectedImageIndex, currentImages.length],
   )
 
+  // Gestos táctiles de swipe en móvil para el Lightbox
+  const minSwipeDistance = 45
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEndX(null)
+    setTouchStartX(e.targetTouches[0].clientX)
+  }
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEndX(e.targetTouches[0].clientX)
+  }
+  const onTouchEnd = () => {
+    if (touchStartX === null || touchEndX === null) return
+    const distance = touchStartX - touchEndX
+    if (distance > minSwipeDistance && currentImages.length > 1) {
+      // Swipe izquierda -> siguiente imagen
+      setSelectedImageIndex((prev) => (prev !== null ? (prev + 1) % currentImages.length : null))
+    } else if (distance < -minSwipeDistance && currentImages.length > 1) {
+      // Swipe derecha -> imagen anterior
+      setSelectedImageIndex((prev) =>
+        prev !== null ? (prev - 1 + currentImages.length) % currentImages.length : null,
+      )
+    }
+  }
+
   useEffect(() => {
     if (selectedImageIndex !== null) {
       document.body.style.overflow = 'hidden'
       window.addEventListener('keydown', handleKeyDown)
+      // Auto-enfocar botón de cierre para accesibilidad
+      setTimeout(() => closeButtonRef.current?.focus(), 50)
     } else {
       document.body.style.overflow = ''
       window.removeEventListener('keydown', handleKeyDown)
@@ -103,6 +132,19 @@ export const GalleryClient: React.FC<Props> = ({
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [selectedImageIndex, handleKeyDown])
+
+  const handleOpenImage = (globalIndex: number, localIdx: number) => {
+    setSelectedImageIndex(globalIndex)
+  }
+
+  const handleCloseImage = () => {
+    const lastIndex = selectedImageIndex
+    setSelectedImageIndex(null)
+    if (lastIndex !== null) {
+      const localIdx = lastIndex % ITEMS_PER_PAGE
+      triggerCardRefs.current[localIdx]?.focus()
+    }
+  }
 
   const selectedImage =
     selectedImageIndex !== null && currentImages[selectedImageIndex]
@@ -162,15 +204,23 @@ export const GalleryClient: React.FC<Props> = ({
               </div>
 
               {/* Lista vertical en Desktop, scroll horizontal de píldoras en Mobile */}
-              <div className="flex lg:flex-col gap-1.5 lg:gap-2 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0 scrollbar-none px-0.5">
+              <div
+                role="tablist"
+                aria-label="Categorías de la galería"
+                className="flex lg:flex-col gap-1.5 lg:gap-2 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0 scrollbar-none px-0.5"
+              >
                 {safeTabs.map((tab, idx) => {
                   const isActive = idx === activeTabIndex
                   return (
                     <button
                       key={idx}
+                      id={`gallery-tab-${idx}`}
+                      role="tab"
+                      aria-selected={isActive}
+                      aria-controls={`gallery-panel-${idx}`}
                       type="button"
                       onClick={() => handleTabChange(idx)}
-                      className={`text-left transition-all duration-300 flex items-center cursor-pointer shrink-0 lg:shrink group px-3.5 py-2 lg:px-4 lg:py-3 rounded-full lg:rounded-2xl w-auto lg:w-full ${
+                      className={`text-left transition-all duration-300 flex items-center cursor-pointer shrink-0 lg:shrink group px-3.5 py-2 lg:px-4 lg:py-3 rounded-full lg:rounded-2xl w-auto lg:w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 ${
                         isActive
                           ? 'bg-brand text-white shadow-md shadow-brand/20 font-medium translate-x-0 lg:translate-x-1'
                           : 'bg-white hover:bg-neutral-50 text-neutral-700 border border-neutral-200/80 hover:border-brand/30'
@@ -200,7 +250,12 @@ export const GalleryClient: React.FC<Props> = ({
           {/* ========================================================= */}
           {/* COLUMNA DERECHA: Cuadrícula de Fotos + Paginación         */}
           {/* ========================================================= */}
-          <div className="lg:col-span-8 xl:col-span-9 space-y-6">
+          <div
+            id={`gallery-panel-${activeTabIndex}`}
+            role="tabpanel"
+            aria-labelledby={`gallery-tab-${activeTabIndex}`}
+            className="lg:col-span-8 xl:col-span-9 space-y-6"
+          >
             
             {/* Header de la categoría activa */}
             <div ref={gridTopRef} className="flex items-center justify-between pb-3 border-b border-neutral-200/80">
@@ -224,10 +279,15 @@ export const GalleryClient: React.FC<Props> = ({
               {paginatedImages.map((img, idx) => {
                 const globalIndex = (currentPage - 1) * ITEMS_PER_PAGE + idx
                 return (
-                  <div
+                  <button
                     key={img.id || idx}
-                    onClick={() => setSelectedImageIndex(globalIndex)}
-                    className="group relative aspect-[3/4] rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-200/70 shadow-xs hover:shadow-[0_16px_36px_rgba(106,27,154,0.18)] transition-all duration-500 cursor-pointer border border-neutral-200/60"
+                    ref={(el) => {
+                      triggerCardRefs.current[idx] = el
+                    }}
+                    type="button"
+                    onClick={() => handleOpenImage(globalIndex, idx)}
+                    aria-label={`Ver fotografía ampliada: ${img.title}`}
+                    className="group relative aspect-[3/4] w-full p-0 text-left rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-200/70 shadow-xs hover:shadow-[0_16px_36px_rgba(106,27,154,0.18)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 transition-all duration-500 cursor-pointer border border-neutral-200/60"
                   >
                     <Image
                       src={img.src}
@@ -238,21 +298,21 @@ export const GalleryClient: React.FC<Props> = ({
                       priority={idx < 3}
                     />
 
-                    {/* Gradient Overlay al hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    {/* Gradient Overlay: visible en móvil para legibilidad de títulos, en desktop al hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
                     {/* Botón Flotante para expandir */}
-                    <div className="absolute bottom-3.5 right-3.5 z-10 w-9 h-9 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center text-brand opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-md scale-90 group-hover:scale-100">
-                      <Maximize2 className="w-4 h-4" />
+                    <div className="absolute bottom-3.5 right-3.5 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center text-brand opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 shadow-md scale-95 group-hover:scale-100 pointer-events-none">
+                      <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </div>
 
-                    {/* Título de la imagen */}
-                    <div className="absolute bottom-3.5 left-3.5 right-14 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                      <p className="text-xs sm:text-sm text-white font-medium line-clamp-1 drop-shadow-xs">
+                    {/* Título de la imagen: siempre visible en móvil, fade-in en desktop */}
+                    <div className="absolute bottom-3.5 left-3.5 right-12 z-10 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <p className="text-xs sm:text-sm text-white font-medium line-clamp-1 drop-shadow-sm">
                         {img.title}
                       </p>
                     </div>
-                  </div>
+                  </button>
                 )
               })}
             </div>
@@ -289,7 +349,8 @@ export const GalleryClient: React.FC<Props> = ({
                         type="button"
                         onClick={() => handlePageChange(pageNum)}
                         aria-label={`Ir a la página ${pageNum}`}
-                        className={`w-8 h-8 rounded-full text-xs font-mono font-medium transition-all duration-200 cursor-pointer ${
+                        aria-current={pageNum === currentPage ? 'page' : undefined}
+                        className={`w-8 h-8 rounded-full text-xs font-mono font-medium transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 ${
                           pageNum === currentPage
                             ? 'bg-brand text-white shadow-xs scale-105'
                             : 'bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200/80'
@@ -305,7 +366,7 @@ export const GalleryClient: React.FC<Props> = ({
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
                     aria-label="Página siguiente"
-                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer ${
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 ${
                       currentPage === totalPages
                         ? 'border-neutral-200 text-neutral-300 cursor-not-allowed bg-neutral-50'
                         : 'border-neutral-200 text-neutral-700 bg-white hover:bg-neutral-50 hover:text-brand hover:border-brand/40 shadow-2xs'
@@ -329,15 +390,20 @@ export const GalleryClient: React.FC<Props> = ({
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-black/90 backdrop-blur-md animate-in fade-in duration-200"
-          onClick={() => setSelectedImageIndex(null)}
+          aria-labelledby="lightbox-image-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-black/90 backdrop-blur-md animate-in fade-in duration-200 touch-pan-y"
+          onClick={handleCloseImage}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
         >
           {/* Botón de Cierre */}
           <button
+            ref={closeButtonRef}
             type="button"
-            onClick={() => setSelectedImageIndex(null)}
-            className="absolute top-4 right-4 sm:top-6 sm:right-6 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-20 cursor-pointer"
-            aria-label="Cerrar visor"
+            onClick={handleCloseImage}
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-20 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            aria-label="Cerrar vista ampliada"
           >
             <X className="w-5 h-5" />
           </button>
@@ -352,7 +418,7 @@ export const GalleryClient: React.FC<Props> = ({
                   prev !== null ? (prev - 1 + currentImages.length) % currentImages.length : null,
                 )
               }}
-              className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-20 cursor-pointer"
+              className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-20 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
               aria-label="Imagen anterior"
             >
               <ChevronLeft className="w-6 h-6" />
@@ -369,16 +435,16 @@ export const GalleryClient: React.FC<Props> = ({
                   prev !== null ? (prev + 1) % currentImages.length : null,
                 )
               }}
-              className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-20 cursor-pointer"
+              className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-20 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
               aria-label="Imagen siguiente"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
           )}
 
-          {/* Contenedor de la Imagen Expandida y descripción */}
+          {/* Contenedor de la Imagen Expandida */}
           <div
-            className="relative max-w-4xl max-h-[88vh] w-full flex flex-col items-center justify-center animate-in zoom-in-95 duration-200"
+            className="relative max-w-4xl max-h-[88vh] w-full flex flex-col items-center justify-center animate-in zoom-in-95 duration-200 select-none"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative w-full h-[65vh] sm:h-[72vh] flex items-center justify-center">
@@ -394,7 +460,7 @@ export const GalleryClient: React.FC<Props> = ({
 
             {/* Pie de foto en el visor */}
             <div className="w-full max-w-xl text-center mt-3 px-4">
-              <p className="text-white font-serif text-lg sm:text-xl drop-shadow-sm">
+              <p id="lightbox-image-title" className="text-white font-serif text-lg sm:text-xl drop-shadow-sm">
                 {selectedImage.title}
               </p>
               <span className="inline-block text-[11px] text-neutral-400 font-mono mt-1.5">
