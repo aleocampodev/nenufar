@@ -5,7 +5,7 @@ import Link from 'next/link'
 import React, { useTransition } from 'react'
 import { Media } from '@/components/Media'
 import { Price } from '@/components/Price'
-import { Sparkles, ShoppingBag, Check } from 'lucide-react'
+import { Sparkles, ShoppingBag, Check, Loader2 } from 'lucide-react'
 import { useCart } from '@payloadcms/plugin-ecommerce/client/react'
 import { toast } from 'sonner'
 
@@ -227,20 +227,7 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, layoutMode 
             Agotado
           </span>
         ) : (
-          /* Botón de compra rápida visible en móvil sin depender de hover */
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={isLoading || isPending}
-            aria-label={`Agregar ${title} al carrito`}
-            className={`sm:hidden pointer-events-auto w-9 h-9 min-w-[36px] min-h-[36px] rounded-full flex items-center justify-center shadow-md active:scale-[0.96] transition-transform duration-150 cursor-pointer ${
-              isDark
-                ? 'bg-[#DFC188] text-[#3B032F] active:bg-white'
-                : 'bg-brand text-white active:bg-brand-dark'
-            }`}
-          >
-            {added ? <Check className="w-4 h-4" /> : <ShoppingBag className="w-4 h-4" />}
-          </button>
+          <span />
         )}
       </div>
 
@@ -281,42 +268,6 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, layoutMode 
             </div>
           )}
         </Link>
-
-        {/* Botón flotante interactivo al hacer hover (Desktop) */}
-        <div className="hidden sm:flex absolute inset-0 items-center justify-center bg-black/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 backdrop-blur-[1px] z-30 pointer-events-none group-hover:pointer-events-auto">
-          {isOutOfStock ? (
-            <button
-              type="button"
-              disabled
-              className="px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[11px] uppercase tracking-wider font-medium bg-neutral-900/90 text-white shadow-md border border-white/20 cursor-not-allowed flex items-center gap-1.5"
-            >
-              Agotado
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleAddToCart}
-              disabled={isLoading || isPending}
-              className={`px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[11px] uppercase tracking-wider font-medium shadow-md border transform translate-y-2 group-hover:translate-y-0 active:scale-[0.96] transition-all duration-300 flex items-center gap-1.5 cursor-pointer pointer-events-auto ${
-                isDark
-                  ? 'bg-[#DFC188] text-[#3B032F] hover:bg-white hover:text-[#3B032F] border-transparent font-semibold shadow-lg'
-                  : 'bg-brand hover:bg-brand-dark text-white border-white/20'
-              }`}
-            >
-              {added ? (
-                <>
-                  <Check className="w-3 h-3" />
-                  Agregado
-                </>
-              ) : (
-                <>
-                  <ShoppingBag className="w-3 h-3" />
-                  Agregar al Carrito
-                </>
-              )}
-            </button>
-          )}
-        </div>
       </div>
 
       {/* Información del Producto Centrada al Pie estilo Krafti */}
@@ -368,6 +319,47 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index, layoutMode 
           </span>
         )}
       </Link>
+
+      {/* Capa que sube desde abajo cubriendo TODO el tile (Mobile + Desktop) */}
+      <div className="flex absolute inset-0 items-center justify-center bg-black/10 backdrop-blur-[1px] translate-y-full opacity-0 transition-all duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-active:translate-y-0 group-active:opacity-100 z-30 pointer-events-none group-hover:pointer-events-auto group-active:pointer-events-auto">
+        {isOutOfStock ? (
+          <button
+            type="button"
+            disabled
+            className="px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[11px] uppercase tracking-wider font-medium bg-neutral-900/90 text-white shadow-md border border-white/20 cursor-not-allowed flex items-center gap-1.5"
+          >
+            Agotado
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={isLoading || isPending}
+            className={`px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[11px] uppercase tracking-wider font-medium shadow-md border active:scale-[0.96] transition-all duration-300 flex items-center gap-1.5 cursor-pointer pointer-events-auto ${
+              isDark
+                ? 'bg-[#DFC188] text-[#3B032F] hover:bg-white hover:text-[#3B032F] border-transparent font-semibold shadow-lg'
+                : 'bg-brand hover:bg-brand-dark text-white border-white/20'
+            }`}
+          >
+            {isLoading || isPending ? (
+              <>
+                <Loader2 className="w-3 h-3 animate-spin" />
+                Agregando...
+              </>
+            ) : added ? (
+              <>
+                <Check className="w-3 h-3" />
+                Agregado
+              </>
+            ) : (
+              <>
+                <ShoppingBag className="w-3 h-3" />
+                Agregar al Carrito
+              </>
+            )}
+          </button>
+        )}
+      </div>
     </div>
   )
 }
