@@ -86,8 +86,15 @@ export function MobileMenu({ menu, categories = [] }: Props) {
               onClick={closeMobileMenu}
               className="flex items-center gap-2.5 group"
             >
-              <LogoIcon variant="negro" className="w-7 h-7 shrink-0 inline-block" />
-              <span className="font-serif text-2xl tracking-wide font-medium text-[#1A0E2E] leading-none select-none">
+              <LogoIcon
+                variant={pathname === '/' || pathname === '' ? 'rosado' : 'negro'}
+                className="w-7 h-7 shrink-0 inline-block"
+              />
+              <span
+                className={`font-serif text-2xl tracking-wide font-medium leading-none select-none ${
+                  pathname === '/' || pathname === '' ? 'text-[#E91E8C]' : 'text-[#1A0E2E]'
+                }`}
+              >
                 Nenúfar
               </span>
             </Link>

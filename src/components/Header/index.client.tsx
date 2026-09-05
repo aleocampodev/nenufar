@@ -79,14 +79,18 @@ export function HeaderClient({ header, categories = [] }: Props) {
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group">
             <LogoIcon
-              variant={isTransparent ? 'negro' : 'blanco'}
+              variant={isHomePage ? 'rosado' : (isTransparent ? 'rosado' : 'blanco')}
               className="w-8 h-8 shrink-0 transition-transform duration-300 group-hover:scale-105"
             />
             <span
               className={`font-serif text-2xl sm:text-3xl tracking-wide font-medium leading-none select-none transition-colors ${
-                isTransparent
-                  ? 'text-[#1A0E2E] dark:text-white group-hover:text-[#E91E8C]'
-                  : 'text-white group-hover:text-[#FF4FA3]'
+                isHomePage
+                  ? (isTransparent
+                      ? 'text-[#E91E8C] group-hover:text-[#D81B60]'
+                      : 'text-[#FF4FA3] group-hover:text-white')
+                  : (isTransparent
+                      ? 'text-[#1A0E2E] dark:text-white group-hover:text-[#E91E8C]'
+                      : 'text-white group-hover:text-[#FF4FA3]')
               }`}
             >
               Nenúfar
