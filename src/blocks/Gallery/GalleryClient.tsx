@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import { Sparkles, Maximize2, X, ChevronLeft, ChevronRight, Layers } from 'lucide-react'
 import { ScrollReveal } from '@/components/Animation/ScrollReveal'
+import { NenufarPagination } from '@/components/Pagination/NenufarPagination'
 
 export type GalleryImageItem = {
   id?: string
@@ -269,9 +270,11 @@ export const GalleryClient: React.FC<Props> = ({
                   </p>
                 )}
               </div>
-              <span className="text-xs font-mono text-neutral-600 bg-white px-3 py-1 rounded-full border border-neutral-200/80 shadow-2xs">
-                Pág. {currentPage} de {totalPages}
-              </span>
+              {totalPages > 1 && (
+                <span className="text-xs font-mono text-neutral-600 bg-white px-3 py-1 rounded-full border border-neutral-200/80 shadow-2xs">
+                  Pág. {currentPage} de {totalPages}
+                </span>
+              )}
             </div>
 
             {/* Cuadrícula de Fotografías */}
@@ -317,67 +320,18 @@ export const GalleryClient: React.FC<Props> = ({
               })}
             </div>
 
-            {/* Controles de Paginación */}
-            {totalPages > 1 && (
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-neutral-200/70">
-                <span className="text-xs text-neutral-500 font-sans order-2 sm:order-1">
-                  Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1}–
-                  {Math.min(currentPage * ITEMS_PER_PAGE, currentImages.length)} de{' '}
-                  {currentImages.length} fotos
-                </span>
-
-                <div className="flex items-center gap-2 order-1 sm:order-2">
-                  <button
-                    type="button"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    aria-label="Página anterior"
-                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer ${
-                      currentPage === 1
-                        ? 'border-neutral-200 text-neutral-300 cursor-not-allowed bg-neutral-50'
-                        : 'border-neutral-200 text-neutral-700 bg-white hover:bg-neutral-50 hover:text-brand hover:border-brand/40 shadow-2xs'
-                    }`}
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                    <span>Anterior</span>
-                  </button>
-
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                      <button
-                        key={pageNum}
-                        type="button"
-                        onClick={() => handlePageChange(pageNum)}
-                        aria-label={`Ir a la página ${pageNum}`}
-                        aria-current={pageNum === currentPage ? 'page' : undefined}
-                        className={`w-8 h-8 rounded-full text-xs font-mono font-medium transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 ${
-                          pageNum === currentPage
-                            ? 'bg-brand text-white shadow-xs scale-105'
-                            : 'bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200/80'
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    ))}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    aria-label="Página siguiente"
-                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 ${
-                      currentPage === totalPages
-                        ? 'border-neutral-200 text-neutral-300 cursor-not-allowed bg-neutral-50'
-                        : 'border-neutral-200 text-neutral-700 bg-white hover:bg-neutral-50 hover:text-brand hover:border-brand/40 shadow-2xs'
-                    }`}
-                  >
-                    <span>Siguiente</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Paginación Innovadora y Cohesiva de Nénufar */}
+            <NenufarPagination
+              page={currentPage}
+              totalPages={totalPages}
+              totalDocs={currentImages.length}
+              limit={ITEMS_PER_PAGE}
+              onPageChange={handlePageChange}
+              categoryLabel="Galería de Momentos"
+              itemCountLabel="fotos"
+              showAlways={false}
+              className="w-full max-w-2xl mx-auto pt-10 flex flex-col items-center gap-5 select-none"
+            />
 
           </div>
         </div>
