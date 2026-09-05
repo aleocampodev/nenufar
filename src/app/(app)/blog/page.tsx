@@ -33,7 +33,7 @@ export default async function BlogPage() {
               className="border border-neutral-200 rounded-lg overflow-hidden hover:shadow-md transition"
             >
               <a href={`/blog/${post.slug}`} className="block p-6">
-                <h2 className="text-xl font-serif mb-2 text-neutral-900 hover:text-[#6A1B9A] transition">
+                <h2 className="text-xl font-serif mb-2 text-neutral-900 hover:text-brand transition">
                   {post.title}
                 </h2>
                 {post.publishedAt && (

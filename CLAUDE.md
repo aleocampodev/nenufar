@@ -96,9 +96,9 @@ To seed test data: go to `/admin` → "Seed database" on the dashboard.
 
 ## Brand color
 
-Nénufar violet (`#6A1B9A`) is formalized as a CSS token:
+Nénufar magenta (`#E91E8C`, primary; `#3B032F` secondary) is formalized as a CSS token:
 - `bg-brand` / `text-brand` / `hover:bg-brand-dark`
-- Defined in `globals.css` as `--brand: oklch(38% 0.2 307deg)`
+- Defined in `globals.css` as `--brand: var(--brand-primary)`
 
 ## Architecture notes
 

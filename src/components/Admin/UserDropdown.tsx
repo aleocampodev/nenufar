@@ -40,7 +40,7 @@ export const UserDropdown: React.FC = () => {
             width: '28px',
             height: '28px',
             borderRadius: '50%',
-            backgroundColor: '#6A1B9A',
+            backgroundColor: '#E91E8C',
             color: '#FFFFFF',
             display: 'flex',
             alignItems: 'center',
@@ -55,7 +55,7 @@ export const UserDropdown: React.FC = () => {
           style={{
             fontSize: '0.85rem',
             fontWeight: 600,
-            color: '#6A1B9A',
+            color: '#E91E8C',
           }}
         >
           Admin
@@ -65,7 +65,7 @@ export const UserDropdown: React.FC = () => {
           height="12"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="#6A1B9A"
+          stroke="#E91E8C"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -107,8 +107,8 @@ export const UserDropdown: React.FC = () => {
                 display: 'inline-block',
                 fontSize: '0.75rem',
                 fontWeight: 700,
-                color: '#6A1B9A',
-                backgroundColor: 'rgba(106, 27, 154, 0.1)',
+                color: '#E91E8C',
+                backgroundColor: 'rgba(233, 30, 140, 0.1)',
                 padding: '2px 8px',
                 borderRadius: '6px',
                 marginBottom: '4px',

@@ -36,7 +36,7 @@ export const BeforeDashboard: React.FC = () => {
               padding: '12px 16px', 
               backgroundColor: '#ffffff', 
               borderRadius: '12px', 
-              border: '1px solid rgba(106, 27, 154, 0.12)', 
+              border: '1px solid rgba(233, 30, 140, 0.12)', 
               color: '#261a37', 
               textDecoration: 'none',
               fontSize: '13px',
@@ -46,7 +46,7 @@ export const BeforeDashboard: React.FC = () => {
           >
             <span>💎</span>
             <div>
-              <strong style={{ display: 'block', color: '#6a1b9a' }}>Catálogo de Joyas</strong>
+              <strong style={{ display: 'block', color: '#e91e8c' }}>Catálogo de Joyas</strong>
               <span style={{ fontSize: '11px', color: '#777' }}>Crear o editar piezas</span>
             </div>
           </a>
@@ -60,7 +60,7 @@ export const BeforeDashboard: React.FC = () => {
               padding: '12px 16px', 
               backgroundColor: '#ffffff', 
               borderRadius: '12px', 
-              border: '1px solid rgba(106, 27, 154, 0.12)', 
+              border: '1px solid rgba(233, 30, 140, 0.12)', 
               color: '#261a37', 
               textDecoration: 'none',
               fontSize: '13px',
@@ -70,7 +70,7 @@ export const BeforeDashboard: React.FC = () => {
           >
             <span>📦</span>
             <div>
-              <strong style={{ display: 'block', color: '#6a1b9a' }}>Pedidos (Órdenes)</strong>
+              <strong style={{ display: 'block', color: '#e91e8c' }}>Pedidos (Órdenes)</strong>
               <span style={{ fontSize: '11px', color: '#777' }}>Ver y despachar</span>
             </div>
           </a>
@@ -84,7 +84,7 @@ export const BeforeDashboard: React.FC = () => {
               padding: '12px 16px', 
               backgroundColor: '#ffffff', 
               borderRadius: '12px', 
-              border: '1px solid rgba(106, 27, 154, 0.12)', 
+              border: '1px solid rgba(233, 30, 140, 0.12)', 
               color: '#261a37', 
               textDecoration: 'none',
               fontSize: '13px',
@@ -94,7 +94,7 @@ export const BeforeDashboard: React.FC = () => {
           >
             <span>📸</span>
             <div>
-              <strong style={{ display: 'block', color: '#6a1b9a' }}>Medios y Archivos</strong>
+              <strong style={{ display: 'block', color: '#e91e8c' }}>Medios y Archivos</strong>
               <span style={{ fontSize: '11px', color: '#777' }}>Subir fotos de joyas</span>
             </div>
           </a>
@@ -108,7 +108,7 @@ export const BeforeDashboard: React.FC = () => {
               padding: '12px 16px', 
               backgroundColor: '#ffffff', 
               borderRadius: '12px', 
-              border: '1px solid rgba(106, 27, 154, 0.12)', 
+              border: '1px solid rgba(233, 30, 140, 0.12)', 
               color: '#261a37', 
               textDecoration: 'none',
               fontSize: '13px',
@@ -118,7 +118,7 @@ export const BeforeDashboard: React.FC = () => {
           >
             <span>✨</span>
             <div>
-              <strong style={{ display: 'block', color: '#6a1b9a' }}>Editar Landing</strong>
+              <strong style={{ display: 'block', color: '#e91e8c' }}>Editar Landing</strong>
               <span style={{ fontSize: '11px', color: '#777' }}>Hero, fotos y carrusel</span>
             </div>
           </a>
@@ -134,7 +134,7 @@ export const BeforeDashboard: React.FC = () => {
               padding: '12px 16px', 
               backgroundColor: '#ffffff', 
               borderRadius: '12px', 
-              border: '1px solid rgba(106, 27, 154, 0.12)', 
+              border: '1px solid rgba(233, 30, 140, 0.12)', 
               color: '#261a37', 
               textDecoration: 'none',
               fontSize: '13px',
@@ -144,7 +144,7 @@ export const BeforeDashboard: React.FC = () => {
           >
             <span>🌐</span>
             <div>
-              <strong style={{ display: 'block', color: '#6a1b9a' }}>Ver Tienda en Vivo</strong>
+              <strong style={{ display: 'block', color: '#e91e8c' }}>Ver Tienda en Vivo</strong>
               <span style={{ fontSize: '11px', color: '#777' }}>Abrir storefront web ↗</span>
             </div>
           </a>

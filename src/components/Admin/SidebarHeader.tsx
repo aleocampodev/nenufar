@@ -37,7 +37,7 @@ export const SidebarHeader: React.FC = () => {
           fontFamily: 'Playfair Display, Georgia, serif',
           fontSize: '1.55rem',
           fontWeight: 900,
-          color: '#6A1B9A',
+          color: '#E91E8C',
           letterSpacing: '-0.02em',
         }}
       >

@@ -71,7 +71,7 @@ export function NenufarPagination({
         {/* Barra de progreso animada */}
         <div className="w-full h-1.5 bg-muted/60 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-brand to-brand-light transition-all duration-500 rounded-full"
+            className="h-full bg-gradient-to-r from-brand to-brand-light rounded-full transition-[width] duration-500 motion-reduce:transition-none"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -88,7 +88,7 @@ export function NenufarPagination({
             <button
               type="button"
               onClick={() => onPageChange(page - 1)}
-              className="flex items-center gap-1 px-4 py-2 text-xs uppercase tracking-wider font-semibold text-brand hover:bg-brand hover:text-white rounded-full transition-all duration-200 cursor-pointer"
+              className="flex items-center gap-1 px-4 py-2 text-xs uppercase tracking-wider font-semibold text-brand hover:bg-brand hover:text-white rounded-full transition-[background-color,color] duration-200 cursor-pointer"
               aria-label="Página anterior"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -97,7 +97,7 @@ export function NenufarPagination({
           ) : (
             <Link
               href={buildPageUrl ? buildPageUrl(page - 1) : '#'}
-              className="flex items-center gap-1 px-4 py-2 text-xs uppercase tracking-wider font-semibold text-brand hover:bg-brand hover:text-white rounded-full transition-all duration-200"
+              className="flex items-center gap-1 px-4 py-2 text-xs uppercase tracking-wider font-semibold text-brand hover:bg-brand hover:text-white rounded-full transition-[background-color,color] duration-200"
               aria-label="Página anterior"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -144,7 +144,7 @@ export function NenufarPagination({
                 key={p}
                 type="button"
                 onClick={() => onPageChange(p as number)}
-                className="w-8 h-8 flex items-center justify-center rounded-full text-xs font-medium font-mono text-muted-foreground hover:text-brand hover:bg-brand/10 transition-all duration-150 cursor-pointer"
+                className="w-8 h-8 flex items-center justify-center rounded-full text-xs font-medium font-mono text-muted-foreground hover:text-brand hover:bg-brand/10 transition-[background-color,color] duration-150 cursor-pointer"
                 aria-label={`Ir a la página ${p}`}
               >
                 {p}
@@ -153,7 +153,7 @@ export function NenufarPagination({
               <Link
                 key={p}
                 href={buildPageUrl ? buildPageUrl(p as number) : '#'}
-                className="w-8 h-8 flex items-center justify-center rounded-full text-xs font-medium font-mono text-muted-foreground hover:text-brand hover:bg-brand/10 transition-all duration-150"
+                className="w-8 h-8 flex items-center justify-center rounded-full text-xs font-medium font-mono text-muted-foreground hover:text-brand hover:bg-brand/10 transition-[background-color,color] duration-150"
                 aria-label={`Ir a la página ${p}`}
               >
                 {p}
@@ -168,7 +168,7 @@ export function NenufarPagination({
             <button
               type="button"
               onClick={() => onPageChange(page + 1)}
-              className="flex items-center gap-1 px-4 py-2 text-xs uppercase tracking-wider font-semibold text-brand hover:bg-brand hover:text-white rounded-full transition-all duration-200 cursor-pointer"
+              className="flex items-center gap-1 px-4 py-2 text-xs uppercase tracking-wider font-semibold text-brand hover:bg-brand hover:text-white rounded-full transition-[background-color,color] duration-200 cursor-pointer"
               aria-label="Página siguiente"
             >
               <span className="hidden sm:inline">Siguiente</span>
@@ -177,7 +177,7 @@ export function NenufarPagination({
           ) : (
             <Link
               href={buildPageUrl ? buildPageUrl(page + 1) : '#'}
-              className="flex items-center gap-1 px-4 py-2 text-xs uppercase tracking-wider font-semibold text-brand hover:bg-brand hover:text-white rounded-full transition-all duration-200"
+              className="flex items-center gap-1 px-4 py-2 text-xs uppercase tracking-wider font-semibold text-brand hover:bg-brand hover:text-white rounded-full transition-[background-color,color] duration-200"
               aria-label="Página siguiente"
             >
               <span className="hidden sm:inline">Siguiente</span>

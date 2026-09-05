@@ -38,7 +38,7 @@ Desde la **v3.3** el mismo bot de Telegram incorpora un **sistema agéntico de g
 | **III — Git** | Ban absoluto de push/merge directo a `main`. Trabajo solo en feature branches con worktrees aislados, integración solo vía PR |
 | **IV — Arquitectura** | Monolito embebido (Next.js + Payload en el mismo proceso), Payload Local API first, puerto **3002** (nunca 3000), webhook en `/telegram/webhook` (nunca `/api/...`) |
 | **V — Seguridad** | Ley 1581 (consentimiento explícito), bot solo Shirley (`chat_id === TELEGRAM_ADMIN_CHAT_ID`, rechazo silencioso 200), idempotencia SHA256 5 min |
-| **VI — Estándares** | **Idioma:** UI/bot en español `es-CO`, código/docs/commits/specs/ADRs en inglés. **Moneda:** COP sin decimales `$ 45.000` (prohibido `COP` en UI). Brand `--brand: #6A1B9A` |
+| **VI — Estándares** | **Idioma:** UI/bot en español `es-CO`, código/docs/commits/specs/ADRs en inglés. **Moneda:** COP sin decimales `$ 45.000` (prohibido `COP` en UI). Brand `--brand: #E91E8C` (secundario `#3B032F`) |
 | **VII — SDLC** | Slicing vertical S/M, tracking en `tasks/plan.md` + `tasks/todo.md`, handoffs para migraciones mayores |
 
 ---
@@ -121,7 +121,7 @@ Desde la **v3.3** el mismo bot de Telegram incorpora un **sistema agéntico de g
 | **Base de datos** | PostgreSQL | 16 · vía `@payloadcms/db-postgres` (Drizzle), puerto `5433` en dev |
 | **Lenguaje** | TypeScript | 6 · `strict`, tipos generados `payload generate:types` |
 | **Validación** | Zod | 4 · schemas de las 7 tools del bot |
-| **UI** | TailwindCSS + shadcn/ui | v4 + Radix UI, tokens OKLCH, `bg-brand` (`#6A1B9A`) |
+| **UI** | TailwindCSS + shadcn/ui | v4 + Radix UI, tokens CSS, `bg-brand` (`#E91E8C`) |
 | **Tipografía** | Playfair Display · Inter · Geist Mono | vía `next/font` |
 | **Imágenes** | Sharp | 0.34 · WebP automático en 4 tamaños al subir, `serverExternalPackages` |
 | **Estado / Forms** | React Hook Form + date-fns + sonner |  |

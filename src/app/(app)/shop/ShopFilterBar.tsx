@@ -3,6 +3,7 @@
 import React, { useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Sparkles } from 'lucide-react'
+import { Search } from '@/components/Search'
 
 interface CategoryOption {
   id: number | string
@@ -60,8 +61,9 @@ export function ShopFilterBar({
           className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none"
         >
           <button
+            aria-pressed={!activeCategory && !activeFeatured}
             onClick={() => updateFilters({ category: null, featured: null })}
-            className={`px-5 py-2 min-h-[38px] rounded-full text-xs uppercase tracking-wider font-medium active:scale-[0.96] transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-5 py-2 min-h-[38px] rounded-full text-xs uppercase tracking-wider font-medium active:scale-[0.96] transition-[transform,background-color,border-color,color,box-shadow] whitespace-nowrap cursor-pointer ${
               !activeCategory && !activeFeatured
                 ? 'bg-brand text-white shadow-md shadow-brand/20 hover:bg-brand-dark scale-[1.02]'
                 : 'bg-white dark:bg-zinc-900 text-neutral-600 dark:text-neutral-300 border border-neutral-200/90 dark:border-zinc-800 hover:border-brand/50 hover:text-brand shadow-sm'
@@ -71,13 +73,14 @@ export function ShopFilterBar({
           </button>
 
           <button
+            aria-pressed={activeFeatured}
             onClick={() =>
               updateFilters({
                 featured: activeFeatured ? null : 'true',
                 category: null,
               })
             }
-            className={`px-5 py-2 min-h-[38px] rounded-full text-xs uppercase tracking-wider font-medium active:scale-[0.96] transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+            className={`px-5 py-2 min-h-[38px] rounded-full text-xs uppercase tracking-wider font-medium active:scale-[0.96] transition-[transform,background-color,border-color,color,box-shadow] whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
               activeFeatured
                 ? 'bg-brand text-white shadow-md shadow-brand/20 hover:bg-brand-dark scale-[1.02]'
                 : 'bg-white dark:bg-zinc-900 text-neutral-600 dark:text-neutral-300 border border-neutral-200/90 dark:border-zinc-800 hover:border-brand/50 hover:text-brand shadow-sm'
@@ -92,13 +95,14 @@ export function ShopFilterBar({
             return (
               <button
                 key={cat.id}
+                aria-pressed={isSelected}
                 onClick={() =>
                   updateFilters({
                     category: isSelected ? null : (cat.slug || String(cat.id)),
                     featured: null,
                   })
                 }
-                className={`px-5 py-2 min-h-[38px] rounded-full text-xs uppercase tracking-wider font-medium active:scale-[0.96] transition-all whitespace-nowrap cursor-pointer ${
+                className={`px-5 py-2 min-h-[38px] rounded-full text-xs uppercase tracking-wider font-medium active:scale-[0.96] transition-[transform,background-color,border-color,color,box-shadow] whitespace-nowrap cursor-pointer ${
                   isSelected
                     ? 'bg-brand text-white shadow-md shadow-brand/20 hover:bg-brand-dark scale-[1.02]'
                     : 'bg-white dark:bg-zinc-900 text-neutral-600 dark:text-neutral-300 border border-neutral-200/90 dark:border-zinc-800 hover:border-brand/50 hover:text-brand shadow-sm'
@@ -110,8 +114,9 @@ export function ShopFilterBar({
           })}
         </nav>
 
-        {/* Selector de Orden con Estilo Nenúfar */}
+        {/* Buscador y selector de orden con estilo Nenúfar */}
         <div className="flex items-center justify-end w-full md:w-auto gap-3 self-end md:self-auto">
+          <Search className="min-w-0 flex-1 md:w-52 md:flex-none" />
           {/* Ordenar por */}
           <div className="relative">
             <select
@@ -131,6 +136,11 @@ export function ShopFilterBar({
           </div>
         </div>
       </div>
+
+      {/* Conteo de resultados */}
+      <p aria-live="polite" className="pt-1 text-right text-[11px] uppercase tracking-widest text-neutral-400">
+        {totalProducts === 1 ? '1 joya' : `${totalProducts} joyas`}
+      </p>
 
       {/* Indicador de carga sutil */}
       {isPending && (

@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────
-   Nénufar Admin — tema violeta artesanal
+   Nénufar Admin — tema magenta artesanal
    Estrategia (upgrade-safe):
    1. Payload mapea --theme-elevation-* desde --color-base-*.
       Redefinimos esa escala con neutros CÁLIDOS VIOLÁCEOS
@@ -7,15 +7,15 @@
       (fondos, cards, sidebar, bordes, texto) se entibia solo,
       y el modo oscuro de Payload invierte el mapeo por sí mismo.
    2. El botón primario usa --bg-color: var(--theme-elevation-800).
-      Lo sobreescribimos con tokens propios para que sea violeta
-      marca, sin tocar el texto (que también usa elevation-800).
+       Lo sobreescribimos con tokens propios para que sea magenta
+       marca, sin tocar el texto (que también usa elevation-800).
    ───────────────────────────────────────────────────────────── */
 
 :root {
   /* Tokens de marca Nénufar */
-  --nenufar-brand: #6a1b9a;
-  --nenufar-brand-dark: #57147d;
-  --nenufar-brand-light: #8e34c4;
+  --nenufar-brand: #e91e8c;
+  --nenufar-brand-dark: #ad1457;
+  --nenufar-brand-light: #ff4fa3;
 
   /* Escala base: gris puro → neutro cálido violáceo */
   --color-base-0: #ffffff;
@@ -54,7 +54,7 @@ html[data-theme='dark'] {
   --color-base-900: #0f0916;
 }
 
-/* ── Botón primario: violeta marca ─────────────────────────── */
+/* ── Botón primario: magenta marca ─────────────────────────── */
 .btn--style-primary {
   --bg-color: var(--nenufar-brand);
   --hover-bg: var(--nenufar-brand-dark);
@@ -69,7 +69,7 @@ html[data-theme='dark'] {
 
 /* ── Detalles ──────────────────────────────────────────────── */
 
-/* CTA "Crear" de las listas: violeta suave para destacarlo */
+/* CTA "Crear" de las listas: magenta suave para destacarlo */
 .list-create-new-doc__create-new-button {
   background-color: var(--nenufar-brand);
   color: #ffffff;
@@ -81,7 +81,7 @@ html[data-theme='dark'] {
   color: #ffffff;
 }
 
-/* Foco visible accesible en violeta */
+/* Foco visible accesible en magenta */
 :where(a, button, input, select, textarea):focus-visible {
   outline: 2px solid var(--nenufar-brand);
   outline-offset: 2px;
@@ -139,7 +139,7 @@ header .avatar {
   object-fit: cover !important;
 }
 
-/* ── Sidebar Navigation: Píldora activa con borde violeta ─── */
+/* ── Sidebar Navigation: Píldora activa con borde magenta ─── */
 .sidebar-header-link,
 .sidebar-header-link:hover,
 .sidebar-header-link:focus,
@@ -174,7 +174,7 @@ header .avatar {
 .nav__link.active,
 .nav a:not(.sidebar-header-link)[aria-current='page'],
 .nav a:not(.sidebar-header-link).active {
-  background-color: rgba(106, 27, 154, 0.08) !important;
+  background-color: rgba(233, 30, 140, 0.08) !important;
   border: 1.5px solid var(--nenufar-brand) !important;
   color: var(--nenufar-brand) !important;
   font-weight: 600;
@@ -207,7 +207,7 @@ header .avatar {
 [class*='card-']:hover {
   border-color: var(--nenufar-brand) !important;
   background-color: #faf7fc !important;
-  box-shadow: 0 8px 24px -4px rgba(106, 27, 154, 0.12);
+  box-shadow: 0 8px 24px -4px rgba(233, 30, 140, 0.12);
 }
 
 .card:hover a,
@@ -227,10 +227,10 @@ header .avatar {
 .card button[aria-label*="Crear"],
 .card a[aria-label*="Create"],
 .card a[aria-label*="Crear"] {
-  background-color: rgba(106, 27, 154, 0.08) !important;
+  background-color: rgba(233, 30, 140, 0.08) !important;
   color: var(--nenufar-brand) !important;
   border-radius: 9999px !important;
-  border: 1px solid rgba(106, 27, 154, 0.2) !important;
+  border: 1px solid rgba(233, 30, 140, 0.2) !important;
   padding: 6px 12px !important;
   font-weight: 600 !important;
   transition: all 0.2s ease !important;

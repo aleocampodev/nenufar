@@ -142,4 +142,4 @@ La hipótesis agéntica (un asistente que reemplaza a Shirley en el cierre de ve
 - **Cuenta de usuario:** agregada (pedidos, direcciones, perfil).
 - **Registro de pedidos:** los pedidos ahora quedan en Payload (colección `Orders`) además de llegar a Telegram.
 - **Imágenes:** conversión automática a WebP (calidad 92, 4 tamaños) via Sharp integrado en Payload.
-- **Color de marca:** violeta Nénufar (`#6A1B9A`) formalizado como token CSS (`--brand`).
+- **Color de marca:** magenta Nénufar (`#E91E8C`, primario; `#3B032F` secundario) formalizado como token CSS (`--brand`).

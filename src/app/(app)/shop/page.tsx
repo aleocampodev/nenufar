@@ -129,7 +129,9 @@ export default async function ShopPage({ searchParams }: Props) {
       {/* Estado Vacío */}
       {docs.length === 0 && (
         <div className="text-center py-24 px-6 border border-dashed border-border/80 rounded-2xl max-w-md mx-auto my-12">
-          <div className="text-5xl mb-4 opacity-40 text-brand">✦</div>
+          <div aria-hidden="true" className="text-5xl mb-4 opacity-40 text-brand">
+            ✦
+          </div>
           <h3 className="font-serif text-xl text-foreground mb-2">No encontramos joyas</h3>
           <p className="text-sm text-muted-foreground mb-6">
             Prueba ajustando los filtros o buscando otra joya en mostacilla.

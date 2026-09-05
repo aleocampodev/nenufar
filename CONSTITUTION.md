@@ -77,7 +77,7 @@ We, the engineers, maintainers, and autonomous AI agents contributing to **Nénu
    - Prices must always be displayed formatted as Colombian Pesos using the currency symbol (`$`) with period thousands separators and **zero decimal places**:
      `new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })` (renders as `$ 45.000`).
    - **Prohibition of "COP" Suffix in UI:** Never render or append the literal string `"COP"` in user-facing text, storefront prices, or Telegram messages (e.g., render `$ 120.000`, never `120.000 COP` or `$120.000 COP`).
-3. **Brand Tokenization:** All UI violet styling must utilize the CSS token `--brand: oklch(38% 0.2 307deg)` (`#6A1B9A`) via Tailwind classes `bg-brand`, `text-brand`, and `hover:bg-brand-dark`.
+3. **Brand Tokenization:** All UI magenta styling must utilize the CSS token `--brand: var(--brand-primary)` (`#E91E8C`, secondary `#3B032F`) via Tailwind classes `bg-brand`, `text-brand`, and `hover:bg-brand-dark`.
 4. **Pre-Existing TypeScript Exceptions:**
    - Known pre-existing typing issues in Payload ecommerce generated types (`slug`, `paymentMethod` in seed) must be respected and preserved as documented. Agents must not waste cycles attempting to refactor upstream plugin types.
 5. **Quality Gates for Pull Requests:**

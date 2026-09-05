@@ -9,7 +9,7 @@ export const Logo = () => {
         className="h-10 w-auto object-contain max-h-10"
         src="/nenufar-negro.svg"
       />
-      <span className="font-serif text-xl font-bold tracking-tight text-[#6A1B9A]">
+      <span className="font-serif text-xl font-bold tracking-tight text-brand">
         Nenúfar
       </span>
     </div>

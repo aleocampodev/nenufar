@@ -15,7 +15,7 @@
 
 ## 1. Executive Summary
 
-Nénufar is a luxury artisanal jewelry brand created in Cartagena de Indias by artisan Shirley. The digital experience reflects high-end Caribbean editorial aesthetics inspired by the Krafti template: warm pastel foundations, refined serif typography, high-contrast dark charcoal footer, and the signature imperial purple (`#6A1B9A`) brand anchor.
+Nénufar is a luxury artisanal jewelry brand created in Cartagena de Indias by artisan Shirley. The digital experience reflects high-end Caribbean editorial aesthetics inspired by the Krafti template: warm pastel foundations, refined serif typography, high-contrast deep violet footer, and the signature magenta (`#E91E8C`, secondary `#3B032F`) brand anchor.
 
 ---
 
@@ -23,9 +23,9 @@ Nénufar is a luxury artisanal jewelry brand created in Cartagena de Indias by a
 
 ```mermaid
 graph TD
-    A[Nénufar Design System] --> B[1. Brand Purple #6A1B9A]
+    A[Nénufar Design System] --> B[1. Brand Magenta #E91E8C / Deep Violet #3B032F]
     A --> C[2. Surfaces: Pure White #FFFFFF / Warm Cream #FAF8F5 / Krafti Pastels]
-    A --> D[3. Dark Footer Charcoal #141211]
+    A --> D[3. Deep Violet Footer #3B032F]
     A --> E[4. Inventory Alert Red #DC2626]
     A --> F[5. Strict Prohibition: Zero Yellow / Gold Text]
 ```
@@ -34,10 +34,11 @@ graph TD
 
 | Token Name | HEX Code | Tailwind Class / CSS Variable | Purpose & Usage |
 | :--- | :--- | :--- | :--- |
-| **Brand Purple (Core)** | `#6A1B9A` | `bg-brand`, `text-brand`, `--brand` | Primary CTA buttons, lotus logo icon, active navigation links, highlighted badges. |
-| **Brand Dark (Hover)** | `#4A0E6D` | `bg-brand-dark`, `hover:bg-brand-dark` | Hover & active states for primary buttons and interactive elements. |
-| **Brand Light (Lavender)** | `#D8B4FE` / `#E9D5FF` | `text-purple-300`, `text-purple-200` | Delicate accent links on dark backgrounds (e.g. *"Escribir a Shirley →"*). |
-| **Brand Muted (Tint)** | `#6A1B9A15` (10%) | `bg-brand/10`, `border-brand/20` | Filter pill backgrounds, active pill borders, subtle tag overlays. |
+| **Brand Magenta (Core)** | `#E91E8C` | `bg-brand`, `text-brand`, `--brand` | Primary CTA buttons, lotus logo icon, active navigation links, highlighted badges. |
+| **Brand Dark (Hover)** | `#AD1457` | `bg-brand-dark`, `hover:bg-brand-dark` | Hover & active states for primary buttons and interactive elements. |
+| **Brand Secondary (Deep Violet)** | `#3B032F` | `bg-brand-secondary` | Footer background, dark catalog tile, scrolled header. |
+| **Brand Light (Pink)** | `#FF4FA3` | `text-brand-accent` | Delicate accent links on dark backgrounds (e.g. *"Escribir a Shirley →"*). |
+| **Brand Muted (Tint)** | `#E91E8C1A` (10%) | `bg-brand/10`, `border-brand/20` | Filter pill backgrounds, active pill borders, subtle tag overlays. |
 
 ---
 
@@ -49,7 +50,7 @@ graph TD
 | **Warm Sand / Ivory** | `#FAF8F5` | Alternating editorial sections (Shirley's Story, Testimonials, Contact). |
 | **Pastel Blush Peach** | `#F7EBE1` | Catalog grid alternating tile (Slot 1 in Krafti checkerboard). |
 | **Pastel Almond Cream** | `#FAF5ED` | Catalog grid alternating tile (Slot 4 in Krafti checkerboard). |
-| **Charcoal Dark** | `#141211` / `#181615` | Footer background giving high-contrast luxury closure. |
+| **Deep Violet** | `#3B032F` | Footer background + dark catalog tile giving high-contrast luxury closure (secondary brand color). |
 
 ---
 
