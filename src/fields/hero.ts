@@ -12,9 +12,9 @@ import { linkGroup } from './linkGroup'
 export const hero: Field = {
   name: 'hero',
   type: 'group',
-  label: 'Fotos principales de la página',
+  label: 'Hero principal de la página',
   admin: {
-    description: 'Aquí va el Carrusel de arriba de la landing. Déjalo en "Carrusel" y agrega las 3 fotos abajo.',
+    description: 'Configuración del Hero de la página (Foto de Shirley / modelo, titular, botón CTA y redes sociales).',
   },
   fields: [
     {
@@ -23,11 +23,11 @@ export const hero: Field = {
       defaultValue: 'slider',
       label: '¿Qué mostrar arriba?',
       admin: {
-        description: 'Elige "Carrusel de 3 fotos" para la Inicio. Las otras opciones son solo texto y no las necesitas ahora.',
+        description: 'Elige "Hero Principal Nénufar" para la página de Inicio.',
       },
       options: [
         {
-          label: '✅ Carrusel de 3 fotos — (usa esto para la Inicio)',
+          label: '✅ Hero Principal Nénufar (Foto de Shirley, Redes Sociales y Titular) — (Inicio)',
           value: 'slider',
         },
         {
@@ -48,6 +48,102 @@ export const hero: Field = {
         },
       ],
       required: true,
+    },
+    {
+      name: 'modelImage',
+      type: 'upload',
+      label: 'Foto de Shirley / Modelo (Fondo Transparente)',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        condition: (_, { type } = {}) => type === 'slider',
+        description:
+          'Foto en primer plano con fondo transparente (SVG o PNG). Si la dejas vacía, se usará por defecto la foto oficial procesada en alta definición (/shirley-hdr-sin-fondo.svg).',
+      },
+    },
+    {
+      name: 'badge',
+      type: 'text',
+      label: 'Etiqueta superior (Badge)',
+      defaultValue: 'ALTA JOYERÍA ARTESANAL',
+      admin: {
+        condition: (_, { type } = {}) => type === 'slider',
+        description: 'Texto pequeño con punto indicador que aparece sobre el titular.',
+      },
+    },
+    {
+      name: 'heading',
+      type: 'text',
+      label: 'Titular H1 (Texto principal)',
+      defaultValue: 'La nobleza del Caribe no se hereda.',
+      admin: {
+        condition: (_, { type } = {}) => type === 'slider',
+        description: 'Frase principal del encabezado (sin la parte resaltada en cursiva violeta).',
+      },
+    },
+    {
+      name: 'headingHighlight',
+      type: 'text',
+      label: 'Texto resaltado (Cursiva violeta)',
+      defaultValue: 'Se teje.',
+      admin: {
+        condition: (_, { type } = {}) => type === 'slider',
+        description: 'Frase o palabra destacada al final del titular con estilo en cursiva y color violeta.',
+      },
+    },
+    {
+      name: 'linkLabel',
+      type: 'text',
+      label: 'Texto del botón principal',
+      defaultValue: 'Conoce la colección',
+      admin: {
+        condition: (_, { type } = {}) => type === 'slider',
+      },
+    },
+    {
+      name: 'linkUrl',
+      type: 'text',
+      label: 'Enlace del botón principal (URL)',
+      defaultValue: '/shop',
+      admin: {
+        condition: (_, { type } = {}) => type === 'slider',
+        description: 'Ej: /shop, /eventos',
+      },
+    },
+    {
+      name: 'socialLinks',
+      type: 'group',
+      label: 'Redes Sociales del Hero',
+      admin: {
+        condition: (_, { type } = {}) => type === 'slider',
+        description: 'Canales oficiales mostrados junto al botón principal.',
+      },
+      fields: [
+        {
+          name: 'instagramUrl',
+          type: 'text',
+          label: 'URL de Instagram',
+          defaultValue: 'https://www.instagram.com/nenufar.co/',
+        },
+        {
+          name: 'facebookUrl',
+          type: 'text',
+          label: 'URL de Facebook',
+          defaultValue: 'https://www.facebook.com/nenufar.co',
+        },
+        {
+          name: 'whatsappUrl',
+          type: 'text',
+          label: 'URL de WhatsApp',
+          defaultValue: 'https://wa.me/?text=Hola%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20N%C3%A9nufar',
+        },
+        {
+          name: 'telegramUrl',
+          type: 'text',
+          label: 'URL de Telegram',
+          defaultValue: 'https://t.me/',
+        },
+      ],
     },
     {
       name: 'richText',
@@ -87,10 +183,10 @@ export const hero: Field = {
     {
       name: 'slides',
       type: 'array',
-      label: 'Fotos del carrusel (3 fotos que se deslizan)',
+      label: 'Fotos del carrusel (Legado / Opcional)',
       admin: {
-        condition: (_, { type } = {}) => type === 'slider',
-        description: 'Agrega 3 fotos. Cada foto lleva su título y su botón. Si aún no tienes fotos, deja el degradado gris.',
+        condition: () => false,
+        description: 'Campo legado preservado para compatibilidad con datos existentes.',
       },
       minRows: 1,
       maxRows: 3,

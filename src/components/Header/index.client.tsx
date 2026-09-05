@@ -55,32 +55,38 @@ export function HeaderClient({ header, categories = [] }: Props) {
   }
 
   // Header styling state
+  // Header styling state:
+  // In the home page at the top, it is transparent over the hero image.
   const isTransparent = isHomePage && !isScrolled
-  const isPurple = isScrolled
+
+  const linkBaseClass = isTransparent
+    ? 'text-[#1A0E2E]/90 hover:text-[#E91E8C]'
+    : 'text-white/90 hover:text-[#FF4FA3]'
+
+  const linkActiveClass = isTransparent
+    ? 'text-[#E91E8C] font-semibold'
+    : 'text-[#FF4FA3] font-semibold'
 
   return (
     <header
-      className={`sticky top-0 z-40 transition-all duration-500 border-none ${
-        isPurple
-          ? 'bg-[#6A1B9A]/95 dark:bg-[#4A106E]/95 backdrop-blur-md text-white shadow-[0_8px_30px_rgba(106,27,154,0.35)]'
-          : isTransparent
-          ? 'bg-transparent text-white'
-          : 'bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md text-neutral-800 dark:text-neutral-100 shadow-sm'
+      className={`sticky top-0 z-40 transition-all duration-500 ${
+        isTransparent
+          ? 'bg-transparent text-[#1A0E2E] dark:text-white'
+          : 'bg-[#3B032F]/95 dark:bg-[#2E1346]/95 backdrop-blur-md text-white shadow-[0_8px_30px_rgba(59,3,47,0.35)] border-b border-white/10'
       }`}
     >
-        <nav className="flex items-center justify-between max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 h-[74px] sm:h-[78px]">
+        <nav className="flex items-center justify-between max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 h-[74px] sm:h-[78px]">
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <LogoIcon
-              className={`w-8 h-8 transition-transform duration-300 group-hover:scale-105 ${
-                isPurple || isTransparent ? 'text-white' : 'text-brand'
-              }`}
+              variant={isTransparent ? 'negro' : 'blanco'}
+              className="w-8 h-8 transition-transform duration-300 group-hover:scale-105"
             />
             <span
               className={`font-serif text-2xl sm:text-3xl tracking-wide font-medium transition-colors ${
-                isPurple || isTransparent
-                  ? 'text-white group-hover:text-purple-100'
-                  : 'text-foreground group-hover:text-brand'
+                isTransparent
+                  ? 'text-[#1A0E2E] dark:text-white group-hover:text-[#E91E8C]'
+                  : 'text-white group-hover:text-[#FF4FA3]'
               }`}
             >
               Nenúfar
@@ -88,7 +94,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
           </Link>
 
           {/* Desktop Navigation Links - Centered */}
-          <div className="hidden md:flex items-center gap-7 lg:gap-8">
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8">
             {/* Catálogo con Dropdown */}
             <div
               className="relative"
@@ -98,18 +104,14 @@ export function HeaderClient({ header, categories = [] }: Props) {
               <Link
                 href="/shop"
                 className={`flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 ${
-                  isPurple || isTransparent
-                    ? 'text-white/90 hover:text-white'
-                    : pathname?.startsWith('/shop')
-                    ? 'text-brand font-semibold'
-                    : 'text-neutral-700 hover:text-brand'
+                  pathname?.startsWith('/shop') ? linkActiveClass : linkBaseClass
                 }`}
               >
                 Catálogo
                 <ChevronDown
                   className={`w-3.5 h-3.5 transition-transform duration-200 ${
                     catOpen ? 'rotate-180' : ''
-                  } ${isPurple || isTransparent ? 'text-white/80' : 'text-neutral-400'}`}
+                  } ${isTransparent ? 'text-[#1A0E2E]/70' : 'text-white/80'}`}
                 />
               </Link>
 
@@ -150,27 +152,11 @@ export function HeaderClient({ header, categories = [] }: Props) {
               </div>
             </div>
 
-            {/* Tradición & Delicadeza (Sección en Landing) */}
+            {/* Galería (Página dedicada) */}
             <Link
-              href="/#tradicion"
-              onClick={(e) => handleAnchorClick(e, '/#tradicion')}
+              href="/galeria"
               className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
-                isPurple || isTransparent
-                  ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-700 hover:text-brand'
-              }`}
-            >
-              Tradición
-            </Link>
-
-            {/* Galería (Sección en Landing) */}
-            <Link
-              href="/#galeria"
-              onClick={(e) => handleAnchorClick(e, '/#galeria')}
-              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
-                isPurple || isTransparent
-                  ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-700 hover:text-brand'
+                pathname?.startsWith('/galeria') ? linkActiveClass : linkBaseClass
               }`}
             >
               Galería
@@ -180,11 +166,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
             <Link
               href="/#historia"
               onClick={(e) => handleAnchorClick(e, '/#historia')}
-              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
-                isPurple || isTransparent
-                  ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-700 hover:text-brand'
-              }`}
+              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${linkBaseClass}`}
             >
               Historia
             </Link>
@@ -193,11 +175,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
             <Link
               href="/#talleres"
               onClick={(e) => handleAnchorClick(e, '/#talleres')}
-              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
-                isPurple || isTransparent
-                  ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-700 hover:text-brand'
-              }`}
+              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${linkBaseClass}`}
             >
               Talleres & Ferias
             </Link>
@@ -206,11 +184,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
             <Link
               href="/#contacto"
               onClick={(e) => handleAnchorClick(e, '/#contacto')}
-              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${
-                isPurple || isTransparent
-                  ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-700 hover:text-brand'
-              }`}
+              className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 relative ${linkBaseClass}`}
             >
               Contacto
             </Link>
@@ -222,7 +196,7 @@ export function HeaderClient({ header, categories = [] }: Props) {
               <Cart />
             </Suspense>
 
-            <div className="md:hidden flex items-center">
+            <div className="lg:hidden flex items-center">
               <Suspense fallback={null}>
                 <MobileMenu menu={header.navItems} categories={displayCategories} />
               </Suspense>

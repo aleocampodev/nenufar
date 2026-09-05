@@ -7,7 +7,7 @@ export const Logo = () => {
       <img
         alt="Nenúfar Logo"
         className="h-10 w-auto object-contain max-h-10"
-        src="/nenufar-logo.png"
+        src="/nenufar-negro.svg"
       />
       <span className="font-serif text-xl font-bold tracking-tight text-[#6A1B9A]">
         Nenúfar

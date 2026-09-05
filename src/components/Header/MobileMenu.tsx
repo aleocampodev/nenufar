@@ -13,6 +13,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { useAuth } from '@/providers/Auth'
+import { LogoIcon } from '@/components/icons/logo'
 import { MenuIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
@@ -79,7 +80,10 @@ export function MobileMenu({ menu, categories = [] }: Props) {
 
       <SheetContent side="left" className="px-5 w-[300px] sm:w-[360px] overflow-y-auto">
         <SheetHeader className="px-0 pt-4 pb-2 border-b border-neutral-100 dark:border-neutral-800">
-          <SheetTitle className="font-serif text-2xl text-foreground text-left">Nenúfar</SheetTitle>
+          <SheetTitle className="font-serif text-2xl text-foreground text-left flex items-center gap-2.5">
+            <LogoIcon variant="negro" className="w-7 h-7 inline-block" />
+            <span>Nenúfar</span>
+          </SheetTitle>
         </SheetHeader>
 
         <div className="py-5 space-y-4">
@@ -133,18 +137,8 @@ export function MobileMenu({ menu, categories = [] }: Props) {
 
             <li>
               <Link
-                href="/#tradicion"
-                onClick={(e) => handleAnchorClick(e, '/#tradicion')}
-                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
-              >
-                Tradición & Delicadeza
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                href="/#galeria"
-                onClick={(e) => handleAnchorClick(e, '/#galeria')}
+                href="/galeria"
+                onClick={closeMobileMenu}
                 className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
               >
                 Galería de Creaciones

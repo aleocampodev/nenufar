@@ -78,10 +78,15 @@ export default async function HomePage() {
   const { hero, layout } = page || (homeStaticData() as Page)
   const isSlider = (hero as any)?.type === 'slider'
 
+  // Garantizar que 'features' (Tradición & Delicadeza) y 'gallery' no se muestren en la landing
+  const filteredBlocks = layout?.filter(
+    (block) => block.blockType !== 'features' && block.blockType !== 'gallery',
+  )
+
   return (
     <article className={isSlider ? 'pb-16' : 'pt-8 pb-16'}>
       <RenderHero {...hero} />
-      <RenderBlocks blocks={layout} />
+      <RenderBlocks blocks={filteredBlocks} />
     </article>
   )
 }

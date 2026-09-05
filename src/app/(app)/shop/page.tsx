@@ -3,7 +3,6 @@ import { NenufarPagination } from '@/components/Pagination/NenufarPagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
-import { Sparkles, Gift, Gem, HeartHandshake } from 'lucide-react'
 import { ShopFilterBar } from './ShopFilterBar'
 
 export const metadata = {
@@ -12,7 +11,7 @@ export const metadata = {
   title: 'Catálogo de Joyería Artesanal & Regalos de Autor | Nenúfar Cartagena',
 }
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 8
 
 type SearchParams = { [key: string]: string | string[] | undefined }
 
@@ -106,51 +105,12 @@ export default async function ShopPage({ searchParams }: Props) {
 
   return (
     <div className="w-full pb-20">
-      {/* 1. Header Editorial de Catálogo con Neuromarketing & Paleta Canónica */}
-      <div className="w-full bg-gradient-to-b from-[#FAF8F5] via-[#FAF8F5]/60 to-background border-b border-neutral-200/60 pt-10 sm:pt-14 pb-8 sm:pb-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-          <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.3em] text-[#8B5A2B] font-semibold font-sans">
-            <Sparkles className="w-3.5 h-3.5 text-[#8B5A2B]" />
-            ALTA JOYERÍA ARTESANAL · CARTAGENA DE INDIAS
-          </span>
-
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#1C1917] dark:text-neutral-100 font-normal tracking-tight">
-            Piezas que Enamoran & Cuentan Historias
+      {/* Encabezado Editorial del Catálogo */}
+      <div className="w-full bg-[#FAF8F5] border-b border-neutral-200/60 py-8 sm:py-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl text-[#1C1917] font-normal tracking-tight">
+            Alta Joyería Artesanal · Cartagena de Indias
           </h1>
-
-          <div className="w-12 h-0.5 bg-brand mx-auto my-3 rounded-full opacity-70" />
-
-          <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-300 font-sans leading-relaxed max-w-2xl mx-auto">
-            Cada collar, arete y pulsera es hilado pacientemente a mano por Shirley durante 10 a 30 horas
-            con micro-mostacillas checas calibradas y herrajes hipoalergénicos.
-          </p>
-
-          {/* 2. Tríada de Confianza / Neuromarketing: Reduce fricción y aumenta deseo de regalo */}
-          <div className="pt-5 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto text-left sm:text-center">
-            <div className="flex items-center sm:flex-col justify-start sm:justify-center gap-2.5 p-3 rounded-2xl bg-white/80 dark:bg-zinc-900/60 border border-brand/15 shadow-sm">
-              <Gift className="w-4 h-4 text-brand shrink-0" />
-              <div className="text-xs">
-                <strong className="block font-medium text-[#1C1917] dark:text-neutral-200">Empaque de Regalo</strong>
-                <span className="text-[11px] text-neutral-500">Listo para fechas especiales</span>
-              </div>
-            </div>
-
-            <div className="flex items-center sm:flex-col justify-start sm:justify-center gap-2.5 p-3 rounded-2xl bg-white/80 dark:bg-zinc-900/60 border border-brand/15 shadow-sm">
-              <Gem className="w-4 h-4 text-brand shrink-0" />
-              <div className="text-xs">
-                <strong className="block font-medium text-[#1C1917] dark:text-neutral-200">Cuentas Calibradas</strong>
-                <span className="text-[11px] text-neutral-500">Brillo y textura inalterable</span>
-              </div>
-            </div>
-
-            <div className="flex items-center sm:flex-col justify-start sm:justify-center gap-2.5 p-3 rounded-2xl bg-white/80 dark:bg-zinc-900/60 border border-brand/15 shadow-sm">
-              <HeartHandshake className="w-4 h-4 text-brand shrink-0" />
-              <div className="text-xs">
-                <strong className="block font-medium text-[#1C1917] dark:text-neutral-200">Atención Personal</strong>
-                <span className="text-[11px] text-neutral-500">Shirley coordina tu pedido</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -183,17 +143,43 @@ export default async function ShopPage({ searchParams }: Props) {
         </div>
       )}
 
-      {/* Grilla Impecable y Uniforme de Catálogo (Misma medida en todas las joyas) */}
+      {/* Grilla Irregular Masonry Estilo Krafti con Tile Oscura Footer (#3B032F) */}
       {docs.length > 0 && (
         <div className="w-full border-t border-l border-border/40">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
             {docs.map((product, index) => (
               <KraftiProductTile
                 key={product.id}
                 product={product}
                 index={index}
+                layoutMode="masonry"
               />
             ))}
+
+            {/* Tarjeta Editorial de Taller Shirley para completar armónicamente la grilla de 3 columnas */}
+            {docs.length === 8 && (
+              <div className="group relative flex flex-col justify-between overflow-hidden border-r border-b border-border/40 p-8 sm:p-10 bg-[#FAF8F5] text-center col-span-1 row-span-1 min-h-[380px] h-full justify-center items-center">
+                <div className="flex flex-col items-center justify-center my-auto space-y-3.5">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-sans font-semibold tracking-[0.25em] uppercase text-[#8B5A2B]">
+                    ✦ Taller Shirley · Cartagena
+                  </span>
+                  <h3 className="font-serif text-xl sm:text-2xl text-[#1C1917] font-normal tracking-tight leading-snug">
+                    ¿Buscas una Joya Personalizada?
+                  </h3>
+                  <p className="text-xs text-neutral-600 font-light leading-relaxed max-w-[240px] mx-auto">
+                    Tejemos diseños exclusivos con los colores, formas y medidas que elijas.
+                  </p>
+                  <div className="pt-2">
+                    <a
+                      href="/#contacto"
+                      className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold bg-brand text-white hover:bg-brand-dark transition-all duration-300 shadow-sm"
+                    >
+                      Hablar con Shirley
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -205,6 +191,7 @@ export default async function ShopPage({ searchParams }: Props) {
         totalDocs={totalDocs}
         limit={PAGE_SIZE}
         buildPageUrl={buildPageUrl}
+        showAlways={true}
       />
     </div>
   )

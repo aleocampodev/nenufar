@@ -1,18 +1,17 @@
 'use client'
 
 import type { Media } from '@/payload-types'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import React, { useRef } from 'react'
 import Link from 'next/link'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-
-import { Media as PayloadMedia } from '@/components/Media'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 
 export type Slide = {
   modelImage?: number | Media | null
-  image: number | Media
+  image?: number | Media
   imagePosition?: 'top' | 'center' | 'bottom' | null
   badge?: string | null
-  heading: string
+  heading?: string
   metaText?: string | null
   subheading?: string | null
   tabTitle?: string | null
@@ -20,354 +19,431 @@ export type Slide = {
   linkUrl?: string | null
 }
 
-const getImagePositionClass = (pos?: string | null) => {
-  if (pos === 'center') return 'object-center'
-  if (pos === 'bottom') return 'object-bottom'
-  return 'object-top'
-}
-
-const DEFAULT_LEFT_IMAGES = [
-  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Embera.jpeg',
-  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/feria-y-talleres.jpg',
-  'https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/shirley-creadora.jpeg',
-]
-
 export const SliderHeroClient: React.FC<{
-  slides: Slide[]
+  modelImage?: number | Media | null
+  badge?: string | null
+  heading?: string | null
+  headingHighlight?: string | null
+  linkLabel?: string | null
+  linkUrl?: string | null
+  socialLinks?: {
+    instagramUrl?: string | null
+    whatsappUrl?: string | null
+    telegramUrl?: string | null
+    facebookUrl?: string | null
+  } | null
+  slides?: Slide[]
   fallbackRichText?: any
   fallbackLinks?: any
   authorMedia?: number | Media | null
-}> = ({ slides, authorMedia }) => {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [incomingIndex, setIncomingIndex] = useState<number | null>(null)
-  const [direction, setDirection] = useState<'next' | 'prev'>('next')
-  const [animationPhase, setAnimationPhase] = useState<'idle' | 'active'>('idle')
-  const [isPaused, setIsPaused] = useState(false)
+}> = ({
+  modelImage,
+  badge,
+  heading,
+  headingHighlight,
+  linkLabel,
+  linkUrl,
+  socialLinks,
+  slides,
+}) => {
+  const containerRef = useRef<HTMLElement>(null)
+  const badgeRef = useRef<HTMLDivElement>(null)
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  const actionsRef = useRef<HTMLDivElement>(null)
+  const modelRef = useRef<HTMLDivElement>(null)
+  const imgRef = useRef<HTMLImageElement>(null)
 
-  const isAnimating = incomingIndex !== null
-  const lastWheelTime = useRef(0)
-  const touchStartY = useRef(0)
-  const animTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const imageSrc =
+    typeof modelImage === 'object' && modelImage && 'url' in modelImage && modelImage.url
+      ? (modelImage.url as string)
+      : '/shirley-hdr-sin-fondo.svg'
 
-  const goToSlide = useCallback(
-    (targetIndex: number, dir: 'next' | 'prev') => {
-      if (incomingIndex !== null) return
-      const nextIdx = (targetIndex + slides.length) % slides.length
-      if (nextIdx === currentIndex) return
+  const imageAlt =
+    typeof modelImage === 'object' && modelImage && 'alt' in modelImage && modelImage.alt
+      ? (modelImage.alt as string)
+      : 'Shirley luciendo alta joyería artesanal en micro-mostacilla Nénufar'
 
-      setDirection(dir)
-      setIncomingIndex(nextIdx)
-      setAnimationPhase('idle')
+  const badgeText = badge || slides?.[0]?.badge || 'ALTA JOYERÍA ARTESANAL'
+  const mainHeading = heading || 'La nobleza del Caribe no se hereda.'
+  const highlightText =
+    headingHighlight !== undefined && headingHighlight !== null ? headingHighlight : 'Se teje.'
+  const ctaLabel = linkLabel || 'Conoce la colección'
+  const ctaUrl = linkUrl || '/shop'
 
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setAnimationPhase('active')
-        })
+  const instagram = socialLinks?.instagramUrl ?? 'https://www.instagram.com/nenufar.co/'
+  const facebook = socialLinks?.facebookUrl ?? 'https://www.facebook.com/nenufar.co'
+  const whatsapp =
+    socialLinks?.whatsappUrl ??
+    'https://wa.me/?text=Hola%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20N%C3%A9nufar'
+  const telegram = socialLinks?.telegramUrl ?? 'https://t.me/'
+  const hasSocial = Boolean(instagram || facebook || whatsapp || telegram)
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia(containerRef)
+
+      const textElements = [
+        badgeRef.current,
+        headingRef.current,
+        actionsRef.current,
+      ].filter(Boolean)
+
+      // Desktop & Tablet landscape (>= 1024px)
+      mm.add('(min-width: 1024px)', () => {
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+        // 1. Imagen desciende suavemente
+        if (imgRef.current) {
+          tl.fromTo(
+            imgRef.current,
+            { y: -35, opacity: 0.85, scale: 1, x: 0 },
+            { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out' },
+            0.05,
+          )
+
+          // 2. Zoom cinematográfico que mantiene la palenquera completa y el turbante 100% intacto
+          tl.to(
+            imgRef.current,
+            {
+              scale: 1.28,
+              transformOrigin: '51.8% 38%',
+              x: 40,
+              y: -30,
+              duration: 1.8,
+              ease: 'power2.inOut',
+            },
+            '+=0.05',
+          )
+        }
+
+        // 3. Texto entra elegante desde abajo
+        if (textElements.length > 0) {
+          tl.fromTo(
+            textElements,
+            {
+              y: 45,
+              opacity: 0,
+            },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.85,
+              stagger: 0.08,
+              ease: 'power3.out',
+              clearProps: 'transform,opacity',
+            },
+            0.25,
+          )
+        }
       })
 
-      if (animTimeoutRef.current) clearTimeout(animTimeoutRef.current)
-      animTimeoutRef.current = setTimeout(() => {
-        setCurrentIndex(nextIdx)
-        setIncomingIndex(null)
-        setAnimationPhase('idle')
-      }, 950)
-    },
-    [incomingIndex, slides.length, currentIndex],
-  )
+      // Tablet portrait (768px - 1023px)
+      mm.add('(min-width: 768px) and (max-width: 1023px)', () => {
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-  const nextSlide = useCallback(() => {
-    goToSlide(currentIndex + 1, 'next')
-  }, [goToSlide, currentIndex])
-
-  const prevSlide = useCallback(() => {
-    goToSlide(currentIndex - 1, 'prev')
-  }, [goToSlide, currentIndex])
-
-  const handleWheel = useCallback(
-    (e: React.WheelEvent) => {
-      const now = Date.now()
-      if (now - lastWheelTime.current < 950 || isAnimating) return
-      if (Math.abs(e.deltaY) > 20) {
-        lastWheelTime.current = now
-        if (e.deltaY > 0) {
-          nextSlide()
-        } else {
-          prevSlide()
+        if (textElements.length > 0) {
+          tl.fromTo(
+            textElements,
+            {
+              y: 35,
+              opacity: 0,
+            },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.75,
+              stagger: 0.07,
+              ease: 'power3.out',
+              clearProps: 'transform,opacity',
+            },
+            0.1,
+          )
         }
-      }
+
+        if (imgRef.current) {
+          tl.fromTo(
+            imgRef.current,
+            { y: -20, opacity: 0.85, scale: 1 },
+            { y: 0, opacity: 1, duration: 0.75, ease: 'power2.out' },
+            0.05,
+          )
+
+          tl.to(
+            imgRef.current,
+            {
+              scale: 1.35,
+              transformOrigin: '51.8% 25%',
+              y: -50,
+              duration: 1.5,
+              ease: 'power2.inOut',
+            },
+            '+=0.05',
+          )
+        }
+      })
+
+      // Mobile (< 768px) - Impeccable Motion Design
+      mm.add('(max-width: 767px)', () => {
+        // Respeto riguroso a preferencias de accesibilidad (prefers-reduced-motion)
+        const prefersReducedMotion =
+          typeof window !== 'undefined' &&
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+        if (prefersReducedMotion) {
+          if (imgRef.current) {
+            gsap.set(imgRef.current, {
+              opacity: 1,
+              scale: 0.95,
+              y: 0,
+              transformOrigin: '51.8% 28%',
+            })
+          }
+          if (textElements.length > 0) {
+            gsap.set(textElements, { opacity: 1, y: 0 })
+          }
+          return
+        }
+
+        const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
+
+        // 1. Fotografía de autor: Llega sutilmente desde abajo (from below)
+        //    Escala más contenida (0.95) y natural para que no se sienta invasiva ni grande
+        if (imgRef.current) {
+          const targetY = 0
+          const breathTargetY = -5
+          const startY = 36 // Entrada suave y sutil desde abajo
+
+          gsap.set(imgRef.current, {
+            scale: 0.95,
+            transformOrigin: '51.8% 25%',
+            willChange: 'transform, opacity',
+          })
+
+          tl.fromTo(
+            imgRef.current,
+            {
+              y: startY,
+              opacity: 0,
+            },
+            {
+              y: targetY,
+              opacity: 1,
+              duration: 1.2,
+              ease: 'power2.out',
+              onComplete: () => {
+                // Sutil respiro ambiental (ambient breath): suave y sereno
+                gsap.to(imgRef.current, {
+                  y: breathTargetY,
+                  duration: 3.6,
+                  ease: 'sine.inOut',
+                  yoyo: true,
+                  repeat: -1,
+                })
+              },
+            },
+            0.05,
+          )
+        }
+
+        // 2. Coreografía tipográfica: Llega sutilmente desde arriba (from above)
+        //    Badge -> Titular H1 -> CTA y Redes descendiendo suavemente
+        if (badgeRef.current) {
+          tl.fromTo(
+            badgeRef.current,
+            { y: -18, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.65, ease: 'power2.out' },
+            0.12,
+          )
+        }
+
+        if (headingRef.current) {
+          tl.fromTo(
+            headingRef.current,
+            { y: -26, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.85,
+              ease: 'power2.out',
+              clearProps: 'transform,opacity',
+            },
+            0.24,
+          )
+        }
+
+        if (actionsRef.current) {
+          tl.fromTo(
+            actionsRef.current,
+            { y: -20, opacity: 0, scale: 0.98 },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 0.75,
+              ease: 'power2.out',
+              clearProps: 'transform,opacity',
+            },
+            0.38,
+          )
+        }
+      })
+
+      return () => mm.revert()
     },
-    [nextSlide, prevSlide, isAnimating],
+    { scope: containerRef },
   )
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartY.current = e.touches[0].clientY
-  }
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (isAnimating) return
-    const diff = touchStartY.current - e.changedTouches[0].clientY
-    if (Math.abs(diff) > 40) {
-      if (diff > 0) {
-        nextSlide()
-      } else {
-        prevSlide()
-      }
-    }
-  }
-
-  useEffect(() => {
-    if (isPaused || isAnimating) return
-    const id = setInterval(() => {
-      nextSlide()
-    }, 6000)
-    return () => clearInterval(id)
-  }, [isPaused, isAnimating, nextSlide])
-
-  useEffect(() => {
-    return () => {
-      if (animTimeoutRef.current) clearTimeout(animTimeoutRef.current)
-    }
-  }, [])
-
-  if (!slides?.length) return null
-
-  const authorMediaObj =
-    authorMedia && typeof authorMedia === 'object' ? (authorMedia as Media) : null
-
-  const getLeftSlideClass = (i: number) => {
-    if (incomingIndex === null) {
-      if (i === currentIndex) return 'translate-y-0 opacity-100 z-10'
-      return 'opacity-0 pointer-events-none -translate-y-full z-0'
-    }
-
-    if (i === currentIndex) {
-      if (animationPhase === 'idle') return 'translate-y-0 z-10'
-      return direction === 'next'
-        ? 'translate-y-full z-10 transition-transform duration-[950ms] ease-[cubic-bezier(0.25,1,0.5,1)]'
-        : '-translate-y-full z-10 transition-transform duration-[950ms] ease-[cubic-bezier(0.25,1,0.5,1)]'
-    }
-
-    if (i === incomingIndex) {
-      if (animationPhase === 'idle') {
-        return direction === 'next' ? '-translate-y-full z-20' : 'translate-y-full z-20'
-      }
-      return 'translate-y-0 z-20 transition-transform duration-[950ms] ease-[cubic-bezier(0.25,1,0.5,1)]'
-    }
-
-    return 'opacity-0 pointer-events-none z-0'
-  }
-
-  const getRightSlideClass = (i: number) => {
-    if (incomingIndex === null) {
-      if (i === currentIndex) return 'translate-y-0 opacity-100 z-10'
-      return 'opacity-0 pointer-events-none translate-y-full z-0'
-    }
-
-    if (i === currentIndex) {
-      if (animationPhase === 'idle') return 'translate-y-0 z-10'
-      return direction === 'next'
-        ? '-translate-y-full z-10 transition-transform duration-[950ms] ease-[cubic-bezier(0.25,1,0.5,1)]'
-        : 'translate-y-full z-10 transition-transform duration-[950ms] ease-[cubic-bezier(0.25,1,0.5,1)]'
-    }
-
-    if (i === incomingIndex) {
-      if (animationPhase === 'idle') {
-        return direction === 'next' ? 'translate-y-full z-20' : '-translate-y-full z-20'
-      }
-      return 'translate-y-0 z-20 transition-transform duration-[950ms] ease-[cubic-bezier(0.25,1,0.5,1)]'
-    }
-
-    return 'opacity-0 pointer-events-none z-0'
-  }
 
   return (
     <section
-      className="relative w-full min-h-screen lg:h-screen -mt-[74px] sm:-mt-[78px] flex flex-col lg:flex-row overflow-hidden bg-[#12100E] select-none"
-      onWheel={handleWheel}
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onFocus={() => setIsPaused(true)}
-      onBlur={() => setIsPaused(false)}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      aria-roledescription="carousel"
-      aria-label="Colecciones destacadas"
+      ref={containerRef}
+      className="relative w-full min-h-screen min-h-[100dvh] -mt-[74px] sm:-mt-[78px] pt-[78px] sm:pt-[88px] lg:pt-[105px] pb-0 bg-[#DBC4AC] border-b border-[#C8AF95]/60 flex flex-col justify-between overflow-hidden select-none transition-colors duration-500"
     >
-      <div className="w-full lg:w-1/2 h-[52vh] sm:h-[58vh] lg:h-full lg:min-h-screen relative overflow-hidden bg-neutral-900 group shrink-0">
-        {slides.map((slide, i) => {
-          const modelMedia =
-            slide.modelImage && typeof slide.modelImage === 'object'
-              ? (slide.modelImage as Media)
-              : null
-          const leftImgSrc = DEFAULT_LEFT_IMAGES[i % DEFAULT_LEFT_IMAGES.length]
+      <div className="relative z-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full pt-[clamp(3.5rem,calc(52vh-309px),14rem)] sm:pt-6 md:pt-8 lg:pt-8 pb-4 sm:pb-8 lg:my-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start lg:items-center">
+          
+          {/* ========================================================= */}
+          {/* COLUMNA IZQUIERDA: Titular, Badge, CTA & Redes            */}
+          {/* ========================================================= */}
+          <div className="lg:col-span-7 flex flex-col items-start text-left max-w-2xl py-0">
+            {/* Badge superior */}
+            {badgeText && (
+              <div
+                ref={badgeRef}
+                className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-[#F4ECE3] border border-[#C8AF95] shadow-xs mb-3 sm:mb-4 lg:mb-5 backdrop-blur-xs"
+              >
+                <span className="w-2 h-2 rounded-full bg-[#E91E8C] animate-pulse shrink-0" />
+                <span className="text-[10px] sm:text-[11px] font-sans font-semibold uppercase tracking-[0.25em] text-[#E91E8C]">
+                  {badgeText}
+                </span>
+              </div>
+            )}
 
-          const leftPositionClass = getImagePositionClass(slide.imagePosition || 'top')
-
-          return (
-            <div
-              key={i}
-              className={`absolute inset-0 will-change-transform ${getLeftSlideClass(i)}`}
+            {/* Titular H1 */}
+            <h1
+              ref={headingRef}
+              className="font-serif text-[1.85rem] leading-[1.12] sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[4.1rem] text-[#1A0E2E] dark:text-white font-normal tracking-tight mb-5 sm:mb-7 lg:mb-9"
             >
-              {modelMedia ? (
-                <PayloadMedia
-                  resource={modelMedia}
-                  sizeName="hero"
-                  fill
-                  priority={i === 0}
-                  imgClassName={`object-cover ${leftPositionClass} w-full h-full`}
-                />
-              ) : authorMediaObj && i === 0 ? (
-                <PayloadMedia
-                  resource={authorMediaObj}
-                  sizeName="hero"
-                  fill
-                  priority
-                  imgClassName={`object-cover ${leftPositionClass} w-full h-full`}
-                />
-              ) : (
-                <img
-                  src={leftImgSrc}
-                  alt=""
-                  role="presentation"
-                  className={`w-full h-full object-cover ${leftPositionClass}`}
-                />
+              {mainHeading}{' '}
+              {highlightText && (
+                <span className="italic font-light text-brand">
+                  {highlightText}
+                </span>
+              )}
+            </h1>
+
+            {/* CTA Principal hacia el Catálogo & Redes Sociales */}
+            <div ref={actionsRef} className="flex items-center gap-2 sm:gap-3 lg:gap-5">
+              {ctaLabel && ctaUrl && (
+                <Link
+                  href={ctaUrl}
+                  className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-7 py-2.5 sm:py-3.5 rounded-full bg-brand hover:bg-brand-dark active:scale-95 text-white font-sans text-[11px] sm:text-sm font-bold uppercase tracking-wider shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group shrink-0"
+                >
+                  <span>{ctaLabel}</span>
+                  <span className="text-sm sm:text-base transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </Link>
+              )}
+
+              {/* Redes Sociales */}
+              {hasSocial && (
+                <div
+                  className="inline-flex items-center gap-2 sm:gap-2.5 text-neutral-700 bg-[#F4ECE3] backdrop-blur-md px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full border border-[#C8AF95] shadow-xs shrink-0"
+                  role="navigation"
+                  aria-label="Redes sociales de Nénufar"
+                >
+                  {instagram && (
+                    <a
+                      href={instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram de Nénufar"
+                      className="p-1 text-neutral-600 hover:text-[#E4405F] transition-all duration-200 hover:scale-115 cursor-pointer"
+                    >
+                      <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                      </svg>
+                    </a>
+                  )}
+                  {facebook && (
+                    <a
+                      href={facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Facebook de Nénufar"
+                      className="p-1 text-neutral-600 hover:text-[#1877F2] transition-all duration-200 hover:scale-115 cursor-pointer"
+                    >
+                      <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                      </svg>
+                    </a>
+                  )}
+                  {whatsapp && (
+                    <a
+                      href={whatsapp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="WhatsApp de Nénufar"
+                      className="p-1 text-neutral-600 hover:text-[#25D366] transition-all duration-200 hover:scale-115 cursor-pointer"
+                    >
+                      <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                      </svg>
+                    </a>
+                  )}
+                  {telegram && (
+                    <a
+                      href={telegram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Telegram de Nénufar"
+                      className="p-1 text-neutral-600 hover:text-[#229ED9] transition-all duration-200 hover:scale-115 cursor-pointer"
+                    >
+                      <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-2.02 9.54c-.15.68-.56.84-1.12.52l-3.1-2.28-1.5 1.44c-.17.17-.31.31-.63.31l.22-3.17 5.77-5.21c.25-.22-.05-.35-.39-.12l-7.14 4.5-3.08-.96c-.67-.21-.68-.67.14-.99l12.04-4.64c.56-.2 1.05.14.81 1.06z" />
+                      </svg>
+                    </a>
+                  )}
+                </div>
               )}
             </div>
-          )
-        })}
-        {/* Shading removed per user request: left image remains clean and vibrant */}
-        <div
-          className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-5 sm:gap-6 text-white/90 bg-black/35 backdrop-blur-md px-5 py-2 rounded-full border border-white/15 shadow-md"
-          role="navigation"
-          aria-label="Redes sociales de Shirley"
-        >
-          <a href="https://www.instagram.com/nenufar.co/" target="_blank" rel="noopener noreferrer" className="p-1 hover:text-white transition-all duration-200 hover:scale-125 cursor-pointer">
-            <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-              <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-            </svg>
-          </a>
-          <a href="https://wa.me/?text=Hola%20Shirley%2C%20quisiera%20consultar%20sobre%20tus%20joyas%20artesanales" target="_blank" rel="noopener noreferrer" className="p-1 hover:text-white transition-all duration-200 hover:scale-125 cursor-pointer">
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-current" viewBox="0 0 24 24">
-              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
-            </svg>
-          </a>
-          <a href="https://t.me/" target="_blank" rel="noopener noreferrer" className="p-1 hover:text-white transition-all duration-200 hover:scale-125 cursor-pointer">
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-current" viewBox="0 0 24 24">
-              <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-2.02 9.54c-.15.68-.56.84-1.12.52l-3.1-2.28-1.5 1.44c-.17.17-.31.31-.63.31l.22-3.17 5.77-5.21c.25-.22-.05-.35-.39-.12l-7.14 4.5-3.08-.96c-.67-.21-.68-.67.14-.99l12.04-4.64c.56-.2 1.05.14.81 1.06z" />
-            </svg>
-          </a>
+          </div>
+
+          {/* ========================================================= */}
+          {/* ESPACIO RESERVADO COLUMNA DERECHA (Desktop Grid >= 1024px)*/}
+          {/* ========================================================= */}
+          <div className="hidden lg:block lg:col-span-5 h-1 pointer-events-none" />
+
         </div>
       </div>
+
       {/* ========================================================= */}
-      {/* PANEL DERECHO: 50% A PANTALLA COMPLETA                     */}
-      {/* Opción A: Terracota Caribeña / Atardecer en Cartagena      */}
+      {/* FOTOGRAFÍA EN PRIMER PLANO (Sin recortes en las manos)    */}
       {/* ========================================================= */}
-      <div className="w-full lg:w-1/2 min-h-[50vh] sm:min-h-[55vh] lg:min-h-screen relative overflow-hidden flex-1 bg-[linear-gradient(135deg,#C2A690_0%,#B87355_48%,#682358_100%)]">
-        {slides.map((slide, i) => {
-          const media = slide.image as Media
-          const isFirst = i === 0
-          const isActive = i === (incomingIndex ?? currentIndex)
-          const positionClass = getImagePositionClass(slide.imagePosition)
-          const categoryTitle = slide.tabTitle || slide.badge || 'COLECCIÓN'
-
-          return (
-            <div
-              key={i}
-              className={`absolute inset-0 w-full h-full flex flex-col justify-between pt-6 sm:pt-10 lg:pt-24 pb-14 sm:pb-16 lg:pb-20 px-4 sm:px-8 lg:px-12 will-change-transform ${getRightSlideClass(
-                i,
-              )}`}
-            >
-              <div className="flex-1 flex flex-col items-center justify-center text-center max-w-lg mx-auto w-full">
-                {/* Título sutil de categoría con revelado elegante */}
-                <div className="overflow-hidden mb-2 sm:mb-3 lg:mb-4">
-                  <span
-                    className={`inline-block text-[10px] sm:text-xs tracking-[0.32em] uppercase text-white/80 font-medium font-sans drop-shadow-sm ${
-                      isActive ? 'animate-prismara-subtle-reveal' : 'opacity-0'
-                    }`}
-                  >
-                    {categoryTitle}
-                  </span>
-                </div>
-
-                {/* Marco en Arco Romano (Arched Frame con borde fino blanco) */}
-                <div
-                  className={`relative w-[160px] sm:w-[200px] md:w-[250px] lg:w-[310px] xl:w-[330px] aspect-[3/4] p-1.5 sm:p-2.5 border border-white/40 rounded-t-[90px] sm:rounded-t-[120px] md:rounded-t-[150px] lg:rounded-t-[185px] rounded-b-none shadow-2xl overflow-hidden mb-3 sm:mb-5 lg:mb-7 transition-all duration-700 ${
-                    isActive ? 'opacity-100 scale-100' : 'opacity-40 scale-95'
-                  }`}
-                >
-                  <div className="w-full h-full rounded-t-[84px] sm:rounded-t-[112px] md:rounded-t-[142px] lg:rounded-t-[176px] rounded-b-none overflow-hidden relative bg-black/10">
-                    {media && typeof media === 'object' ? (
-                      <div
-                        className={`relative w-full h-full ${
-                          isActive ? 'animate-prismara-ken-burns' : 'scale-100'
-                        }`}
-                      >
-                        <PayloadMedia
-                          resource={media}
-                          sizeName="hero"
-                          fill
-                          priority={isFirst}
-                          imgClassName={`object-cover ${positionClass} transition-transform duration-1000 ease-out`}
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-full h-full bg-neutral-800/40" />
-                    )}
-                  </div>
-                </div>
-
-                {/* Texto descriptivo (blanco cálido, tipografía ligera y elegante) */}
-                <div className="overflow-hidden mb-3 sm:mb-5 lg:mb-7 max-w-xs sm:max-w-md mx-auto px-2">
-                  <p className="text-white/95 text-xs sm:text-sm md:text-[15px] font-light tracking-wide leading-relaxed drop-shadow-sm line-clamp-3 sm:line-clamp-none">
-                    {slide.subheading ||
-                      slide.heading ||
-                      'Piezas únicas tejidas a mano en Cartagena, con la dedicación y maestría de Shirley.'}
-                  </p>
-                </div>
-
-                {/* Botón ovalado estilo píldora con borde fino */}
-                <div>
-                  <Link
-                    href={slide.linkUrl || '/shop'}
-                    onClick={(e) => {
-                      if (slide.linkUrl?.includes('#')) {
-                        const hash = slide.linkUrl.substring(slide.linkUrl.indexOf('#'))
-                        const el = document.querySelector(hash)
-                        if (el) {
-                          e.preventDefault()
-                          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                          window.history.pushState(null, '', hash)
-                        }
-                      }
-                    }}
-                    className="inline-flex items-center justify-center px-6 sm:px-9 py-2.5 sm:py-3.5 rounded-full border border-white/60 hover:border-white text-white hover:bg-white hover:text-[#2A2421] text-[10px] sm:text-xs tracking-[0.22em] uppercase font-medium transition-all duration-300 shadow-sm hover:shadow-lg active:scale-95 cursor-pointer"
-                  >
-                    {slide.linkLabel || 'EXPLORAR CATÁLOGO'}
-                  </Link>
-                </div>
-              </div>
-            </div>
-          )
-        })}
-        <div className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-6 text-white/80">
-          <button
-            onClick={prevSlide}
-            aria-label="Diapositiva anterior"
-            className="p-2 hover:text-white transition-transform hover:-translate-y-1 active:translate-y-0 cursor-pointer"
-          >
-            <ChevronUp className="w-5 h-5 stroke-[1.5]" />
-          </button>
-          <button
-            onClick={nextSlide}
-            aria-label="Diapositiva siguiente"
-            className="p-2 hover:text-white transition-transform hover:translate-y-1 active:translate-y-0 cursor-pointer"
-          >
-            <ChevronDown className="w-5 h-5 stroke-[1.5]" />
-          </button>
-        </div>
+      <div
+        ref={modelRef}
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-8 xl:right-16 lg:bottom-10 xl:bottom-12 h-[47vh] sm:h-[55vh] md:h-[62vh] lg:h-[78vh] xl:h-[84vh] w-full lg:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-visible"
+      >
+        <img
+          ref={imgRef}
+          src={imageSrc}
+          alt={imageAlt}
+          className="w-auto max-w-none h-full max-h-[86vh] object-contain object-bottom select-none drop-shadow-none will-change-transform subpixel-antialiased"
+          style={{
+            imageRendering: 'auto',
+            WebkitBackfaceVisibility: 'hidden',
+            backfaceVisibility: 'hidden',
+            WebkitTransform: 'translateZ(0)',
+            transform: 'translateZ(0)',
+            shapeRendering: 'geometricPrecision',
+          }}
+          loading="eager"
+        />
       </div>
     </section>
   )
 }
+
+
+
+

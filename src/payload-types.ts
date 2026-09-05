@@ -483,13 +483,43 @@ export interface Page {
   title: string;
   publishedOn?: string | null;
   /**
-   * Aquí va el Carrusel de arriba de la landing. Déjalo en "Carrusel" y agrega las 3 fotos abajo.
+   * Configuración del Hero de la página (Foto de Shirley / modelo, titular, botón CTA y redes sociales).
    */
   hero: {
     /**
-     * Elige "Carrusel de 3 fotos" para la Inicio. Las otras opciones son solo texto y no las necesitas ahora.
+     * Elige "Hero Principal Nénufar" para la página de Inicio.
      */
     type: 'slider' | 'lowImpact' | 'mediumImpact' | 'highImpact' | 'none';
+    /**
+     * Foto en primer plano con fondo transparente (SVG o PNG). Si la dejas vacía, se usará por defecto la foto oficial procesada en alta definición (/shirley-hdr-sin-fondo.svg).
+     */
+    modelImage?: (number | null) | Media;
+    /**
+     * Texto pequeño con punto indicador que aparece sobre el titular.
+     */
+    badge?: string | null;
+    /**
+     * Frase principal del encabezado (sin la parte resaltada en cursiva violeta).
+     */
+    heading?: string | null;
+    /**
+     * Frase o palabra destacada al final del titular con estilo en cursiva y color violeta.
+     */
+    headingHighlight?: string | null;
+    linkLabel?: string | null;
+    /**
+     * Ej: /shop, /eventos
+     */
+    linkUrl?: string | null;
+    /**
+     * Canales oficiales mostrados junto al botón principal.
+     */
+    socialLinks?: {
+      instagramUrl?: string | null;
+      facebookUrl?: string | null;
+      whatsappUrl?: string | null;
+      telegramUrl?: string | null;
+    };
     richText?: {
       root: {
         type: string;
@@ -526,7 +556,7 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
     /**
-     * Agrega 3 fotos. Cada foto lleva su título y su botón. Si aún no tienes fotos, deja el degradado gris.
+     * Campo legado preservado para compatibilidad con datos existentes.
      */
     slides?:
       | {
@@ -559,41 +589,6 @@ export interface Page {
   layout: (
     | NenufarStoryBlock
     | ImageStripBlock
-    | {
-        /**
-         * Texto pequeño en mayúsculas sobre el título (ej: Tradición y Delicadeza)
-         */
-        tagline?: string | null;
-        heading?: string | null;
-        /**
-         * Imagen del centro destacada. Si se deja vacía se muestra imagen ilustrativa por defecto.
-         */
-        centerImage?: (number | null) | Media;
-        items?:
-          | {
-              icon?:
-                | (
-                    | 'handmade'
-                    | 'ancestral'
-                    | 'colors'
-                    | 'unique'
-                    | 'design'
-                    | 'quality'
-                    | 'gift'
-                    | 'shipping'
-                    | 'support'
-                    | 'sparkles'
-                  )
-                | null;
-              title: string;
-              description: string;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'features';
-      }
     | GalleryBlock
     | {
         tagline?: string | null;
@@ -1710,6 +1705,20 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         type?: T;
+        modelImage?: T;
+        badge?: T;
+        heading?: T;
+        headingHighlight?: T;
+        linkLabel?: T;
+        linkUrl?: T;
+        socialLinks?:
+          | T
+          | {
+              instagramUrl?: T;
+              facebookUrl?: T;
+              whatsappUrl?: T;
+              telegramUrl?: T;
+            };
         richText?: T;
         links?:
           | T
@@ -1748,23 +1757,6 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         nenufarStory?: T | NenufarStoryBlockSelect<T>;
         imageStrip?: T | ImageStripBlockSelect<T>;
-        features?:
-          | T
-          | {
-              tagline?: T;
-              heading?: T;
-              centerImage?: T;
-              items?:
-                | T
-                | {
-                    icon?: T;
-                    title?: T;
-                    description?: T;
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
         gallery?: T | GalleryBlockSelect<T>;
         testimonials?:
           | T

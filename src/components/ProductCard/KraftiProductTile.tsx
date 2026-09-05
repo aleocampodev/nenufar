@@ -13,18 +13,80 @@ type Props = {
   product: Partial<Product>
   index: number
   isHero?: boolean
+  layoutMode?: 'masonry' | 'uniform'
 }
 
-// Dos únicos colores de fondo estrictamente intercalados en damero 2D uniforme (4 columnas)
-const BG_CREMA_LINO = 'bg-[#FAF8F5] dark:bg-zinc-900/60'
-const BG_BLANCO = 'bg-[#FFFFFF] dark:bg-zinc-900/20'
-
-const getKraftiBg = (index: number): string => {
-  const row = Math.floor(index / 4)
-  const col = index % 4
-  const isLino = (row + col) % 2 === 0
-  return isLino ? BG_CREMA_LINO : BG_BLANCO
+export type KraftiTileConfig = {
+  colSpan: string
+  rowSpan: string
+  bgClass: string
+  isDark: boolean
+  isLarge?: boolean
+  isWide?: boolean
 }
+
+// Patrón irregular de Masonry idéntico a Krafti (3 columnas)
+// con tile oscura usando exactamente el color del footer (#3B032F)
+export const KRAFTI_MASONRY_PATTERN: KraftiTileConfig[] = [
+  // 0: Gran pieza protagonista 2 columnas x 2 filas
+  {
+    colSpan: 'col-span-1 md:col-span-2',
+    rowSpan: 'row-span-1 md:row-span-2',
+    bgClass: 'bg-[#F4EFEA] dark:bg-zinc-900/80',
+    isDark: false,
+    isLarge: true,
+  },
+  // 1: Cuadrado 1x1
+  {
+    colSpan: 'col-span-1 md:col-span-1',
+    rowSpan: 'row-span-1 md:row-span-1',
+    bgClass: 'bg-[#FAF0E6] dark:bg-zinc-900/40',
+    isDark: false,
+  },
+  // 2: Cuadrado 1x1
+  {
+    colSpan: 'col-span-1 md:col-span-1',
+    rowSpan: 'row-span-1 md:row-span-1',
+    bgClass: 'bg-[#FFFFFF] dark:bg-zinc-900/20',
+    isDark: false,
+  },
+  // 3: Cuadrado 1x1
+  {
+    colSpan: 'col-span-1 md:col-span-1',
+    rowSpan: 'row-span-1 md:row-span-1',
+    bgClass: 'bg-[#F8F5EE] dark:bg-zinc-900/50',
+    isDark: false,
+  },
+  // 4: TILE OSCURA CON EL COLOR EXACTO DEL FOOTER (#3B032F)
+  {
+    colSpan: 'col-span-1 md:col-span-1',
+    rowSpan: 'row-span-1 md:row-span-1',
+    bgClass: 'bg-[#3B032F]',
+    isDark: true,
+  },
+  // 5: Cuadrado 1x1
+  {
+    colSpan: 'col-span-1 md:col-span-1',
+    rowSpan: 'row-span-1 md:row-span-1',
+    bgClass: 'bg-[#FFFFFF] dark:bg-zinc-900/20',
+    isDark: false,
+  },
+  // 6: Cuadrado 1x1
+  {
+    colSpan: 'col-span-1 md:col-span-1',
+    rowSpan: 'row-span-1 md:row-span-1',
+    bgClass: 'bg-[#FAF0E6] dark:bg-zinc-900/60',
+    isDark: false,
+  },
+  // 7: Cuadrado 1x1 armónico para joyería
+  {
+    colSpan: 'col-span-1 md:col-span-1',
+    rowSpan: 'row-span-1 md:row-span-1',
+    bgClass: 'bg-[#EDE6DC] dark:bg-zinc-900/30',
+    isDark: false,
+    isWide: false,
+  },
+]
 
 const extractShortDescription = (desc: any, max = 80): string => {
   if (!desc) return ''
@@ -51,7 +113,18 @@ const extractShortDescription = (desc: any, max = 80): string => {
   return ''
 }
 
-export const KraftiProductTile: React.FC<Props> = ({ product, index }) => {
+// Dos únicos colores de fondo para modo uniforme
+const BG_CREMA_LINO = 'bg-[#FAF8F5] dark:bg-zinc-900/60'
+const BG_BLANCO = 'bg-[#FFFFFF] dark:bg-zinc-900/20'
+
+const getKraftiBg = (index: number): string => {
+  const row = Math.floor(index / 4)
+  const col = index % 4
+  const isLino = (row + col) % 2 === 0
+  return isLino ? BG_CREMA_LINO : BG_BLANCO
+}
+
+export const KraftiProductTile: React.FC<Props> = ({ product, index, layoutMode = 'masonry' }) => {
   const { addItem, isLoading } = useCart()
   const [isPending, startTransition] = useTransition()
   const [added, setAdded] = React.useState(false)
@@ -84,8 +157,22 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index }) => {
       : null
 
   const isOutOfStock = typeof inventory === 'number' && inventory <= 0
-  const bgClass = getKraftiBg(index)
-  const shortDescription = extractShortDescription(description)
+
+  // Configuración de layout según el patrón irregular de Krafti o uniforme
+  const isMasonry = layoutMode === 'masonry'
+  const tilePattern = isMasonry
+    ? KRAFTI_MASONRY_PATTERN[index % KRAFTI_MASONRY_PATTERN.length]
+    : {
+        colSpan: 'col-span-1',
+        rowSpan: 'row-span-1',
+        bgClass: getKraftiBg(index),
+        isDark: false,
+        isLarge: false,
+        isWide: false,
+      }
+
+  const { colSpan, rowSpan, bgClass, isDark, isLarge, isWide } = tilePattern
+  const shortDescription = extractShortDescription(description, isLarge ? 140 : 80)
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -115,12 +202,18 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index }) => {
 
   return (
     <div
-      className={`group relative flex flex-col justify-between overflow-hidden border-r border-b border-border/40 transition-all duration-300 ${bgClass} col-span-1 row-span-1`}
+      className={`group relative flex flex-col justify-between overflow-hidden border-r border-b ${
+        isDark ? 'border-[#4D0A3F]/60' : 'border-border/40'
+      } transition-all duration-300 ${bgClass} ${colSpan} ${rowSpan} h-full min-h-[380px]`}
     >
       {/* Badges superiores sutiles (Destacado / Agotado) */}
       <div className="absolute top-3.5 left-3.5 right-3.5 z-20 flex items-center justify-between pointer-events-none">
         {featured ? (
-          <span className="inline-flex items-center gap-1 bg-brand text-white text-[9px] uppercase font-medium tracking-widest px-2.5 py-0.5 rounded-full shadow-sm">
+          <span
+            className={`inline-flex items-center gap-1 text-[9px] uppercase font-semibold tracking-widest px-2.5 py-0.5 rounded-full shadow-sm ${
+              isDark ? 'bg-[#DFC188] text-[#3B032F]' : 'bg-brand text-white'
+            }`}
+          >
             <Sparkles className="w-2.5 h-2.5" />
             Destacado
           </span>
@@ -135,8 +228,16 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index }) => {
         )}
       </div>
 
-      {/* Contenedor de la Imagen: proporción uniforme de alta visibilidad */}
-      <div className="relative w-full h-[280px] sm:h-[320px] flex items-center justify-center p-5 sm:p-6 overflow-hidden">
+      {/* Contenedor de la Imagen: proporción adaptativa según tamaño del tile */}
+      <div
+        className={`relative w-full flex items-center justify-center p-5 sm:p-8 overflow-hidden ${
+          isLarge
+            ? 'flex-1 min-h-[360px] sm:min-h-[440px] md:min-h-[520px]'
+            : isWide
+            ? 'h-[260px] sm:h-[320px]'
+            : 'h-[260px] sm:h-[300px]'
+        }`}
+      >
         <Link
           href={`/products/${productSlug}`}
           className="relative w-full h-full flex items-center justify-center z-10 focus:outline-none"
@@ -144,12 +245,22 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index }) => {
           {image ? (
             <Media
               fill
-              imgClassName="object-contain p-2 transition-transform duration-500 ease-out group-hover:scale-105 drop-shadow-[0_10px_25px_rgba(0,0,0,0.07)]"
+              imgClassName={`object-contain p-2 transition-transform duration-500 ease-out group-hover:scale-105 ${
+                isDark
+                  ? 'drop-shadow-[0_15px_30px_rgba(0,0,0,0.55)]'
+                  : 'drop-shadow-[0_10px_25px_rgba(0,0,0,0.07)]'
+              }`}
               resource={image}
               priority={index < 4}
             />
           ) : (
-            <div className="flex aspect-square w-24 items-center justify-center rounded-full bg-background/40 text-muted-foreground/30 text-3xl font-serif">
+            <div
+              className={`flex aspect-square w-24 items-center justify-center rounded-full text-3xl font-serif ${
+                isDark
+                  ? 'bg-white/10 text-white/40'
+                  : 'bg-background/40 text-muted-foreground/30'
+              }`}
+            >
               ✦
             </div>
           )}
@@ -170,7 +281,11 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index }) => {
               type="button"
               onClick={handleAddToCart}
               disabled={isLoading || isPending}
-              className="px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[11px] uppercase tracking-wider font-medium bg-brand hover:bg-brand-dark text-white shadow-md border border-white/20 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 flex items-center gap-1.5 cursor-pointer pointer-events-auto"
+              className={`px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[11px] uppercase tracking-wider font-medium shadow-md border transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 flex items-center gap-1.5 cursor-pointer pointer-events-auto ${
+                isDark
+                  ? 'bg-white text-[#3B032F] hover:bg-[#DFC188] hover:text-[#3B032F] border-transparent'
+                  : 'bg-brand hover:bg-brand-dark text-white border-white/20'
+              }`}
             >
               {added ? (
                 <>
@@ -191,18 +306,36 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index }) => {
       {/* Información del Producto Centrada al Pie estilo Krafti */}
       <Link
         href={`/products/${productSlug}`}
-        className="pb-6 sm:pb-7 px-4 sm:px-6 text-center flex flex-col items-center justify-center gap-1.5 z-10 focus:outline-none"
+        className={`pb-6 sm:pb-7 px-4 sm:px-6 text-center flex flex-col items-center justify-center gap-1.5 z-10 focus:outline-none`}
       >
-        <span className="text-[10px] font-sans font-semibold tracking-[0.25em] uppercase text-[#8B5A2B] dark:text-[#E2AB80]">
+        <span
+          className={`text-[10px] font-sans font-semibold tracking-[0.25em] uppercase ${
+            isDark ? 'text-[#DFC188]' : 'text-[#8B5A2B] dark:text-[#E2AB80]'
+          }`}
+        >
           {categoryTitle || 'Joyería en Mostacilla'}
         </span>
 
-        <h3 className="font-serif tracking-[0.05em] text-[#1C1917] dark:text-neutral-100 transition-colors duration-300 group-hover:text-brand font-medium text-sm sm:text-base leading-snug line-clamp-1">
+        <h3
+          className={`font-serif tracking-[0.05em] font-normal transition-colors duration-300 leading-snug line-clamp-1 ${
+            isLarge
+              ? 'text-lg sm:text-xl md:text-2xl'
+              : 'text-sm sm:text-base'
+          } ${
+            isDark
+              ? 'text-white group-hover:text-[#DFC188]'
+              : 'text-[#1C1917] dark:text-neutral-100 group-hover:text-brand'
+          }`}
+        >
           {title}
         </h3>
 
         {shortDescription ? (
-          <p className="text-xs font-light text-neutral-600 dark:text-neutral-300 line-clamp-2 max-w-[260px] mx-auto mt-0.5 leading-relaxed min-h-[32px]">
+          <p
+            className={`text-xs font-light line-clamp-2 max-w-[280px] mx-auto mt-0.5 leading-relaxed min-h-[32px] ${
+              isDark ? 'text-purple-100/80' : 'text-neutral-600 dark:text-neutral-300'
+            }`}
+          >
             {shortDescription}
           </p>
         ) : (
@@ -210,7 +343,11 @@ export const KraftiProductTile: React.FC<Props> = ({ product, index }) => {
         )}
 
         {typeof price === 'number' && (
-          <span className="font-serif text-brand dark:text-purple-300 font-semibold tracking-wider text-base sm:text-lg mt-1">
+          <span
+            className={`font-serif font-semibold tracking-wider text-base sm:text-lg mt-1 ${
+              isDark ? 'text-[#DFC188]' : 'text-brand dark:text-purple-300'
+            }`}
+          >
             <Price amount={price} currencyCode="COP" />
           </span>
         )}
