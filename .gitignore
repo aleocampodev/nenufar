@@ -47,4 +47,5 @@ public/media
 # Claude Code worktrees y scratchpad (artefactos de herramientas)
 .claude/worktrees/
 scratchpad/
+animation-plans/
 

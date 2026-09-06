@@ -483,7 +483,7 @@ export interface Page {
   title: string;
   publishedOn?: string | null;
   /**
-   * Configuración del Hero de la página (Foto de Shirley / modelo, titular, botón CTA y redes sociales).
+   * Configuración del Hero de la página (Foto de palenquera / modelo, titular, botón CTA y redes sociales).
    */
   hero: {
     /**
@@ -491,7 +491,7 @@ export interface Page {
      */
     type: 'hero' | 'slider' | 'lowImpact' | 'mediumImpact' | 'highImpact' | 'none';
     /**
-     * Foto en primer plano con fondo transparente (SVG o PNG). Si la dejas vacía, se usará por defecto la foto oficial procesada en alta definición (/shirley-hdr-sin-fondo.svg).
+     * Foto en primer plano con fondo transparente (SVG o PNG). Si la dejas vacía, se usará por defecto la foto oficial procesada en alta definición (/palenquera-hdr-sin-fondo.svg).
      */
     modelImage?: (number | null) | Media;
     /**
@@ -561,7 +561,7 @@ export interface Page {
     slides?:
       | {
           /**
-           * Foto a pantalla completa para el lado izquierdo. Si la dejas vacía, se usará la foto de Shirley por defecto.
+           * Foto a pantalla completa para el lado izquierdo. Si la dejas vacía, se usará la foto de palenquera por defecto.
            */
           modelImage?: (number | null) | Media;
           /**

@@ -32,7 +32,7 @@ export function ScrollReveal({
   duration = 850,
   threshold = 0.08,
   rootMargin = '0px 0px -40px 0px',
-  once = true,
+  once = false,
   distance = 36,
   blur = true,
 }: ScrollRevealProps) {
