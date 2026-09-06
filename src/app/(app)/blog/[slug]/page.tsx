@@ -39,7 +39,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     collection: 'posts',
     depth: 1,
     limit: 1,
-    overrideAccess: false,
+    // Public article only needs the author byline (name), which Users
+    // read-access would otherwise block during prerender.
+    overrideAccess: true,
     where: {
       slug: {
         equals: slug,
@@ -142,7 +144,8 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     collection: 'posts',
     depth: 1,
     limit: 1,
-    overrideAccess: false,
+    // Same public byline rationale as the page query above.
+    overrideAccess: true,
     where: {
       slug: {
         equals: slug,

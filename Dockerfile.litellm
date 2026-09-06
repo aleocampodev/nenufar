@@ -1,0 +1,17 @@
+# LiteLLM gateway for Shirley's Telegram bot (production).
+#
+# Render/VPS deploys this image; the Next.js app reaches it via
+# ANTHROPIC_BASE_URL. Same config as local docker-compose (config.yaml +
+# custom_callbacks.py baked in instead of volume-mounted).
+# The container binary lives at /app/.venv/bin/litellm (full path used
+# because ENTRYPOINT is cleared to allow ${PORT} expansion for hosts
+# like Render that inject their own port).
+FROM ghcr.io/berriai/litellm:main-latest
+
+COPY litellm/config.yaml /app/config.yaml
+COPY litellm/custom_callbacks.py /app/custom_callbacks.py
+
+ENV PYTHONPATH=/app
+
+ENTRYPOINT []
+CMD ["sh", "-c", "/app/.venv/bin/litellm --config /app/config.yaml --port ${PORT:-4000}"]
