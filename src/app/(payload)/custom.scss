@@ -206,8 +206,19 @@ header .avatar {
 .card:hover,
 [class*='card-']:hover {
   border-color: var(--nenufar-brand) !important;
-  background-color: #faf7fc !important;
+  /* Tinte magenta visible (no blanco): claro en light, profundo en dark */
+  background-color: rgba(233, 30, 140, 0.07) !important;
   box-shadow: 0 8px 24px -4px rgba(233, 30, 140, 0.12);
+}
+
+html[data-theme='dark'] .card:hover,
+html[data-theme='dark'] [class*='card-']:hover {
+  background-color: rgba(233, 30, 140, 0.16) !important;
+}
+
+/* El overlay .card__click cubre toda la tarjeta: que no blanquee el hover */
+.card .card__click:hover {
+  background-color: transparent !important;
 }
 
 .card:hover a,
@@ -247,6 +258,19 @@ header .avatar {
   transform: scale(1.05);
 }
 
+/* El icono '+' de Payload fija su stroke en elevation-800 (oscuro):
+   forzarlo a currentColor para que herede el magenta en reposo
+   y el blanco en hover */
+.card__actions .btn svg,
+.card__actions .btn svg path,
+.card a[aria-label*='Create'] svg,
+.card a[aria-label*='Create'] svg path,
+.card a[aria-label*='Crear'] svg,
+.card a[aria-label*='Crear'] svg path {
+  stroke: currentColor !important;
+  fill: none !important;
+}
+
 /* ── Badges de Stock (Verde Suave) ────────────────────────── */
 .badge-stock {
   display: inline-flex;
@@ -258,6 +282,15 @@ header .avatar {
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 9999px;
+}
+
+/* ── Breadcrumb: ocultar icono home (logo) ───────────────────
+   El StepNav de Payload renderiza graphics.Icon como acceso al Panel.
+   Se oculta el icono y la barra que le sigue para que la ruta
+   empiece directamente en la colección (ej: Páginas Web / Inicio). */
+.step-nav__home,
+.step-nav__home + span {
+  display: none !important;
 }
 
 /* ── Utilidad (existente) ──────────────────────────────────── */

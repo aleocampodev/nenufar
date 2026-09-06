@@ -24,7 +24,7 @@ export const SidebarHeader: React.FC = () => {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         alt="Nenúfar Logo"
-        src="/nenufar-logo.png"
+        src="/nenufar-logo.svg"
         style={{
           height: '42px',
           width: 'auto',
@@ -32,17 +32,6 @@ export const SidebarHeader: React.FC = () => {
           objectFit: 'contain',
         }}
       />
-      <span
-        style={{
-          fontFamily: 'Playfair Display, Georgia, serif',
-          fontSize: '1.55rem',
-          fontWeight: 900,
-          color: '#E91E8C',
-          letterSpacing: '-0.02em',
-        }}
-      >
-        Nenúfar
-      </span>
     </a>
   )
 }

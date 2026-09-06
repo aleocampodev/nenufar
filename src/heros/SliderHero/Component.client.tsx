@@ -56,12 +56,12 @@ export const SliderHeroClient: React.FC<{
   const imageSrc =
     typeof modelImage === 'object' && modelImage && 'url' in modelImage && modelImage.url
       ? (modelImage.url as string)
-      : '/shirley-hdr-sin-fondo.svg?v=2'
+      : '/palenquera-hdr-sin-fondo.svg?v=2'
 
   const imageAlt =
     typeof modelImage === 'object' && modelImage && 'alt' in modelImage && modelImage.alt
       ? (modelImage.alt as string)
-      : 'Shirley luciendo joyería artesanal de autor en micro-mostacilla Nénufar'
+      : 'Mujer palenquera luciendo joyería artesanal de autor en micro-mostacilla Nénufar'
 
   const rawBadge = badge || slides?.[0]?.badge || null
   const badgeText =
@@ -91,7 +91,7 @@ export const SliderHeroClient: React.FC<{
       // Respeto estricto a accesibilidad y reducción de movimiento (WCAG 2.3.3)
       if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         if (imgRef.current) {
-          gsap.set(imgRef.current, { opacity: 1, y: 0, scale: 1.28, x: 40, transformOrigin: '51.8% 38%' })
+          gsap.set(imgRef.current, { opacity: 1, y: 0, scale: 1.2, x: 40, transformOrigin: '51.8% 38%' })
         }
         if (textElements.length > 0) {
           gsap.set(textElements, { opacity: 1, y: 0 })
@@ -118,10 +118,10 @@ export const SliderHeroClient: React.FC<{
           tl.to(
             imgRef.current,
             {
-              scale: 1.28,
+              scale: 1.2,
               transformOrigin: '51.8% 38%',
               x: 40,
-              y: -30,
+              y: -15,
               duration: 1.8,
               ease: 'power2.inOut',
             },
@@ -435,13 +435,13 @@ export const SliderHeroClient: React.FC<{
       {/* ========================================================= */}
       <div
         ref={modelRef}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-8 xl:right-16 lg:bottom-10 xl:bottom-12 h-[47vh] sm:h-[55vh] md:h-[62vh] lg:h-[78vh] xl:h-[84vh] w-full lg:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-visible"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-8 xl:right-16 lg:bottom-6 xl:bottom-8 h-[47vh] sm:h-[55vh] md:h-[62vh] lg:h-[68vh] xl:h-[74vh] 2xl:h-[78vh] w-full lg:w-auto flex items-end justify-center pointer-events-none z-10 select-none overflow-visible"
       >
         <img
           ref={imgRef}
           src={imageSrc}
           alt={imageAlt}
-          className="w-auto max-w-none h-full max-h-[86vh] object-contain object-bottom select-none drop-shadow-none will-change-transform subpixel-antialiased"
+          className="w-auto max-w-none h-full max-h-[86vh] lg:max-h-[74vh] xl:max-h-[80vh] object-contain object-bottom select-none drop-shadow-none will-change-transform subpixel-antialiased"
           style={{
             imageRendering: 'auto',
             WebkitBackfaceVisibility: 'hidden',

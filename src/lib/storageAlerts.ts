@@ -99,7 +99,7 @@ export async function getMediaStorageStats(
   }
 
   const status: 'healthy' | 'warning' | 'danger' =
-    percentUsed >= 85 ? 'danger' : percentUsed >= 75 ? 'warning' : 'healthy'
+    percentUsed >= 85 ? 'danger' : percentUsed >= 70 ? 'warning' : 'healthy'
 
   return {
     totalImages,
@@ -124,7 +124,7 @@ export function formatStorageReport(stats: MediaStorageStats): string {
     stats.status === 'danger'
       ? '¡Atención! Estás cerca del límite del plan gratuito de Supabase.'
       : stats.status === 'warning'
-      ? 'Aviso: Estás utilizando más del 75% del almacenamiento.'
+      ? 'Aviso: Estás utilizando más del 70% del almacenamiento.'
       : 'Excelente: Tu almacenamiento está en nivel óptimo y 100% gratuito.'
 
   const heavyList =
@@ -165,8 +165,8 @@ export async function checkAndSendStorageAlert(
   try {
     const stats = await getMediaStorageStats(payload, 5)
 
-    // Solo alertar si está en zona de advertencia / peligro (>= 85%)
-    if (stats.percentUsed < 85) {
+    // Alertar desde el 70% para avisar con margen de maniobra
+    if (stats.percentUsed < 70) {
       return false
     }
 
@@ -184,10 +184,13 @@ export async function checkAndSendStorageAlert(
       return false
     }
 
+    const isDanger = stats.percentUsed >= 85
     const alertMessage = [
-      `🚨 <b>¡ALERTA DE ALMACENAMIENTO NÉNUFAR!</b> 🚨`,
+      isDanger ? `🚨 <b>¡ALERTA DE ALMACENAMIENTO NÉNUFAR!</b> 🚨` : `⚠️ <b>AVISO DE ALMACENAMIENTO NÉNUFAR</b>`,
       `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-      `Shirley, el almacenamiento de fotos ha entrado en <b>ZONA ROJA</b>:`,
+      isDanger
+        ? `Shirley, el almacenamiento de fotos ha entrado en <b>ZONA ROJA</b>:`
+        : `Shirley, el almacenamiento de fotos llegó al <b>${stats.percentUsed}%</b>, conviene ir liberando espacio:`,
       `🔴 Has alcanzado el <b>${stats.percentUsed}%</b> de tu plan gratuito de Supabase Storage.`,
       `📊 Usado: <b>${stats.usedMB} MB de ${stats.limitMB} MB (1 GB)</b>.`,
       `⚠️ Te quedan solo <b>${stats.remainingMB} MB libres</b> (aprox. ~${stats.estimatedImagesRemaining} fotos).`,
