@@ -1,4 +1,5 @@
 import { KraftiProductTile } from '@/components/ProductCard/KraftiProductTile'
+import Link from 'next/link'
 import { NenufarPagination } from '@/components/Pagination/NenufarPagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -136,12 +137,12 @@ export default async function ShopPage({ searchParams }: Props) {
           <p className="text-sm text-muted-foreground mb-6">
             Prueba ajustando los filtros o buscando otra joya en mostacilla.
           </p>
-          <a
+          <Link
             href="/shop"
             className="inline-block px-6 py-2.5 bg-foreground text-background text-xs uppercase tracking-widest font-medium rounded-full hover:bg-brand transition-colors"
           >
             Ver todo el catálogo
-          </a>
+          </Link>
         </div>
       )}
 

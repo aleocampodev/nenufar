@@ -34,7 +34,7 @@ Desde la **v3.3** el mismo bot de Telegram incorpora un **sistema agéntico de g
 | Artículo | Qué establece |
 |----------|---------------|
 | **I — Negocio** | Atelier de Shirley, sinergia físico-digital, modelo *Zero-Stripe Human Closing* (`/shop → /pedidos/enviar → Telegram → WhatsApp`) |
-| **II — $0/mes #253** | Cero SaaS recurrente. Bot vía `Claude Agent SDK → LiteLLM :4000 → Groq free` (`drop_params: true`), fallback Gemini 2.0 Flash. Prohibido usar API paga de Anthropic/OpenAI |
+| **II — $0/mes #253** | Cero SaaS recurrente. Bot vía `Claude Agent SDK → LiteLLM :4000 → Groq free` (`drop_params: true`), fallback Gemini 3.6 Flash. Prohibido usar API paga de Anthropic/OpenAI |
 | **III — Git** | Ban absoluto de push/merge directo a `main`. Trabajo solo en feature branches con worktrees aislados, integración solo vía PR |
 | **IV — Arquitectura** | Monolito embebido (Next.js + Payload en el mismo proceso), Payload Local API first, puerto **3002** (nunca 3000), webhook en `/telegram/webhook` (nunca `/api/...`) |
 | **V — Seguridad** | Ley 1581 (consentimiento explícito), bot solo Shirley (`chat_id === TELEGRAM_ADMIN_CHAT_ID`, rechazo silencioso 200), idempotencia SHA256 5 min |
@@ -355,7 +355,7 @@ Al subir una foto al admin, Payload genera automáticamente variantes WebP (cali
 
 **Claude Agent SDK vía LiteLLM (v3.3)** — el orquestador artesanal sobre Groq fue reemplazado por el loop oficial del SDK. LiteLLM es el gateway: si Groq falla o se quiere probar otro free tier (Gemini Flash, Cerebras), se cambia una línea en `litellm/config.yaml`, cero código. `drop_params: true` es crítico (el SDK envía params Anthropic que Groq no soporta).
 
-**$0/mes #253 intacto** — la app nunca llama a la API paga de Anthropic. Toda inferencia es `SDK → ANTHROPIC_BASE_URL=:4000 → Groq free`. El fallback es Gemini 2.0 Flash vía el mismo LiteLLM.
+**$0/mes #253 intacto** — la app nunca llama a la API paga de Anthropic. Toda inferencia es `SDK → ANTHROPIC_BASE_URL=:4000 → Groq free`. El fallback es Gemini 3.6 Flash vía el mismo LiteLLM.
 
 **El bot es la herramienta de Shirley, no un vendedor** — los agentes ejecutan las acciones de gestión que Shirley pide en lenguaje natural (ver pedidos, confirmar, actualizar stock, destacar, crear borradores). No hay agente que atienda compradoras: la venta y su cierre siempre los maneja Shirley por WhatsApp.
 

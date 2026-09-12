@@ -1,0 +1,42 @@
+{
+  "skill_name": "vercel-react-best-practices",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review this Next.js product page: it fetches product data client-side in useEffect, renders a 2MB carousel library for 3 images, and re-renders the whole grid on every keystroke in the search box.",
+      "expected_output": "Should flag client-side fetching where server components or cached fetches fit, the oversized carousel dependency for bundle size, and the unthrottled grid re-render — each mapped to its rule category by impact.",
+      "assertions": [
+        "Flags useEffect client fetching where a server-side pattern fits",
+        "Flags the 2MB carousel dependency as a bundle-size problem",
+        "Flags full-grid re-render on every keystroke",
+        "Prioritizes findings by impact per the rule categories",
+        "References specific rules rather than generic advice"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Write a new arrivals section for our shop: server-rendered grid, images with sizes, add-to-cart buttons.",
+      "expected_output": "Should write the section applying the guidelines proactively: server component data fetching, optimized images with sizes, and bundle-conscious component choices.",
+      "assertions": [
+        "Uses server-side data fetching instead of client useEffect",
+        "Optimizes images with size hints",
+        "Avoids adding heavy new dependencies for simple UI",
+        "Follows the skill's rule categories by priority"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Our bundle grew 400KB after adding a date library, a chart library and a modal library for one small dashboard. What do we do?",
+      "expected_output": "Should audit the three dependencies for lighter replacements or tree-shaking, flag importing full libraries for single uses, and propose a concrete reduction plan.",
+      "assertions": [
+        "Audits each of the three dependencies individually",
+        "Flags full-library imports used for a single feature",
+        "Proposes lighter replacements or tree-shaken imports",
+        "Quantifies the bundle impact in the plan"
+      ],
+      "files": []
+    }
+  ]
+}

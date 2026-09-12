@@ -1,0 +1,43 @@
+{
+  "skill_name": "design-taste-frontend",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Build a landing page for a B2B invoicing SaaS aimed at finance teams. Tone should be serious and trustworthy.",
+      "expected_output": "Should start with a one-line Design Read (page kind, audience, vibe, aesthetic family), avoid LLM defaults (AI-purple gradients, centered hero over dark mesh, three equal feature cards, Inter + slate-900), and pick an aesthetic that fits serious B2B buyers.",
+      "assertions": [
+        "Outputs a one-line Design Read before any code",
+        "Design Read names page kind, audience, vibe and aesthetic family",
+        "Avoids AI-purple gradients and generic dark-mesh centered hero",
+        "Avoids three equal feature cards as the default layout",
+        "Aesthetic choice fits a serious B2B finance audience"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Redesign our homepage. Not sure yet if we want a full overhaul or just a refresh, and I have no strong opinion on style.",
+      "expected_output": "Should ask exactly one clarifying question about the genuinely divergent decision (e.g. Linear-clean vs Awwwards-experimental, preserve vs overhaul) instead of guessing or dumping multiple questions.",
+      "assertions": [
+        "Asks exactly one clarifying question, not a multi-question dump",
+        "Question targets the genuinely divergent decision (preserve vs overhaul or aesthetic direction)",
+        "Does not guess the design direction silently",
+        "Does not jump to code before resolving the ambiguity"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Audit-first redesign: our agency portfolio homepage converts poorly. It currently uses a generic hero, glassmorphism cards everywhere, and infinite-loop micro-animations.",
+      "expected_output": "Should run an audit-first pass identifying the templated patterns (generic glassmorphism, scattered micro-animations), read existing brand assets as starting material, and propose a direction grounded in the agency's real work.",
+      "assertions": [
+        "Runs audit before proposing the redesign",
+        "Flags generic glassmorphism applied everywhere as a problem",
+        "Flags scattered infinite-loop micro-animations as a problem",
+        "Treats existing brand assets (logo, color, type, photography) as starting material",
+        "Runs the strict pre-flight check before shipping"
+      ],
+      "files": []
+    }
+  ]
+}

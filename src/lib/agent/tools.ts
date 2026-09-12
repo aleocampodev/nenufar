@@ -206,7 +206,7 @@ export const ANTHROPIC_SHIRLEY_TOOLS: ToolDefinition[] = [
   {
     name: 'actualizarInventario',
     description:
-      'Actualiza el inventario (unidades disponibles) y/o el precio en COP de una joya por su slug.',
+      'Actualiza el inventario (unidades disponibles) y/o el precio en pesos colombianos de una joya por su slug.',
     input_schema: {
       type: 'object',
       properties: {
@@ -807,7 +807,9 @@ export async function executeShirleyTool(
               return `${it.quantity ?? 1}x ${titulo}`
             })
             .join(', ')
-          return `📦 Pedido #${o.id} — ${formatCOP(o.amount)} — ${o.customerEmail || 'Sin email'}\n   Detalle: ${items || 'Sin items'}`
+          const buyer = o.buyerName || o.shippingAddress?.firstName || 'Sin nombre'
+          const contact = o.buyerContact || o.shippingAddress?.phone || o.customerEmail || 'Sin contacto'
+          return `📦 Pedido #${o.id} — ${formatCOP(o.amount)} — ${buyer} (${contact})\n   Detalle: ${items || 'Sin items'}`
         })
         return `Tienes ${result.docs.length} pedido(s) pendiente(s):\n\n${lines.join('\n\n')}`
       }

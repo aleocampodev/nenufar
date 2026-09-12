@@ -32,7 +32,7 @@ async function main() {
     return
   }
 
-  let newLayout = [...currentLayout]
+  const newLayout = [...currentLayout]
   const existingGalleryIdx = newLayout.findIndex((b) => b.blockType === 'gallery')
 
   if (existingGalleryIdx !== -1) {

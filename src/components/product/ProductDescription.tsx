@@ -1,5 +1,6 @@
 'use client'
 import type { Product, Variant } from '@/payload-types'
+import Link from 'next/link'
 
 import { RichText } from '@/components/RichText'
 import { AddToCart } from '@/components/Cart/AddToCart'
@@ -88,12 +89,12 @@ export function ProductDescription({ product }: { product: Product }) {
         </Suspense>
       </div>
 
-      <a
+      <Link
         href="/pedidos/enviar?modo=personalizado"
         className="w-full text-center py-3 px-6 border border-brand text-brand font-medium rounded-md hover:bg-brand hover:text-brand-foreground transition text-sm"
       >
         ✦ Personalizar esta pieza
-      </a>
+      </Link>
     </div>
   )
 }

@@ -29,7 +29,9 @@ function useIsNarrow(breakpoint = 640): boolean {
 export const MediaStorageQuota: React.FC<{ compact?: boolean }> = ({ compact = false }) => {
   const [stats, setStats] = useState<QuotaStats | null>(null)
   const [loading, setLoading] = useState(true)
-  const isCompact = compact || useIsNarrow()
+  // Hooks must run unconditionally: never gate useIsNarrow() behind `compact`.
+  const autoNarrow = useIsNarrow()
+  const isCompact = compact || autoNarrow
 
   useEffect(() => {
     fetch('/api/media-quota')

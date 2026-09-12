@@ -57,7 +57,7 @@ describe('formatOrderMessage', () => {
   it('usa cart.subtotal como total cuando está disponible', () => {
     const msg = formatOrderMessage({ cart: makeCart({ subtotal: 150000 }), buyer: BUYER, orderId: 'ORD-003', timestamp: FIXED_DATE })
     expect(msg).toContain('150')
-    expect(msg).toContain('COP')
+    expect(msg).not.toContain('COP')
   })
 
   it('calcula el total desde items cuando cart.subtotal es null', () => {

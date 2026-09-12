@@ -175,7 +175,7 @@ export function formatOrderMessage({
   const total = cart.subtotal ?? calculatedSubtotal
   lines.push('<b>💰 Totales</b>')
   lines.push(`Items: ${totalUnits} unidades`)
-  lines.push(`<b>TOTAL: ${COP_FORMATTER.format(total)} COP</b>`)
+  lines.push(`<b>TOTAL: ${COP_FORMATTER.format(total)}</b>`)
   lines.push('')
 
   // Footer

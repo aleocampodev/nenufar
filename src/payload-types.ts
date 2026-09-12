@@ -265,6 +265,11 @@ export interface Order {
   status?: OrderStatus;
   amount?: number | null;
   currency?: 'COP' | null;
+  /**
+   * Nombre + WhatsApp que la compradora deja en /pedidos/enviar (Ley 1581)
+   */
+  buyerName?: string | null;
+  buyerContact?: string | null;
   accessToken?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -2486,6 +2491,8 @@ export interface OrdersSelect<T extends boolean = true> {
   status?: T;
   amount?: T;
   currency?: T;
+  buyerName?: T;
+  buyerContact?: T;
   accessToken?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -1,0 +1,43 @@
+{
+  "skill_name": "landing-content-manager",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Shirley quiere agregar una feria: 'Feria del Dulce' el 20 de marzo en Getsemaní. Actualiza la landing.",
+      "expected_output": "Should create the event in the events collection (visible on the landing events section and /admin) with Spanish content, and must not touch products, prices, inventory, orders or carts.",
+      "assertions": [
+        "Creates the fair in the events collection for the landing page",
+        "Keeps all content in Spanish (es-CO)",
+        "Does not modify the products collection",
+        "Does not modify prices, inventory, orders or carts",
+        "Persists the change so it is visible in production and /admin"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Agrega estas fotos de clientas a la galería y de paso sube el precio del collar Okama a $95.000.",
+      "expected_output": "Should add the clientas photos to the landing gallery (WebP via Payload Media) and refuse the price change, explaining it exclusively operates on the Landing Page and never touches catalog prices.",
+      "assertions": [
+        "Adds the photos to the landing gallery (clientas tab)",
+        "Uses WebP/Payload Media paths for gallery images",
+        "Refuses to change the collar price",
+        "Cites the catalog prohibition guardrail explicitly",
+        "Does not modify products, orders or carts under any circumstance"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Lista los próximos talleres y ferias publicados en la landing.",
+      "expected_output": "Should query only the landing events source (events collection for the home page) and list them with title, date and place, without touching shop catalog data.",
+      "assertions": [
+        "Queries the landing events source, not the shop catalog",
+        "Lists title, date and place for each event",
+        "Operates exclusively on landing content (home page + events)",
+        "Does not read or modify products, inventory or orders"
+      ],
+      "files": []
+    }
+  ]
+}

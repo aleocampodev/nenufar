@@ -1,0 +1,54 @@
+# Nénufar CI — integration tests on every push and pull request.
+#
+# Spins up throwaway PostgreSQL, applies Payload migrations (this also
+# validates that src/migrations/* stay appliable), then runs the Vitest
+# integration suite. No secrets required: dummy values suffice because no
+# test touches paid APIs, Telegram, or Groq (all network boundaries are
+# mocked or use fake payloads).
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-int:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nenufar
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/nenufar
+      PAYLOAD_SECRET: ci-dummy-secret-min-32-chars-long
+      NEXT_PUBLIC_SERVER_URL: http://localhost:3002
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Apply Payload migrations (validates src/migrations/*)
+        run: pnpm payload migrate
+
+      - name: Run integration tests
+        run: pnpm test:int

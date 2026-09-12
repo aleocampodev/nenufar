@@ -35,7 +35,7 @@ However, running enterprise agent frameworks directly on paid models (such as Cl
   1. The bot runtime uses `@anthropic-ai/claude-agent-sdk` pointed to `ANTHROPIC_BASE_URL=http://localhost:4000`.
   2. A lightweight self-hosted **LiteLLM Proxy container** runs locally on port `:4000` (~50MB RAM).
   3. LiteLLM translates Anthropic Messages API calls into OpenAI chat completions and routes them to **Groq Cloud (Llama 3.3 70B Versatile)** at **$0 cost** with `drop_params: true`.
-  4. If Groq hits rate limits or downtime, LiteLLM automatically routes to **Google Gemini 2.0 Flash (Google AI Studio Free Tier)** as a secondary $0 fallback.
+  4. If Groq hits rate limits or downtime, LiteLLM automatically routes to **Google Gemini 3.6 Flash (Google AI Studio Free Tier)** as a secondary $0 fallback.
 
 ---
 
@@ -50,7 +50,7 @@ flowchart LR
     C -->|"ANTHROPIC_BASE_URL :4000"| D["LiteLLM Universal Gateway\n(drop_params: true)"]
     
     D -->|"Primary ($0 Free Tier)"| E["Groq API Cloud\n(Llama 3.3 70B)"]
-    D -.->|"Fallback on 429/500 ($0)"| F["Google AI Studio\n(Gemini 2.0 Flash)"]
+    D -.->|"Fallback on 429/500 ($0)"| F["Google AI Studio\n(Gemini 3.6 Flash)"]
     
     C <-->|"Local API (Drizzle)"| G[("PostgreSQL 16\nPayload CMS")]
 ```
@@ -80,7 +80,7 @@ model_list:
 
   - model_name: nenufar-bot-fallback
     litellm_params:
-      model: gemini/gemini-2.0-flash
+      model: gemini/gemini-3.6-flash
       api_key: os.environ/GEMINI_API_KEY
       drop_params: true
 
