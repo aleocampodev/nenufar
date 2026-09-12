@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { Media } from '@/payload-types'
+import Link from 'next/link'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -125,9 +126,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         )}
 
         <footer className="mt-12 pt-8 border-t border-neutral-200">
-          <a href="/blog" className="text-brand hover:underline">
+          <Link href="/blog" className="text-brand hover:underline">
             ← Volver al blog
-          </a>
+          </Link>
         </footer>
       </article>
     </main>

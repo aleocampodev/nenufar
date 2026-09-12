@@ -9,6 +9,7 @@
  */
 
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -77,12 +78,12 @@ export default async function ConfirmationPage({ searchParams }: ConfirmationPag
           </div>
         )}
 
-        <a
+        <Link
           href="/"
           className="inline-block px-6 py-3 bg-brand text-brand-foreground font-medium rounded-md hover:bg-brand-dark transition mb-3"
         >
           Volver al inicio
-        </a>
+        </Link>
 
         <p className="mt-8 text-xs text-neutral-500">
           Guardá tu número de pedido por si necesitás contactarnos.

@@ -1,0 +1,41 @@
+{
+  "skill_name": "ui-ux-pro-max",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review our new checkout page: it has icon-only remove buttons with no labels, 32px tall tap targets, and gray-on-light-gray helper text.",
+      "expected_output": "Should apply priority order with Accessibility and Touch first: missing accessible names, sub-44px targets, and contrast failures flagged as CRITICAL before any style advice.",
+      "assertions": [
+        "Flags icon-only buttons without labels as a critical accessibility issue",
+        "Flags 32px tap targets against the 44x44px minimum",
+        "Flags low-contrast helper text against the 4.5:1 requirement",
+        "Prioritizes accessibility and touch findings above style findings",
+        "References the quick-reference rule text rather than inventing rules"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Design the database schema and API endpoints for our new billing service.",
+      "expected_output": "Should skip itself: pure backend/API work with no visual surface is out of scope unless the task changes how something looks, feels, moves, or is interacted with.",
+      "assertions": [
+        "Declines to apply UI guidance to pure backend work",
+        "States the looks/feels/moves/interacted-with scope boundary",
+        "Does not produce palette, typography or layout advice for the schema task"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Our product gallery loads slowly with layout shifts: full-size JPEGs, no lazy loading, no reserved space. Fix the guidance.",
+      "expected_output": "Should flag WebP/AVIF formats, lazy loading, and reserved space (CLS < 0.1) as HIGH priority performance findings with concrete checks.",
+      "assertions": [
+        "Recommends WebP or AVIF over full-size JPEGs",
+        "Recommends lazy loading for below-the-fold images",
+        "Recommends reserving space to keep CLS under 0.1",
+        "Treats performance findings as HIGH priority per the category table"
+      ],
+      "files": []
+    }
+  ]
+}

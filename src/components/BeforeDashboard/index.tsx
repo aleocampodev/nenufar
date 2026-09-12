@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 import './index.scss'
 import { MediaStorageQuota } from '@/components/Admin/MediaStorageQuota'
@@ -27,7 +28,7 @@ export const BeforeDashboard: React.FC = () => {
         </p>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
-          <a 
+          <Link 
             href="/admin/collections/products" 
             style={{ 
               display: 'flex', 
@@ -49,9 +50,9 @@ export const BeforeDashboard: React.FC = () => {
               <strong style={{ display: 'block', color: '#e91e8c' }}>Catálogo de Joyas</strong>
               <span style={{ fontSize: '11px', color: '#777' }}>Crear o editar piezas</span>
             </div>
-          </a>
+          </Link>
 
-          <a 
+          <Link 
             href="/admin/collections/orders" 
             style={{ 
               display: 'flex', 
@@ -73,9 +74,9 @@ export const BeforeDashboard: React.FC = () => {
               <strong style={{ display: 'block', color: '#e91e8c' }}>Pedidos (Órdenes)</strong>
               <span style={{ fontSize: '11px', color: '#777' }}>Ver y despachar</span>
             </div>
-          </a>
+          </Link>
 
-          <a 
+          <Link 
             href="/admin/collections/media" 
             style={{ 
               display: 'flex', 
@@ -97,9 +98,9 @@ export const BeforeDashboard: React.FC = () => {
               <strong style={{ display: 'block', color: '#e91e8c' }}>Medios y Archivos</strong>
               <span style={{ fontSize: '11px', color: '#777' }}>Subir fotos de joyas</span>
             </div>
-          </a>
+          </Link>
 
-          <a 
+          <Link 
             href="/admin/collections/pages/3" 
             style={{ 
               display: 'flex', 
@@ -121,7 +122,7 @@ export const BeforeDashboard: React.FC = () => {
               <strong style={{ display: 'block', color: '#e91e8c' }}>Editar Landing</strong>
               <span style={{ fontSize: '11px', color: '#777' }}>Hero, fotos y carrusel</span>
             </div>
-          </a>
+          </Link>
 
           <a 
             href="/" 

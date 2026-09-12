@@ -1,0 +1,42 @@
+{
+  "skill_name": "improve-ui",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our checkout page looks inconsistent with the rest of the app. Review it and clean it up.",
+      "expected_output": "Should select the checkout surface, trace its rendered path through compositions, tokens and styles, verify each problem against design evidence, and write self-contained plans under design-plans/ without touching product source.",
+      "assertions": [
+        "Selects one coherent surface (checkout) instead of synthesizing the whole repo",
+        "Traces the rendered path through layouts, compositions and resolved tokens",
+        "Verifies findings against design evidence rather than asserting drift by name similarity",
+        "Creates or edits files only under design-plans/",
+        "Never modifies product source files"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Just apply the fixes to the checkout directly, I trust your judgment.",
+      "expected_output": "Should decline to modify product source, explain the read-only boundary, and offer the written plans for another agent to execute after the user selects changes.",
+      "assertions": [
+        "Declines to modify product source directly",
+        "Cites the read-only boundary",
+        "Writes plans only for changes the user selects",
+        "Hands execution to another agent"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "The dashboard uses a slightly different card radius than the settings page. Is that design-system drift?",
+      "expected_output": "Should prove or disprove the connection through rendering, imports, props, resolved config or generated artifacts — shared names or proximity alone must not count as drift.",
+      "assertions": [
+        "Requires proof through rendering, imports, props or resolved config",
+        "Rejects shared names alone as evidence of drift",
+        "Rejects repository proximity alone as evidence",
+        "Prefers no finding over an unsupported one"
+      ],
+      "files": []
+    }
+  ]
+}

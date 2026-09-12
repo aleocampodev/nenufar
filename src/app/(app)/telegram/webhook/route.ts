@@ -15,7 +15,12 @@ import type { Payload } from 'payload'
 import { runShirleyAgent } from '@/lib/agent/runShirleyAgent'
 import { sendTelegramChatAction, sendTelegramReply } from '@/lib/telegram'
 
-export const maxDuration = 300
+/**
+ * Vercel Hobby caps functions at 60s — declaring more fails the deploy.
+ * The SDK spawn + Groq turn usually fits; longer runs fall back to /admin
+ * via AGENT_FALLBACK instead of a Telegram retry storm.
+ */
+export const maxDuration = 60
 
 // Single-flight + burst fusion for text-only messages (single-instance).
 // Rapid double-taps from Shirley are fused into ONE agent call instead of N,
@@ -185,14 +190,21 @@ export async function POST(request: Request): Promise<Response> {
 
   const payload = await getPayload({ config })
 
-  // 4. Voice/audio notes get a fixed zero-token reply (no transcription path).
+  // 4. Voice/audio notes: transcribe via LiteLLM → Groq Whisper ($0),
+  // then handle the transcript as a regular text turn. Falls back to the
+  // fixed reply when transcription is unavailable.
   const audioObj = message?.voice ?? message?.audio
   if (audioObj) {
-    await sendTelegramReply({
-      chatId,
-      text: 'Shirley, la tienda ahora opera exclusivamente por mensaje de texto o enviando fotos y videos ✍️. ¡Escríbeme lo que necesitas y te ayudo de inmediato! 💜',
-    })
-    return Response.json({ ok: true })
+    const { transcribeTelegramVoice } = await import('@/lib/voice-transcription')
+    const transcript = await transcribeTelegramVoice(audioObj.file_id)
+    if (!transcript) {
+      await sendTelegramReply({
+        chatId,
+        text: 'Shirley, no pude escuchar tu nota de voz. ¿Me lo escribes por texto o me envías fotos/videos? ✍️💜',
+      })
+      return Response.json({ ok: true })
+    }
+    text = `[Nota de voz] ${transcript}`.trim()
   }
 
   if (!text && !hasMedia) {

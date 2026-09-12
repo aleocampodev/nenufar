@@ -59,17 +59,19 @@ park threshold or while the circuit is open.
 
 ## 4. Human-in-the-loop (destructive tools)
 
-Covered tools (`DESTRUCTIVE_TOOLS`): `eliminarEvento`,
-`eliminarFotoGaleria`, `eliminarTestimonio`, `confirmarPedido`.
+Single home: `src/lib/agent/confirmation.ts` (service with injectable
+store + clock). Destructive flags live in `src/lib/agent/toolRegistry.ts`
+(`confirmarPedido`, `eliminarEvento`, `eliminarFotoGaleria`,
+`eliminarTestimonio`); the SDK MCP server (`nenufarMcp.ts`) gates them.
 
 Contract:
 
-1. The model (or the forced pre-router) requests a destructive tool →
-   **nothing executes**. A pending confirmation is stored (5 min TTL,
-   `PENDING_TTL_MS`) and Shirley receives a one-line summary plus:
-   *“Respóndeme sí para confirmar o no para cancelar.”*
+1. The model calls a destructive tool → the MCP gate stores the pending
+   action (`confirmationService.request`) and returns the confirmation
+   prompt instead of executing. **Nothing runs.**
 2. `sí / confirmo / dale / ok` (relaxed `CONFIRM_RE`, accent-tolerant) →
-   the stored call executes exactly once with the stored args.
+   the pre-query block in `runShirleyAgent` executes the stored call
+   exactly once, with zero model calls.
 3. `no / cancela` (`CANCEL_RE`) → cancelled, warm reply, trace
    `fallback` / `confirmation-cancelled`.
 4. Any other message supersedes and clears the pending item (non-tedious:
@@ -156,7 +158,10 @@ Alert thresholds: **150K** (degrade) / **190K** (park) of 200K TPD.
 
 ## 10. File reference
 
-- `src/lib/agent/runShirleyAgent.ts` — loop, HITL, retry, budget, traces
+- `src/lib/agent/runShirleyAgent.ts` — SDK loop, HITL pre-query, retry, budget, traces
+- `src/lib/agent/confirmation.ts` — HITL service (request/peek/resolve)
+- `src/lib/agent/toolRegistry.ts` — single tool inventory + destructive flags
+- `src/lib/agent/nenufarMcp.ts` — SDK MCP server + destructive gate
 - `src/lib/agent/tools.ts` — 23 tools, Payload Local API, deterministic copy
 - `src/app/(app)/telegram/webhook/route.ts` — auth, fusion, media, replies
 - `src/collections/AgentMessages.ts`, `src/collections/AgentTraces.ts`

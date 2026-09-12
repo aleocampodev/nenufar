@@ -1,0 +1,43 @@
+{
+  "skill_name": "frontend-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a landing page for a handmade pottery studio that sells weekend workshop seats. They have no brand yet.",
+      "expected_output": "Should propose a concrete subject, audience and primary job first, then make opinionated palette/typography/layout choices grounded in pottery craft (clay, kiln, hands), opening the hero with the most characteristic thing in that world — not a generic big-number headline.",
+      "assertions": [
+        "Proposes a concrete subject, audience and primary job before designing",
+        "Grounds palette and typography choices in the pottery subject matter",
+        "Opens the hero with the most characteristic thing in the subject's world",
+        "Makes opinionated distinctive choices rather than templated defaults",
+        "Avoids the big-number-with-small-label default hero treatment unless justified"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Review my hero headline: 'Handcrafted <em>magic</em> for your <strong>home</strong>' with section labels in ALL CAPS above every block.",
+      "expected_output": "Should flag the single-accented-word headline treatment and the all-caps labels as generic generated-page tells, and suggest type-as-design-element alternatives with a clear type scale.",
+      "assertions": [
+        "Flags accenting a single word in the headline as a generic tell",
+        "Flags all-caps labels above content as a generic tell",
+        "Suggests treating type itself as an active design element",
+        "Recommends one or two clearly distinct typefaces with a clear scale"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I want numbered markers 01/02/03 on my features section, fade-and-slide-up on every section, and hover transitions on all cards for our accounting software landing.",
+      "expected_output": "Should reject numbered markers because the features are not a sequence, reject scattered fade-and-slide-up entrances and per-card hovers as the generic default, and allow at most one orchestrated motion moment plus motion that answers user actions.",
+      "assertions": [
+        "Rejects numbered markers because the content is not a sequence",
+        "Rejects fade-and-slide-up on every section as the generic default",
+        "Rejects hover transitions on every card as the generic default",
+        "Allows a single orchestrated motion moment at most",
+        "Keeps motion that answers a user action (opening, expanding, confirming)"
+      ],
+      "files": []
+    }
+  ]
+}
