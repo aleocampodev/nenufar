@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Nénufar: Systems Design</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 10mm 12mm;
+    }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 8.8pt;
+      line-height: 1.28;
+      color: #1a1a1a;
+      background: #fff;
+    }
+    header {
+      border-bottom: 1.5px solid #222;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 14pt;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #0f172a;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    h1 span.subtitle {
+      font-size: 9.5pt;
+      font-weight: 500;
+      color: #475569;
+    }
+    .meta {
+      font-size: 7.5pt;
+      color: #64748b;
+      margin-top: 2px;
+      display: flex;
+      gap: 12px;
+    }
+    .lead-box {
+      background: #f8fafc;
+      border-left: 3px solid #E91E8C;
+      padding: 5px 8px;
+      font-size: 8pt;
+      color: #334155;
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 12px;
+      row-gap: 8px;
+    }
+    .col-full {
+      grid-column: 1 / -1;
+    }
+    h2 {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: #0f172a;
+      border-bottom: 1px solid #cbd5e1;
+      padding-bottom: 2px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    h3 {
+      font-size: 8.5pt;
+      font-weight: 600;
+      color: #1e293b;
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+    p, ul, ol {
+      margin-bottom: 4px;
+    }
+    ul, ol {
+      padding-left: 14px;
+    }
+    li {
+      margin-bottom: 2px;
+    }
+    b, strong {
+      font-weight: 600;
+      color: #0f172a;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 7.5pt;
+      margin: 4px 0 6px 0;
+    }
+    th, td {
+      border: 0.5px solid #cbd5e1;
+      padding: 2.5px 4px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #334155;
+    }
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+    .badge {
+      display: inline-block;
+      padding: 1px 4px;
+      border-radius: 2px;
+      font-size: 7pt;
+      font-weight: 600;
+      background: #fce7f3;
+      color: #be185d;
+    }
+    .ascii-box {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 6.8pt;
+      line-height: 1.15;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 6px;
+      border-radius: 3px;
+      white-space: pre;
+      margin: 4px 0 6px 0;
+      overflow: hidden;
+    }
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Nénufar: Systems Design <span class="subtitle">Zero-cost commerce, human-closed sales, and resilient agent operations</span></h1>
+    <div class="meta">
+      <span><b>Project:</b> Nénufar (Cartagena, Colombia)</span>
+      <span><b>Engineers:</b> Alejandro Ocampo & Shirley</span>
+      <span><b>Stack:</b> Payload CMS v3 + Next.js App Router + LiteLLM / Groq</span>
+      <span><b>Budget:</b> Strict $0/mo</span>
+    </div>
+  </header>
+
+  <div class="lead-box">
+    <b>Executive Thesis:</b> Nénufar replaces expensive payment gateways and brittle SaaS with an embedded monolith and a Telegram-driven human sales closing flow. Customers browse and build carts on the web; Shirley closes payments, sizing, and shipping directly on WhatsApp. The store operates under a strict $0/mo fixed cost invariant, protected by in-process seams, SHA-256 idempotency, and an autonomous operations agent constrained by a 190k daily token circuit breaker.
+  </div>
+
+  <div class="grid">
+    <!-- COL 1 -->
+    <div>
+      <h2>1. Problem and Goals</h2>
+      <p>Artisan jewelry businesses face prohibitive payment gateway fees (3–5% + fixed fees on Stripe/Wompi), customer checkout friction, and recurring SaaS debt. Customers in Colombia demand personal WhatsApp consultation for custom sizing and trust. Shirley needs operational control directly from Telegram without navigating web admin consoles.</p>
+      
+      <ul>
+        <li><b>① Strict $0/mo Infrastructure (Art. I):</b> Zero SaaS fees. Compute, storage, and models run 100% on Always-Free tiers (Oracle Cloud VPS / Vercel + PostgreSQL + Groq Free).</li>
+        <li><b>② Human-Closed Sales (ADR-001):</b> Web checkout creates Payload order with status <code>processing</code> and dispatches rich HTML to Telegram with a pre-filled WhatsApp link. Shirley coordinates payment and logistics manually.</li>
+        <li><b>③ Colombian Localization & Privacy (Art. V/VI):</b> Prices strictly formatted as <code>$ 45.000</code> (never literal <code>COP</code>). Ley 1581 (habeas data) explicit consent. Validated Colombian mobile numbers.</li>
+        <li><b>④ Resilient Agent Operations (ADR-002):</b> Single-admin Telegram bot powered by Claude Agent SDK → LiteLLM (:4000) → Groq (Llama-3.3-70b-versatile) with automatic burst fusion and token caps.</li>
+      </ul>
+
+      <p><b>Non-goals:</b> Automated payment gateways; public conversational customer chatbots; microservice networks; paid proprietary LLM APIs.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Assumption</th>
+            <th>How We Enforce & Test It</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>No duplicate orders</b></td>
+            <td>SHA-256 idempotency key over cart + contact in a 5-min sliding window (<code>idempotency.int.spec.ts</code>).</td>
+          </tr>
+          <tr>
+            <td><b>Zero unauthorized AI calls</b></td>
+            <td>Webhook silently drops non-admin <code>chat_id</code> with HTTP 200 (<code>agent-runtime.int.spec.ts</code>).</td>
+          </tr>
+          <tr>
+            <td><b>No selling zero stock</b></td>
+            <td>Atomic inventory validation against Payload Local API before order creation (<code>checkout.int.spec.ts</code>).</td>
+          </tr>
+          <tr>
+            <td><b>Never exceed Groq free tier</b></td>
+            <td><code>getDailyTokenUsage</code> parks agent at 190k tokens; circuit breaker opens on 3 failures.</td>
+          </tr>
+          <tr>
+            <td><b>Private calendar isolation</b></td>
+            <td>Outbound RFC 5545 feed (<code>/api/calendar/feed</code>); inbound personal sync disabled by default.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>2. Interface: System Contracts</h2>
+      <ul>
+        <li><b>Web Storefront:</b> <code>GET /shop</code>, <code>/products/[slug]</code>, <code>/galeria</code>, <code>/eventos</code>.</li>
+        <li><b>Order Submission:</b> <code>POST /pedidos/enviar</code> (Server Action). Enforces Ley 1581 consent, phone format, stock checks, SHA-256 idempotency → creates <code>Order</code> in Payload → Telegram dispatch → redirect.</li>
+        <li><b>Shirley Ops Bot:</b> <code>POST /telegram/webhook</code>. Checks <code>x-telegram-bot-api-secret-token</code>, validates admin ID, fuses rapid multi-messages within 1000ms debounce, applies HITL confirmation gates on destructive tools.</li>
+        <li><b>Calendar Feed:</b> <code>GET /api/calendar/feed</code>. Revalidated every 5 min; subscribable via Google Calendar URL.</li>
+      </ul>
+    </div>
+
+    <!-- COL 2 -->
+    <div>
+      <h2>3. Architecture & Topology</h2>
+      
+      <div class="ascii-box">
+┌────────────────────────────────────────────────────────┐
+│               NÉNUFAR EMBEDDED MONOLITH                │
+│                                                        │
+│  [CUSTOMER LOOP: Deterministic]   [SHIRLEY LOOP: Agent]│
+│  Next.js 15 App Router (Web)      Telegram Webhook     │
+│  └─ SHA-256 Idempotency Engine    └─ Burst Fusion      │
+│                │                         │             │
+│                ▼                         ▼             │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │       PAYLOAD CMS v3 CORE (In-Process API)       │  │
+│  │   Products · Orders · Events · Gallery · Traces  │  │
+│  └─────────────┬─────────────────────────┬──────────┘  │
+└────────────────┼─────────────────────────┼─────────────┘
+                 ▼                         ▼
+         PostgreSQL 16 (DB)       LiteLLM Gateway (:4000)
+       [Oracle VPS / Docker]               │
+                                           ▼
+                                 Groq API (Llama 3.3 Free)
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Decision</th>
+            <th>Chosen</th>
+            <th>Rejected, and why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Payment Flow</b></td>
+            <td>WhatsApp human closing</td>
+            <td><b>Stripe/Wompi:</b> Transaction fees erode margins; checkout drop-off in Colombia.</td>
+          </tr>
+          <tr>
+            <td><b>App Topology</b></td>
+            <td>Embedded Monolith (Payload v3)</td>
+            <td><b>Microservices:</b> Unnecessary latency and ops complexity for single store.</td>
+          </tr>
+          <tr>
+            <td><b>Agent Gateway</b></td>
+            <td>Claude Agent SDK → LiteLLM</td>
+            <td><b>Handmade orchestrator:</b> Brittle. <b>Paid APIs:</b> Violates $0/mo rule.</td>
+          </tr>
+          <tr>
+            <td><b>Calendar Sync</b></td>
+            <td>Outbound iCal Feed (/feed)</td>
+            <td><b>Inbound Google Sync:</b> Leaks Shirley's private events to public website.</td>
+          </tr>
+          <tr>
+            <td><b>Host & Infra</b></td>
+            <td>Oracle Cloud VPS / Vercel</td>
+            <td><b>Paid AWS/GCP:</b> Breaks zero-cost invariant.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>4. How We Measure: Evals & Reliability</h2>
+      <ul>
+        <li><b>Integration Suites:</b> <code>checkout.int.spec.ts</code> (stock & duplicate prevention), <code>agent-tools.int.spec.ts</code> (tool parity & HITL gates), <code>agent-runtime.int.spec.ts</code> (auth guards & 45s fallback timeout), <code>landing-blocks.int.spec.ts</code> (currency compliance).</li>
+        <li><b>Token Canary & Budget:</b> <code>DAILY_WARN_TOKENS = 150_000</code>, <code>DAILY_PARK_TOKENS = 190_000</code>. When reached, agent sends one Telegram alert and gracefully parks until 00:00 UTC.</li>
+        <li><b>Circuit Breaker:</b> 3 consecutive gateway failures trigger a 5-minute pause (<code>CIRCUIT_BREAKER_MS = 300_000</code>).</li>
+        <li><b>Input Truncation:</b> Max 1,000 chars per message; conversational history limited to 4 messages (2,000 chars).</li>
+        <li><b>Network Partition Resiliency:</b> Orders persist in PostgreSQL even if Telegram fails (logged with <code>warn=1</code>).</li>
+      </ul>
+    </div>
+  </div>
+
+</body>
+</html>
