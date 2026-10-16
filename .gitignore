@@ -49,3 +49,6 @@ public/media
 scratchpad/
 animation-plans/
 
+# Respaldo cifrado de variables de entorno (nunca versionar)
+.secrets-backup/
+

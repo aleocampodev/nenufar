@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { Media } from '@/components/Media'
@@ -141,12 +142,12 @@ export default async function EventosPage() {
           <p className="text-neutral-600 max-w-md mx-auto">
             Estamos preparando nuevos eventos. Seguinos en Instagram para enterarte primero.
           </p>
-          <a
+          <Link
             href="/#contacto"
             className="inline-block mt-6 px-6 py-3 bg-brand text-brand-foreground rounded-md hover:bg-brand-dark transition"
           >
             Contactanos
-          </a>
+          </Link>
         </section>
       )}
 

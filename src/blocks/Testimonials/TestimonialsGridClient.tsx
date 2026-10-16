@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Star, Quote, X, Sparkles, MapPin, ArrowRight } from 'lucide-react'
@@ -44,6 +44,21 @@ export function TestimonialsGridClient({ testimonials }: TestimonialsGridClientP
   const [activeTestimonial, setActiveTestimonial] = useState<TestimonialItem | null>(null)
 
   const handleClose = () => setActiveTestimonial(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+
+  // Escape closes the modal; the close button is autofocused for keyboard users.
+  useEffect(() => {
+    if (!activeTestimonial) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActiveTestimonial(null)
+    }
+    window.addEventListener('keydown', onKey)
+    const timer = setTimeout(() => closeButtonRef.current?.focus(), 50)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      clearTimeout(timer)
+    }
+  }, [activeTestimonial])
 
   // Get details for active testimonial
   const activeDetails = activeTestimonial
@@ -147,19 +162,20 @@ export function TestimonialsGridClient({ testimonials }: TestimonialsGridClientP
       </div>
 
       {/* Modal Editorial Expandido al hacer Clic */}
+      {/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click is a mouse-only shortcut; keyboard path is Escape + autofocused labeled close button (see effect above) */}
       {activeTestimonial && activeDetails && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
-          onClick={handleClose}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) handleClose()
+          }}
           role="dialog"
           aria-modal="true"
         >
-          <div
-            className="relative w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-neutral-100 overflow-hidden animate-in zoom-in-95 duration-300"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="relative w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-neutral-100 overflow-hidden animate-in zoom-in-95 duration-300">
             {/* Botón de Cierre */}
             <button
+              ref={closeButtonRef}
               onClick={handleClose}
               className="absolute top-4 right-4 w-9 h-9 rounded-full bg-neutral-100 hover:bg-brand/10 text-neutral-500 hover:text-brand flex items-center justify-center transition-colors"
               aria-label="Cerrar ventana"
@@ -241,6 +257,7 @@ export function TestimonialsGridClient({ testimonials }: TestimonialsGridClientP
           </div>
         </div>
       )}
+      {/* eslint-enable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
     </>
   )
 }

@@ -357,6 +357,7 @@ export const GalleryClient: React.FC<Props> = ({
       {/* ========================================================= */}
       {/* 3. LIGHTBOX MODAL: Expansión de Imagen al Seleccionar     */}
       {/* ========================================================= */}
+      {/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click is a mouse-only shortcut; keyboard path is Escape + focus trap + labeled close button (see handleKeyDown) */}
       {selectedImage && (
         <div
           ref={modalRef}
@@ -364,7 +365,9 @@ export const GalleryClient: React.FC<Props> = ({
           aria-modal="true"
           aria-labelledby="lightbox-image-title"
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-black/90 backdrop-blur-md animate-in fade-in duration-200 touch-pan-y"
-          onClick={handleCloseImage}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) handleCloseImage()
+          }}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
@@ -415,10 +418,7 @@ export const GalleryClient: React.FC<Props> = ({
           )}
 
           {/* Contenedor de la Imagen Expandida */}
-          <div
-            className="relative max-w-4xl max-h-[88vh] w-full flex flex-col items-center justify-center animate-in zoom-in-95 duration-200 select-none"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="relative max-w-4xl max-h-[88vh] w-full flex flex-col items-center justify-center animate-in zoom-in-95 duration-200 select-none">
             <div className="relative w-full h-[65vh] sm:h-[72vh] flex items-center justify-center">
               <Image
                 src={selectedImage.src}
@@ -442,6 +442,7 @@ export const GalleryClient: React.FC<Props> = ({
           </div>
         </div>
       )}
+      {/* eslint-enable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
     </section>
   )
 }

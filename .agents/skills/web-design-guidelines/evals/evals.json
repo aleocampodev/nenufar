@@ -1,0 +1,41 @@
+{
+  "skill_name": "web-design-guidelines",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Check my UI: src/components/CartModal.tsx",
+      "expected_output": "Should fetch the fresh guidelines from the source URL first, then review the specified file against all rules and output findings in terse file:line format.",
+      "assertions": [
+        "Fetches fresh guidelines from the source URL before reviewing",
+        "Reviews the specified file against the rules",
+        "Outputs findings in terse file:line format",
+        "Does not review files outside the given pattern"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Is my site accessible?",
+      "expected_output": "Should ask for the files or pattern to review (per the argument-hint) instead of guessing, since no target was specified.",
+      "assertions": [
+        "Asks for the file or pattern to review when none is given",
+        "Does not audit an imagined codebase",
+        "References the argument-hint contract"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Audit src/app/shop/page.tsx and src/components/ProductCard/* against the guidelines and give me the top 3 violations.",
+      "expected_output": "Should fetch fresh guidelines, check both targets against all rules, and return the top 3 violations in file:line format with the violated rule cited.",
+      "assertions": [
+        "Fetches fresh guidelines before the audit",
+        "Checks all specified targets, including the glob",
+        "Returns findings in file:line format",
+        "Cites the violated rule for each finding",
+        "Limits the report to the top 3 as requested"
+      ],
+      "files": []
+    }
+  ]
+}

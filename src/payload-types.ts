@@ -265,6 +265,11 @@ export interface Order {
   status?: OrderStatus;
   amount?: number | null;
   currency?: 'COP' | null;
+  /**
+   * Nombre + WhatsApp que la compradora deja en /pedidos/enviar (Ley 1581)
+   */
+  buyerName?: string | null;
+  buyerContact?: string | null;
   accessToken?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -628,11 +633,11 @@ export interface Page {
          */
         videoCaption?: string | null;
         /**
-         * Pega aquí el enlace iCal público o secreto de tu Google Calendar. Si lo dejas vacío, se usará la variable GOOGLE_CALENDAR_ICAL_URL del entorno o la lista manual inferior.
+         * Solo si quieres que los eventos de tu Google Calendar aparezcan en la web. Si lo dejas vacío, la web muestra únicamente lo que agregues en la lista inferior y tu calendario personal nunca se mezcla.
          */
         googleCalendarIcalUrl?: string | null;
         /**
-         * Si está activo y hay un enlace iCal configurado, el calendario se actualizará solo cuando Shirley agregue o edite eventos en Google Calendar.
+         * Apagado por defecto. Al revés sí funciona siempre: lo que agregues en la lista inferior se publica solo en tu Google Calendar si lo suscribes en calendar.google.com → Otros calendarios → Desde URL con /api/calendar/feed.
          */
         syncWithGoogleCalendar?: boolean | null;
         events?:
@@ -2486,6 +2491,8 @@ export interface OrdersSelect<T extends boolean = true> {
   status?: T;
   amount?: T;
   currency?: T;
+  buyerName?: T;
+  buyerContact?: T;
   accessToken?: T;
   updatedAt?: T;
   createdAt?: T;

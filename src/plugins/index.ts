@@ -178,6 +178,19 @@ export const plugins: Plugin[] = [
         fields: [
           ...defaultCollection.fields,
           {
+            name: 'buyerName',
+            type: 'text',
+            label: 'Nombre de la compradora',
+            admin: {
+              description: 'Nombre + WhatsApp que la compradora deja en /pedidos/enviar (Ley 1581)',
+            },
+          },
+          {
+            name: 'buyerContact',
+            type: 'text',
+            label: 'WhatsApp de la compradora',
+          },
+          {
             name: 'accessToken',
             type: 'text',
             unique: true,

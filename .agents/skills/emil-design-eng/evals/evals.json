@@ -1,0 +1,42 @@
+{
+  "skill_name": "emil-design-eng",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Hi, I just installed this skill. What can you help me with?",
+      "expected_output": "Should respond only with the prescribed initial response mentioning Emil Kowalski's design engineering philosophy and the animations.dev course link, with no additional information until the user asks a question.",
+      "assertions": [
+        "Responds only with the prescribed initial response",
+        "Mentions Emil Kowalski's design engineering philosophy",
+        "Includes the animations.dev course link",
+        "Provides no additional information beyond the initial response"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Review this button component: it uses ease-in for hover, no pressed state, and a generic box-shadow on focus. Here is the code: <button className=\"btn\">Buy now</button> with .btn { transition: all 0.3s ease-in; }",
+      "expected_output": "Should review using a markdown table with Before/After columns (not a Before:/After: list), covering easing, pressed state, and focus treatment with exact values.",
+      "assertions": [
+        "Uses a markdown table with Before/After columns",
+        "Does not use a Before:/After: list format",
+        "Addresses the ease-in easing choice with a concrete correction",
+        "Addresses the missing pressed state",
+        "Addresses the focus treatment"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Our settings page feels cheap but everything works. Where do we start polishing?",
+      "expected_output": "Should apply the unseen-details-compound philosophy: small invisible correctness details that aggregate, trained taste over personal preference, and beauty as leverage — with concrete first details to fix rather than a redesign.",
+      "assertions": [
+        "Frames polish as compounding unseen details, not a redesign",
+        "Recommends concrete small details first instead of big changes",
+        "Distinguishes trained taste from personal preference",
+        "Keeps advice scoped to details that make the interface feel right"
+      ],
+      "files": []
+    }
+  ]
+}

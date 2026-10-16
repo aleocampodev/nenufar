@@ -23,30 +23,50 @@ export interface SendTelegramMessageResult {
 const TELEGRAM_API_BASE = 'https://api.telegram.org'
 
 /**
- * Sends one message to the configured Telegram channel.
- * Returns ok=false (never throws) so callers can render a retry screen.
+ * Splits a long message on newline boundaries so every part fits within
+ * Telegram's hard cap. Oversized single lines are hard-cut as a last resort
+ * (may split an HTML tag — callers with markup should keep lines short).
  */
-export async function sendTelegramMessage({
-  text,
-  parseMode = 'HTML',
-  disableWebPagePreview = true,
-}: SendTelegramMessageArgs): Promise<SendTelegramMessageResult> {
-  const token = process.env.TELEGRAM_BOT_TOKEN
-  const channelId = process.env.TELEGRAM_CHANNEL_ID
-
-  if (!token) {
-    return { ok: false, error: 'TELEGRAM_BOT_TOKEN is not configured' }
+export function splitTelegramMessage(text: string, maxLength: number): string[] {
+  if (text.length <= maxLength) return [text]
+  const parts: string[] = []
+  let current = ''
+  for (const line of text.split('\n')) {
+    if (line.length > maxLength) {
+      if (current) {
+        parts.push(current)
+        current = ''
+      }
+      for (let i = 0; i < line.length; i += maxLength) {
+        parts.push(line.slice(i, i + maxLength))
+      }
+      continue
+    }
+    const candidate = current ? `${current}\n${line}` : line
+    if (candidate.length > maxLength) {
+      parts.push(current)
+      current = line
+    } else {
+      current = candidate
+    }
   }
-  if (!channelId) {
-    return { ok: false, error: 'TELEGRAM_CHANNEL_ID is not configured' }
-  }
+  if (current) parts.push(current)
+  return parts.length > 0 ? parts : [text]
+}
 
+async function postTelegramText(
+  token: string,
+  chatId: number | string,
+  text: string,
+  parseMode: 'HTML' | 'MarkdownV2',
+  disableWebPagePreview: boolean,
+): Promise<SendTelegramMessageResult> {
   try {
     const response = await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        chat_id: channelId,
+        chat_id: chatId,
         text,
         parse_mode: parseMode,
         disable_web_page_preview: disableWebPagePreview,
@@ -69,6 +89,37 @@ export async function sendTelegramMessage({
     const message = error instanceof Error ? error.message : 'Unknown error'
     return { ok: false, error: message }
   }
+}
+
+/**
+ * Sends one message to the configured Telegram channel.
+ * Long texts are split into sequential parts within the size cap.
+ * Returns ok=false (never throws) so callers can render a retry screen.
+ */
+export async function sendTelegramMessage({
+  text,
+  parseMode = 'HTML',
+  disableWebPagePreview = true,
+}: SendTelegramMessageArgs): Promise<SendTelegramMessageResult> {
+  const token = process.env.TELEGRAM_BOT_TOKEN
+  const channelId = process.env.TELEGRAM_CHANNEL_ID
+
+  if (!token) {
+    return { ok: false, error: 'TELEGRAM_BOT_TOKEN is not configured' }
+  }
+  if (!channelId) {
+    return { ok: false, error: 'TELEGRAM_CHANNEL_ID is not configured' }
+  }
+
+  const parts = splitTelegramMessage(text, TELEGRAM_MESSAGE_MAX_LENGTH)
+  let lastMessageId: number | undefined
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts.length > 1 ? `${parts[i]}\n…(${i + 1}/${parts.length})` : parts[i]
+    const result = await postTelegramText(token, channelId, part, parseMode, disableWebPagePreview)
+    if (!result.ok) return result
+    lastMessageId = result.messageId
+  }
+  return { ok: true, messageId: lastMessageId }
 }
 
 interface TelegramApiResponse {
@@ -192,31 +243,15 @@ export async function sendTelegramReply({
     return { ok: false, error: 'No hay token de bot asistente configurado' }
   }
 
-  try {
-    const response = await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text,
-        parse_mode: parseMode,
-        disable_web_page_preview: true,
-      }),
-      signal: AbortSignal.timeout(10_000),
-    })
-
-    const data: TelegramApiResponse = await response.json()
-    if (!response.ok || !data.ok) {
-      return {
-        ok: false,
-        error: data.description || `Telegram API returned HTTP ${response.status}`,
-      }
-    }
-    return { ok: true, messageId: data.result?.message_id }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error'
-    return { ok: false, error: message }
+  const parts = splitTelegramMessage(text, TELEGRAM_MESSAGE_MAX_LENGTH)
+  let lastMessageId: number | undefined
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts.length > 1 ? `${parts[i]}\n…(${i + 1}/${parts.length})` : parts[i]
+    const result = await postTelegramText(token, chatId, part, parseMode, true)
+    if (!result.ok) return result
+    lastMessageId = result.messageId
   }
+  return { ok: true, messageId: lastMessageId }
 }
 
 /**

@@ -1,0 +1,41 @@
+{
+  "skill_name": "better-ui",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review this card component: a modal dialog with border-radius 12px on the outer container, 12px padding, and an inner image also with border-radius 12px. What is wrong and how should it be fixed?",
+      "expected_output": "Should identify the concentric border radius violation: outer radius must equal inner radius plus padding (12px outer vs 12px inner + 12px padding is mismatched). Should prescribe the exact corrected values and reference the surfaces recipe, keeping the project's tokens.",
+      "assertions": [
+        "Identifies the concentric border radius mismatch (outer must equal inner plus padding)",
+        "Prescribes exact corrected radius values, not approximate ranges",
+        "Keeps the project's component library and tokens instead of introducing new ones",
+        "References the surfaces recipe for radius, shadow and outline values"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "A dropdown menu in our app uses CSS keyframes for its open/close animation and feels laggy when the user hovers in and out quickly. What should change?",
+      "expected_output": "Should recommend CSS transitions instead of keyframes for interactive state changes because transitions can be interrupted mid-animation, reserving keyframes for staged sequences that run once.",
+      "assertions": [
+        "Recommends CSS transitions over keyframes for the interactive open/close state",
+        "Explains interruptibility as the reason (mid-animation interruption)",
+        "Reserves keyframes for staged run-once sequences",
+        "Does not change the project's motion language beyond the prescribed interaction"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Our toast notifications disappear instantly and it feels abrupt. Propose an exit animation.",
+      "expected_output": "Should propose a subtle exit animation with a small fixed translateY (not full height), softer than the enter animation, using ease-out for both directions.",
+      "assertions": [
+        "Proposes a small fixed translateY rather than full-height movement",
+        "Makes the exit softer than the enter animation",
+        "Uses ease-out for both directions",
+        "Uses the exact prescribed values from the skill, not invented ranges"
+      ],
+      "files": []
+    }
+  ]
+}

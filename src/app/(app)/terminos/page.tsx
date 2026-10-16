@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 
@@ -58,7 +59,7 @@ export default function TerminosPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-serif mb-3 text-neutral-900">4. Precios y moneda</h2>
           <p className="text-neutral-700 leading-relaxed">
-            Todos los precios están expresados en Pesos Colombianos (COP) y pueden variar sin previo
+            Todos los precios están expresados en pesos colombianos y pueden variar sin previo
             aviso. El precio válido es el vigente al momento de la confirmación del pedido por parte
             de Shirley.
           </p>
@@ -96,9 +97,9 @@ export default function TerminosPage() {
           <h2 className="text-2xl font-serif mb-3 text-neutral-900">8. Contacto</h2>
           <p className="text-neutral-700 leading-relaxed">
             Para cualquier consulta sobre estos términos, contáctanos a través de nuestra{' '}
-            <a href="/#contacto" className="text-brand hover:underline">
+            <Link href="/#contacto" className="text-brand hover:underline">
               sección de contacto
-            </a>
+            </Link>
             .
           </p>
         </section>

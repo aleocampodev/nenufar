@@ -1,0 +1,42 @@
+{
+  "skill_name": "improve-animations",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our app feels sluggish: dropdowns use ease-in, toasts jump with keyframes, and tab switches animate for 600ms. Audit the motion and tell me what to fix first.",
+      "expected_output": "Should survey the motion code read-only, produce a prioritized audit (ease-in dropdowns first as highest leverage), and write self-contained plans with exact values under plans/ — without modifying source.",
+      "assertions": [
+        "Surveys motion code without modifying any source file",
+        "Produces a prioritized audit with highest-leverage item first",
+        "Flags ease-in on dropdowns as a problem",
+        "Writes plans under plans/ (or animation-plans/) only",
+        "Plans inline exact values (cubic-bezier, durations, file paths) with zero assumed context"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Just fix the toast animation directly, it jumps when it appears.",
+      "expected_output": "Should decline to fix it directly, cite the read-only rule, and point to executing the written plan with any agent instead.",
+      "assertions": [
+        "Declines to modify source code directly",
+        "Cites the read-only operating rule",
+        "Points to plan execution (improve-animations execute or any agent running the plan)",
+        "Still delivers the audit finding and plan for the toast"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Audit keyboard-triggered animations in our command palette: Escape closes with a 400ms fade, arrow navigation animates each move.",
+      "expected_output": "Should flag animating keyboard navigation moves and the slow Escape fade as findings, since keyboard actions should feel instant and never carry staged animation.",
+      "assertions": [
+        "Flags animated arrow-key navigation as a problem",
+        "Flags the slow Escape-close fade as a problem",
+        "States that keyboard actions should feel instant",
+        "Writes a self-contained plan with exact replacement values and file paths"
+      ],
+      "files": []
+    }
+  ]
+}

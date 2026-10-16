@@ -24,7 +24,7 @@ import { redirect } from 'next/navigation'
 import path from 'path'
 
 import { validateConsent } from '@/lib/consent'
-import { checkIdempotency, markSeen } from '@/lib/idempotency'
+import { IDEMPOTENCY_WINDOW_MS, checkIdempotency, markSeen } from '@/lib/idempotency'
 import { formatOrderMessage } from '@/lib/order-formatter'
 import { sendTelegramMessage, sendTelegramPhoto } from '@/lib/telegram'
 import { validateWhatsAppContact, normalizeWhatsAppContact } from '@/lib/contact-validation'
@@ -83,14 +83,7 @@ export async function submitOrderAction(
     return { status: 'error', errorMessage: consentResult.reason }
   }
 
-  // 4. Idempotency guard (SHA256 cartId + buyerContact, 5 min window)
-  const idempotencyCheck = checkIdempotency(cartId, buyerContact)
-  if (!idempotencyCheck.allowed && idempotencyCheck.existingOrderId) {
-    // Duplicate click — redirect to original confirmation
-    redirect(`/pedidos/enviar/confirmacion?id=${idempotencyCheck.existingOrderId}`)
-  }
-
-  // 5. Fetch cart from Payload (server-side, Local API)
+  // 4. Fetch cart from Payload (server-side, Local API)
   const payload = await getPayload({ config: configPromise })
   let cart
   try {
@@ -113,6 +106,40 @@ export async function submitOrderAction(
       status: 'error',
       errorMessage: 'Tu carrito está vacío. Agregá productos antes de enviar el pedido.',
     }
+  }
+
+  // 5. Idempotency guards (5 min window).
+  // L1: in-memory SHA256 (cartId + buyerContact) — same instance.
+  // L2: recent-order lookup in DB — survives multi-instance/serverless,
+  // where the in-memory map is empty after every cold start.
+  const idempotencyCheck = checkIdempotency(cartId, buyerContact)
+  if (!idempotencyCheck.allowed && idempotencyCheck.existingOrderId) {
+    // Duplicate click — redirect to original confirmation
+    redirect(`/pedidos/enviar/confirmacion?id=${idempotencyCheck.existingOrderId}`)
+  }
+  try {
+    const windowStart = new Date(Date.now() - IDEMPOTENCY_WINDOW_MS).toISOString()
+    const recent = await payload.find({
+      collection: 'orders',
+      limit: 5,
+      depth: 0,
+      sort: '-createdAt',
+      overrideAccess: true,
+      where: {
+        and: [
+          { createdAt: { greater_than_equal: windowStart } },
+          { buyerContact: { equals: buyerContact } },
+        ],
+      },
+    })
+    const cartTotal = Number(cart.subtotal ?? 0)
+    const dup = (recent.docs ?? []).find((o: any) => Number(o.amount ?? 0) === cartTotal)
+    if (dup) {
+      markSeen(cartId, String(dup.id), buyerContact)
+      redirect(`/pedidos/enviar/confirmacion?id=${dup.id}`)
+    }
+  } catch (err) {
+    payload.logger.warn({ msg: '[submitOrder] DB idempotency lookup skipped', err })
   }
 
   // 5b. Real-time Inventory / Stock Verification
@@ -206,8 +233,8 @@ export async function submitOrderAction(
         currency: cart.currency ?? 'COP',
         status: 'processing',
         customerEmail: null,
-        // NOTE: buyerName + buyerContact go into shippingAddress for now
-        // (Fase 6 will add proper fields via ordersCollectionOverride)
+        buyerName,
+        buyerContact,
         shippingAddress: {
           firstName: buyerName,
           phone: buyerContact,
@@ -281,6 +308,47 @@ export async function submitOrderAction(
   }
 
   await Promise.allSettled(photoTasks)
+
+  // 7c. Decrement inventory (product + variant levels, floored at 0).
+  // Best-effort: stock was verified above; a concurrent sale can still
+  // oversell, but without decrement every sale oversells guaranteed.
+  const decrementTasks: Promise<unknown>[] = []
+  for (const item of cart.items ?? []) {
+    const product = typeof item?.product === 'object' ? item.product : null
+    const qty = item.quantity ?? 1
+    if (product && 'id' in product && typeof (product as { inventory?: unknown }).inventory === 'number') {
+      const current = Number((product as { inventory?: number }).inventory ?? 0)
+      decrementTasks.push(
+        payload
+          .update({
+            collection: 'products',
+            id: (product as { id: number }).id,
+            data: { inventory: Math.max(0, current - qty) },
+            overrideAccess: true,
+          })
+          .catch((err) => {
+            payload.logger.warn({ msg: '[submitOrder] Inventory decrement skipped', err })
+          }),
+      )
+    }
+    const variant = typeof item?.variant === 'object' ? item.variant : null
+    if (variant && 'id' in variant && typeof (variant as { inventory?: unknown }).inventory === 'number') {
+      const currentVar = Number((variant as { inventory?: number }).inventory ?? 0)
+      decrementTasks.push(
+        payload
+          .update({
+            collection: 'variants',
+            id: (variant as { id: number }).id,
+            data: { inventory: Math.max(0, currentVar - qty) },
+            overrideAccess: true,
+          })
+          .catch((err) => {
+            payload.logger.warn({ msg: '[submitOrder] Variant inventory decrement skipped', err })
+          }),
+      )
+    }
+  }
+  await Promise.allSettled(decrementTasks)
 
   // 8. Mark idempotency (after Telegram succeeds + Order exists)
   markSeen(cartId, orderId, buyerContact)

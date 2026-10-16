@@ -28,9 +28,24 @@ model_list:
       api_key: os.environ/GROQ_API_KEY
       max_tokens: 1024
 
+  # Secondary $0 fallback (ADR-002): Google AI Studio free tier.
+  # Active only when GOOGLE_API_KEY is set; otherwise LiteLLM skips it.
+  - model_name: nenufar-bot-gemini
+    litellm_params:
+      model: gemini/gemini-3.6-flash
+      api_key: os.environ/GOOGLE_API_KEY
+      max_tokens: 1024
+
+  # Speech-to-text for Shirley's voice notes (Groq free tier).
+  - model_name: nenufar-whisper
+    litellm_params:
+      model: groq/whisper-large-v3-turbo
+      api_key: os.environ/GROQ_API_KEY
+
 router_settings:
   fallbacks:
-    - nenufar-bot: ["nenufar-bot-20b", "nenufar-bot-qwen36", "nenufar-bot-qwen38"]
+    - nenufar-bot: ["nenufar-bot-20b", "nenufar-bot-qwen36", "nenufar-bot-qwen38", "nenufar-bot-gemini"]
+    - nenufar-bot-20b: ["nenufar-bot-qwen36", "nenufar-bot-gemini"]
 
 litellm_settings:
   drop_params: true

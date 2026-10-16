@@ -6,11 +6,11 @@ import { validateAllSkills, validateSkill, parseFrontmatter } from "@/lib/skills
 describe("Skills Integrity & Schema Validation (.agents/skills)", () => {
   const skillsDir = path.join(process.cwd(), ".agents/skills")
 
-  it("scans all 50 skills and validates zero critical schema errors", () => {
+  it("scans all 62 skills and validates zero critical schema errors", () => {
     const report = validateAllSkills(skillsDir)
 
-    expect(report.totalSkills).toBe(50)
-    expect(report.validSkills).toBe(50)
+    expect(report.totalSkills).toBe(62)
+    expect(report.validSkills).toBe(62)
     expect(report.totalEvals).toBeGreaterThanOrEqual(330)
     expect(report.errors).toEqual([])
   })
@@ -42,7 +42,7 @@ describe("Skills Integrity & Schema Validation (.agents/skills)", () => {
     const dirEntries = fs.readdirSync(skillsDir, { withFileTypes: true })
     const skillDirs = dirEntries.filter((d) => d.isDirectory()).map((d) => d.name)
 
-    expect(skillDirs.length).toBe(50)
+    expect(skillDirs.length).toBe(62)
 
     for (const skillName of skillDirs) {
       const { metadata, errors } = validateSkill(skillName, skillsDir)

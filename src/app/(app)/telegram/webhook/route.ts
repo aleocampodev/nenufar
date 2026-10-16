@@ -11,10 +11,28 @@
 import config from '@payload-config'
 import { headers } from 'next/headers'
 import { getPayload } from 'payload'
+import type { Payload } from 'payload'
 import { runShirleyAgent } from '@/lib/agent/runShirleyAgent'
 import { sendTelegramChatAction, sendTelegramReply } from '@/lib/telegram'
 
-export const maxDuration = 300
+/**
+ * Vercel Hobby caps functions at 60s — declaring more fails the deploy.
+ * The SDK spawn + Groq turn usually fits; longer runs fall back to /admin
+ * via AGENT_FALLBACK instead of a Telegram retry storm.
+ */
+export const maxDuration = 60
+
+// Single-flight + burst fusion for text-only messages (single-instance).
+// Rapid double-taps from Shirley are fused into ONE agent call instead of N,
+// so bursts never burn N× tokens nor hit Groq RPM. Media messages bypass the
+// queue and process immediately. The check-and-mark sequence below is
+// synchronous (no await between), hence atomic in the Node event loop.
+const chatLocks = new Set<number>()
+const chatDebouncing = new Set<number>()
+const chatQueues = new Map<number, string[]>()
+const DEBOUNCE_MS = 1000
+const MAX_DRAINS = 3
+const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
 
 // Dedupe de updates (Telegram reintenta si no recibe 200). Suficiente para
 // instancia única — mismo criterio que src/lib/idempotency.ts.
@@ -95,6 +113,42 @@ function isAuthorizedAdmin(chatId: number): boolean {
   return chatId === adminChatId
 }
 
+/**
+ * Runs one fused agent turn with typing feedback. Never throws: any failure
+ * is rendered as the warm Spanish fallback reply, never a stack trace.
+ */
+async function runAgentAndReply(
+  payload: Payload,
+  chatId: number,
+  fusedText: string,
+  uploadedMediaId?: number,
+): Promise<void> {
+  // Feedback visual: mostrar "escribiendo..." en Telegram
+  void sendTelegramChatAction(chatId, 'typing')
+  const typingInterval = setInterval(() => {
+    void sendTelegramChatAction(chatId, 'typing')
+  }, 4000)
+
+  try {
+    const reply = await runShirleyAgent({
+      text: fusedText || 'Shirley envió una foto para el catálogo o landing.',
+      payload,
+      chatId,
+      mediaId: uploadedMediaId,
+    })
+    payload.logger.info({ msg: '[telegram] handled by shirley-agent', chatId })
+    await sendTelegramReply({ chatId, text: reply })
+  } catch (err) {
+    payload.logger.error({ msg: '[telegram] error', err })
+    await sendTelegramReply({
+      chatId,
+      text: 'Uy, tuve un problemita para responder. ¿Puedes intentar de nuevo en un momento? 💜',
+    })
+  } finally {
+    clearInterval(typingInterval)
+  }
+}
+
 export async function POST(request: Request): Promise<Response> {
   // 1. Autenticación: Telegram reenvía nuestro secreto en este header.
   const expectedSecret = process.env.TELEGRAM_WEBHOOK_SECRET
@@ -136,30 +190,59 @@ export async function POST(request: Request): Promise<Response> {
 
   const payload = await getPayload({ config })
 
-  // Feedback visual: mostrar "escribiendo..." en Telegram
-  void sendTelegramChatAction(chatId, 'typing')
-  const typingInterval = setInterval(() => {
-    void sendTelegramChatAction(chatId, 'typing')
-  }, 4000)
-
-  try {
-    let uploadedMediaId: number | undefined
-
-    // 4. Si envía nota de voz o audio, indicarle amablemente que use texto
-    const audioObj = message?.voice ?? message?.audio
-    if (audioObj) {
-      clearInterval(typingInterval)
+  // 4. Voice/audio notes: transcribe via LiteLLM → Groq Whisper ($0),
+  // then handle the transcript as a regular text turn. Falls back to the
+  // fixed reply when transcription is unavailable.
+  const audioObj = message?.voice ?? message?.audio
+  if (audioObj) {
+    const { transcribeTelegramVoice } = await import('@/lib/voice-transcription')
+    const transcript = await transcribeTelegramVoice(audioObj.file_id)
+    if (!transcript) {
       await sendTelegramReply({
         chatId,
-        text: 'Shirley, la tienda ahora opera exclusivamente por mensaje de texto o enviando fotos y videos ✍️. ¡Escríbeme lo que necesitas y te ayudo de inmediato! 💜',
+        text: 'Shirley, no pude escuchar tu nota de voz. ¿Me lo escribes por texto o me envías fotos/videos? ✍️💜',
       })
       return Response.json({ ok: true })
     }
+    text = `[Nota de voz] ${transcript}`.trim()
+  }
 
-    if (!text && !hasMedia) {
-      clearInterval(typingInterval)
-      return Response.json({ ok: true })
+  if (!text && !hasMedia) {
+    return Response.json({ ok: true })
+  }
+
+  // 5. Text-only fast path: single-flight + burst fusion. Double-taps sent
+  //    within DEBOUNCE_MS are fused into a single agent call.
+  if (!hasMedia) {
+    const queue = chatQueues.get(chatId) ?? []
+    queue.push(text)
+    chatQueues.set(chatId, queue)
+    if (chatLocks.has(chatId) || chatDebouncing.has(chatId)) {
+      return Response.json({ ok: true, queued: true })
     }
+    chatDebouncing.add(chatId)
+    await sleep(DEBOUNCE_MS)
+    chatDebouncing.delete(chatId)
+    chatLocks.add(chatId)
+    try {
+      let drains = 0
+      while (drains <= MAX_DRAINS) {
+        const buffered = chatQueues.get(chatId) ?? []
+        if (buffered.length === 0) break
+        chatQueues.set(chatId, [])
+        await runAgentAndReply(payload, chatId, buffered.join('\n'))
+        drains++
+      }
+    } finally {
+      chatLocks.delete(chatId)
+      if ((chatQueues.get(chatId) ?? []).length === 0) chatQueues.delete(chatId)
+    }
+    return Response.json({ ok: true })
+  }
+
+  // 6. Media path (photo/video/document): upload to Media, then one agent turn.
+  try {
+    let uploadedMediaId: number | undefined
 
     // 5. Procesar video adjunto de Telegram si existe
     const videoObj = message?.video ?? message?.video_note
@@ -244,22 +327,13 @@ export async function POST(request: Request): Promise<Response> {
       }
     }
 
-    const reply = await runShirleyAgent({
-      text: text || 'Shirley envió una foto para el catálogo o landing.',
-      payload,
-      chatId,
-      mediaId: uploadedMediaId,
-    })
-    payload.logger.info({ msg: '[telegram] handled by shirley-agent', chatId })
-    await sendTelegramReply({ chatId, text: reply })
+    await runAgentAndReply(payload, chatId, text, uploadedMediaId)
   } catch (err) {
     payload.logger.error({ msg: '[telegram] error', err })
     await sendTelegramReply({
       chatId,
       text: 'Uy, tuve un problemita para responder. ¿Puedes intentar de nuevo en un momento? 💜',
     })
-  } finally {
-    clearInterval(typingInterval)
   }
 
   return Response.json({ ok: true })

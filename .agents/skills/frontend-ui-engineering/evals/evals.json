@@ -1,0 +1,44 @@
+{
+  "skill_name": "frontend-ui-engineering",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Build a product card component for an ecommerce grid: image, title, price, add-to-cart button. It must work on mobile and desktop.",
+      "expected_output": "Should colocate the component files, follow the design system tokens, implement a responsive layout, keyboard-accessible button with visible focus, and avoid generic AI-aesthetic choices.",
+      "assertions": [
+        "Colocates component-related files together",
+        "Uses design system tokens instead of hardcoded values",
+        "Implements a responsive layout for mobile and desktop",
+        "Add-to-cart button is keyboard accessible with visible focus state",
+        "Avoids generic AI-aesthetic styling"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Our checkout form has icon-only buttons for removing cart lines, no labels, and error messages that appear only as red borders. Fix the accessibility.",
+      "expected_output": "Should add accessible names to icon-only buttons, associate error messages with inputs via aria-describedby (not color alone), and ensure the whole flow is keyboard operable.",
+      "assertions": [
+        "Adds accessible names to icon-only buttons",
+        "Associates error text with inputs instead of relying on red color alone",
+        "Ensures error messages are exposed to assistive technology",
+        "Keeps the full interaction keyboard operable",
+        "Meets WCAG contrast and naming requirements"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Add a filter sidebar to our catalog page with category checkboxes, a price sort dropdown, and live result counts. Manage the state cleanly.",
+      "expected_output": "Should implement thoughtful state management for filters, keep the sidebar responsive (collapsible on mobile), announce result-count changes accessibly, and match existing interaction patterns.",
+      "assertions": [
+        "Implements clean state management for filter selections",
+        "Sidebar collapses or adapts on mobile viewports",
+        "Result-count changes are announced accessibly",
+        "Matches the project's existing interaction patterns",
+        "Checkboxes and dropdown follow accessible authoring practices"
+      ],
+      "files": []
+    }
+  ]
+}

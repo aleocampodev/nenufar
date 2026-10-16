@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 
@@ -85,9 +86,9 @@ export default function PrivacidadPage() {
           <h2 className="text-2xl font-serif mb-3 text-neutral-900">7. Contacto</h2>
           <p className="text-neutral-700 leading-relaxed">
             Si tenés preguntas sobre esta política de privacidad, contactanos a través de nuestra{' '}
-            <a href="/#contacto" className="text-brand hover:underline">
+            <Link href="/#contacto" className="text-brand hover:underline">
               sección de contacto
-            </a>.
+            </Link>.
           </p>
         </section>
       </article>

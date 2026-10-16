@@ -30,7 +30,7 @@ We, the engineers, maintainers, and autonomous AI agents contributing to **Nénu
 2. **Inference Gateway Architecture (ADR-002):**
    - The AI management bot engine is powered by `@anthropic-ai/claude-agent-sdk`.
    - All Anthropic Messages API traffic is routed through a local **LiteLLM Universal Proxy (`:4000`)** pointing to **Groq Cloud Free Tier (`groq/llama-3.3-70b-versatile`)**.
-   - Automated secondary fallback is configured to **Google Gemini 2.0 Flash** via LiteLLM.
+   - Automated secondary fallback is configured to **Google Gemini 3.6 Flash** via LiteLLM.
    - `drop_params: true` is mandatory in LiteLLM config to prevent non-Anthropic parameter rejection.
    - Use of paid Anthropic/OpenAI API keys is strictly prohibited.
 

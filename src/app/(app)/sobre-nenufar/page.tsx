@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 
@@ -56,12 +57,12 @@ export default function SobreNenufarPage() {
               ¿Tenés alguna pregunta o querés una pieza personalizada? Escribinos y Shirley te
               contacta directamente.
             </p>
-            <a
+            <Link
               href="/#contacto"
               className="inline-block mt-4 px-6 py-3 bg-brand text-brand-foreground rounded-md hover:bg-brand-dark transition"
             >
               Contactar a Shirley
-            </a>
+            </Link>
           </section>
         </div>
       </article>

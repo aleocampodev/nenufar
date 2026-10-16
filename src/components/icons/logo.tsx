@@ -2,11 +2,18 @@ import clsx from 'clsx'
 import React from 'react'
 
 export interface LogoIconProps extends React.ComponentProps<'img'> {
-  variant?: 'color' | 'blanco'
+  variant?: 'blanco' | 'negro' | 'color' | 'blanco-horizontal'
 }
 
-export function LogoIcon({ variant = 'color', className, src, ...props }: LogoIconProps) {
-  const logoSrc = src || (variant === 'blanco' ? '/nenufar-blanco.svg' : '/nenufar-logo.svg')
+const VARIANT_SRC: Record<NonNullable<LogoIconProps['variant']>, string> = {
+  blanco: '/nenufar-blanco.svg',
+  negro: '/nenufar-negro.svg',
+  color: '/nenufar-logo.svg',
+  'blanco-horizontal': '/nenufar-logo-blanco.svg',
+}
+
+export function LogoIcon({ variant = 'blanco', className, src, ...props }: LogoIconProps) {
+  const logoSrc = src || VARIANT_SRC[variant]
 
   return (
     /* eslint-disable @next/next/no-img-element */
@@ -14,7 +21,7 @@ export function LogoIcon({ variant = 'color', className, src, ...props }: LogoIc
       alt="Nenúfar Logo"
       src={logoSrc}
       {...props}
-      className={clsx('h-9 w-auto object-contain', className)}
+      className={clsx('h-8 w-8 object-contain', className)}
     />
   )
 }

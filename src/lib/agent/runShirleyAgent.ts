@@ -1,5 +1,13 @@
 import type { Payload } from 'payload'
-import { ANTHROPIC_SHIRLEY_TOOLS, executeShirleyTool } from './tools'
+import { query } from '@anthropic-ai/claude-agent-sdk'
+import { executeShirleyTool } from './tools'
+import {
+  confirmationService,
+  nenufarMcpServer,
+  setMcpContext,
+  takePendingConfirmation,
+} from './nenufarMcp'
+import { SHIRLEY_TOOL_DEFINITIONS } from './toolRegistry'
 
 export interface RunShirleyAgentArgs {
   /** Mensaje de texto de Shirley. */
@@ -20,38 +28,38 @@ export const AGENT_FALLBACK =
 /** Límite de rondas agénticas. */
 const MAX_TURNS = 4
 
-/** Timeout por petición al gateway (2 minutos para operaciones complejas). */
-const TIMEOUT_MS = 120_000
+/** Timeout por consulta agéntica completa. 45s para responder SIEMPRE dentro
+ * de la ventana de Telegram (~60s): ante un stall, Shirley recibe el
+ * fallback cálido en vez de silencio + timeout. */
+const TIMEOUT_MS = 45_000
 
 /** Ventana máxima de mensajes previos para memoria conversacional. */
 const MAX_HISTORY_MESSAGES = 4
 
-/** Herramientas operativas cuyos mensajes de salida ya están formateados en lenguaje natural para Shirley. */
-const DIRECT_REPLY_TOOLS = new Set([
-  'buscarProducto',
-  'crearProductoDraft',
-  'publicarProducto',
-  'actualizarInventario',
-  'destacarProducto',
-  'crearCategoria',
-  'listarCategorias',
-  'asignarCategoriaProducto',
-  'pedidosPendientes',
-  'confirmarPedido',
-  'publicarEvento',
-  'listarEventos',
-  'eliminarEvento',
-  'crearTestimonio',
-  'listarTestimonios',
-  'eliminarTestimonio',
-  'agregarFotoGaleria',
-  'listarFotosGaleria',
-  'eliminarFotoGaleria',
-  'generarCopyProducto',
-  'actualizarDescripcionProducto',
-  'generarCopyLanding',
-  'consultarAlmacenamientoFotos',
-])
+/** Tope de caracteres del preámbulo de historial (los más recientes ganan). */
+const HISTORY_MAX_CHARS = 2000
+
+/** Tope invisible de tamaño para no quemar tokens en entradas largas. */
+const INPUT_MAX_CHARS = 1000
+
+/** Presupuesto diario (Groq gpt-oss-120b free: 200K TPD). */
+const DAILY_WARN_TOKENS = 150_000
+const DAILY_PARK_TOKENS = 190_000
+
+/** Circuit breaker ante saturación sostenida del tier gratuito. */
+const CIRCUIT_FAIL_THRESHOLD = 3
+const CIRCUIT_BREAKER_MS = 5 * 60_000
+
+// Single-instance in-memory guards (same criterion as webhook dedupe:
+// sufficient for the current single-node deployment, never a billing risk
+// since the only caller is the single-admin Telegram webhook).
+// HITL pending confirmations live in the shared MCP store (nenufarMcp.ts)
+// so both the pre-query block here and the destructive MCP tool gates
+// resolve the same pending action.
+let circuitOpenUntil = 0
+let consecutiveGatewayFailures = 0
+
+const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
 
 function buildSystemPrompt(): string {
   return [
@@ -63,30 +71,16 @@ function buildSystemPrompt(): string {
     'Tono: cálido, respetuoso y cartagenero, pero profesional y eficiente. Respuestas directas para Telegram. Español.',
     '',
     'Reglas de negocio:',
-    '- Precios siempre en pesos colombianos (COP) sin decimales.',
-    '- Nunca inventes datos: si necesitas información del catálogo o pedidos, usa las herramientas.',
-    '- Si te preguntan qué productos hay, qué joyas vendemos o piden ver el catálogo, USA SIEMPRE la herramienta buscarProducto (con consulta vacía o palabra clave) para obtener la lista real de la base de datos.',
-    '- Puedes crear productos en borrador o publicarlos de inmediato en la tienda web (/shop) si te lo pide (incluso asignando su categoría).',
-    '- Puedes crear y listar categorías del catálogo con crearCategoria y listarCategorias.',
-    '- Puedes asignar categorías a joyas existentes con asignarCategoriaProducto.',
-    '- Puedes publicar o despublicar cualquier producto existente con la herramienta publicarProducto.',
-    '- Puedes gestionar la subpágina de galería de Nénufar (/galeria) con agregarFotoGaleria, listarFotosGaleria y eliminarFotoGaleria.',
-    '- Si Shirley envía una foto con texto indicando una categoría (clientas, ferias, talleres, shirley) o diciendo que es para la galería, USA SIEMPRE agregarFotoGaleria para publicarla de inmediato.',
-    '- Si Shirley pide ver o listar las fotos de la galería, USA SIEMPRE listarFotosGaleria.',
-    '- Si Shirley pide retirar o borrar una foto de la galería, USA SIEMPRE eliminarFotoGaleria.',
-    '- Si Shirley pide ideas de texto, descripciones atractivas para una joya o copys para el catálogo web (/products/[slug]), usa generarCopyProducto.',
-    '- Si Shirley pide agendar un taller o feria, USA SIEMPRE publicarEvento.',
-    '- Si Shirley pide ver, consultar o listar los talleres y ferias programados, USA SIEMPRE listarEventos para ver los datos reales.',
-    '- Si Shirley pide eliminar o cancelar un taller o feria, USA SIEMPRE eliminarEvento.',
-    '- Si Shirley pide registrar testimonios de compradoras, USA crearTestimonio o listarTestimonios.',
-    '- Si Shirley pregunta por el espacio, almacenamiento de fotos en Supabase o qué fotos pesan más para eliminar y liberar espacio, USA SIEMPRE consultarAlmacenamientoFotos.',
+    '- Precios siempre en pesos colombianos con símbolo $ y sin decimales (ej. $ 45.000). Nunca muestres la abreviatura COP.',
+    '- Nunca inventes datos: si necesitas información del catálogo o pedidos, usa las herramientas disponibles.',
+    `- Herramientas disponibles (invócalas SIEMPRE con estos nombres exactos, incluido el prefijo): ${SHIRLEY_TOOL_DEFINITIONS.map((t) => `mcp__nenufar-tienda__${t.name}`).join(', ')}.`,
+    '- Acciones destructivas (mcp__nenufar-tienda__confirmarPedido, mcp__nenufar-tienda__eliminarEvento, mcp__nenufar-tienda__eliminarFotoGaleria, mcp__nenufar-tienda__eliminarTestimonio): la herramienta te pedirá confirmación; transmite la pregunta a Shirley y espera su "sí" antes de continuar.',
     '- Si una herramienta falla, discúlpate brevemente y sugiere intentar en un momento. No muestres errores técnicos ni IDs.',
     '- Si el mensaje es una pregunta general o saludo, responde directo sin usar herramientas.',
     '- Tienes acceso al historial de conversación previo: úsalo para entender referencias a productos, fotos o temas hablados anteriormente.',
     '',
     'Reglas de Copywriting para Marketing y Ventas (ALTA CONVERSIÓN · ANTI-SLOP · ANTI-SYCOPHANCY):',
     '- ENFOQUE DE MARKETING Y VENTAS DIRECTAS: El objetivo de cada texto comercial es convertir visitantes en compradoras. Despierta deseo genuino, vincula características técnicas a beneficios tangibles (ej. ligereza extrema que permite usar aretes de impacto 10 horas seguidas sin dolor), derriba objeciones (cero níquel para pieles reactivas, resistencia al sudor, empaque de regalo) y cierra con llamados a la acción claros.',
-    '- FORMATO COMERCIAL INTEGRAL: Entrega propuestas útiles para los canales de Shirley: ficha para la tienda web, copy persuasivo para Instagram/WhatsApp con gancho scroll-stopper, y frase de cierre directo para cuando una clienta pregunte por chat.',
     '- PROHIBIDO EL AI SLOP Y CLICHÉS DE IA: No uses fórmulas vacías como "eleva tu estilo al siguiente nivel", "un tapiz de emociones", "sinfonía de colores", "en un mundo donde...", "déjate cautivar", "fusión mágica de lo ancestral y lo contemporáneo" ni adjetivos inflados.',
     '- PROHIBIDO EL SYCOPHANCY (adulación servil o complaciente): Jamás adules a Shirley ni a las clientas con lisonjas exageradas ("¡maravillosa reina!", "¡obra maestra divina!", "¡eres genial!"). El tono debe ser cálido pero sobrio, profesional y con la dignidad de quien domina un oficio manual.',
     '- ANCLADO EN EL OFICIO REAL: Basa cada argumento de venta en hechos tangibles: micro-mostacilla checa calibrada Preciosa Ornela que conserva su brillo, tejido punto por punto con hilo técnico resistente a la humedad del Caribe, ligereza extrema (menos de 15g que no jala las orejas ni cansa el cuello), remates limpios hipoalergénicos y confección pausada en Getsemaní, Cartagena.',
@@ -229,78 +223,92 @@ async function recordTrace(
 }
 
 /**
- * Corre una consulta agéntica completa y devuelve el texto final para enviar
- * por Telegram. Nunca lanza: ante cualquier fallo devuelve AGENT_FALLBACK.
+ * Suma los tokens consumidos hoy (UTC, ventana de reset de Groq) leyendo
+ * agent-traces. Base del presupuesto diario invisible.
  */
-function determineToolChoice(text: string, mediaId?: number): { type: 'tool' | 'auto'; name?: string } | undefined {
-  const t = text.toLowerCase().trim()
-  // 1. Pregunta sobre eventos/talleres programados
-  if (
-    /(taller|talleres|feria|ferias|evento|eventos)/i.test(t) &&
-    /(que|cu[aá]les|hay|ver|lista|listar|muestra|mostrar|consultar|programad)/i.test(t) &&
-    !/(elimina|borra|cancela|agenda|crea|agrega|publica|nuevo)/i.test(t)
-  ) {
-    return { type: 'tool', name: 'listarEventos' }
-  }
+/** L1 cache so every Telegram message does not scan 2000 traces. */
+let budgetCache: { total: number; at: number } | null = null
+const BUDGET_CACHE_TTL_MS = 60_000
 
-  // 2. Pregunta sobre pedidos pendientes
-  if (
-    /(pedido|pedidos|compras|ventas)/i.test(t) &&
-    /(pendiente|pendientes|nuevo|nuevos|hay|cu[aá]ntos|ver|lista)/i.test(t) &&
-    !/(confirma|complet)/i.test(t)
-  ) {
-    return { type: 'tool', name: 'pedidosPendientes' }
-  }
-
-  // 3. Almacenamiento en la nube de Supabase / Espacio / Cuota / Fotos pesadas
-  if (
-    /(almacenamiento|espacio|memoria|cuota|giga|gigas|mega|megas|peso.*foto|foto.*pesad|pesadas|cu[aá]nto.*queda|disco|supabase|liberar.*espacio)/i.test(
-      t,
-    )
-  ) {
-    return { type: 'tool', name: 'consultarAlmacenamientoFotos' }
-  }
-
-  // 4. Galería de Fotos / Momentos / Clientas (subpágina /galeria)
-  if (/(galer[ií]a|foto|fotos|fotograf[ií]a|momentos|clienta|clientas)/i.test(t)) {
-    if (/(elimina|borra|quita|retira|cancela)/i.test(t)) {
-      return { type: 'tool', name: 'eliminarFotoGaleria' }
+export async function getDailyTokenUsage(
+  payload: Payload,
+): Promise<{ total: number; lite: boolean; parked: boolean }> {
+  try {
+    const now = Date.now()
+    let total: number
+    if (budgetCache && now - budgetCache.at < BUDGET_CACHE_TTL_MS) {
+      total = budgetCache.total
+    } else {
+      const start = new Date()
+      start.setUTCHours(0, 0, 0, 0)
+      const result = await payload.find({
+        collection: 'agent-traces' as any,
+        where: {
+          createdAt: { greater_than_equal: start.toISOString() },
+        },
+        pagination: false,
+        limit: 2000,
+        overrideAccess: true,
+      })
+      total = (result.docs || []).reduce(
+        (acc: number, doc: any) => acc + Number(doc?.totalTokens || 0),
+        0,
+      )
+      budgetCache = { total, at: now }
     }
-    if (/(agrega|sube|guarda|pon|nueva|nuevo|publica)/i.test(t) || Boolean(mediaId)) {
-      return { type: 'tool', name: 'agregarFotoGaleria' }
+    return {
+      total,
+      lite: total >= DAILY_WARN_TOKENS,
+      parked: total >= DAILY_PARK_TOKENS,
     }
-    if (/(ver|que|cu[aá]les|hay|lista|listar|muestra|mostrar)/i.test(t)) {
-      return { type: 'tool', name: 'listarFotosGaleria' }
-    }
+  } catch (err) {
+    payload.logger.warn({
+      msg: '[shirley-agent] No se pudo calcular el consumo diario, continuando sin presupuesto',
+      err: err instanceof Error ? err.message : String(err),
+    })
+    return { total: 0, lite: false, parked: false }
   }
-
-  // 5. Actualizar descripción de producto existente
-  if (/(actualiza|cambia|modifica|guarda).*descripci[oó]n/i.test(t)) {
-    return { type: 'tool', name: 'actualizarDescripcionProducto' }
-  }
-
-  // 6. Redacción de copys comerciales (Anti-Slop / Oficio Real)
-  if (/(copy|copys|redacta|redactar|propuesta|escribe|escribir|texto)/i.test(t)) {
-    if (/(landing|inicio|hero|home|web|portada|cta|secci[oó]n)/i.test(t)) {
-      return { type: 'tool', name: 'generarCopyLanding' }
-    }
-    if (/(producto|joya|aretes|collar|pulsera|pieza|colecci[oó]n|descripci[oó]n)/i.test(t) || /(para|de)\s+/i.test(t)) {
-      return { type: 'tool', name: 'generarCopyProducto' }
-    }
-  }
-
-  // 7. Pregunta sobre productos / catálogo
-  if (
-    /(joya|joyas|producto|productos|cat[aá]logo|aretes|collares|pulseras|piezas|colecci[oó]n)/i.test(t) &&
-    /(que|cu[aá]les|hay|ver|lista|listar|muestra|mostrar|qu[eé] vendemos|inventario)/i.test(t) &&
-    !/(crea|agrega|publica|elimina|borra|foto|copy|redacta|descripci[oó]n)/i.test(t)
-  ) {
-    return { type: 'tool', name: 'buscarProducto' }
-  }
-
-  return undefined
 }
 
+/** Mensaje cálido cuando la cuota gratuita del día se agota. */
+export const DAILY_PARK_MESSAGE =
+  'Shirley, por hoy agoté mi cuota gratuita del servicio. Puedes trabajar desde /admin y mañana seguimos normal 💜'
+
+/** Mensaje cálido cuando el gateway gratuito está saturado temporalmente. */
+export const CIRCUIT_BUSY_MESSAGE =
+  'Shirley, el servicio gratuito está saturado por unos minutos. Si es urgente revísalo en /admin y ya retomamos 💜'
+
+/** Date (UTC) of the last park alert sent to the channel — at most one per day. */
+let lastParkAlertDate = ''
+
+/**
+ * Alerts the operations channel the first time the bot parks for the day,
+ * so the quota exhaustion is visible without reading the DB. Fire-and-forget:
+ * an alert failure must never break the user reply.
+ */
+async function alertParkedOncePerDay(totalTokens: number): Promise<void> {
+  try {
+    const today = new Date().toISOString().slice(0, 10)
+    if (lastParkAlertDate === today) return
+    lastParkAlertDate = today
+    const { sendTelegramMessage } = await import('@/lib/telegram')
+    await sendTelegramMessage({
+      text:
+        `⚠️ <b>Nénufar bot parqueado por cuota diaria</b>\n` +
+        `Consumo estimado hoy: ${totalTokens} tokens (tope ${DAILY_PARK_TOKENS}).\n` +
+        `Revisar límites de Groq / GOOGLE_API_KEY. El servicio sigue en /admin.`,
+    })
+  } catch {
+    // Non-fatal by design.
+  }
+}
+
+/**
+ * Corre una consulta agéntica completa y devuelve el texto final para enviar
+ * por Telegram. Usa el Claude Agent SDK real (query() + MCP in-process) con
+ * LiteLLM :4000 como puerta hacia Groq. Nunca lanza: ante cualquier fallo
+ * devuelve AGENT_FALLBACK.
+ */
 export async function runShirleyAgent({
   text,
   payload,
@@ -308,12 +316,10 @@ export async function runShirleyAgent({
   mediaId,
 }: RunShirleyAgentArgs): Promise<string> {
   const startTime = Date.now()
-  const toolsInvoked: string[] = []
-  let totalInputTokens = 0
-  let totalOutputTokens = 0
+  const model = process.env.ANTHROPIC_MODEL || 'nenufar-bot'
 
   const cleanPrompt = (() => {
-    const trimmed = text.trim()
+    const trimmed = text.trim().slice(0, INPUT_MAX_CHARS)
     if (trimmed === '/start' || trimmed === '/iniciar') {
       return 'Hola, soy Shirley. ¿Cómo estás y en qué me puedes ayudar hoy en la tienda?'
     }
@@ -332,18 +338,97 @@ export async function runShirleyAgent({
     text.trim() === '/reiniciar' ||
     text.trim() === '/reset'
 
-  // 1. Cargar memoria previa de Supabase (o iniciar sesión limpia si envió /start)
-  const historyMessages = isResetCommand ? [] : await loadRecentHistory(payload, chatId)
+  if (isResetCommand) {
+    takePendingConfirmation(chatId)
+  }
+
+  // 0a. Circuit breaker: ante saturación sostenida no se queman tokens.
+  if (Date.now() < circuitOpenUntil) {
+    return CIRCUIT_BUSY_MESSAGE
+  }
+
+  // 0b. Presupuesto diario invisible (ventana UTC de Groq).
+  const dailyUsage = await getDailyTokenUsage(payload)
+  if (dailyUsage.parked) {
+    void recordTrace(payload, {
+      chatId,
+      query: text,
+      responseSummary: DAILY_PARK_MESSAGE,
+      toolsUsed: 'ninguna',
+      inputTokens: 0,
+      outputTokens: 0,
+      totalTokens: 0,
+      cost: '$0 USD (Groq Free Tier)',
+      executionTimeMs: Date.now() - startTime,
+      status: 'fallback',
+      errorMessage: `daily-budget-parked (${dailyUsage.total} tokens)`,
+      model,
+    })
+    void alertParkedOncePerDay(dailyUsage.total)
+    return DAILY_PARK_MESSAGE
+  }
+  const liteMode = dailyUsage.lite
+  const effectiveMaxTurns = liteMode ? 1 : MAX_TURNS
+
+  // 0c. HITL: resolver una confirmación pendiente antes de cualquier llamada.
+  // El pendiente lo pudo guardar un tool destructivo del MCP (que pide el
+  // "sí" en vez de ejecutar) o un turno anterior.
+  if (!isResetCommand) {
+    const resolution = confirmationService.resolve(chatId, cleanPrompt)
+    if (resolution.status === 'confirmed') {
+      const pending = resolution.pending
+      const confirmedArgs = { ...pending.args, ...(mediaId ? { mediaId } : {}) }
+      const resultText = await executeShirleyTool(pending.toolName, confirmedArgs, payload)
+      void persistMessage(payload, {
+        chatId,
+        role: 'assistant',
+        content: resultText,
+        toolName: pending.toolName,
+      })
+      void recordTrace(payload, {
+        chatId,
+        query: text,
+        responseSummary: resultText,
+        toolsUsed: pending.toolName,
+        inputTokens: 0,
+        outputTokens: 0,
+        totalTokens: 0,
+        cost: '$0 USD (Groq Free Tier)',
+        executionTimeMs: Date.now() - startTime,
+        status: 'success',
+        model,
+      })
+      return resultText
+    } else if (resolution.status === 'cancelled') {
+      const cancelReply = 'Entendido Shirley, lo dejé como estaba, no eliminé ni cambié nada 💜'
+      void persistMessage(payload, { chatId, role: 'assistant', content: cancelReply })
+      void recordTrace(payload, {
+        chatId,
+        query: text,
+        responseSummary: cancelReply,
+        toolsUsed: 'ninguna',
+        inputTokens: 0,
+        outputTokens: 0,
+        totalTokens: 0,
+        cost: '$0 USD (Groq Free Tier)',
+        executionTimeMs: Date.now() - startTime,
+        status: 'fallback',
+        errorMessage: 'HITL: confirmation-cancelled by Shirley',
+        model,
+      })
+      return cancelReply
+    }
+    // expired / superseded / none: fall through to the regular agent turn.
+    // (A superseded pending was already consumed — never tedious.)
+  }
+
+  // 1. Memoria previa de Supabase (o sesión limpia si envió /start).
+  // En modo lite se omite el historial para ahorrar tokens de entrada.
+  const historyMessages = isResetCommand || liteMode ? [] : await loadRecentHistory(payload, chatId)
   const system = buildSystemPrompt()
   const baseUrl = (process.env.ANTHROPIC_BASE_URL || 'http://localhost:4000').replace(/\/$/, '')
   const apiKey =
     process.env.ANTHROPIC_AUTH_TOKEN || process.env.LITELLM_MASTER_KEY || 'sk-nenufar-local'
-  const model = process.env.ANTHROPIC_MODEL || 'nenufar-bot'
-
-  const messages: AnthropicMessage[] = [
-    ...historyMessages,
-    { role: 'user', content: cleanPrompt },
-  ]
 
   // Persistir mensaje del usuario
   void persistMessage(payload, {
@@ -352,179 +437,140 @@ export async function runShirleyAgent({
     content: text,
   })
 
-  console.log(`⏱️ [agent] Iniciando consulta (${Date.now() - startTime}ms)`)
-  const forcedToolChoice = determineToolChoice(cleanPrompt, mediaId)
+  // 2. Armar el prompt con historial como preámbulo (el SDK maneja su propia
+  // memoria de turnos dentro de la consulta; el historial persistido entra
+  // como contexto de solo lectura, acotado para no contaminar todos los
+  // turnos futuros con una sola respuesta larga).
+  const historyPreamble = historyMessages
+    .map((m) => `${m.role === 'user' ? 'Shirley' : 'Asistente'}: ${typeof m.content === 'string' ? m.content : ''}`)
+    .join('\n')
+    .slice(-HISTORY_MAX_CHARS)
+  const mediaNote = mediaId
+    ? `\n[Shirley adjuntó una foto ya guardada en Media con id ${mediaId}. La gestión de galería por ahora se hace desde /admin.]`
+    : ''
+  const fullPrompt = `${historyPreamble ? `Conversación previa:\n${historyPreamble}\n\n` : ''}Mensaje actual de Shirley: ${cleanPrompt}${mediaNote}`
+
+  console.log(`⏱️ [agent-sdk] Iniciando query() (${Date.now() - startTime}ms, model=${model})`)
+
+  // 3. Loop agéntico REAL vía Claude Agent SDK. El SDK hace spawn del CLI con
+  // ANTHROPIC_BASE_URL apuntando a LiteLLM :4000, que traduce a Groq free.
+  // tools: [] desactiva los built-ins (Bash/Read/Edit) — solo nuestras MCP.
+  setMcpContext({ payload, chatId, ...(mediaId ? { mediaId } : {}) })
+  const toolsInvoked: string[] = []
+  let totalInputTokens = 0
+  let totalOutputTokens = 0
+  let finalReply = ''
+  let sdkError = ''
 
   try {
-    for (let turn = 0; turn < MAX_TURNS; turn++) {
-      const turnStart = Date.now()
-      console.log(`⏱️ [agent] Llamando a LiteLLM Turno ${turn + 1}...`)
-      const response = await fetch(`${baseUrl}/v1/messages`, {
-        method: 'POST',
-        headers: {
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
+    const q = query({
+      prompt: fullPrompt,
+      options: {
+        systemPrompt: system,
+        model: liteMode ? 'nenufar-bot-20b' : model,
+        maxTurns: effectiveMaxTurns,
+        mcpServers: { 'nenufar-tienda': nenufarMcpServer },
+        allowedTools: ['mcp__nenufar-tienda__*'],
+        tools: [],
+        permissionMode: 'bypassPermissions',
+        allowDangerouslySkipPermissions: true,
+        cwd: '/tmp',
+        env: {
+          ...process.env as Record<string, string>,
+          ANTHROPIC_BASE_URL: baseUrl,
+          ANTHROPIC_AUTH_TOKEN: apiKey,
         },
-        body: JSON.stringify({
-          model,
-          max_tokens: 1024,
-          system,
-          messages,
-          tools: ANTHROPIC_SHIRLEY_TOOLS,
-          ...(turn === 0 && forcedToolChoice ? { tool_choice: forcedToolChoice } : {}),
-        }),
-        signal: AbortSignal.timeout(TIMEOUT_MS),
-      })
-      console.log(`⏱️ [agent] LiteLLM Turno ${turn + 1} respondió en ${Date.now() - turnStart}ms (status: ${response.status})`)
+      },
+    })
 
-      if (!response.ok) {
-        const errorText = await response.text()
-        payload.logger.error({
-          msg: '[shirley-agent] Error en llamada a Anthropic/LiteLLM',
-          status: response.status,
-          errorText,
-        })
-
-        void recordTrace(payload, {
-          chatId,
-          query: text,
-          responseSummary: AGENT_FALLBACK,
-          toolsUsed: toolsInvoked.join(', ') || 'ninguna',
-          inputTokens: totalInputTokens,
-          outputTokens: totalOutputTokens,
-          totalTokens: totalInputTokens + totalOutputTokens,
-          cost: '$0 USD (Groq Free Tier)',
-          executionTimeMs: Date.now() - startTime,
-          status: 'error',
-          errorMessage: `HTTP ${response.status}: ${errorText}`,
-          model,
-        })
-
-        return AGENT_FALLBACK
-      }
-
-      const data = await response.json()
-
-      // Acumular conteo de tokens devueltos por LiteLLM / Groq
-      if (data.usage) {
-        totalInputTokens += Number(data.usage.input_tokens || 0)
-        totalOutputTokens += Number(data.usage.output_tokens || 0)
-      }
-
-      const content = (data.content ?? []) as Array<Record<string, any>>
-
-      // 1. Detectar invocaciones de herramientas (tool_use)
-      const toolCalls = content.filter((item) => item.type === 'tool_use')
-      if (toolCalls.length > 0) {
-        messages.push({ role: 'assistant', content })
-
-        const toolResults: Array<Record<string, any>> = []
-        for (const toolCall of toolCalls) {
-          toolsInvoked.push(toolCall.name)
-          const toolArgs = {
-            ...(toolCall.input ?? {}),
-            ...(mediaId ? { mediaId } : {}),
+    const collect = (async () => {
+      for await (const msg of q) {
+        if (msg.type === 'assistant') {
+          const blocks = (msg.message.content ?? []) as Array<Record<string, any>>
+          for (const block of blocks) {
+            if (block?.type === 'text' && typeof block.text === 'string' && block.text.trim()) {
+              finalReply = block.text.trim()
+            }
+            if (block?.type === 'tool_use' && typeof block.name === 'string') {
+              if (!toolsInvoked.includes(block.name)) toolsInvoked.push(block.name)
+            }
           }
-          const resultText = await executeShirleyTool(
-            toolCall.name,
-            toolArgs,
-            payload,
-          )
-          toolResults.push({
-            type: 'tool_result',
-            tool_use_id: toolCall.id,
-            content: resultText,
-          })
+        } else if (msg.type === 'result') {
+          if (msg.subtype === 'success') {
+            if (typeof msg.result === 'string' && msg.result.trim()) {
+              finalReply = msg.result.trim()
+            }
+            const usage = msg.usage as any
+            totalInputTokens += Number(usage?.input_tokens ?? 0)
+            totalOutputTokens += Number(usage?.output_tokens ?? 0)
+          } else {
+            sdkError = (msg as any).errors?.join('; ') ?? msg.subtype
+          }
         }
-
-        const onlyDirectTools = toolCalls.every((tc) => DIRECT_REPLY_TOOLS.has(tc.name))
-        if (onlyDirectTools && toolResults.length > 0) {
-          const directReply = toolResults.map((tr) => tr.content).join('\n\n')
-
-          void persistMessage(payload, {
-            chatId,
-            role: 'assistant',
-            content: directReply,
-            toolName: toolsInvoked.join(', ') || undefined,
-          })
-
-          void recordTrace(payload, {
-            chatId,
-            query: text,
-            responseSummary: directReply,
-            toolsUsed: toolsInvoked.join(', ') || 'ninguna',
-            inputTokens: totalInputTokens,
-            outputTokens: totalOutputTokens,
-            totalTokens: totalInputTokens + totalOutputTokens,
-            cost: '$0 USD (Groq Free Tier)',
-            executionTimeMs: Date.now() - startTime,
-            status: 'success',
-            model,
-          })
-
-          return directReply
-        }
-
-        messages.push({ role: 'user', content: toolResults })
-        continue
       }
+      return 'done' as const
+    })()
 
-      // 2. Extraer texto de respuesta final
-      const textBlock = content.find((item) => item.type === 'text')
-      if (textBlock && typeof textBlock.text === 'string' && textBlock.text.trim()) {
-        const finalReply = textBlock.text.trim()
-
-        // Persistir respuesta del asistente
-        void persistMessage(payload, {
-          chatId,
-          role: 'assistant',
-          content: finalReply,
-          toolName: toolsInvoked.join(', ') || undefined,
-        })
-
-        // Registrar métrica de observabilidad con conteo de tokens
-        void recordTrace(payload, {
-          chatId,
-          query: text,
-          responseSummary: finalReply,
-          toolsUsed: toolsInvoked.join(', ') || 'ninguna',
-          inputTokens: totalInputTokens,
-          outputTokens: totalOutputTokens,
-          totalTokens: totalInputTokens + totalOutputTokens,
-          cost: '$0 USD (Groq Free Tier)',
-          executionTimeMs: Date.now() - startTime,
-          status: 'success',
-          model,
-        })
-
-        return finalReply
-      }
+    const outcome = await Promise.race([
+      collect,
+      sleep(TIMEOUT_MS).then(() => 'timeout' as const),
+    ])
+    if (outcome === 'timeout') {
+      await q.interrupt().catch(() => undefined)
+      throw new Error('TimeoutError')
     }
 
+    consecutiveGatewayFailures = 0
+
+    if (!finalReply) {
+      payload.logger.warn({ msg: '[shirley-agent-sdk] query() sin texto final, usando fallback' })
+      void recordTrace(payload, {
+        chatId,
+        query: text,
+        responseSummary: AGENT_FALLBACK,
+        toolsUsed: toolsInvoked.join(', ') || 'ninguna',
+        inputTokens: totalInputTokens,
+        outputTokens: totalOutputTokens,
+        totalTokens: totalInputTokens + totalOutputTokens,
+        cost: '$0 USD (Groq Free Tier)',
+        executionTimeMs: Date.now() - startTime,
+        status: 'fallback',
+        errorMessage: sdkError || 'query() sin respuesta textual',
+        model,
+      })
+      return AGENT_FALLBACK
+    }
+
+    void persistMessage(payload, {
+      chatId,
+      role: 'assistant',
+      content: finalReply,
+      toolName: toolsInvoked.join(', ') || undefined,
+    })
     void recordTrace(payload, {
       chatId,
       query: text,
-      responseSummary: AGENT_FALLBACK,
+      responseSummary: finalReply,
       toolsUsed: toolsInvoked.join(', ') || 'ninguna',
       inputTokens: totalInputTokens,
       outputTokens: totalOutputTokens,
       totalTokens: totalInputTokens + totalOutputTokens,
       cost: '$0 USD (Groq Free Tier)',
       executionTimeMs: Date.now() - startTime,
-      status: 'fallback',
-      errorMessage: 'Se alcanzó el límite de MAX_TURNS sin respuesta textual',
+      status: 'success',
       model,
     })
-
-    return AGENT_FALLBACK
+    return finalReply
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err)
+    consecutiveGatewayFailures++
+    if (consecutiveGatewayFailures >= CIRCUIT_FAIL_THRESHOLD) {
+      circuitOpenUntil = Date.now() + CIRCUIT_BREAKER_MS
+    }
     payload.logger.error({
-      msg: '[shirley-agent] Error crítico en el loop agéntico',
+      msg: '[shirley-agent-sdk] Error crítico en query() del SDK',
       err: errorMsg,
     })
-
     void recordTrace(payload, {
       chatId,
       query: text,
@@ -539,7 +585,6 @@ export async function runShirleyAgent({
       errorMessage: errorMsg,
       model,
     })
-
     return AGENT_FALLBACK
   }
 }

@@ -35,26 +35,27 @@ export function FilterItemDropdown({ list }: { list: ListItem[] }) {
         setActive(listItem.title)
       }
     })
+    // A selection navigates (new searchParams): close the panel for mouse
+    // and keyboard users alike. No onClick on the panel itself is needed.
+    setOpenSelect(false)
   }, [pathname, list, searchParams])
 
   return (
     <div className="relative" ref={ref}>
-      <div
-        className="flex w-full items-center justify-between rounded border border-black/30 px-4 py-2 text-sm dark:border-white/30"
+      <button
+        type="button"
+        aria-expanded={openSelect}
+        aria-haspopup="listbox"
+        className="flex w-full cursor-pointer items-center justify-between rounded border border-black/30 px-4 py-2 text-left text-sm dark:border-white/30"
         onClick={() => {
           setOpenSelect(!openSelect)
         }}
       >
         <div>{active}</div>
         <ChevronDownIcon className="h-4" />
-      </div>
+      </button>
       {openSelect && (
-        <div
-          className="absolute z-40 w-full rounded-b-md bg-white p-4 shadow-md dark:bg-black"
-          onClick={() => {
-            setOpenSelect(false)
-          }}
-        >
+        <div className="absolute z-40 w-full rounded-b-md bg-white p-4 shadow-md dark:bg-black">
           {list.map((item: ListItem, i) => (
             <FilterItem item={item} key={i} />
           ))}

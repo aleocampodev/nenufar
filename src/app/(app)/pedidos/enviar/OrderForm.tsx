@@ -6,6 +6,7 @@ import { useCart } from '@payloadcms/plugin-ecommerce/client/react'
 import { submitOrderAction, type SubmitOrderState } from './submitOrderAction'
 import { CONSENT_TEXT, PRIVACY_URL } from '@/lib/consent'
 import { useState } from 'react'
+import Link from 'next/link'
 
 const initialState: SubmitOrderState = { status: 'idle' }
 
@@ -28,12 +29,12 @@ export function OrderForm() {
           <p className="text-neutral-600 mb-6 text-sm leading-relaxed">
             Agregá piezas artesanales al carrito antes de enviar tu pedido.
           </p>
-          <a
+          <Link
             href="/shop"
             className="inline-block px-6 py-3 bg-brand text-brand-foreground text-sm font-medium rounded-xl hover:bg-brand-dark transition shadow-xs"
           >
             Ver catálogo
-          </a>
+          </Link>
         </div>
       </div>
     )
