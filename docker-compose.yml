@@ -7,7 +7,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: nenufar
     ports:
-      - "5433:5432"
+      # Host port is overridable: 5432/5433 are frequently taken by other
+      # local projects. Default 5435 keeps Nénufar collision-free.
+      - "${POSTGRES_HOST_PORT:-5435}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

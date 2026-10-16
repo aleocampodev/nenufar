@@ -50,7 +50,7 @@ Minimum environment variables (see `.env.example`):
 
 ```
 PAYLOAD_SECRET=          # Payload secret
-DATABASE_URL=            # PostgreSQL (docker-compose runs postgres on :5433)
+DATABASE_URL=            # PostgreSQL (docker compose runs postgres on :5435, override with POSTGRES_HOST_PORT)
 NEXT_PUBLIC_SERVER_URL=  # Public URL (e.g. http://localhost:3002)
 TELEGRAM_BOT_TOKEN=      # Telegram bot token (from BotFather) — orders + Shirley's bot
 TELEGRAM_CHANNEL_ID=     # Telegram channel ID (@name or -100xxxxxxxx)
@@ -66,7 +66,7 @@ TELEGRAM_ADMIN_CHAT_ID=  # Shirley's chat_id (@userinfobot) — only sender the 
 ## Key commands
 
 ```bash
-docker-compose up -d    # start PostgreSQL on :5433 + LiteLLM gateway on :4000
+docker compose up -d    # start PostgreSQL on :5435 + LiteLLM gateway on :4000
 pnpm dev                # dev server on port 3002 (not 3000)
 pnpm build              # production build (includes payload build)
 pnpm payload migrate    # run migrations in production

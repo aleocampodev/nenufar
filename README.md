@@ -118,7 +118,7 @@ Desde la **v3.3** el mismo bot de Telegram incorpora un **sistema agéntico de g
 |------|------------|--------------------|
 | **Framework** | Next.js | 15 · App Router, RSC, Server Actions, Turbopack |
 | **CMS** | Payload CMS | v3 · Self-hosted, admin UI, Local API (`getPayload`) |
-| **Base de datos** | PostgreSQL | 16 · vía `@payloadcms/db-postgres` (Drizzle), puerto `5433` en dev |
+| **Base de datos** | PostgreSQL | 16 · vía `@payloadcms/db-postgres` (Drizzle), puerto `5435` en dev (configurable con `POSTGRES_HOST_PORT`) |
 | **Lenguaje** | TypeScript | 6 · `strict`, tipos generados `payload generate:types` |
 | **Validación** | Zod | 4 · schemas de las 7 tools del bot |
 | **UI** | TailwindCSS + shadcn/ui | v4 + Radix UI, tokens CSS, `bg-brand` (`#E91E8C`) |
@@ -157,7 +157,7 @@ cp .env.example .env
 # Editar .env con tus valores (ver sección abajo)
 
 # 3. Infra local
-docker-compose up -d       # PostgreSQL :5433 + LiteLLM :4000
+docker compose up -d      # PostgreSQL :5435 + LiteLLM :4000
 
 # 4. Dependencias
 pnpm install
@@ -166,6 +166,20 @@ pnpm install
 pnpm dev                   # → http://localhost:3002
 ```
 
+#### Arranque local en un comando
+
+```bash
+pnpm dev:local    # levanta Postgres, espera que acepte conexiones, aplica
+                  # migraciones y arranca el dev server en :3002
+
+pnpm seed:local   # carga datos de muestra (admin@nenufar.com / admin123)
+```
+
+Si el puerto 5435 está ocupado, define `POSTGRES_HOST_PORT=<otro>` antes de
+`pnpm dev:local` y usa ese mismo puerto en `DATABASE_URL`. Si el dev server
+arranca con errores de webpack después de un `git pull`, borra la caché con
+`rm -rf .next`.
+
 Abrir **http://localhost:3002/admin** → Dashboard → **"Seed database"** para cargar productos y páginas de muestra.
 
 ### Variables de entorno
@@ -173,7 +187,7 @@ Abrir **http://localhost:3002/admin** → Dashboard → **"Seed database"** para
 ```env
 # ── Core ────────────────────────────────────────────────
 PAYLOAD_SECRET=un-string-largo-y-aleatorio-min-32-chars
-DATABASE_URL=postgres://postgres:postgres@localhost:5433/nenufar
+DATABASE_URL=postgres://postgres:postgres@localhost:5435/nenufar
 NEXT_PUBLIC_SERVER_URL=http://localhost:3002
 
 # ── Bot de pedidos (notificaciones a Shirley) ────────────
@@ -232,8 +246,8 @@ pnpm generate:types        # Regenerar tipos de Payload
 pnpm generate:importmap    # Regenerar import map
 
 # Infra
-docker-compose up -d       # Postgres :5433 + LiteLLM :4000
-docker-compose up -d litellm  # solo gateway
+docker compose up -d       # Postgres :5435 + LiteLLM :4000
+docker compose up -d litellm  # solo gateway
 curl http://localhost:4000/health/liveliness  # health del gateway
 
 # Webhook del bot de gestión

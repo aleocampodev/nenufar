@@ -5,34 +5,46 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
    CREATE TYPE "public"."enum_users_roles" AS ENUM('admin', 'customer');
   CREATE TYPE "public"."enum_pages_hero_links_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum_pages_hero_links_link_appearance" AS ENUM('default', 'outline');
+  CREATE TYPE "public"."enum_pages_hero_slides_image_position" AS ENUM('top', 'center', 'bottom');
+  CREATE TYPE "public"."enum_pages_blocks_upcoming_events_events_type" AS ENUM('taller', 'feria', 'popup');
   CREATE TYPE "public"."enum_pages_blocks_cta_links_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum_pages_blocks_cta_links_link_appearance" AS ENUM('default', 'outline');
   CREATE TYPE "public"."enum_pages_blocks_content_columns_size" AS ENUM('oneThird', 'half', 'twoThirds', 'full');
   CREATE TYPE "public"."enum_pages_blocks_content_columns_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum_pages_blocks_content_columns_link_appearance" AS ENUM('default', 'outline');
   CREATE TYPE "public"."enum_pages_blocks_archive_populate_by" AS ENUM('collection', 'selection');
-  CREATE TYPE "public"."enum_pages_blocks_archive_relation_to" AS ENUM('products');
+  CREATE TYPE "public"."enum_pages_blocks_archive_relation_to" AS ENUM('products', 'posts');
   CREATE TYPE "public"."enum_pages_blocks_carousel_populate_by" AS ENUM('collection', 'selection');
   CREATE TYPE "public"."enum_pages_blocks_carousel_relation_to" AS ENUM('products');
   CREATE TYPE "public"."enum_pages_blocks_banner_style" AS ENUM('info', 'warning', 'error', 'success');
-  CREATE TYPE "public"."enum_pages_hero_type" AS ENUM('none', 'highImpact', 'mediumImpact', 'lowImpact');
+  CREATE TYPE "public"."enum_pages_hero_type" AS ENUM('hero', 'slider', 'lowImpact', 'mediumImpact', 'highImpact', 'none');
   CREATE TYPE "public"."enum_pages_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum__pages_v_version_hero_links_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum__pages_v_version_hero_links_link_appearance" AS ENUM('default', 'outline');
+  CREATE TYPE "public"."enum__pages_v_version_hero_slides_image_position" AS ENUM('top', 'center', 'bottom');
+  CREATE TYPE "public"."enum__pages_v_blocks_upcoming_events_events_type" AS ENUM('taller', 'feria', 'popup');
   CREATE TYPE "public"."enum__pages_v_blocks_cta_links_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum__pages_v_blocks_cta_links_link_appearance" AS ENUM('default', 'outline');
   CREATE TYPE "public"."enum__pages_v_blocks_content_columns_size" AS ENUM('oneThird', 'half', 'twoThirds', 'full');
   CREATE TYPE "public"."enum__pages_v_blocks_content_columns_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum__pages_v_blocks_content_columns_link_appearance" AS ENUM('default', 'outline');
   CREATE TYPE "public"."enum__pages_v_blocks_archive_populate_by" AS ENUM('collection', 'selection');
-  CREATE TYPE "public"."enum__pages_v_blocks_archive_relation_to" AS ENUM('products');
+  CREATE TYPE "public"."enum__pages_v_blocks_archive_relation_to" AS ENUM('products', 'posts');
   CREATE TYPE "public"."enum__pages_v_blocks_carousel_populate_by" AS ENUM('collection', 'selection');
   CREATE TYPE "public"."enum__pages_v_blocks_carousel_relation_to" AS ENUM('products');
   CREATE TYPE "public"."enum__pages_v_blocks_banner_style" AS ENUM('info', 'warning', 'error', 'success');
-  CREATE TYPE "public"."enum__pages_v_version_hero_type" AS ENUM('none', 'highImpact', 'mediumImpact', 'lowImpact');
+  CREATE TYPE "public"."enum__pages_v_version_hero_type" AS ENUM('hero', 'slider', 'lowImpact', 'mediumImpact', 'highImpact', 'none');
   CREATE TYPE "public"."enum__pages_v_version_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum_posts_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum__posts_v_version_status" AS ENUM('draft', 'published');
+  CREATE TYPE "public"."enum_events_type" AS ENUM('taller', 'feria', 'pop-up');
+  CREATE TYPE "public"."enum_events_status" AS ENUM('draft', 'published');
+  CREATE TYPE "public"."enum__events_v_version_type" AS ENUM('taller', 'feria', 'pop-up');
+  CREATE TYPE "public"."enum__events_v_version_status" AS ENUM('draft', 'published');
+  CREATE TYPE "public"."enum_testimonials_status" AS ENUM('draft', 'published');
+  CREATE TYPE "public"."enum__testimonials_v_version_status" AS ENUM('draft', 'published');
+  CREATE TYPE "public"."enum_agent_messages_role" AS ENUM('user', 'assistant', 'tool');
+  CREATE TYPE "public"."enum_agent_traces_status" AS ENUM('success', 'error', 'fallback');
   CREATE TYPE "public"."enum_forms_confirmation_type" AS ENUM('message', 'redirect');
   CREATE TYPE "public"."enum_addresses_country" AS ENUM('US', 'GB', 'CA', 'AU', 'AT', 'BE', 'BR', 'BG', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HK', 'HU', 'IN', 'IE', 'IT', 'JP', 'LV', 'LT', 'LU', 'MY', 'MT', 'MX', 'NL', 'NZ', 'NO', 'PL', 'PT', 'RO', 'SG', 'SK', 'SI', 'ES', 'SE', 'CH');
   CREATE TYPE "public"."enum_variants_status" AS ENUM('draft', 'published');
@@ -94,6 +106,142 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"link_url" varchar,
   	"link_label" varchar,
   	"link_appearance" "enum_pages_hero_links_link_appearance" DEFAULT 'default'
+  );
+  
+  CREATE TABLE "pages_hero_slides" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"model_image_id" integer,
+  	"image_id" integer,
+  	"image_position" "enum_pages_hero_slides_image_position" DEFAULT 'top',
+  	"badge" varchar,
+  	"heading" varchar,
+  	"meta_text" varchar,
+  	"subheading" varchar,
+  	"tab_title" varchar,
+  	"link_label" varchar,
+  	"link_url" varchar
+  );
+  
+  CREATE TABLE "pages_blocks_nenufar_story" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"image_id" integer,
+  	"tagline" varchar DEFAULT 'Hecho a mano en Cartagena',
+  	"heading" varchar DEFAULT 'Nenúfar — Manos que tejen historias',
+  	"description" jsonb,
+  	"link_url" varchar DEFAULT '/shop',
+  	"link_label" varchar DEFAULT 'Conocer la colección',
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE "pages_blocks_image_strip_images" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"title" varchar,
+  	"category" varchar,
+  	"excerpt" varchar,
+  	"image_id" integer,
+  	"image_url" varchar,
+  	"story_meaning" varchar,
+  	"story_craft" varchar,
+  	"story_feel" varchar,
+  	"alt" varchar
+  );
+  
+  CREATE TABLE "pages_blocks_image_strip" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"tagline" varchar DEFAULT 'LEGADO VIVO · COSMOVISIÓN EMBERÁ',
+  	"heading" varchar DEFAULT 'El Universo Ancestral de los Okamas & Otapas',
+  	"description" varchar DEFAULT 'Cada collar es un lienzo sagrado donde miles de micro-mostacillas tejidas a mano por Shirley narran la dignidad de la mujer, los ríos y los senderos sagrados de nuestra tierra.',
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE "pages_blocks_gallery_tabs_images" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"image_id" integer,
+  	"image_url" varchar,
+  	"title" varchar,
+  	"category" varchar,
+  	"description" varchar,
+  	"is_featured" boolean DEFAULT false
+  );
+  
+  CREATE TABLE "pages_blocks_gallery_tabs" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"tab_title" varchar,
+  	"tab_subtitle" varchar
+  );
+  
+  CREATE TABLE "pages_blocks_gallery" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"tagline" varchar,
+  	"heading" varchar,
+  	"description" varchar,
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE "pages_blocks_testimonials_items" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"author_name" varchar,
+  	"author_role" varchar,
+  	"quote" varchar,
+  	"rating" numeric DEFAULT 5,
+  	"avatar_id" integer
+  );
+  
+  CREATE TABLE "pages_blocks_testimonials" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"tagline" varchar DEFAULT 'Voces de Nuestra Comunidad',
+  	"heading" varchar DEFAULT 'Lo que dicen quienes lucen Nenúfar',
+  	"limit" numeric DEFAULT 3,
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE "pages_blocks_upcoming_events_events" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"title" varchar,
+  	"type" "enum_pages_blocks_upcoming_events_events_type" DEFAULT 'feria',
+  	"date" timestamp(3) with time zone,
+  	"location" varchar,
+  	"description" varchar
+  );
+  
+  CREATE TABLE "pages_blocks_upcoming_events" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"tagline" varchar DEFAULT 'EXPERIENCIAS & ENCUENTROS',
+  	"title" varchar DEFAULT 'Talleres en Vivo & Próximas Ferias en Cartagena',
+  	"description" varchar DEFAULT 'Vive el arte de tejer mostacilla en nuestro taller o encuéntranos en las ferias artesanales del Centro Histórico.',
+  	"video_id" integer,
+  	"video_url" varchar DEFAULT 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-an-artisan-weaving-a-basket-43403-large.mp4',
+  	"video_caption" varchar DEFAULT 'El arte de tejer paciencia: experiencia vivencial en Cartagena con Shirley.',
+  	"google_calendar_ical_url" varchar,
+  	"sync_with_google_calendar" boolean DEFAULT false,
+  	"block_name" varchar
   );
   
   CREATE TABLE "pages_blocks_cta_links" (
@@ -204,12 +352,23 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"id" serial PRIMARY KEY NOT NULL,
   	"title" varchar,
   	"published_on" timestamp(3) with time zone,
-  	"hero_type" "enum_pages_hero_type" DEFAULT 'lowImpact',
+  	"hero_type" "enum_pages_hero_type" DEFAULT 'slider',
+  	"hero_model_image_id" integer,
+  	"hero_badge" varchar DEFAULT '',
+  	"hero_heading" varchar DEFAULT 'La nobleza del Caribe no se hereda.',
+  	"hero_heading_highlight" varchar DEFAULT 'Se teje.',
+  	"hero_link_label" varchar DEFAULT 'Conoce la colección',
+  	"hero_link_url" varchar DEFAULT '/shop',
+  	"hero_social_links_instagram_url" varchar DEFAULT 'https://www.instagram.com/nenufar.co/',
+  	"hero_social_links_facebook_url" varchar DEFAULT 'https://www.facebook.com/nenufar.co',
+  	"hero_social_links_whatsapp_url" varchar DEFAULT 'https://wa.me/?text=Hola%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20N%C3%A9nufar',
+  	"hero_social_links_telegram_url" varchar DEFAULT 'https://t.me/',
   	"hero_rich_text" jsonb,
   	"hero_media_id" integer,
   	"meta_title" varchar,
   	"meta_image_id" integer,
   	"meta_description" varchar,
+  	"slug" varchar,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"_status" "enum_pages_status" DEFAULT 'draft'
@@ -222,7 +381,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"path" varchar NOT NULL,
   	"pages_id" integer,
   	"categories_id" integer,
-  	"products_id" integer
+  	"products_id" integer,
+  	"posts_id" integer
   );
   
   CREATE TABLE "_pages_v_version_hero_links" (
@@ -235,6 +395,153 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"link_label" varchar,
   	"link_appearance" "enum__pages_v_version_hero_links_link_appearance" DEFAULT 'default',
   	"_uuid" varchar
+  );
+  
+  CREATE TABLE "_pages_v_version_hero_slides" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"model_image_id" integer,
+  	"image_id" integer,
+  	"image_position" "enum__pages_v_version_hero_slides_image_position" DEFAULT 'top',
+  	"badge" varchar,
+  	"heading" varchar,
+  	"meta_text" varchar,
+  	"subheading" varchar,
+  	"tab_title" varchar,
+  	"link_label" varchar,
+  	"link_url" varchar,
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_nenufar_story" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"image_id" integer,
+  	"tagline" varchar DEFAULT 'Hecho a mano en Cartagena',
+  	"heading" varchar DEFAULT 'Nenúfar — Manos que tejen historias',
+  	"description" jsonb,
+  	"link_url" varchar DEFAULT '/shop',
+  	"link_label" varchar DEFAULT 'Conocer la colección',
+  	"_uuid" varchar,
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_image_strip_images" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"title" varchar,
+  	"category" varchar,
+  	"excerpt" varchar,
+  	"image_id" integer,
+  	"image_url" varchar,
+  	"story_meaning" varchar,
+  	"story_craft" varchar,
+  	"story_feel" varchar,
+  	"alt" varchar,
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_image_strip" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"tagline" varchar DEFAULT 'LEGADO VIVO · COSMOVISIÓN EMBERÁ',
+  	"heading" varchar DEFAULT 'El Universo Ancestral de los Okamas & Otapas',
+  	"description" varchar DEFAULT 'Cada collar es un lienzo sagrado donde miles de micro-mostacillas tejidas a mano por Shirley narran la dignidad de la mujer, los ríos y los senderos sagrados de nuestra tierra.',
+  	"_uuid" varchar,
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_gallery_tabs_images" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"image_id" integer,
+  	"image_url" varchar,
+  	"title" varchar,
+  	"category" varchar,
+  	"description" varchar,
+  	"is_featured" boolean DEFAULT false,
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_gallery_tabs" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"tab_title" varchar,
+  	"tab_subtitle" varchar,
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_gallery" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"tagline" varchar,
+  	"heading" varchar,
+  	"description" varchar,
+  	"_uuid" varchar,
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_testimonials_items" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"author_name" varchar,
+  	"author_role" varchar,
+  	"quote" varchar,
+  	"rating" numeric DEFAULT 5,
+  	"avatar_id" integer,
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_testimonials" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"tagline" varchar DEFAULT 'Voces de Nuestra Comunidad',
+  	"heading" varchar DEFAULT 'Lo que dicen quienes lucen Nenúfar',
+  	"limit" numeric DEFAULT 3,
+  	"_uuid" varchar,
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_upcoming_events_events" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"title" varchar,
+  	"type" "enum__pages_v_blocks_upcoming_events_events_type" DEFAULT 'feria',
+  	"date" timestamp(3) with time zone,
+  	"location" varchar,
+  	"description" varchar,
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_upcoming_events" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"tagline" varchar DEFAULT 'EXPERIENCIAS & ENCUENTROS',
+  	"title" varchar DEFAULT 'Talleres en Vivo & Próximas Ferias en Cartagena',
+  	"description" varchar DEFAULT 'Vive el arte de tejer mostacilla en nuestro taller o encuéntranos en las ferias artesanales del Centro Histórico.',
+  	"video_id" integer,
+  	"video_url" varchar DEFAULT 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-an-artisan-weaving-a-basket-43403-large.mp4',
+  	"video_caption" varchar DEFAULT 'El arte de tejer paciencia: experiencia vivencial en Cartagena con Shirley.',
+  	"google_calendar_ical_url" varchar,
+  	"sync_with_google_calendar" boolean DEFAULT false,
+  	"_uuid" varchar,
+  	"block_name" varchar
   );
   
   CREATE TABLE "_pages_v_blocks_cta_links" (
@@ -356,12 +663,23 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"parent_id" integer,
   	"version_title" varchar,
   	"version_published_on" timestamp(3) with time zone,
-  	"version_hero_type" "enum__pages_v_version_hero_type" DEFAULT 'lowImpact',
+  	"version_hero_type" "enum__pages_v_version_hero_type" DEFAULT 'slider',
+  	"version_hero_model_image_id" integer,
+  	"version_hero_badge" varchar DEFAULT '',
+  	"version_hero_heading" varchar DEFAULT 'La nobleza del Caribe no se hereda.',
+  	"version_hero_heading_highlight" varchar DEFAULT 'Se teje.',
+  	"version_hero_link_label" varchar DEFAULT 'Conoce la colección',
+  	"version_hero_link_url" varchar DEFAULT '/shop',
+  	"version_hero_social_links_instagram_url" varchar DEFAULT 'https://www.instagram.com/nenufar.co/',
+  	"version_hero_social_links_facebook_url" varchar DEFAULT 'https://www.facebook.com/nenufar.co',
+  	"version_hero_social_links_whatsapp_url" varchar DEFAULT 'https://wa.me/?text=Hola%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20N%C3%A9nufar',
+  	"version_hero_social_links_telegram_url" varchar DEFAULT 'https://t.me/',
   	"version_hero_rich_text" jsonb,
   	"version_hero_media_id" integer,
   	"version_meta_title" varchar,
   	"version_meta_image_id" integer,
   	"version_meta_description" varchar,
+  	"version_slug" varchar,
   	"version_updated_at" timestamp(3) with time zone,
   	"version_created_at" timestamp(3) with time zone,
   	"version__status" "enum__pages_v_version_status" DEFAULT 'draft',
@@ -378,7 +696,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"path" varchar NOT NULL,
   	"pages_id" integer,
   	"categories_id" integer,
-  	"products_id" integer
+  	"products_id" integer,
+  	"posts_id" integer
   );
   
   CREATE TABLE "categories" (
@@ -402,7 +721,31 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"width" numeric,
   	"height" numeric,
   	"focal_x" numeric,
-  	"focal_y" numeric
+  	"focal_y" numeric,
+  	"sizes_thumbnail_url" varchar,
+  	"sizes_thumbnail_width" numeric,
+  	"sizes_thumbnail_height" numeric,
+  	"sizes_thumbnail_mime_type" varchar,
+  	"sizes_thumbnail_filesize" numeric,
+  	"sizes_thumbnail_filename" varchar,
+  	"sizes_card_url" varchar,
+  	"sizes_card_width" numeric,
+  	"sizes_card_height" numeric,
+  	"sizes_card_mime_type" varchar,
+  	"sizes_card_filesize" numeric,
+  	"sizes_card_filename" varchar,
+  	"sizes_hero_url" varchar,
+  	"sizes_hero_width" numeric,
+  	"sizes_hero_height" numeric,
+  	"sizes_hero_mime_type" varchar,
+  	"sizes_hero_filesize" numeric,
+  	"sizes_hero_filename" varchar,
+  	"sizes_og_url" varchar,
+  	"sizes_og_width" numeric,
+  	"sizes_og_height" numeric,
+  	"sizes_og_mime_type" varchar,
+  	"sizes_og_filesize" numeric,
+  	"sizes_og_filename" varchar
   );
   
   CREATE TABLE "posts" (
@@ -451,6 +794,101 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"parent_id" integer NOT NULL,
   	"path" varchar NOT NULL,
   	"products_id" integer
+  );
+  
+  CREATE TABLE "events" (
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"type" "enum_events_type" DEFAULT 'feria',
+  	"title" varchar,
+  	"date" timestamp(3) with time zone,
+  	"end_date" timestamp(3) with time zone,
+  	"location" varchar,
+  	"image_id" integer,
+  	"description" varchar,
+  	"link" varchar,
+  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"_status" "enum_events_status" DEFAULT 'draft'
+  );
+  
+  CREATE TABLE "_events_v" (
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"parent_id" integer,
+  	"version_type" "enum__events_v_version_type" DEFAULT 'feria',
+  	"version_title" varchar,
+  	"version_date" timestamp(3) with time zone,
+  	"version_end_date" timestamp(3) with time zone,
+  	"version_location" varchar,
+  	"version_image_id" integer,
+  	"version_description" varchar,
+  	"version_link" varchar,
+  	"version_updated_at" timestamp(3) with time zone,
+  	"version_created_at" timestamp(3) with time zone,
+  	"version__status" "enum__events_v_version_status" DEFAULT 'draft',
+  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"latest" boolean
+  );
+  
+  CREATE TABLE "testimonials" (
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"quote" varchar,
+  	"author_name" varchar,
+  	"author_role" varchar,
+  	"avatar_id" integer,
+  	"rating" numeric,
+  	"featured" boolean DEFAULT false,
+  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"_status" "enum_testimonials_status" DEFAULT 'draft'
+  );
+  
+  CREATE TABLE "_testimonials_v" (
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"parent_id" integer,
+  	"version_quote" varchar,
+  	"version_author_name" varchar,
+  	"version_author_role" varchar,
+  	"version_avatar_id" integer,
+  	"version_rating" numeric,
+  	"version_featured" boolean DEFAULT false,
+  	"version_updated_at" timestamp(3) with time zone,
+  	"version_created_at" timestamp(3) with time zone,
+  	"version__status" "enum__testimonials_v_version_status" DEFAULT 'draft',
+  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"latest" boolean,
+  	"autosave" boolean
+  );
+  
+  CREATE TABLE "agent_messages" (
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"chat_id" numeric NOT NULL,
+  	"role" "enum_agent_messages_role" NOT NULL,
+  	"content" varchar,
+  	"tool_name" varchar,
+  	"tool_calls" jsonb,
+  	"tool_results" jsonb,
+  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+  );
+  
+  CREATE TABLE "agent_traces" (
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"chat_id" numeric NOT NULL,
+  	"query" varchar NOT NULL,
+  	"response_summary" varchar,
+  	"tools_used" varchar,
+  	"input_tokens" numeric,
+  	"output_tokens" numeric,
+  	"total_tokens" numeric,
+  	"cost" varchar DEFAULT '$0 USD (Groq Free Tier)',
+  	"execution_time_ms" numeric,
+  	"status" "enum_agent_traces_status" DEFAULT 'success',
+  	"error_message" varchar,
+  	"model" varchar,
+  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
   
   CREATE TABLE "forms_blocks_checkbox" (
@@ -766,6 +1204,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"meta_title" varchar,
   	"meta_image_id" integer,
   	"meta_description" varchar,
+  	"featured" boolean DEFAULT false,
+  	"slug" varchar,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"deleted_at" timestamp(3) with time zone,
@@ -860,6 +1300,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"version_meta_title" varchar,
   	"version_meta_image_id" integer,
   	"version_meta_description" varchar,
+  	"version_featured" boolean DEFAULT false,
+  	"version_slug" varchar,
   	"version_updated_at" timestamp(3) with time zone,
   	"version_created_at" timestamp(3) with time zone,
   	"version_deleted_at" timestamp(3) with time zone,
@@ -937,6 +1379,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"status" "enum_orders_status" DEFAULT 'processing',
   	"amount" numeric,
   	"currency" "enum_orders_currency" DEFAULT 'COP',
+  	"buyer_name" varchar,
+  	"buyer_contact" varchar,
   	"access_token" varchar,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
@@ -1006,6 +1450,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"categories_id" integer,
   	"media_id" integer,
   	"posts_id" integer,
+  	"events_id" integer,
+  	"testimonials_id" integer,
+  	"agent_messages_id" integer,
+  	"agent_traces_id" integer,
   	"forms_id" integer,
   	"form_submissions_id" integer,
   	"addresses_id" integer,
@@ -1093,6 +1541,24 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "users_roles" ADD CONSTRAINT "users_roles_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "users_sessions" ADD CONSTRAINT "users_sessions_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_hero_links" ADD CONSTRAINT "pages_hero_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_hero_slides" ADD CONSTRAINT "pages_hero_slides_model_image_id_media_id_fk" FOREIGN KEY ("model_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "pages_hero_slides" ADD CONSTRAINT "pages_hero_slides_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "pages_hero_slides" ADD CONSTRAINT "pages_hero_slides_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_nenufar_story" ADD CONSTRAINT "pages_blocks_nenufar_story_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "pages_blocks_nenufar_story" ADD CONSTRAINT "pages_blocks_nenufar_story_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_image_strip_images" ADD CONSTRAINT "pages_blocks_image_strip_images_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "pages_blocks_image_strip_images" ADD CONSTRAINT "pages_blocks_image_strip_images_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_image_strip"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_image_strip" ADD CONSTRAINT "pages_blocks_image_strip_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_gallery_tabs_images" ADD CONSTRAINT "pages_blocks_gallery_tabs_images_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "pages_blocks_gallery_tabs_images" ADD CONSTRAINT "pages_blocks_gallery_tabs_images_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_gallery_tabs"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_gallery_tabs" ADD CONSTRAINT "pages_blocks_gallery_tabs_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_gallery"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_gallery" ADD CONSTRAINT "pages_blocks_gallery_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_testimonials_items" ADD CONSTRAINT "pages_blocks_testimonials_items_avatar_id_media_id_fk" FOREIGN KEY ("avatar_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "pages_blocks_testimonials_items" ADD CONSTRAINT "pages_blocks_testimonials_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_testimonials"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_testimonials" ADD CONSTRAINT "pages_blocks_testimonials_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_upcoming_events_events" ADD CONSTRAINT "pages_blocks_upcoming_events_events_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_upcoming_events"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_upcoming_events" ADD CONSTRAINT "pages_blocks_upcoming_events_video_id_media_id_fk" FOREIGN KEY ("video_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "pages_blocks_upcoming_events" ADD CONSTRAINT "pages_blocks_upcoming_events_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_cta_links" ADD CONSTRAINT "pages_blocks_cta_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_cta"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_cta" ADD CONSTRAINT "pages_blocks_cta_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_content_columns" ADD CONSTRAINT "pages_blocks_content_columns_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_content"("id") ON DELETE cascade ON UPDATE no action;
@@ -1105,13 +1571,33 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "pages_blocks_banner" ADD CONSTRAINT "pages_blocks_banner_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_form_block" ADD CONSTRAINT "pages_blocks_form_block_form_id_forms_id_fk" FOREIGN KEY ("form_id") REFERENCES "public"."forms"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "pages_blocks_form_block" ADD CONSTRAINT "pages_blocks_form_block_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages" ADD CONSTRAINT "pages_hero_model_image_id_media_id_fk" FOREIGN KEY ("hero_model_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "pages" ADD CONSTRAINT "pages_hero_media_id_media_id_fk" FOREIGN KEY ("hero_media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "pages" ADD CONSTRAINT "pages_meta_image_id_media_id_fk" FOREIGN KEY ("meta_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "pages_rels" ADD CONSTRAINT "pages_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_rels" ADD CONSTRAINT "pages_rels_pages_fk" FOREIGN KEY ("pages_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_rels" ADD CONSTRAINT "pages_rels_categories_fk" FOREIGN KEY ("categories_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_rels" ADD CONSTRAINT "pages_rels_products_fk" FOREIGN KEY ("products_id") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_rels" ADD CONSTRAINT "pages_rels_posts_fk" FOREIGN KEY ("posts_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_version_hero_links" ADD CONSTRAINT "_pages_v_version_hero_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_version_hero_slides" ADD CONSTRAINT "_pages_v_version_hero_slides_model_image_id_media_id_fk" FOREIGN KEY ("model_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_pages_v_version_hero_slides" ADD CONSTRAINT "_pages_v_version_hero_slides_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_pages_v_version_hero_slides" ADD CONSTRAINT "_pages_v_version_hero_slides_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_nenufar_story" ADD CONSTRAINT "_pages_v_blocks_nenufar_story_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_nenufar_story" ADD CONSTRAINT "_pages_v_blocks_nenufar_story_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_image_strip_images" ADD CONSTRAINT "_pages_v_blocks_image_strip_images_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_image_strip_images" ADD CONSTRAINT "_pages_v_blocks_image_strip_images_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_image_strip"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_image_strip" ADD CONSTRAINT "_pages_v_blocks_image_strip_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_gallery_tabs_images" ADD CONSTRAINT "_pages_v_blocks_gallery_tabs_images_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_gallery_tabs_images" ADD CONSTRAINT "_pages_v_blocks_gallery_tabs_images_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_gallery_tabs"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_gallery_tabs" ADD CONSTRAINT "_pages_v_blocks_gallery_tabs_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_gallery"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_gallery" ADD CONSTRAINT "_pages_v_blocks_gallery_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_testimonials_items" ADD CONSTRAINT "_pages_v_blocks_testimonials_items_avatar_id_media_id_fk" FOREIGN KEY ("avatar_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_testimonials_items" ADD CONSTRAINT "_pages_v_blocks_testimonials_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_testimonials"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_testimonials" ADD CONSTRAINT "_pages_v_blocks_testimonials_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_upcoming_events_events" ADD CONSTRAINT "_pages_v_blocks_upcoming_events_events_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_upcoming_events"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_upcoming_events" ADD CONSTRAINT "_pages_v_blocks_upcoming_events_video_id_media_id_fk" FOREIGN KEY ("video_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_upcoming_events" ADD CONSTRAINT "_pages_v_blocks_upcoming_events_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_cta_links" ADD CONSTRAINT "_pages_v_blocks_cta_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_cta"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_cta" ADD CONSTRAINT "_pages_v_blocks_cta_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_content_columns" ADD CONSTRAINT "_pages_v_blocks_content_columns_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_content"("id") ON DELETE cascade ON UPDATE no action;
@@ -1125,12 +1611,14 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "_pages_v_blocks_form_block" ADD CONSTRAINT "_pages_v_blocks_form_block_form_id_forms_id_fk" FOREIGN KEY ("form_id") REFERENCES "public"."forms"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_form_block" ADD CONSTRAINT "_pages_v_blocks_form_block_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v" ADD CONSTRAINT "_pages_v_parent_id_pages_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."pages"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_pages_v" ADD CONSTRAINT "_pages_v_version_hero_model_image_id_media_id_fk" FOREIGN KEY ("version_hero_model_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_pages_v" ADD CONSTRAINT "_pages_v_version_hero_media_id_media_id_fk" FOREIGN KEY ("version_hero_media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_pages_v" ADD CONSTRAINT "_pages_v_version_meta_image_id_media_id_fk" FOREIGN KEY ("version_meta_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_pages_v_rels" ADD CONSTRAINT "_pages_v_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_rels" ADD CONSTRAINT "_pages_v_rels_pages_fk" FOREIGN KEY ("pages_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_rels" ADD CONSTRAINT "_pages_v_rels_categories_fk" FOREIGN KEY ("categories_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_rels" ADD CONSTRAINT "_pages_v_rels_products_fk" FOREIGN KEY ("products_id") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_rels" ADD CONSTRAINT "_pages_v_rels_posts_fk" FOREIGN KEY ("posts_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "posts" ADD CONSTRAINT "posts_author_id_users_id_fk" FOREIGN KEY ("author_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "posts" ADD CONSTRAINT "posts_meta_image_id_media_id_fk" FOREIGN KEY ("meta_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "posts_rels" ADD CONSTRAINT "posts_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
@@ -1140,6 +1628,12 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "_posts_v" ADD CONSTRAINT "_posts_v_version_meta_image_id_media_id_fk" FOREIGN KEY ("version_meta_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_posts_v_rels" ADD CONSTRAINT "_posts_v_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."_posts_v"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_posts_v_rels" ADD CONSTRAINT "_posts_v_rels_products_fk" FOREIGN KEY ("products_id") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "events" ADD CONSTRAINT "events_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_events_v" ADD CONSTRAINT "_events_v_parent_id_events_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."events"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_events_v" ADD CONSTRAINT "_events_v_version_image_id_media_id_fk" FOREIGN KEY ("version_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "testimonials" ADD CONSTRAINT "testimonials_avatar_id_media_id_fk" FOREIGN KEY ("avatar_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_testimonials_v" ADD CONSTRAINT "_testimonials_v_parent_id_testimonials_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."testimonials"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_testimonials_v" ADD CONSTRAINT "_testimonials_v_version_avatar_id_media_id_fk" FOREIGN KEY ("version_avatar_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "forms_blocks_checkbox" ADD CONSTRAINT "forms_blocks_checkbox_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."forms"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "forms_blocks_country" ADD CONSTRAINT "forms_blocks_country_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."forms"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "forms_blocks_email" ADD CONSTRAINT "forms_blocks_email_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."forms"("id") ON DELETE cascade ON UPDATE no action;
@@ -1216,6 +1710,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_categories_fk" FOREIGN KEY ("categories_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_media_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_posts_fk" FOREIGN KEY ("posts_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_events_fk" FOREIGN KEY ("events_id") REFERENCES "public"."events"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_testimonials_fk" FOREIGN KEY ("testimonials_id") REFERENCES "public"."testimonials"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_agent_messages_fk" FOREIGN KEY ("agent_messages_id") REFERENCES "public"."agent_messages"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_agent_traces_fk" FOREIGN KEY ("agent_traces_id") REFERENCES "public"."agent_traces"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_forms_fk" FOREIGN KEY ("forms_id") REFERENCES "public"."forms"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_form_submissions_fk" FOREIGN KEY ("form_submissions_id") REFERENCES "public"."form_submissions"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_addresses_fk" FOREIGN KEY ("addresses_id") REFERENCES "public"."addresses"("id") ON DELETE cascade ON UPDATE no action;
@@ -1243,6 +1741,40 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE UNIQUE INDEX "users_email_idx" ON "users" USING btree ("email");
   CREATE INDEX "pages_hero_links_order_idx" ON "pages_hero_links" USING btree ("_order");
   CREATE INDEX "pages_hero_links_parent_id_idx" ON "pages_hero_links" USING btree ("_parent_id");
+  CREATE INDEX "pages_hero_slides_order_idx" ON "pages_hero_slides" USING btree ("_order");
+  CREATE INDEX "pages_hero_slides_parent_id_idx" ON "pages_hero_slides" USING btree ("_parent_id");
+  CREATE INDEX "pages_hero_slides_model_image_idx" ON "pages_hero_slides" USING btree ("model_image_id");
+  CREATE INDEX "pages_hero_slides_image_idx" ON "pages_hero_slides" USING btree ("image_id");
+  CREATE INDEX "pages_blocks_nenufar_story_order_idx" ON "pages_blocks_nenufar_story" USING btree ("_order");
+  CREATE INDEX "pages_blocks_nenufar_story_parent_id_idx" ON "pages_blocks_nenufar_story" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_nenufar_story_path_idx" ON "pages_blocks_nenufar_story" USING btree ("_path");
+  CREATE INDEX "pages_blocks_nenufar_story_image_idx" ON "pages_blocks_nenufar_story" USING btree ("image_id");
+  CREATE INDEX "pages_blocks_image_strip_images_order_idx" ON "pages_blocks_image_strip_images" USING btree ("_order");
+  CREATE INDEX "pages_blocks_image_strip_images_parent_id_idx" ON "pages_blocks_image_strip_images" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_image_strip_images_image_idx" ON "pages_blocks_image_strip_images" USING btree ("image_id");
+  CREATE INDEX "pages_blocks_image_strip_order_idx" ON "pages_blocks_image_strip" USING btree ("_order");
+  CREATE INDEX "pages_blocks_image_strip_parent_id_idx" ON "pages_blocks_image_strip" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_image_strip_path_idx" ON "pages_blocks_image_strip" USING btree ("_path");
+  CREATE INDEX "pages_blocks_gallery_tabs_images_order_idx" ON "pages_blocks_gallery_tabs_images" USING btree ("_order");
+  CREATE INDEX "pages_blocks_gallery_tabs_images_parent_id_idx" ON "pages_blocks_gallery_tabs_images" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_gallery_tabs_images_image_idx" ON "pages_blocks_gallery_tabs_images" USING btree ("image_id");
+  CREATE INDEX "pages_blocks_gallery_tabs_order_idx" ON "pages_blocks_gallery_tabs" USING btree ("_order");
+  CREATE INDEX "pages_blocks_gallery_tabs_parent_id_idx" ON "pages_blocks_gallery_tabs" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_gallery_order_idx" ON "pages_blocks_gallery" USING btree ("_order");
+  CREATE INDEX "pages_blocks_gallery_parent_id_idx" ON "pages_blocks_gallery" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_gallery_path_idx" ON "pages_blocks_gallery" USING btree ("_path");
+  CREATE INDEX "pages_blocks_testimonials_items_order_idx" ON "pages_blocks_testimonials_items" USING btree ("_order");
+  CREATE INDEX "pages_blocks_testimonials_items_parent_id_idx" ON "pages_blocks_testimonials_items" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_testimonials_items_avatar_idx" ON "pages_blocks_testimonials_items" USING btree ("avatar_id");
+  CREATE INDEX "pages_blocks_testimonials_order_idx" ON "pages_blocks_testimonials" USING btree ("_order");
+  CREATE INDEX "pages_blocks_testimonials_parent_id_idx" ON "pages_blocks_testimonials" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_testimonials_path_idx" ON "pages_blocks_testimonials" USING btree ("_path");
+  CREATE INDEX "pages_blocks_upcoming_events_events_order_idx" ON "pages_blocks_upcoming_events_events" USING btree ("_order");
+  CREATE INDEX "pages_blocks_upcoming_events_events_parent_id_idx" ON "pages_blocks_upcoming_events_events" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_upcoming_events_order_idx" ON "pages_blocks_upcoming_events" USING btree ("_order");
+  CREATE INDEX "pages_blocks_upcoming_events_parent_id_idx" ON "pages_blocks_upcoming_events" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_upcoming_events_path_idx" ON "pages_blocks_upcoming_events" USING btree ("_path");
+  CREATE INDEX "pages_blocks_upcoming_events_video_idx" ON "pages_blocks_upcoming_events" USING btree ("video_id");
   CREATE INDEX "pages_blocks_cta_links_order_idx" ON "pages_blocks_cta_links" USING btree ("_order");
   CREATE INDEX "pages_blocks_cta_links_parent_id_idx" ON "pages_blocks_cta_links" USING btree ("_parent_id");
   CREATE INDEX "pages_blocks_cta_order_idx" ON "pages_blocks_cta" USING btree ("_order");
@@ -1273,8 +1805,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "pages_blocks_form_block_parent_id_idx" ON "pages_blocks_form_block" USING btree ("_parent_id");
   CREATE INDEX "pages_blocks_form_block_path_idx" ON "pages_blocks_form_block" USING btree ("_path");
   CREATE INDEX "pages_blocks_form_block_form_idx" ON "pages_blocks_form_block" USING btree ("form_id");
+  CREATE INDEX "pages_hero_hero_model_image_idx" ON "pages" USING btree ("hero_model_image_id");
   CREATE INDEX "pages_hero_hero_media_idx" ON "pages" USING btree ("hero_media_id");
   CREATE INDEX "pages_meta_meta_image_idx" ON "pages" USING btree ("meta_image_id");
+  CREATE UNIQUE INDEX "pages_slug_idx" ON "pages" USING btree ("slug");
   CREATE INDEX "pages_updated_at_idx" ON "pages" USING btree ("updated_at");
   CREATE INDEX "pages_created_at_idx" ON "pages" USING btree ("created_at");
   CREATE INDEX "pages__status_idx" ON "pages" USING btree ("_status");
@@ -1284,8 +1818,43 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "pages_rels_pages_id_idx" ON "pages_rels" USING btree ("pages_id");
   CREATE INDEX "pages_rels_categories_id_idx" ON "pages_rels" USING btree ("categories_id");
   CREATE INDEX "pages_rels_products_id_idx" ON "pages_rels" USING btree ("products_id");
+  CREATE INDEX "pages_rels_posts_id_idx" ON "pages_rels" USING btree ("posts_id");
   CREATE INDEX "_pages_v_version_hero_links_order_idx" ON "_pages_v_version_hero_links" USING btree ("_order");
   CREATE INDEX "_pages_v_version_hero_links_parent_id_idx" ON "_pages_v_version_hero_links" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_version_hero_slides_order_idx" ON "_pages_v_version_hero_slides" USING btree ("_order");
+  CREATE INDEX "_pages_v_version_hero_slides_parent_id_idx" ON "_pages_v_version_hero_slides" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_version_hero_slides_model_image_idx" ON "_pages_v_version_hero_slides" USING btree ("model_image_id");
+  CREATE INDEX "_pages_v_version_hero_slides_image_idx" ON "_pages_v_version_hero_slides" USING btree ("image_id");
+  CREATE INDEX "_pages_v_blocks_nenufar_story_order_idx" ON "_pages_v_blocks_nenufar_story" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_nenufar_story_parent_id_idx" ON "_pages_v_blocks_nenufar_story" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_nenufar_story_path_idx" ON "_pages_v_blocks_nenufar_story" USING btree ("_path");
+  CREATE INDEX "_pages_v_blocks_nenufar_story_image_idx" ON "_pages_v_blocks_nenufar_story" USING btree ("image_id");
+  CREATE INDEX "_pages_v_blocks_image_strip_images_order_idx" ON "_pages_v_blocks_image_strip_images" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_image_strip_images_parent_id_idx" ON "_pages_v_blocks_image_strip_images" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_image_strip_images_image_idx" ON "_pages_v_blocks_image_strip_images" USING btree ("image_id");
+  CREATE INDEX "_pages_v_blocks_image_strip_order_idx" ON "_pages_v_blocks_image_strip" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_image_strip_parent_id_idx" ON "_pages_v_blocks_image_strip" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_image_strip_path_idx" ON "_pages_v_blocks_image_strip" USING btree ("_path");
+  CREATE INDEX "_pages_v_blocks_gallery_tabs_images_order_idx" ON "_pages_v_blocks_gallery_tabs_images" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_gallery_tabs_images_parent_id_idx" ON "_pages_v_blocks_gallery_tabs_images" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_gallery_tabs_images_image_idx" ON "_pages_v_blocks_gallery_tabs_images" USING btree ("image_id");
+  CREATE INDEX "_pages_v_blocks_gallery_tabs_order_idx" ON "_pages_v_blocks_gallery_tabs" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_gallery_tabs_parent_id_idx" ON "_pages_v_blocks_gallery_tabs" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_gallery_order_idx" ON "_pages_v_blocks_gallery" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_gallery_parent_id_idx" ON "_pages_v_blocks_gallery" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_gallery_path_idx" ON "_pages_v_blocks_gallery" USING btree ("_path");
+  CREATE INDEX "_pages_v_blocks_testimonials_items_order_idx" ON "_pages_v_blocks_testimonials_items" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_testimonials_items_parent_id_idx" ON "_pages_v_blocks_testimonials_items" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_testimonials_items_avatar_idx" ON "_pages_v_blocks_testimonials_items" USING btree ("avatar_id");
+  CREATE INDEX "_pages_v_blocks_testimonials_order_idx" ON "_pages_v_blocks_testimonials" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_testimonials_parent_id_idx" ON "_pages_v_blocks_testimonials" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_testimonials_path_idx" ON "_pages_v_blocks_testimonials" USING btree ("_path");
+  CREATE INDEX "_pages_v_blocks_upcoming_events_events_order_idx" ON "_pages_v_blocks_upcoming_events_events" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_upcoming_events_events_parent_id_idx" ON "_pages_v_blocks_upcoming_events_events" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_upcoming_events_order_idx" ON "_pages_v_blocks_upcoming_events" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_upcoming_events_parent_id_idx" ON "_pages_v_blocks_upcoming_events" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_upcoming_events_path_idx" ON "_pages_v_blocks_upcoming_events" USING btree ("_path");
+  CREATE INDEX "_pages_v_blocks_upcoming_events_video_idx" ON "_pages_v_blocks_upcoming_events" USING btree ("video_id");
   CREATE INDEX "_pages_v_blocks_cta_links_order_idx" ON "_pages_v_blocks_cta_links" USING btree ("_order");
   CREATE INDEX "_pages_v_blocks_cta_links_parent_id_idx" ON "_pages_v_blocks_cta_links" USING btree ("_parent_id");
   CREATE INDEX "_pages_v_blocks_cta_order_idx" ON "_pages_v_blocks_cta" USING btree ("_order");
@@ -1317,8 +1886,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "_pages_v_blocks_form_block_path_idx" ON "_pages_v_blocks_form_block" USING btree ("_path");
   CREATE INDEX "_pages_v_blocks_form_block_form_idx" ON "_pages_v_blocks_form_block" USING btree ("form_id");
   CREATE INDEX "_pages_v_parent_idx" ON "_pages_v" USING btree ("parent_id");
+  CREATE INDEX "_pages_v_version_hero_version_hero_model_image_idx" ON "_pages_v" USING btree ("version_hero_model_image_id");
   CREATE INDEX "_pages_v_version_hero_version_hero_media_idx" ON "_pages_v" USING btree ("version_hero_media_id");
   CREATE INDEX "_pages_v_version_meta_version_meta_image_idx" ON "_pages_v" USING btree ("version_meta_image_id");
+  CREATE INDEX "_pages_v_version_version_slug_idx" ON "_pages_v" USING btree ("version_slug");
   CREATE INDEX "_pages_v_version_version_updated_at_idx" ON "_pages_v" USING btree ("version_updated_at");
   CREATE INDEX "_pages_v_version_version_created_at_idx" ON "_pages_v" USING btree ("version_created_at");
   CREATE INDEX "_pages_v_version_version__status_idx" ON "_pages_v" USING btree ("version__status");
@@ -1332,11 +1903,16 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "_pages_v_rels_pages_id_idx" ON "_pages_v_rels" USING btree ("pages_id");
   CREATE INDEX "_pages_v_rels_categories_id_idx" ON "_pages_v_rels" USING btree ("categories_id");
   CREATE INDEX "_pages_v_rels_products_id_idx" ON "_pages_v_rels" USING btree ("products_id");
+  CREATE INDEX "_pages_v_rels_posts_id_idx" ON "_pages_v_rels" USING btree ("posts_id");
   CREATE INDEX "categories_updated_at_idx" ON "categories" USING btree ("updated_at");
   CREATE INDEX "categories_created_at_idx" ON "categories" USING btree ("created_at");
   CREATE INDEX "media_updated_at_idx" ON "media" USING btree ("updated_at");
   CREATE INDEX "media_created_at_idx" ON "media" USING btree ("created_at");
   CREATE UNIQUE INDEX "media_filename_idx" ON "media" USING btree ("filename");
+  CREATE INDEX "media_sizes_thumbnail_sizes_thumbnail_filename_idx" ON "media" USING btree ("sizes_thumbnail_filename");
+  CREATE INDEX "media_sizes_card_sizes_card_filename_idx" ON "media" USING btree ("sizes_card_filename");
+  CREATE INDEX "media_sizes_hero_sizes_hero_filename_idx" ON "media" USING btree ("sizes_hero_filename");
+  CREATE INDEX "media_sizes_og_sizes_og_filename_idx" ON "media" USING btree ("sizes_og_filename");
   CREATE INDEX "posts_author_idx" ON "posts" USING btree ("author_id");
   CREATE INDEX "posts_meta_meta_image_idx" ON "posts" USING btree ("meta_image_id");
   CREATE INDEX "posts_updated_at_idx" ON "posts" USING btree ("updated_at");
@@ -1359,6 +1935,37 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "_posts_v_rels_parent_idx" ON "_posts_v_rels" USING btree ("parent_id");
   CREATE INDEX "_posts_v_rels_path_idx" ON "_posts_v_rels" USING btree ("path");
   CREATE INDEX "_posts_v_rels_products_id_idx" ON "_posts_v_rels" USING btree ("products_id");
+  CREATE INDEX "events_image_idx" ON "events" USING btree ("image_id");
+  CREATE INDEX "events_updated_at_idx" ON "events" USING btree ("updated_at");
+  CREATE INDEX "events_created_at_idx" ON "events" USING btree ("created_at");
+  CREATE INDEX "events__status_idx" ON "events" USING btree ("_status");
+  CREATE INDEX "_events_v_parent_idx" ON "_events_v" USING btree ("parent_id");
+  CREATE INDEX "_events_v_version_version_image_idx" ON "_events_v" USING btree ("version_image_id");
+  CREATE INDEX "_events_v_version_version_updated_at_idx" ON "_events_v" USING btree ("version_updated_at");
+  CREATE INDEX "_events_v_version_version_created_at_idx" ON "_events_v" USING btree ("version_created_at");
+  CREATE INDEX "_events_v_version_version__status_idx" ON "_events_v" USING btree ("version__status");
+  CREATE INDEX "_events_v_created_at_idx" ON "_events_v" USING btree ("created_at");
+  CREATE INDEX "_events_v_updated_at_idx" ON "_events_v" USING btree ("updated_at");
+  CREATE INDEX "_events_v_latest_idx" ON "_events_v" USING btree ("latest");
+  CREATE INDEX "testimonials_avatar_idx" ON "testimonials" USING btree ("avatar_id");
+  CREATE INDEX "testimonials_updated_at_idx" ON "testimonials" USING btree ("updated_at");
+  CREATE INDEX "testimonials_created_at_idx" ON "testimonials" USING btree ("created_at");
+  CREATE INDEX "testimonials__status_idx" ON "testimonials" USING btree ("_status");
+  CREATE INDEX "_testimonials_v_parent_idx" ON "_testimonials_v" USING btree ("parent_id");
+  CREATE INDEX "_testimonials_v_version_version_avatar_idx" ON "_testimonials_v" USING btree ("version_avatar_id");
+  CREATE INDEX "_testimonials_v_version_version_updated_at_idx" ON "_testimonials_v" USING btree ("version_updated_at");
+  CREATE INDEX "_testimonials_v_version_version_created_at_idx" ON "_testimonials_v" USING btree ("version_created_at");
+  CREATE INDEX "_testimonials_v_version_version__status_idx" ON "_testimonials_v" USING btree ("version__status");
+  CREATE INDEX "_testimonials_v_created_at_idx" ON "_testimonials_v" USING btree ("created_at");
+  CREATE INDEX "_testimonials_v_updated_at_idx" ON "_testimonials_v" USING btree ("updated_at");
+  CREATE INDEX "_testimonials_v_latest_idx" ON "_testimonials_v" USING btree ("latest");
+  CREATE INDEX "_testimonials_v_autosave_idx" ON "_testimonials_v" USING btree ("autosave");
+  CREATE INDEX "agent_messages_chat_id_idx" ON "agent_messages" USING btree ("chat_id");
+  CREATE INDEX "agent_messages_updated_at_idx" ON "agent_messages" USING btree ("updated_at");
+  CREATE INDEX "agent_messages_created_at_idx" ON "agent_messages" USING btree ("created_at");
+  CREATE INDEX "agent_traces_chat_id_idx" ON "agent_traces" USING btree ("chat_id");
+  CREATE INDEX "agent_traces_updated_at_idx" ON "agent_traces" USING btree ("updated_at");
+  CREATE INDEX "agent_traces_created_at_idx" ON "agent_traces" USING btree ("created_at");
   CREATE INDEX "forms_blocks_checkbox_order_idx" ON "forms_blocks_checkbox" USING btree ("_order");
   CREATE INDEX "forms_blocks_checkbox_parent_id_idx" ON "forms_blocks_checkbox" USING btree ("_parent_id");
   CREATE INDEX "forms_blocks_checkbox_path_idx" ON "forms_blocks_checkbox" USING btree ("_path");
@@ -1450,6 +2057,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "products_blocks_media_block_path_idx" ON "products_blocks_media_block" USING btree ("_path");
   CREATE INDEX "products_blocks_media_block_media_idx" ON "products_blocks_media_block" USING btree ("media_id");
   CREATE INDEX "products_meta_meta_image_idx" ON "products" USING btree ("meta_image_id");
+  CREATE UNIQUE INDEX "products_slug_idx" ON "products" USING btree ("slug");
   CREATE INDEX "products_updated_at_idx" ON "products" USING btree ("updated_at");
   CREATE INDEX "products_created_at_idx" ON "products" USING btree ("created_at");
   CREATE INDEX "products_deleted_at_idx" ON "products" USING btree ("deleted_at");
@@ -1481,6 +2089,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "_products_v_blocks_media_block_media_idx" ON "_products_v_blocks_media_block" USING btree ("media_id");
   CREATE INDEX "_products_v_parent_idx" ON "_products_v" USING btree ("parent_id");
   CREATE INDEX "_products_v_version_meta_version_meta_image_idx" ON "_products_v" USING btree ("version_meta_image_id");
+  CREATE INDEX "_products_v_version_version_slug_idx" ON "_products_v" USING btree ("version_slug");
   CREATE INDEX "_products_v_version_version_updated_at_idx" ON "_products_v" USING btree ("version_updated_at");
   CREATE INDEX "_products_v_version_version_created_at_idx" ON "_products_v" USING btree ("version_created_at");
   CREATE INDEX "_products_v_version_version_deleted_at_idx" ON "_products_v" USING btree ("version_deleted_at");
@@ -1539,6 +2148,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "payload_locked_documents_rels_categories_id_idx" ON "payload_locked_documents_rels" USING btree ("categories_id");
   CREATE INDEX "payload_locked_documents_rels_media_id_idx" ON "payload_locked_documents_rels" USING btree ("media_id");
   CREATE INDEX "payload_locked_documents_rels_posts_id_idx" ON "payload_locked_documents_rels" USING btree ("posts_id");
+  CREATE INDEX "payload_locked_documents_rels_events_id_idx" ON "payload_locked_documents_rels" USING btree ("events_id");
+  CREATE INDEX "payload_locked_documents_rels_testimonials_id_idx" ON "payload_locked_documents_rels" USING btree ("testimonials_id");
+  CREATE INDEX "payload_locked_documents_rels_agent_messages_id_idx" ON "payload_locked_documents_rels" USING btree ("agent_messages_id");
+  CREATE INDEX "payload_locked_documents_rels_agent_traces_id_idx" ON "payload_locked_documents_rels" USING btree ("agent_traces_id");
   CREATE INDEX "payload_locked_documents_rels_forms_id_idx" ON "payload_locked_documents_rels" USING btree ("forms_id");
   CREATE INDEX "payload_locked_documents_rels_form_submissions_id_idx" ON "payload_locked_documents_rels" USING btree ("form_submissions_id");
   CREATE INDEX "payload_locked_documents_rels_addresses_id_idx" ON "payload_locked_documents_rels" USING btree ("addresses_id");
@@ -1578,6 +2191,17 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "users_sessions" CASCADE;
   DROP TABLE "users" CASCADE;
   DROP TABLE "pages_hero_links" CASCADE;
+  DROP TABLE "pages_hero_slides" CASCADE;
+  DROP TABLE "pages_blocks_nenufar_story" CASCADE;
+  DROP TABLE "pages_blocks_image_strip_images" CASCADE;
+  DROP TABLE "pages_blocks_image_strip" CASCADE;
+  DROP TABLE "pages_blocks_gallery_tabs_images" CASCADE;
+  DROP TABLE "pages_blocks_gallery_tabs" CASCADE;
+  DROP TABLE "pages_blocks_gallery" CASCADE;
+  DROP TABLE "pages_blocks_testimonials_items" CASCADE;
+  DROP TABLE "pages_blocks_testimonials" CASCADE;
+  DROP TABLE "pages_blocks_upcoming_events_events" CASCADE;
+  DROP TABLE "pages_blocks_upcoming_events" CASCADE;
   DROP TABLE "pages_blocks_cta_links" CASCADE;
   DROP TABLE "pages_blocks_cta" CASCADE;
   DROP TABLE "pages_blocks_content_columns" CASCADE;
@@ -1591,6 +2215,17 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "pages" CASCADE;
   DROP TABLE "pages_rels" CASCADE;
   DROP TABLE "_pages_v_version_hero_links" CASCADE;
+  DROP TABLE "_pages_v_version_hero_slides" CASCADE;
+  DROP TABLE "_pages_v_blocks_nenufar_story" CASCADE;
+  DROP TABLE "_pages_v_blocks_image_strip_images" CASCADE;
+  DROP TABLE "_pages_v_blocks_image_strip" CASCADE;
+  DROP TABLE "_pages_v_blocks_gallery_tabs_images" CASCADE;
+  DROP TABLE "_pages_v_blocks_gallery_tabs" CASCADE;
+  DROP TABLE "_pages_v_blocks_gallery" CASCADE;
+  DROP TABLE "_pages_v_blocks_testimonials_items" CASCADE;
+  DROP TABLE "_pages_v_blocks_testimonials" CASCADE;
+  DROP TABLE "_pages_v_blocks_upcoming_events_events" CASCADE;
+  DROP TABLE "_pages_v_blocks_upcoming_events" CASCADE;
   DROP TABLE "_pages_v_blocks_cta_links" CASCADE;
   DROP TABLE "_pages_v_blocks_cta" CASCADE;
   DROP TABLE "_pages_v_blocks_content_columns" CASCADE;
@@ -1609,6 +2244,12 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "posts_rels" CASCADE;
   DROP TABLE "_posts_v" CASCADE;
   DROP TABLE "_posts_v_rels" CASCADE;
+  DROP TABLE "events" CASCADE;
+  DROP TABLE "_events_v" CASCADE;
+  DROP TABLE "testimonials" CASCADE;
+  DROP TABLE "_testimonials_v" CASCADE;
+  DROP TABLE "agent_messages" CASCADE;
+  DROP TABLE "agent_traces" CASCADE;
   DROP TABLE "forms_blocks_checkbox" CASCADE;
   DROP TABLE "forms_blocks_country" CASCADE;
   DROP TABLE "forms_blocks_email" CASCADE;
@@ -1669,6 +2310,8 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum_users_roles";
   DROP TYPE "public"."enum_pages_hero_links_link_type";
   DROP TYPE "public"."enum_pages_hero_links_link_appearance";
+  DROP TYPE "public"."enum_pages_hero_slides_image_position";
+  DROP TYPE "public"."enum_pages_blocks_upcoming_events_events_type";
   DROP TYPE "public"."enum_pages_blocks_cta_links_link_type";
   DROP TYPE "public"."enum_pages_blocks_cta_links_link_appearance";
   DROP TYPE "public"."enum_pages_blocks_content_columns_size";
@@ -1683,6 +2326,8 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum_pages_status";
   DROP TYPE "public"."enum__pages_v_version_hero_links_link_type";
   DROP TYPE "public"."enum__pages_v_version_hero_links_link_appearance";
+  DROP TYPE "public"."enum__pages_v_version_hero_slides_image_position";
+  DROP TYPE "public"."enum__pages_v_blocks_upcoming_events_events_type";
   DROP TYPE "public"."enum__pages_v_blocks_cta_links_link_type";
   DROP TYPE "public"."enum__pages_v_blocks_cta_links_link_appearance";
   DROP TYPE "public"."enum__pages_v_blocks_content_columns_size";
@@ -1697,6 +2342,14 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum__pages_v_version_status";
   DROP TYPE "public"."enum_posts_status";
   DROP TYPE "public"."enum__posts_v_version_status";
+  DROP TYPE "public"."enum_events_type";
+  DROP TYPE "public"."enum_events_status";
+  DROP TYPE "public"."enum__events_v_version_type";
+  DROP TYPE "public"."enum__events_v_version_status";
+  DROP TYPE "public"."enum_testimonials_status";
+  DROP TYPE "public"."enum__testimonials_v_version_status";
+  DROP TYPE "public"."enum_agent_messages_role";
+  DROP TYPE "public"."enum_agent_traces_status";
   DROP TYPE "public"."enum_forms_confirmation_type";
   DROP TYPE "public"."enum_addresses_country";
   DROP TYPE "public"."enum_variants_status";

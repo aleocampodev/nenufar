@@ -7,7 +7,8 @@ const dirname = path.dirname(filename)
 
 test.describe('Frontend', () => {
   let page: Page
-  const baseURL = 'http://localhost:3000'
+  // CONSTITUTION Art. IV: the dev server is :3002, never :3000.
+  const baseURL = 'http://localhost:3002'
   const mediaURL = `${baseURL}/admin/collections/media`
   const adminEmail = 'admin@test.com'
   const adminPassword = 'admin'

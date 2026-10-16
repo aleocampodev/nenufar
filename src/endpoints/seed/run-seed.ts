@@ -1,3 +1,6 @@
+// Load .env before @payload-config is evaluated: unlike the Payload CLI, a
+// direct `tsx` run has no dotenv, and payload.config.ts throws without it.
+import 'dotenv/config'
 import { getPayload, createLocalReq } from 'payload'
 import config from '@payload-config'
 import { seed } from './index'
