@@ -29,7 +29,7 @@ Archivos: `src/lib/agent/tools.ts`, `src/lib/agent/runShirleyAgent.ts`, `litellm
 
 ## Comandos
 ```bash
-docker-compose up -d    # PostgreSQL en :5433 + gateway LiteLLM en :4000
+docker compose up -d    # PostgreSQL en :5435 (POSTGRES_HOST_PORT) + gateway LiteLLM en :4000
 pnpm dev                # dev server en :3002 (NO 3000)
 pnpm build              # build producción (payload build)
 pnpm generate:types     # regenera tipos de Payload
