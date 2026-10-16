@@ -7,6 +7,8 @@ Stack: **Payload CMS v3 + Next.js App Router + PostgreSQL + TailwindCSS + shadcn
 Basado en `@payloadcms/plugin-ecommerce`. **Sin pasarela de pago**: el comprador llena un formulario → se envía un mensaje a Telegram → Shirley coordina pago y envío manualmente.
 
 > La documentación completa de arquitectura está en `CLAUDE.md`, `docs/specs/` y la guía de despliegue a producción en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md). Este archivo es el índice rápido para agentes.
+>
+> **Si la app devuelve 500 o no arranca en local:** lee primero [`docs/HANDOFF-local-bootstrap-and-os-migration.md`](docs/HANDOFF-local-bootstrap-and-os-migration.md) — documenta el arranque local con `pnpm dev:local`, la pausa de Supabase y el checklist de migración de sistema operativo.
 
 ## Flujo de pedido (core del negocio)
 ```

@@ -61,7 +61,16 @@ const eslintConfig = [
     },
   },
   {
-    ignores: ['.next/', 'src/payload-types.ts', 'src/payload-generated-schema.ts'],
+    // `playwright-report/` and `test-results/` are git-ignored but ESLint does not
+    // inherit .gitignore: linting them after an E2E run reports ~2946 bogus errors
+    // from the report's bundled vendor JS.
+    ignores: [
+      '.next/',
+      'src/payload-types.ts',
+      'src/payload-generated-schema.ts',
+      'playwright-report/',
+      'test-results/',
+    ],
   },
 ]
 
