@@ -48,3 +48,6 @@ public/media
 .claude/worktrees/
 scratchpad/
 
+# Respaldo cifrado de variables de entorno (nunca versionar)
+.secrets-backup/
+
