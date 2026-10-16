@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { ANTHROPIC_SHIRLEY_TOOLS, executeShirleyTool } from '@/lib/agent/tools'
+import { executeShirleyTool } from '@/lib/agent/tools'
+import { SHIRLEY_TOOL_DEFINITIONS } from '@/lib/agent/toolRegistry'
 
 const createMockPayload = () => ({
   logger: {
@@ -22,9 +23,9 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
     vi.clearAllMocks()
   })
 
-  describe('Definición de Esquemas (ANTHROPIC_SHIRLEY_TOOLS)', () => {
+  describe('Definición de Esquemas (toolRegistry — single source of truth)', () => {
     it('registra todas las herramientas requeridas con esquemas válidos', () => {
-      const toolNames = ANTHROPIC_SHIRLEY_TOOLS.map((t) => t.name)
+      const toolNames = SHIRLEY_TOOL_DEFINITIONS.map((t) => t.name)
       const expectedTools = [
         'buscarProducto',
         'crearProductoDraft',
@@ -44,13 +45,20 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
         'eliminarEvento',
         'crearTestimonio',
         'listarTestimonios',
+        'eliminarTestimonio',
         'generarCopyProducto',
         'actualizarDescripcionProducto',
         'generarCopyLanding',
+        'consultarAlmacenamientoFotos',
       ]
 
       for (const tool of expectedTools) {
         expect(toolNames).toContain(tool)
+      }
+      // No drift in either direction: the registry is exactly this inventory.
+      expect(new Set(toolNames)).toEqual(new Set(expectedTools))
+      for (const def of SHIRLEY_TOOL_DEFINITIONS) {
+        expect(def.description.length).toBeGreaterThan(0)
       }
     })
   })

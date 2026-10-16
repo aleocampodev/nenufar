@@ -9,7 +9,7 @@ import 'dotenv/config'
 import config from '../src/payload.config'
 import { getPayload } from 'payload'
 import { runShirleyAgent } from '../src/lib/agent/runShirleyAgent'
-import { ANTHROPIC_SHIRLEY_TOOLS } from '../src/lib/agent/tools'
+import { SHIRLEY_TOOL_DEFINITIONS } from '../src/lib/agent/toolRegistry'
 import readline from 'readline'
 
 async function main() {
@@ -20,8 +20,8 @@ async function main() {
   console.log('🌸 Claude Agent SDK + LiteLLM + Groq Free ($0/mes)')
   console.log('🌸 ======================================================\n')
 
-  console.log(`🛠️  Tools/Skills registradas (${ANTHROPIC_SHIRLEY_TOOLS.length}):`)
-  ANTHROPIC_SHIRLEY_TOOLS.forEach((t, i) => {
+  console.log(`🛠️  Tools/Skills registradas (${SHIRLEY_TOOL_DEFINITIONS.length}):`)
+  SHIRLEY_TOOL_DEFINITIONS.forEach((t, i) => {
     console.log(`   ${i + 1}. [${t.name}] — ${t.description.slice(0, 75)}...`)
   })
   console.log('\n🔄 Inicializando Payload CMS Local API...')

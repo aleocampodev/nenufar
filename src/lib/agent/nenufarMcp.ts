@@ -31,7 +31,8 @@ function requireContext(): ToolContext {
 /** Destructive names — derived from the registry, never hardcoded twice. */
 export const MCP_DESTRUCTIVE_TOOLS: Set<string> = destructiveToolNames()
 
-export const PENDING_TTL_MS = 5 * 60_000
+/** Single source lives in confirmation.ts — re-exported here for import convenience. */
+export { PENDING_TTL_MS } from './confirmation'
 
 /** Shared HITL service — the same instance the runner's pre-query block resolves. */
 export const confirmationService = createConfirmationService()

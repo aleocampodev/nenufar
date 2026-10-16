@@ -7,7 +7,7 @@ import {
   setMcpContext,
   takePendingConfirmation,
 } from './nenufarMcp'
-import { toolInventoryPrompt } from './toolRegistry'
+import { SHIRLEY_TOOL_DEFINITIONS } from './toolRegistry'
 
 export interface RunShirleyAgentArgs {
   /** Mensaje de texto de Shirley. */
@@ -28,17 +28,16 @@ export const AGENT_FALLBACK =
 /** Límite de rondas agénticas. */
 const MAX_TURNS = 4
 
-/** Timeout por consulta agéntica completa (2 minutos para operaciones complejas). */
-const TIMEOUT_MS = 120_000
+/** Timeout por consulta agéntica completa. 45s para responder SIEMPRE dentro
+ * de la ventana de Telegram (~60s): ante un stall, Shirley recibe el
+ * fallback cálido en vez de silencio + timeout. */
+const TIMEOUT_MS = 45_000
 
 /** Ventana máxima de mensajes previos para memoria conversacional. */
 const MAX_HISTORY_MESSAGES = 4
 
 /** Tope de caracteres del preámbulo de historial (los más recientes ganan). */
 const HISTORY_MAX_CHARS = 2000
-
-/** Tiempo de vida de una confirmación pendiente antes de cancelarse sola. */
-const PENDING_TTL_MS = 5 * 60_000
 
 /** Tope invisible de tamaño para no quemar tokens en entradas largas. */
 const INPUT_MAX_CHARS = 1000
@@ -74,8 +73,8 @@ function buildSystemPrompt(): string {
     'Reglas de negocio:',
     '- Precios siempre en pesos colombianos con símbolo $ y sin decimales (ej. $ 45.000). Nunca muestres la abreviatura COP.',
     '- Nunca inventes datos: si necesitas información del catálogo o pedidos, usa las herramientas disponibles.',
-    `- Herramientas disponibles: ${toolInventoryPrompt()}.`,
-    '- Acciones destructivas (confirmarPedido, eliminarEvento, eliminarFotoGaleria, eliminarTestimonio): la herramienta te pedirá confirmación; transmite la pregunta a Shirley y espera su "sí" antes de continuar.',
+    `- Herramientas disponibles (invócalas SIEMPRE con estos nombres exactos, incluido el prefijo): ${SHIRLEY_TOOL_DEFINITIONS.map((t) => `mcp__nenufar-tienda__${t.name}`).join(', ')}.`,
+    '- Acciones destructivas (mcp__nenufar-tienda__confirmarPedido, mcp__nenufar-tienda__eliminarEvento, mcp__nenufar-tienda__eliminarFotoGaleria, mcp__nenufar-tienda__eliminarTestimonio): la herramienta te pedirá confirmación; transmite la pregunta a Shirley y espera su "sí" antes de continuar.',
     '- Si una herramienta falla, discúlpate brevemente y sugiere intentar en un momento. No muestres errores técnicos ni IDs.',
     '- Si el mensaje es una pregunta general o saludo, responde directo sin usar herramientas.',
     '- Tienes acceso al historial de conversación previo: úsalo para entender referencias a productos, fotos o temas hablados anteriormente.',

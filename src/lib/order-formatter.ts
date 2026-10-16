@@ -30,6 +30,14 @@ const COP_FORMATTER = new Intl.NumberFormat('es-CO', {
   maximumFractionDigits: 0,
 })
 
+/**
+ * Shared COP formatter (Constitution Art. VI: `$ 45.000`, never literal "COP").
+ * Single source — agent tools and order messages consume this module.
+ */
+export function formatCOP(value: number | null | undefined): string {
+  return typeof value === 'number' ? COP_FORMATTER.format(value) : 'precio por confirmar'
+}
+
 const DATE_FORMATTER = new Intl.DateTimeFormat('es-CO', {
   timeZone: 'America/Bogota',
   dateStyle: 'full',
