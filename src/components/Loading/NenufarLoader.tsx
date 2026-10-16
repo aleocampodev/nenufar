@@ -1,5 +1,4 @@
 import React from 'react'
-import { LogoIcon } from '@/components/icons/logo'
 
 type Props = {
   fullScreen?: boolean
@@ -31,7 +30,12 @@ export function NenufarLoader({ fullScreen = false, className = '' }: Props) {
 
         {/* Isotipo central Nenúfar con latido */}
         <div className="relative z-10 animate-pulse [animation-duration:2s]">
-          <LogoIcon className="w-12 h-12 text-brand drop-shadow-md" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            alt="Nenúfar Isotipo"
+            src="/favicon.svg"
+            className="w-12 h-12 object-contain drop-shadow-md"
+          />
         </div>
       </div>
 

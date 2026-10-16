@@ -14,7 +14,7 @@ export const hero: Field = {
   type: 'group',
   label: 'Hero principal de la página',
   admin: {
-    description: 'Configuración del Hero de la página (Foto de Shirley / modelo, titular, botón CTA y redes sociales).',
+    description: 'Configuración del Hero de la página (Foto de palenquera / modelo, titular, botón CTA y redes sociales).',
   },
   fields: [
     {
@@ -27,7 +27,7 @@ export const hero: Field = {
       },
       options: [
         {
-          label: '✅ Hero Principal Nénufar (Foto de Shirley, Redes Sociales y Titular) — (Inicio)',
+          label: '✅ Hero Principal Nénufar (Foto de palenquera, Redes Sociales y Titular) — (Inicio)',
           value: 'hero',
         },
         {
@@ -56,13 +56,13 @@ export const hero: Field = {
     {
       name: 'modelImage',
       type: 'upload',
-      label: 'Foto de Shirley / Modelo (Fondo Transparente)',
+      label: 'Foto de palenquera / Modelo (Fondo Transparente)',
       relationTo: 'media',
       required: false,
       admin: {
         condition: (_, { type } = {}) => type === 'slider' || type === 'hero',
         description:
-          'Foto en primer plano con fondo transparente (SVG o PNG). Si la dejas vacía, se usará por defecto la foto oficial procesada en alta definición (/shirley-hdr-sin-fondo.svg).',
+          'Foto en primer plano con fondo transparente (SVG o PNG). Si la dejas vacía, se usará por defecto la foto oficial procesada en alta definición (/palenquera-hdr-sin-fondo.svg).',
       },
     },
     {
@@ -198,11 +198,11 @@ export const hero: Field = {
         {
           name: 'modelImage',
           type: 'upload',
-          label: 'Foto de Shirley / Modelo (Lado Izquierdo)',
+          label: 'Foto de palenquera / Modelo (Lado Izquierdo)',
           relationTo: 'media',
           required: false,
           admin: {
-            description: 'Foto a pantalla completa para el lado izquierdo. Si la dejas vacía, se usará la foto de Shirley por defecto.',
+            description: 'Foto a pantalla completa para el lado izquierdo. Si la dejas vacía, se usará la foto de palenquera por defecto.',
           },
         },
         {
@@ -222,7 +222,7 @@ export const hero: Field = {
           defaultValue: 'top',
           options: [
             {
-              label: '👤 Rostros / Superior (Recomendado para fotos con Shirley o personas)',
+              label: '👤 Rostros / Superior (Recomendado para fotos con personas)',
               value: 'top',
             },
             {

@@ -1,0 +1,19 @@
+# Render Blueprint for the LiteLLM gateway (Shirley's bot brain).
+# The Next.js app itself deploys on Vercel; only this stateful gateway
+# lives here because Vercel serverless cannot run Docker containers.
+#
+# After deploy, copy the service URL + master key into Vercel env:
+#   ANTHROPIC_BASE_URL=https://<service>.onrender.com
+#   ANTHROPIC_AUTH_TOKEN=<same value as LITELLM_MASTER_KEY>
+services:
+  - type: web
+    name: nenufar-litellm
+    runtime: docker
+    dockerfilePath: ./Dockerfile.litellm
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: LITELLM_MASTER_KEY
+        sync: false

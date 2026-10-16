@@ -58,7 +58,7 @@ export function ShopFilterBar({
         {/* Pills de Categorías Rápidas con Paleta de Marca Nenúfar */}
         <nav
           aria-label="Filtros de categoría del catálogo"
-          className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none"
+          className="flex items-center gap-2 overflow-x-auto w-full md:w-auto md:max-w-[60%] pb-2 md:pb-0 scrollbar-none flex-nowrap [&>*]:shrink-0"
         >
           <button
             aria-pressed={!activeCategory && !activeFeatured}

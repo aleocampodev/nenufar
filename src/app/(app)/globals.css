@@ -133,6 +133,16 @@
   .bg-neutral-light { background-color: #FAF8FC; }
   .text-neutral-light { color: #1A0E2E; }
   .border-neutral-light { border-color: #FAF8FC; }
+
+  /* Oculta la barra de scroll nativa pero conserva el desplazamiento
+     (táctil, rueda, Shift+rueda). Usado en pills de filtros del shop. */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 :root {

@@ -11,7 +11,9 @@ export default async function BlogPage() {
     collection: 'posts',
     depth: 1,
     limit: 12,
-    overrideAccess: false,
+    // Public listing only shows published posts; depth:1 populates the
+    // author byline (name), which Users read-access would otherwise block.
+    overrideAccess: true,
     where: {
       _status: {
         equals: 'published',

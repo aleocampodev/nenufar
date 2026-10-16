@@ -47,6 +47,7 @@ public/media
 # Claude Code worktrees y scratchpad (artefactos de herramientas)
 .claude/worktrees/
 scratchpad/
+animation-plans/
 
 # Respaldo cifrado de variables de entorno (nunca versionar)
 .secrets-backup/
