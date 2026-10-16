@@ -49,6 +49,12 @@ if ! docker exec nenufar-postgres pg_isready -U postgres >/dev/null 2>&1; then
 fi
 
 printf 'Applying migrations...\n'
+# Payload's dev mode (`push: true`) records a marker row with batch = -1, and
+# every later `payload migrate` then blocks on an interactive confirm prompt.
+# Clearing that dev-only marker keeps this bootstrap non-interactive.
+PG_DB="${PG_DB:-nenufar}"
+docker exec nenufar-postgres psql -U postgres -d "$PG_DB" \
+  -tAc 'DELETE FROM payload_migrations WHERE batch = -1' >/dev/null 2>&1 || true
 pnpm payload migrate
 
 printf '\n  Site:  http://localhost:3002\n  Admin: http://localhost:3002/admin (seed: admin@nenufar.com / admin123)\n\n'
