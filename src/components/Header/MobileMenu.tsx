@@ -1,23 +1,10 @@
 'use client'
 
 import type { Header } from '@/payload-types'
-
-import { CMSLink } from '@/components/Link'
-import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet'
-import { useAuth } from '@/providers/Auth'
-import { LogoIcon } from '@/components/icons/logo'
-import { MenuIcon } from 'lucide-react'
+import { ChevronDown, MessageCircle, Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 interface CategoryItem {
   id: number | string
@@ -26,37 +13,66 @@ interface CategoryItem {
 }
 
 interface Props {
-  menu: Header['navItems']
+  menu?: Header['navItems']
   categories?: CategoryItem[]
 }
 
-export function MobileMenu({ menu, categories = [] }: Props) {
-  const { user } = useAuth()
-
+export function MobileMenu({ categories = [] }: Props) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isOpen, setIsOpen] = useState(false)
+  const [categoriesExpanded, setCategoriesExpanded] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
 
-  const closeMobileMenu = () => setIsOpen(false)
+  const closeMenu = () => {
+    setIsOpen(false)
+    setCategoriesExpanded(false)
+  }
 
+  // Cerrar al hacer clic fuera del dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        closeMenu()
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  // Cerrar con tecla Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeMenu()
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown)
+    }
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen])
+
+  // Cerrar si se redimensiona a pantalla de escritorio
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768) {
-        setIsOpen(false)
+      if (window.innerWidth >= 1024) {
+        closeMenu()
       }
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [isOpen])
+  }, [])
 
+  // Cerrar al cambiar de ruta
   useEffect(() => {
-    setIsOpen(false)
+    closeMenu()
   }, [pathname, searchParams])
 
-  const [categoriesExpanded, setCategoriesExpanded] = useState(true)
-
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    closeMobileMenu()
+    closeMenu()
     if (href.includes('#')) {
       const hash = href.substring(href.indexOf('#'))
       if (pathname === '/' || pathname === '') {
@@ -67,165 +83,140 @@ export function MobileMenu({ menu, categories = [] }: Props) {
             el.scrollIntoView({ behavior: 'smooth', block: 'start' })
             window.history.pushState(null, '', hash)
           }
-        }, 150)
+        }, 120)
       }
     }
   }
 
   return (
-    <Sheet onOpenChange={setIsOpen} open={isOpen}>
-      <SheetTrigger className="relative flex h-10 w-10 items-center justify-center rounded-full border border-current text-inherit opacity-90 hover:opacity-100 hover:bg-white/15 transition-all">
-        <MenuIcon className="h-4 w-4 text-inherit" />
-      </SheetTrigger>
+    <div className="relative" ref={menuRef}>
+      {/* Botón activador del Dropdown */}
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-expanded={isOpen}
+        aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú de navegación'}
+        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-current text-inherit opacity-90 hover:opacity-100 hover:bg-white/15 transition-all cursor-pointer active:scale-95"
+      >
+        {isOpen ? <X className="h-5 w-5 text-inherit" /> : <Menu className="h-5 w-5 text-inherit" />}
+      </button>
 
-      <SheetContent side="left" className="px-5 w-[300px] sm:w-[360px] overflow-y-auto">
-        <SheetHeader className="px-0 pt-4 pb-2 border-b border-neutral-100 dark:border-neutral-800">
-          <SheetTitle asChild>
+      {/* Menú Dropdown Flotante Editorial */}
+      {isOpen && (
+        <div className="absolute right-0 top-[calc(100%+12px)] w-[min(90vw,320px)] rounded-2xl bg-[#3B032F]/98 dark:bg-[#1A0E2E]/98 backdrop-blur-xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.45)] text-white p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          <nav className="flex flex-col space-y-1">
             <Link
-              href="/"
-              onClick={closeMobileMenu}
-              className="flex items-center group py-1"
+              href="/#historia"
+              onClick={(e) => handleAnchorClick(e, '/#historia')}
+              className="flex items-center px-3 py-2.5 rounded-xl text-xs uppercase tracking-[0.2em] font-medium text-white/90 hover:text-white hover:bg-white/10 transition-colors"
             >
-              <LogoIcon variant="color" className="h-7 w-auto shrink-0 inline-block" />
+              Mi Historia
             </Link>
-          </SheetTitle>
-        </SheetHeader>
 
-        <div className="py-5 space-y-4">
-          <ul className="flex flex-col space-y-2">
+            <Link
+              href="/#testimonios"
+              onClick={(e) => handleAnchorClick(e, '/#testimonios')}
+              className="flex items-center px-3 py-2.5 rounded-xl text-xs uppercase tracking-[0.2em] font-medium text-white/90 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              Testimonios
+            </Link>
 
-            <li>
-              <Link
-                href="/#historia"
-                onClick={(e) => handleAnchorClick(e, '/#historia')}
-                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
-              >
-                Mi Historia
-              </Link>
-            </li>
+            <Link
+              href="/#talleres"
+              onClick={(e) => handleAnchorClick(e, '/#talleres')}
+              className="flex items-center px-3 py-2.5 rounded-xl text-xs uppercase tracking-[0.2em] font-medium text-white/90 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              Talleres & Ferias
+            </Link>
 
-            <li>
-              <Link
-                href="/#testimonios"
-                onClick={(e) => handleAnchorClick(e, '/#testimonios')}
-                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
-              >
-                Testimonios
-              </Link>
-            </li>
+            <Link
+              href="/galeria"
+              onClick={closeMenu}
+              className={`flex items-center px-3 py-2.5 rounded-xl text-xs uppercase tracking-[0.2em] font-medium transition-colors ${
+                pathname?.startsWith('/galeria')
+                  ? 'text-[#FF4FA3] bg-white/10 font-semibold'
+                  : 'text-white/90 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              Galería
+            </Link>
 
-            <li>
-              <Link
-                href="/#talleres"
-                onClick={(e) => handleAnchorClick(e, '/#talleres')}
-                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
-              >
-                Talleres & Ferias
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                href="/galeria"
-                onClick={closeMobileMenu}
-                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
-              >
-                Galería
-              </Link>
-            </li>
-
-            {/* Catálogo con categorías */}
-            <li className="border-y border-neutral-100 py-2">
-              <div className="flex items-center justify-between">
+            {/* Catálogo con subcategorías desplegables */}
+            <div className="border-t border-b border-white/10 my-1 py-1">
+              <div className="flex items-center justify-between px-3 py-2">
                 <Link
                   href="/shop"
-                  onClick={closeMobileMenu}
-                  className="text-sm font-medium uppercase tracking-wider text-neutral-800 hover:text-brand transition-colors"
+                  onClick={closeMenu}
+                  className={`text-xs uppercase tracking-[0.2em] font-medium transition-colors ${
+                    pathname?.startsWith('/shop')
+                      ? 'text-[#FF4FA3] font-semibold'
+                      : 'text-white/90 hover:text-white'
+                  }`}
                 >
                   Catálogo
                 </Link>
-                <button
-                  type="button"
-                  onClick={() => setCategoriesExpanded(!categoriesExpanded)}
-                  className="p-1 text-neutral-500 hover:text-brand"
-                  aria-label="Alternar categorías"
-                >
-                  <span className="text-xs">{categoriesExpanded ? '▲' : '▼'}</span>
-                </button>
+                {categories && categories.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setCategoriesExpanded((prev) => !prev)}
+                    className="p-1 text-white/60 hover:text-white rounded-md transition-colors cursor-pointer"
+                    aria-label="Alternar categorías"
+                  >
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        categoriesExpanded ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                )}
               </div>
 
               {categoriesExpanded && categories && categories.length > 0 && (
-                <ul className="pl-3 mt-2 space-y-1.5 border-l-2 border-brand/20">
+                <div className="pl-4 pr-2 py-1 space-y-1 border-l-2 border-[#E91E8C]/40 ml-3 mb-1">
                   {categories.map((cat) => (
-                    <li key={cat.slug}>
-                      <Link
-                        href={`/shop?category=${cat.slug}`}
-                        onClick={closeMobileMenu}
-                        className="block py-1 text-xs text-neutral-600 hover:text-brand transition-colors"
-                      >
-                        {cat.title}
-                      </Link>
-                    </li>
-                  ))}
-                  <li>
                     <Link
-                      href="/shop"
-                      onClick={closeMobileMenu}
-                      className="block py-1 text-xs font-semibold text-brand hover:underline"
+                      key={cat.slug}
+                      href={`/shop?category=${cat.slug}`}
+                      onClick={closeMenu}
+                      className="block px-2 py-1.5 text-xs text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors font-sans"
                     >
-                      Ver todo el catálogo →
+                      {cat.title}
                     </Link>
-                  </li>
-                </ul>
+                  ))}
+                  <Link
+                    href="/shop"
+                    onClick={closeMenu}
+                    className="block px-2 py-1.5 text-xs font-semibold text-[#FF4FA3] hover:underline"
+                  >
+                    Ver todas las piezas →
+                  </Link>
+                </div>
               )}
-            </li>
-
-            <li>
-              <Link
-                href="/#contacto"
-                onClick={(e) => handleAnchorClick(e, '/#contacto')}
-                className="block py-2 text-sm font-medium uppercase tracking-wider text-neutral-800 dark:text-neutral-200 hover:text-brand transition-colors"
-              >
-                Contáctame
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {user ? (
-          <div className="mt-4 pt-4 border-t border-neutral-100">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-3">Mi cuenta</h2>
-            <ul className="flex flex-col gap-2 text-sm">
-              <li>
-                <Link href="/orders" onClick={closeMobileMenu} className="hover:text-brand">Mis pedidos</Link>
-              </li>
-              <li>
-                <Link href="/account/addresses" onClick={closeMobileMenu} className="hover:text-brand">Direcciones</Link>
-              </li>
-              <li>
-                <Link href="/account" onClick={closeMobileMenu} className="hover:text-brand">Mi perfil</Link>
-              </li>
-              <li className="mt-4">
-                <Button asChild variant="outline" size="sm" className="w-full">
-                  <Link href="/logout" onClick={closeMobileMenu}>Cerrar sesión</Link>
-                </Button>
-              </li>
-            </ul>
-          </div>
-        ) : (
-          <div className="mt-4 pt-4 border-t border-neutral-100">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-3">Mi cuenta</h2>
-            <div className="flex flex-col gap-2">
-              <Button asChild className="w-full" variant="outline" size="sm">
-                <Link href="/login" onClick={closeMobileMenu}>Iniciar sesión</Link>
-              </Button>
-              <Button asChild className="w-full bg-brand hover:bg-brand-dark" size="sm">
-                <Link href="/create-account" onClick={closeMobileMenu}>Crear cuenta</Link>
-              </Button>
             </div>
+
+            <Link
+              href="/#contacto"
+              onClick={(e) => handleAnchorClick(e, '/#contacto')}
+              className="flex items-center px-3 py-2.5 rounded-xl text-xs uppercase tracking-[0.2em] font-medium text-white/90 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              Contáctame
+            </Link>
+          </nav>
+
+          {/* Contacto directo con Shirley (Zero-Stripe, cierre humano por WhatsApp) */}
+          <div className="mt-4 pt-3 border-t border-white/10">
+            <a
+              href="https://wa.me/?text=Hola%20Shirley%2C%20quisiera%20consultar%20sobre%20tus%20joyas%20artesanales%20en%20N%C3%A9nufar"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-full bg-[#E91E8C] hover:bg-[#AD1457] text-white text-xs uppercase tracking-wider font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>Escribir a Shirley</span>
+            </a>
           </div>
-        )}
-      </SheetContent>
-    </Sheet>
+        </div>
+      )}
+    </div>
   )
 }

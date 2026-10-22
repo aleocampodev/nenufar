@@ -13,6 +13,17 @@ export function getSupabasePublicUrl(filename: string): string {
   if (!filename) return ''
   // Clean clean base filename
   const clean = path.basename(filename)
+
+  // In local development or when Supabase is paused/offline, serve from local /media/
+  const isLocalDev =
+    process.env.NODE_ENV === 'development' ||
+    process.env.DATABASE_URL?.includes('127.0.0.1') ||
+    process.env.DATABASE_URL?.includes('localhost')
+
+  if (isLocalDev && !process.env.FORCE_SUPABASE_STORAGE) {
+    return `/media/${clean}`
+  }
+
   return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${clean}`
 }
 

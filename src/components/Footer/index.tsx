@@ -57,15 +57,30 @@ export async function Footer() {
               ) : (
                 <>
                   <li>
-                    <Link href="/shop" className="hover:text-[#FF4FA3] transition-colors">
-                      Ver catálogo completo
+                    <Link href="/shop?category=collares" className="hover:text-[#FF4FA3] transition-colors">
+                      Collares & Okamas
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/shop?category=aretes" className="hover:text-[#FF4FA3] transition-colors">
+                      Aretes
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/shop?category=conjuntos" className="hover:text-[#FF4FA3] transition-colors">
+                      Conjuntos
                     </Link>
                   </li>
                 </>
               )}
+              <li className="pt-1">
+                <Link href="/shop" className="text-white hover:text-[#FF4FA3] transition-colors font-medium">
+                  Ver catálogo completo →
+                </Link>
+              </li>
               <li>
                 <Link href="/#talleres" className="hover:text-[#FF4FA3] transition-colors">
-                  Talleres & Ferias
+                  Talleres & Ferias en Cartagena
                 </Link>
               </li>
             </ul>

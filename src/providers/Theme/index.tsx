@@ -37,14 +37,10 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     let themeToSet: Theme = defaultTheme
     const preference = window.localStorage.getItem(themeLocalStorageKey)
 
-    if (themeIsValid(preference)) {
+    if (themeIsValid(preference) && preference === 'light') {
       themeToSet = preference
     } else {
-      const implicitPreference = getImplicitPreference()
-
-      if (implicitPreference) {
-        themeToSet = implicitPreference
-      }
+      themeToSet = defaultTheme
     }
 
     document.documentElement.setAttribute('data-theme', themeToSet)

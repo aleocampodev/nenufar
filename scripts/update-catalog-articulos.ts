@@ -4,12 +4,12 @@ import path from 'path'
 import config from '../src/payload.config'
 import { getPayload } from 'payload'
 
-const SOURCE_DIR = '/home/ale/Imágenes/nenufar/nenufar-productos'
+const SOURCE_DIR = path.resolve(process.cwd(), 'public/media')
 
 const ARTICULOS = [
   {
     num: 1,
-    file: 'articulo1.jpeg',
+    file: 'articulo1.png',
     title: 'Conjunto Lirio Esmeralda',
     slug: 'conjunto-lirio-esmeralda',
     priceInCOP: 85000,
@@ -22,7 +22,7 @@ const ARTICULOS = [
   },
   {
     num: 2,
-    file: 'articulo2.jpeg',
+    file: 'articulo2.png',
     title: 'Set Imperial Flor de Nieve',
     slug: 'set-imperial-flor-de-nieve',
     priceInCOP: 110000,
@@ -35,7 +35,7 @@ const ARTICULOS = [
   },
   {
     num: 3,
-    file: 'articulo3.jpeg',
+    file: 'articulo3.png',
     title: 'Collar Ceremonial Colibrí del Caribe',
     slug: 'collar-ceremonial-colibri-del-caribe',
     priceInCOP: 75000,
@@ -48,7 +48,7 @@ const ARTICULOS = [
   },
   {
     num: 4,
-    file: 'articulo4.jpeg',
+    file: 'articulo4.png',
     title: 'Aretes Piña Dorada del Sinú',
     slug: 'aretes-pina-dorada-del-sinu',
     priceInCOP: 45000,
@@ -61,7 +61,7 @@ const ARTICULOS = [
   },
   {
     num: 5,
-    file: 'articulo5.jpeg',
+    file: 'articulo5.png',
     title: 'Gargantilla Tubular Étnica & Aretes Rombo',
     slug: 'gargantilla-tubular-etnica-aretes-rombo',
     priceInCOP: 95000,
@@ -74,7 +74,7 @@ const ARTICULOS = [
   },
   {
     num: 6,
-    file: 'articulo6.jpeg',
+    file: 'articulo6.png',
     title: 'Aretes Alas de Cartagena',
     slug: 'aretes-alas-de-cartagena',
     priceInCOP: 40000,
@@ -87,7 +87,7 @@ const ARTICULOS = [
   },
   {
     num: 7,
-    file: 'articulo7.jpeg',
+    file: 'articulo7.png',
     title: 'Pectoral Solar Flor del Fuego',
     slug: 'pectoral-solar-flor-del-fuego',
     priceInCOP: 120000,
@@ -100,7 +100,7 @@ const ARTICULOS = [
   },
   {
     num: 8,
-    file: 'articulo8.jpeg',
+    file: 'articulo8.png',
     title: 'Prendedor & Colgante Rosa Ámbar Silvestre',
     slug: 'prendedor-colgante-rosa-ambar-silvestre',
     priceInCOP: 65000,
@@ -216,7 +216,7 @@ async function main() {
         file: {
           name: fileName,
           data: fileBuffer,
-          mimetype: 'image/jpeg',
+          mimetype: 'image/png',
           size: fileBuffer.length,
         },
       })
