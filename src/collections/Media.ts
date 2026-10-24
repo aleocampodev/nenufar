@@ -146,6 +146,14 @@ export const Media: CollectionConfig = {
               ? getSupabasePublicUrl(doc.sizes.thumbnail.filename)
               : doc.url
           }
+
+          if (doc.sizes && typeof doc.sizes === 'object') {
+            for (const sizeKey of Object.keys(doc.sizes)) {
+              if (doc.sizes[sizeKey]?.filename) {
+                doc.sizes[sizeKey].url = getSupabasePublicUrl(doc.sizes[sizeKey].filename)
+              }
+            }
+          }
         }
         return doc
       },
