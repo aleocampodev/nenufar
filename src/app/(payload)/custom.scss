@@ -17,27 +17,27 @@
   --nenufar-brand-dark: #ad1457;
   --nenufar-brand-light: #ff4fa3;
 
-  /* Escala base: gris puro → neutro cálido violáceo */
+  /* Escala base: blanco limpio y neutros claros */
   --color-base-0: #ffffff;
-  --color-base-50: #f7f4fa;
-  --color-base-100: #efe9f5;
-  --color-base-150: #e4dcec;
-  --color-base-200: #d7cde2;
-  --color-base-250: #c9bcda;
-  --color-base-300: #bbaad1;
-  --color-base-350: #ac9cc7;
-  --color-base-400: #9d8dbc;
-  --color-base-450: #8f7fb1;
-  --color-base-500: #7f6ba3;
-  --color-base-550: #6f5c94;
-  --color-base-600: #5f4d83;
-  --color-base-650: #4f3e6f;
-  --color-base-700: #40305b;
-  --color-base-750: #322348;
-  --color-base-800: #261a37;
-  --color-base-850: #1a1127;
-  --color-base-900: #0f0916;
-  --color-base-950: #070410;
+  --color-base-50: #ffffff;
+  --color-base-100: #f9f9fb;
+  --color-base-150: #f0f0f4;
+  --color-base-200: #e4e4eb;
+  --color-base-250: #d5d5df;
+  --color-base-300: #c4c4d1;
+  --color-base-350: #b0b0c0;
+  --color-base-400: #9e9eb0;
+  --color-base-450: #8d8da0;
+  --color-base-500: #7b7b90;
+  --color-base-550: #6b6b80;
+  --color-base-600: #5d5d71;
+  --color-base-650: #4f4f62;
+  --color-base-700: #424254;
+  --color-base-750: #353545;
+  --color-base-800: #2a2a38;
+  --color-base-850: #1f1f2c;
+  --color-base-900: #161620;
+  --color-base-950: #0d0d14;
   --color-base-1000: #000000;
 
   /* Success/warning/error: tonos algo más cálidos */
@@ -47,11 +47,16 @@
 }
 
 html[data-theme='dark'] {
-  /* Fondo oscuro con sesgo violáceo profundo */
-  --color-base-50: #1d1526;
-  --color-base-100: #251b30;
-  --color-base-150: #2e2239;
-  --color-base-900: #0f0916;
+  /* Si el navegador fuerza dark mode, mantenemos el fondo blanco limpio */
+  --color-base-0: #ffffff !important;
+  --color-base-50: #ffffff !important;
+  --color-base-100: #f9f9fb !important;
+  --color-base-150: #f0f0f4 !important;
+  --color-base-200: #e4e4eb !important;
+  --color-base-800: #2a2a38 !important;
+  --color-base-900: #161620 !important;
+  background-color: #ffffff !important;
+  color: #161620 !important;
 }
 
 /* ── Botón primario: magenta marca ─────────────────────────── */
@@ -274,7 +279,8 @@ header .avatar {
 
 /* ── Contenedor centrado y elegante para Login / Minimal Template ── */
 .template-minimal {
-  background-color: #FAF8FC !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -283,16 +289,26 @@ header .avatar {
 }
 
 .template-minimal__wrap {
-  background-color: #FAF8F5 !important; /* Color cremita cálido (fondo de la tienda) */
-  border: 1px solid #EAE3D9 !important; /* Borde sutil y cálido */
-  border-radius: 24px !important;
-  box-shadow: 0 20px 48px -12px rgba(59, 3, 47, 0.08), 0 2px 8px -2px rgba(0, 0, 0, 0.02) !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 20px !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06), 0 1px 3px 0 rgba(0, 0, 0, 0.02) !important;
   padding: 2.75rem 2.25rem 2.5rem !important;
   max-width: 440px !important;
   width: 100% !important;
   margin: auto !important;
   position: relative;
   transition: box-shadow 0.3s ease;
+}
+
+/* ── Fondos blancos limpios para la interfaz de administración ── */
+.template-default,
+.template-default__wrap,
+.app-header,
+.nav,
+main.template-default {
+  background-color: #ffffff !important;
 }
 
 @media (max-width: 480px) {
@@ -387,28 +403,35 @@ header .avatar {
   }
 }
 
-/* Soporte para modo oscuro */
-html[data-theme='dark'] .template-minimal {
-  background-color: #0f0916 !important;
+/* Soporte para modo oscuro (se mantiene blanco limpio) */
+html[data-theme='dark'] .template-minimal,
+html[data-theme='dark'] .template-default,
+html[data-theme='dark'] .template-default__wrap,
+html[data-theme='dark'] .nav,
+html[data-theme='dark'] .app-header {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #161620 !important;
 }
 
 html[data-theme='dark'] .template-minimal__wrap {
-  background-color: #1d1526 !important;
-  border-color: rgba(233, 30, 140, 0.25) !important;
-  box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.5) !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06) !important;
 
   .field-type.text:not(.has-many) input,
   .field-type.password input,
   input[type="email"],
   input[type="password"],
   input[type="text"] {
-    background-color: #251b30 !important;
-    border-color: #3b2c4c !important;
-    color: #f7f4fa !important;
+    background-color: #ffffff !important;
+    border-color: #d1d5db !important;
+    color: #161620 !important;
   }
 
   .field-label {
-    color: #f7f4fa !important;
+    color: #374151 !important;
   }
 }
 

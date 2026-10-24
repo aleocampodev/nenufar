@@ -35,6 +35,7 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   admin: {
+    theme: 'light',
     components: {
       actions: ['@/components/Admin/UserDropdown#UserDropdown'],
       beforeLogin: ['@/components/BeforeLogin#BeforeLogin'],
