@@ -32,8 +32,7 @@ const DEFAULT_ITEMS: CardItem[] = [
     category: "TRADICIÓN FEMENINA EMBERÁ",
     title: "El Okama Ceremonial",
     excerpt: "El camino sagrado que viste y abraza el cuello de la mujer con la dignidad del pueblo Emberá.",
-    imageUrl:
-      "https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Embera.jpeg",
+    imageUrl: "/media/Embera.jpeg",
     storyMeaning:
       "En lengua Emberá, Okama significa literalmente \"camino que recorre el cuello\". Es el collar más sagrado de la mujer indígena: comunica su madurez, dignidad y conexión profunda con las aguas de los ríos y los ciclos de la luna.",
     storyCraft:
@@ -45,8 +44,7 @@ const DEFAULT_ITEMS: CardItem[] = [
     category: "COSMOVISIÓN & PODER",
     title: "La Otapa Ancestral",
     excerpt: "Estructura geométrica de rombos y senderos de selva que custodia el espíritu.",
-    imageUrl:
-      "https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/collar-narana.jpg",
+    imageUrl: "/media/collar-narana.jpg",
     storyMeaning:
       "La Otapa es la expresión geométrica del linaje ancestral. Sus patrones en zigzag y rombos representan los senderos de la montaña, la piel protectora de la serpiente sagrada y un escudo contra las malas energías.",
     storyCraft:
@@ -58,8 +56,7 @@ const DEFAULT_ITEMS: CardItem[] = [
     category: "ELEGANCIA CONTEMPORÁNEA",
     title: "El Okama Contemporáneo",
     excerpt: "La magia del tejido Emberá adaptada a un formato liviano para cada día.",
-    imageUrl:
-      "https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/Collar-flor.jpeg",
+    imageUrl: "/media/Collar-flor.jpeg",
     storyMeaning:
       "Creado para la mujer que desea portar la fuerza del tejido indígena en su rutina diaria (reuniones, salidas casuales o eventos formales) sin recurrir a formatos ceremoniales gigantes.",
     storyCraft:
@@ -71,8 +68,7 @@ const DEFAULT_ITEMS: CardItem[] = [
     category: "ALTA COSTURA ARTESANAL",
     title: "La Otapa de Autor",
     excerpt: "Obras de arte textil irrepetibles: nacen una sola vez y no vuelven a existir igual.",
-    imageUrl:
-      "https://kbzfhqmagzmtlgtolioa.supabase.co/storage/v1/object/public/media/colombia-aretes.jpeg",
+    imageUrl: "/media/colombia-aretes.jpeg",
     storyMeaning:
       "Piezas nacidas de la inspiración pura de Shirley en Cartagena, fusionando la técnica milenaria Emberá con paletas de color inspiradas en los atardeceres y la arquitectura caribeña.",
     storyCraft:
@@ -171,6 +167,13 @@ export const ImageStripClient: React.FC<ImageStripProps> = ({
                     sizeName="card"
                     fill
                     imgClassName="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                ) : imgSrc ? (
+                  <img
+                    src={imgSrc}
+                    alt={title}
+                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="absolute inset-0 bg-stone-800" />
