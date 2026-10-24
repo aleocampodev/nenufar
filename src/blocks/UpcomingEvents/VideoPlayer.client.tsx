@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from "react"
 import { Volume2, VolumeX, Play, Pause, Sparkles } from "lucide-react"
+import { getSupabasePublicUrl } from "@/lib/supabaseStorage"
 
 interface VideoPlayerProps {
   videoUrl?: string | null
@@ -47,7 +48,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         <video
           ref={videoRef}
           src={videoUrl || undefined}
-          poster="/media/taller-artesanal-poster.jpg"
+          poster={getSupabasePublicUrl('taller-artesanal-poster.jpg') || '/media/taller-artesanal-poster.jpg'}
           autoPlay
           loop
           muted
