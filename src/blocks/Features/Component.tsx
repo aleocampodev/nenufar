@@ -3,6 +3,7 @@ import { Sparkles, Truck, HeartHandshake, Gift, ShieldCheck, Gem } from 'lucide-
 import { Media } from '@/components/Media'
 import type { Media as MediaType } from '@/payload-types'
 import { ScrollReveal } from '@/components/Animation/ScrollReveal'
+import { getSupabasePublicUrl } from '@/lib/supabaseStorage'
 
 type FeatureItem = {
   icon?: string | null
@@ -167,7 +168,7 @@ export const FeaturesBlock: React.FC<Props> = ({
     }
     // Fallback fotográfico real de alta resolución de la tienda
     return {
-      src: '/media/colombia-aretes-6.jpeg',
+      src: getSupabasePublicUrl('colombia-aretes-6.jpeg'),
       alt: 'Joyería artesanal en mostacilla tejida a mano - Nénufar',
     }
   }

@@ -5,6 +5,7 @@ import { Media as PayloadMedia } from "@/components/Media"
 import type { Media } from "@/payload-types"
 import { Sparkles, X, ChevronDown, ChevronUp, Feather, ShieldCheck } from "lucide-react"
 import { ScrollReveal } from "@/components/Animation/ScrollReveal"
+import { getSupabasePublicUrl } from "@/lib/supabaseStorage"
 
 interface CardItem {
   id?: string
@@ -32,7 +33,7 @@ const DEFAULT_ITEMS: CardItem[] = [
     category: "TRADICIÓN FEMENINA EMBERÁ",
     title: "El Okama Ceremonial",
     excerpt: "El camino sagrado que viste y abraza el cuello de la mujer con la dignidad del pueblo Emberá.",
-    imageUrl: "/media/Embera.jpeg",
+    imageUrl: getSupabasePublicUrl("Embera.jpeg"),
     storyMeaning:
       "En lengua Emberá, Okama significa literalmente \"camino que recorre el cuello\". Es el collar más sagrado de la mujer indígena: comunica su madurez, dignidad y conexión profunda con las aguas de los ríos y los ciclos de la luna.",
     storyCraft:
@@ -44,7 +45,7 @@ const DEFAULT_ITEMS: CardItem[] = [
     category: "COSMOVISIÓN & PODER",
     title: "La Otapa Ancestral",
     excerpt: "Estructura geométrica de rombos y senderos de selva que custodia el espíritu.",
-    imageUrl: "/media/collar-narana.jpg",
+    imageUrl: getSupabasePublicUrl("collar-narana.jpg"),
     storyMeaning:
       "La Otapa es la expresión geométrica del linaje ancestral. Sus patrones en zigzag y rombos representan los senderos de la montaña, la piel protectora de la serpiente sagrada y un escudo contra las malas energías.",
     storyCraft:
@@ -56,7 +57,7 @@ const DEFAULT_ITEMS: CardItem[] = [
     category: "ELEGANCIA CONTEMPORÁNEA",
     title: "El Okama Contemporáneo",
     excerpt: "La magia del tejido Emberá adaptada a un formato liviano para cada día.",
-    imageUrl: "/media/Collar-flor.jpeg",
+    imageUrl: getSupabasePublicUrl("Collar-flor.jpeg"),
     storyMeaning:
       "Creado para la mujer que desea portar la fuerza del tejido indígena en su rutina diaria (reuniones, salidas casuales o eventos formales) sin recurrir a formatos ceremoniales gigantes.",
     storyCraft:
@@ -68,7 +69,7 @@ const DEFAULT_ITEMS: CardItem[] = [
     category: "ALTA COSTURA ARTESANAL",
     title: "La Otapa de Autor",
     excerpt: "Obras de arte textil irrepetibles: nacen una sola vez y no vuelven a existir igual.",
-    imageUrl: "/media/colombia-aretes.jpeg",
+    imageUrl: getSupabasePublicUrl("colombia-aretes.jpeg"),
     storyMeaning:
       "Piezas nacidas de la inspiración pura de Shirley en Cartagena, fusionando la técnica milenaria Emberá con paletas de color inspiradas en los atardeceres y la arquitectura caribeña.",
     storyCraft:

@@ -7,6 +7,7 @@ import type { Media } from "@/payload-types"
 import { Sparkles } from "lucide-react"
 import { ScrollReveal } from "@/components/Animation/ScrollReveal"
 import { fetchGoogleCalendarEvents } from "@/lib/google-calendar"
+import { getSupabasePublicUrl } from "@/lib/supabaseStorage"
 
 interface UpcomingEventsBlockProps {
   tagline?: string | null
@@ -146,7 +147,7 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
 
   // Fallback a video real subido si no hay URL configurada
   if (!finalVideoUrl) {
-    finalVideoUrl = '/media/taller-artesanal.mp4'
+    finalVideoUrl = getSupabasePublicUrl('taller-artesanal.mp4')
   }
 
   return (

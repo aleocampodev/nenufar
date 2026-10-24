@@ -5,6 +5,7 @@ import { ScrollReveal } from '@/components/Animation/ScrollReveal'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
+import { getSupabasePublicUrl } from '@/lib/supabaseStorage'
 
 export const NenufarStoryBlock: React.FC<Props & { id?: string }> = ({
   image,
@@ -38,7 +39,7 @@ export const NenufarStoryBlock: React.FC<Props & { id?: string }> = ({
                   />
                 ) : (
                   <img
-                    src="/media/shirley-creadora.jpeg"
+                    src={getSupabasePublicUrl('shirley-creadora.jpeg')}
                     alt="Shirley tejiendo joyería en mostacilla en su taller"
                     className="w-full h-full object-cover object-[center_38%] transition-transform duration-700 group-hover:scale-105"
                   />
