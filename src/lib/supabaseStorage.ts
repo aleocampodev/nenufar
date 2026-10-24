@@ -14,6 +14,13 @@ export function getSupabasePublicUrl(filename: string): string {
   // Clean clean base filename
   const clean = path.basename(filename)
 
+  // SVGs are static brand/editorial assets committed to /public. Supabase Storage
+  // strictly sets Content-Disposition: attachment and CSP sandbox on SVGs to prevent XSS,
+  // which causes all modern browsers to refuse rendering them inside <img> tags.
+  if (clean.endsWith('.svg')) {
+    return `/${clean}`
+  }
+
   // In local development or when Supabase is paused/offline, serve from local /media/
   const isLocalDev =
     process.env.NODE_ENV === 'development' ||
