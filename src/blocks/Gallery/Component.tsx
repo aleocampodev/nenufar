@@ -1,8 +1,14 @@
 import type { Media as MediaType, GalleryBlock as GalleryBlockType } from '@/payload-types'
 import { GalleryClient, type GalleryTabItem, type GalleryImageItem } from './GalleryClient'
+import { getSupabasePublicUrl } from '@/lib/supabaseStorage'
 
 export type GalleryBlockProps = GalleryBlockType & {
   id?: string
+}
+
+function toPublicUrl(pathOrFilename: string): string {
+  const clean = pathOrFilename.replace(/^\/?media\//, '')
+  return getSupabasePublicUrl(clean)
 }
 
 // Fotografías auténticas organizadas por categorías temáticas de Nenúfar
@@ -10,44 +16,44 @@ const CLIENTAS_IMAGES: GalleryImageItem[] = [
   {
     id: 'clienta-1',
     title: 'Okama Ceremonial en Lino',
-    src: '/media/Embera-800x1000.webp',
+    src: toPublicUrl('Embera-800x1000.webp'),
     alt: 'Clienta de Nenúfar luciendo collar Okama en Cartagena',
     isFeatured: true,
   },
   {
     id: 'clienta-2',
     title: 'Aretes Tricolor en Celebración',
-    src: '/media/colombia-aretes-800x1000.webp',
+    src: toPublicUrl('colombia-aretes-800x1000.webp'),
     alt: 'Clienta luciendo aretes artesanales tricolor de Nenúfar',
   },
   {
     id: 'clienta-3',
     title: 'Joya de Autor en la Piel',
-    src: '/media/joya-1788320703397-800x1000.webp',
+    src: toPublicUrl('joya-1788320703397-800x1000.webp'),
     alt: 'Clienta con pieza exclusiva de Shirley - Nenúfar',
   },
   {
     id: 'clienta-4',
     title: 'Aretes Inspiración Café',
-    src: '/media/cafe-aretes-1-800x1000.webp',
+    src: toPublicUrl('cafe-aretes-1-800x1000.webp'),
     alt: 'Clienta con aretes de café Nenúfar',
   },
   {
     id: 'clienta-5',
     title: 'Candongas de Mostacilla Calibrada',
-    src: '/media/colombia-aretes-2-800x1000.webp',
+    src: toPublicUrl('colombia-aretes-2-800x1000.webp'),
     alt: 'Clienta con candongas Nenúfar',
   },
   {
     id: 'clienta-6',
     title: 'Collar Colibrí en Ocasión Especial',
-    src: '/media/colibri-1-800x1000.webp',
+    src: toPublicUrl('colibri-1-800x1000.webp'),
     alt: 'Clienta con collar de colibrí Nenúfar',
   },
   {
     id: 'clienta-7',
     title: 'Diseño Ancestral en Celebración',
-    src: '/media/joya-1788320381292-800x1000.webp',
+    src: toPublicUrl('joya-1788320381292-800x1000.webp'),
     alt: 'Aretes de autor en clienta Nenúfar',
   },
 ]
@@ -56,38 +62,38 @@ const FERIAS_IMAGES: GalleryImageItem[] = [
   {
     id: 'feria-1',
     title: 'Muestra en Feria de Diseño',
-    src: '/media/landing-1-800x1000.webp',
+    src: toPublicUrl('landing-1-800x1000.webp'),
     alt: 'Puesto de Nénufar en feria de diseño de Cartagena',
     isFeatured: true,
   },
   {
     id: 'feria-2',
     title: 'Shirley Compartiendo su Oficio',
-    src: '/media/shirley-nenufar-1-800x1000.webp',
+    src: toPublicUrl('shirley-nenufar-1-800x1000.webp'),
     alt: 'Shirley en feria artesanal en Cartagena',
   },
   {
     id: 'feria-3',
     title: 'Muestra de Piezas en Vivo',
-    src: '/media/joya-1788385407531-800x1000.webp',
+    src: toPublicUrl('joya-1788385407531-800x1000.webp'),
     alt: 'Muestra de joyas en mostacilla en feria local',
   },
   {
     id: 'feria-4',
     title: 'Pop-Up en el Centro Histórico',
-    src: '/media/WhatsApp%20Image%202026-07-29%20at%2011.35.53%20PM-1-800x1000.webp',
+    src: toPublicUrl('WhatsApp Image 2026-07-29 at 11.35.53 PM-1-800x1000.webp'),
     alt: 'Exhibición Pop-Up en Cartagena',
   },
   {
     id: 'feria-5',
     title: 'Exhibición de Collares y Aretes',
-    src: '/media/image-landing1-800x1000.webp',
+    src: toPublicUrl('image-landing1-800x1000.webp'),
     alt: 'Exhibición de piezas en feria',
   },
   {
     id: 'feria-6',
     title: 'Encuentro con Amantes del Arte Textil',
-    src: '/media/landing-800x1000.webp',
+    src: toPublicUrl('landing-800x1000.webp'),
     alt: 'Feria de diseño independiente',
   },
 ]
@@ -96,20 +102,20 @@ const PREMIOS_IMAGES: GalleryImageItem[] = [
   {
     id: 'premio-1',
     title: 'Reconocimiento Artesanía Colombiana',
-    src: '/media/shirley-creadora-800x1000.webp',
+    src: toPublicUrl('shirley-creadora-800x1000.webp'),
     alt: 'Shirley recibiendo reconocimiento por su labor artesanal',
     isFeatured: true,
   },
   {
     id: 'premio-2',
     title: 'Mención Especial Diseño Contemporáneo',
-    src: '/media/Embera-800x1000.webp',
+    src: toPublicUrl('Embera-800x1000.webp'),
     alt: 'Pieza galardonada en concurso de diseño',
   },
   {
     id: 'premio-3',
     title: 'Premio Innovación en Técnica Ancestral',
-    src: '/media/colombia-aretes-800x1000.webp',
+    src: toPublicUrl('colombia-aretes-800x1000.webp'),
     alt: 'Reconocimiento a la innovación en tejido de mostacilla',
   },
 ]
@@ -118,38 +124,38 @@ const SHIRLEY_IMAGES: GalleryImageItem[] = [
   {
     id: 'shirley-1',
     title: 'Shirley en su Espacio Creador',
-    src: '/media/shirley-creadora-800x1000.webp',
+    src: toPublicUrl('shirley-creadora-800x1000.webp'),
     alt: 'Shirley tejiendo joyería artesanal en su taller de Cartagena',
     isFeatured: true,
   },
   {
     id: 'shirley-2',
     title: 'Prototipos y Flores Tejidas',
-    src: '/media/Collar-flor-800x1000.webp',
+    src: toPublicUrl('Collar-flor-800x1000.webp'),
     alt: 'Creación botánica en mostacilla en el taller de Shirley',
   },
   {
     id: 'shirley-3',
     title: 'Selección de Micro-Mostacillas',
-    src: '/media/shirley-nenufar-800x1000.webp',
+    src: toPublicUrl('shirley-nenufar-800x1000.webp'),
     alt: 'Shirley seleccionando mostacillas en su taller',
   },
   {
     id: 'shirley-4',
     title: 'Diseño Floral Caribeño',
-    src: '/media/pinas-800x1000.webp',
+    src: toPublicUrl('pinas-800x1000.webp'),
     alt: 'Aretes de piña y flores',
   },
   {
     id: 'shirley-5',
     title: 'Colibrí Tejido a Mano',
-    src: '/media/colibri-800x1000.webp',
+    src: toPublicUrl('colibri-800x1000.webp'),
     alt: 'Colibrí artesanal en mostacilla',
   },
   {
     id: 'shirley-6',
     title: 'Mesa de Hilado y Texturas',
-    src: '/media/aretas-cafe-800x1000.webp',
+    src: toPublicUrl('aretas-cafe-800x1000.webp'),
     alt: 'Mesa de hilado en taller de Shirley',
   },
 ]
@@ -197,12 +203,12 @@ function resolveImageUrl(imageField?: number | string | MediaType | null, fallba
     if (url) return url
   }
   if (typeof imageField === 'string' && imageField.trim().length > 0) {
-    return imageField
+    return toPublicUrl(imageField)
   }
   if (fallbackUrl && fallbackUrl.trim().length > 0) {
-    return fallbackUrl
+    return toPublicUrl(fallbackUrl)
   }
-  return '/media/Embera-800x1000.webp'
+  return toPublicUrl('Embera-800x1000.webp')
 }
 
 export const GalleryBlock: React.FC<GalleryBlockProps> = ({

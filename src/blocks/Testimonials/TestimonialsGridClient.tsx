@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Star, Quote, X, Sparkles, MapPin, ArrowRight } from 'lucide-react'
 import { ScrollReveal } from '@/components/Animation/ScrollReveal'
+import { getSupabasePublicUrl } from '@/lib/supabaseStorage'
 
 export type TestimonialItem = {
   id: number | string
@@ -24,19 +25,19 @@ const defaultPieceDetails: Record<string, { pieceName: string; technique: string
     pieceName: 'Collar Flor de Loto en Mostacilla',
     technique: 'Tejido peyote a mano con 1.400 mostacillas checas calibradas e hilo de alta resistencia.',
     location: 'Elaborado en el Taller de Shirley, Getsemaní, Cartagena de Indias.',
-    image: '/media/landing-image1.jpeg',
+    image: getSupabasePublicUrl('landing-image1.jpeg'),
   },
   '2': {
     pieceName: 'Aretes Colibrí Caribeños',
     technique: 'Tejido artesanal liviano con topos hipoalergénicos en acero quirúrgico dorado.',
     location: 'Diseño original inspirado en los jardines y patios de Cartagena.',
-    image: '/media/landing-image2.jpeg',
+    image: getSupabasePublicUrl('landing-image2.jpeg'),
   },
   '3': {
     pieceName: 'Taller de Tejido de Pulseras',
     technique: 'Clase presencial personalizada: lectura de patrones ancestrales y ensartado fino.',
     location: 'Taller presencial en el Centro Histórico de Cartagena.',
-    image: '/media/landing-image3.jpeg',
+    image: getSupabasePublicUrl('landing-image3.jpeg'),
   },
 }
 
@@ -66,7 +67,7 @@ export function TestimonialsGridClient({ testimonials }: TestimonialsGridClientP
         pieceName: 'Joya de Autor en Mostacilla Calibrada',
         technique: 'Tejido artesanal hecho a mano con técnicas ancestrales colombianas.',
         location: 'Taller Shirley, Cartagena de Indias.',
-        image: '/media/landing-image1.jpeg',
+        image: getSupabasePublicUrl('landing-image1.jpeg'),
       }
     : null
 
