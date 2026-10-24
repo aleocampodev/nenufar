@@ -42,8 +42,20 @@ async function queryHomePage(): Promise<Page | null> {
       },
     })
 
+    const isStarterTemplate = (doc: Page) => {
+      const heroType = (doc.hero as any)?.type
+      const blocks = doc.layout || []
+      const hasNenufarBlocks = blocks.some((b) =>
+        ['nenufarStory', 'imageStrip', 'upcomingEvents', 'testimonials', 'gallery'].includes(b.blockType)
+      )
+      return heroType === 'lowImpact' && !hasNenufarBlocks
+    }
+
     if (result.docs && result.docs.length > 0) {
-      return result.docs[0] as Page
+      const doc = result.docs[0] as Page
+      if (!isStarterTemplate(doc)) {
+        return doc
+      }
     }
 
     // Si no está publicado y no estamos en draftMode, buscar el documento borrador de la DB antes del fallback estático
@@ -64,7 +76,10 @@ async function queryHomePage(): Promise<Page | null> {
       })
 
       if (draftResult.docs && draftResult.docs.length > 0) {
-        return draftResult.docs[0] as Page
+        const draftDoc = draftResult.docs[0] as Page
+        if (!isStarterTemplate(draftDoc)) {
+          return draftDoc
+        }
       }
     }
   } catch (err) {
