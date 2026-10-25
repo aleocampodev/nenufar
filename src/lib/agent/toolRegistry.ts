@@ -49,12 +49,13 @@ export const SHIRLEY_TOOL_DEFINITIONS: ShirleyToolDefinition[] = [
   local('buscarProducto', 'Busca piezas de joyeria en el catalogo real de Nenufar por nombre o palabra clave. Devuelve solo piezas que existen en la base de datos.', {
     consulta: z.string().describe('Palabra clave, ej. "aretes", "collar", "pulsera"'),
   }),
-  local('crearProductoDraft', 'Crea una joya nueva: borrador o publicada de inmediato en /shop. Si Shirley envio una foto, se vincula automaticamente.', {
+  local('crearProductoDraft', 'Crea una joya nueva: borrador o publicada de inmediato en /shop. Si Shirley envio una foto, se vincula y se le retira el fondo con IA para dejarla de estudio blanco limpio.', {
     titulo: z.string().describe('Nombre de la pieza, ej. "Collar Filigrana Atardecer"'),
     precioCOP: z.number().optional().describe('Precio en pesos colombianos sin decimales (ej. 45000)'),
     inventario: z.number().optional().describe('Unidades disponibles (ej. 5)'),
     categoria: z.string().optional().describe('Categoria (ej. "Aretes"). Se crea si no existe.'),
     publicar: z.boolean().optional().describe('true para publicar de inmediato, false para borrador'),
+    quitarFondo: z.boolean().optional().describe('true para retirar el fondo con IA (fondo de estudio blanco limpio), por defecto true si hay foto'),
   }),
   local('publicarProducto', 'Publica o pasa a borrador un producto existente para que sea visible (o invisible) en /shop.', {
     slug: z.string().describe('Slug o nombre del producto'),
@@ -73,6 +74,7 @@ export const SHIRLEY_TOOL_DEFINITIONS: ShirleyToolDefinition[] = [
     titulo: z.string().describe('Nombre de la categoria, ej. "Tobilleras"'),
   }),
   local('listarCategorias', 'Lista todas las categorias de joyas registradas en el catalogo con el numero de piezas asociadas.', {}),
+  local('analizarCatalogoYGaleria', 'Analiza el estado del catalogo (/shop) y la galeria (/galeria): cuenta joyas por categoria, detecta piezas sin foto, categorias vacias o pestanas de galeria desiertas, y genera recomendaciones de que fotos o joyas deberia subir Shirley hoy.', {}),
   local('asignarCategoriaProducto', 'Asigna o vincula una categoria a una joya existente del catalogo por su slug o nombre.', {
     slug: z.string().describe('Slug o nombre del producto'),
     categoria: z.string().describe('Nombre de la categoria a asignar (ej. "Aretes")'),

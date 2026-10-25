@@ -146,7 +146,7 @@ export async function executeShirleyTool(
       }
 
       case 'crearProductoDraft': {
-        const { titulo, precioCOP, inventario, publicar, mediaId, categoria } = args
+        const { titulo, precioCOP, inventario, publicar, mediaId, categoria, quitarFondo = true } = args
         const shouldPublish = Boolean(publicar)
         let categoryIds: number[] = []
 
@@ -155,13 +155,53 @@ export async function executeShirleyTool(
           categoryIds = [catDoc.id]
         }
 
+        let finalMediaId = mediaId ? Number(mediaId) : undefined
+        let bgRemoved = false
+
+        if (finalMediaId && quitarFondo !== false) {
+          try {
+            const mediaDoc = await payload.findByID({
+              collection: 'media',
+              id: finalMediaId,
+              depth: 0,
+              overrideAccess: true,
+            })
+            if (mediaDoc?.url) {
+              const { removeImageBackground } = await import('@/lib/background-removal')
+              const cleanBuffer = await removeImageBackground(mediaDoc.url)
+              if (cleanBuffer) {
+                const cleanDoc = await payload.create({
+                  collection: 'media',
+                  data: {
+                    alt: `${titulo} - Fondo blanco de estudio`,
+                  },
+                  file: {
+                    data: cleanBuffer,
+                    mimetype: 'image/png',
+                    name: `${slugify(titulo)}-clean-${Date.now()}.png`,
+                    size: cleanBuffer.length,
+                  },
+                  overrideAccess: true,
+                })
+                finalMediaId = cleanDoc.id
+                bgRemoved = true
+              }
+            }
+          } catch (bgErr) {
+            payload.logger.warn({
+              msg: '[shirley-agent] No se pudo remover fondo con IA, usando foto original',
+              err: bgErr,
+            })
+          }
+        }
+
         const doc = await payload.create({
           collection: 'products',
           data: {
             title: titulo,
             ...(precioCOP !== undefined ? { priceInCOPEnabled: true, priceInCOP: Number(precioCOP) } : {}),
             ...(inventario !== undefined ? { inventory: Number(inventario) } : {}),
-            ...(mediaId ? { images: [{ image: mediaId }] } : {}),
+            ...(finalMediaId ? { images: [{ image: finalMediaId }] } : {}),
             ...(categoryIds.length > 0 ? { categories: categoryIds } : {}),
             _status: shouldPublish ? 'published' : 'draft',
           } as any,
@@ -169,9 +209,12 @@ export async function executeShirleyTool(
           overrideAccess: true,
         })
         const catMsg = categoryIds.length > 0 ? ` en la categoría "${categoria}"` : ''
+        const bgMsg = bgRemoved
+          ? ' ✨ Le retiré el fondo automáticamente para que luzca con fondo de estudio blanco impecable.'
+          : ''
         return shouldPublish
-          ? `¡Listo Shirley! Joya "${titulo}" creada y publicada exitosamente en el catálogo (/shop)${catMsg} con precio ${formatCOP(precioCOP)} ✨`
-          : `¡Listo Shirley! Joya "${titulo}" guardada como borrador${catMsg} con precio ${formatCOP(precioCOP)}. Puedes publicarla cuando quieras diciendo "publicar ${titulo}".`
+          ? `¡Listo Shirley! Joya "${titulo}" creada y publicada exitosamente en el catálogo (/shop)${catMsg} con precio ${formatCOP(precioCOP)}.${bgMsg}`
+          : `¡Listo Shirley! Joya "${titulo}" guardada como borrador${catMsg} con precio ${formatCOP(precioCOP)}.${bgMsg} Puedes publicarla cuando quieras diciendo "publicar ${titulo}".`
       }
 
       case 'publicarProducto': {
@@ -282,6 +325,96 @@ export async function executeShirleyTool(
         })
 
         return `Categorías en el catálogo (${categoriesRes.docs.length}):\n${lines.join('\n')}`
+      }
+
+      case 'analizarCatalogoYGaleria': {
+        // 1. Análisis del catálogo (/shop)
+        const categoriesRes = await payload.find({
+          collection: 'categories',
+          limit: 100,
+          depth: 0,
+          overrideAccess: true,
+          sort: 'title',
+        })
+
+        const allProducts = await payload.find({
+          collection: 'products',
+          limit: 200,
+          depth: 0,
+          overrideAccess: true,
+        })
+
+        const published = allProducts.docs.filter((p: any) => p._status === 'published')
+        const drafts = allProducts.docs.filter((p: any) => p._status === 'draft')
+        const withoutPhotos = allProducts.docs.filter((p: any) => !p.images || p.images.length === 0)
+
+        // Desglose por categoría
+        const categoryBreakdown: Array<{ title: string; count: number; empty: boolean }> = []
+        for (const cat of categoriesRes.docs) {
+          const prodsInCat = allProducts.docs.filter((p: any) => {
+            const cats = Array.isArray(p.categories) ? p.categories : []
+            return cats.some((c: any) => (typeof c === 'object' ? c.id === cat.id : c === cat.id))
+          })
+          categoryBreakdown.push({
+            title: cat.title,
+            count: prodsInCat.length,
+            empty: prodsInCat.length === 0,
+          })
+        }
+
+        // 2. Análisis de la galería (/galeria y landing)
+        const homeRes = await payload.find({
+          collection: 'pages',
+          where: { or: [{ slug: { equals: 'home' } }, { slug: { equals: 'inicio' } }] },
+          depth: 1,
+          overrideAccess: true,
+          limit: 1,
+        })
+        const page = homeRes.docs[0]
+        const galleryBlock = (page?.layout as any[])?.find((b) => b.blockType === 'gallery')
+        const galleryTabs = galleryBlock?.tabs || []
+
+        const galleryBreakdown: Array<{ title: string; count: number; empty: boolean }> = galleryTabs.map((t: any) => ({
+          title: t.tabTitle || 'Sección',
+          count: Array.isArray(t.images) ? t.images.length : 0,
+          empty: !Array.isArray(t.images) || t.images.length === 0,
+        }))
+
+        // 3. Recomendaciones accionables
+        const recomendaciones: string[] = []
+        const emptyCats = categoryBreakdown.filter((c) => c.empty)
+        if (emptyCats.length > 0) {
+          recomendaciones.push(`• Catálogo: No tienes piezas en las categorías ${emptyCats.map((c) => `"${c.title}"`).join(', ')}. ¿Subimos fotos de estas categorías?`)
+        }
+        if (withoutPhotos.length > 0) {
+          recomendaciones.push(`• Joyas sin foto: Tienes ${withoutPhotos.length} joya(s) sin foto (${withoutPhotos.slice(0, 3).map((p: any) => `"${p.title}"`).join(', ')}). Envíame las fotos para asociarlas.`)
+        }
+        const emptyGallery = galleryBreakdown.filter((g) => g.empty || g.count < 2)
+        if (emptyGallery.length > 0) {
+          recomendaciones.push(`• Galería: La sección "${emptyGallery[0].title}" tiene ${emptyGallery[0].count} foto(s). Si tienes fotos de clientas o momentos recientes, envíamelas para publicarlas.`)
+        }
+        if (recomendaciones.length === 0) {
+          recomendaciones.push(`• ¡Todo está balanceado y al día! Tienes ${published.length} joyas publicadas y fotos en todas las secciones.`)
+        }
+
+        const catLines = categoryBreakdown.map((c) => `  - ${c.title}: ${c.count} joya(s)${c.empty ? ' ⚠️ (Vacía)' : ''}`)
+        const galLines = galleryBreakdown.map((g) => `  - ${g.title}: ${g.count} foto(s)${g.empty ? ' ⚠️ (Sin fotos)' : ''}`)
+
+        return [
+          `📊 Análisis de Estado: Catálogo y Galería Nénufar:`,
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+          `💎 Catálogo (/shop):`,
+          `• Total joyas: ${allProducts.totalDocs} (${published.length} publicadas, ${drafts.length} borradores)`,
+          ...(catLines.length > 0 ? catLines : ['  (Sin categorías creadas)']),
+          ``,
+          `📸 Galería (/galeria):`,
+          ...(galLines.length > 0 ? galLines : ['  (Sin pestañas de galería)']),
+          ``,
+          `💡 Recomendaciones para hoy:`,
+          ...recomendaciones,
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+          `Para subir una foto, envíamela por aquí y dime si va al catálogo o a la galería. ✨`,
+        ].join('\n')
       }
 
       case 'asignarCategoriaProducto': {
