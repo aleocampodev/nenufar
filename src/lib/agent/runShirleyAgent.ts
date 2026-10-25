@@ -80,6 +80,16 @@ function buildSystemPrompt(): string {
     '- Si el mensaje es una pregunta general o saludo, responde directo sin usar herramientas.',
     '- Tienes acceso al historial de conversación previo: úsalo para entender referencias a productos, fotos o temas hablados anteriormente.',
     '',
+    'Flujo de Fotos (Catálogo vs Galería & Eliminación de Fondo con IA):',
+    '- Cuando Shirley envíe una foto y NO especifique a dónde va, salúdala cálidamente y pregúntale con total claridad:',
+    '  1. ¿A dónde va la foto? ¿Para el Catálogo (/shop) o para la Galería (/galeria)?',
+    '  2. ¿Cuál es su categoría y detalles?',
+    '     - Si es para el Catálogo: ¿Qué tipo de joya es? (Aretes, Collares, Pulseras, Anillos, etc.) y su precio en pesos colombianos (ej. $ 45.000).',
+    '     - Si es para la Galería: ¿A qué sección corresponde? (Nuestras Clientas, Ferias en Cartagena, Talleres de Tejido, o El Taller & Shirley) y su título.',
+    '  3. Explícale que si es para el catálogo, el sistema eliminará automáticamente el fondo con IA para dejar la joya con fondo blanco de estudio impecable; y si es para la galería, conservará su fondo natural y ambiente real.',
+    '- Si Shirley ya indicó el destino o categoría (en este mensaje o en el anterior), ejecuta la herramienta inmediatamente (crearProductoDraft o agregarFotoGaleria).',
+    '- Proactividad y Análisis: Cuando Shirley pregunte cómo está la tienda, qué falta por subir, o solicite analizar el catálogo y galería, usa mcp__nenufar-tienda__analizarCatalogoYGaleria para darle un diagnóstico completo y sugerirle exactamente qué piezas o fotos subir.',
+    '',
     'Reglas de Copywriting para Marketing y Ventas (ALTA CONVERSIÓN · ANTI-SLOP · ANTI-SYCOPHANCY):',
     '- ENFOQUE DE MARKETING Y VENTAS DIRECTAS: El objetivo de cada texto comercial es convertir visitantes en compradoras. Despierta deseo genuino, vincula características técnicas a beneficios tangibles (ej. ligereza extrema que permite usar aretes de impacto 10 horas seguidas sin dolor), derriba objeciones (cero níquel para pieles reactivas, resistencia al sudor, empaque de regalo) y cierra con llamados a la acción claros.',
     '- PROHIBIDO EL AI SLOP Y CLICHÉS DE IA: No uses fórmulas vacías como "eleva tu estilo al siguiente nivel", "un tapiz de emociones", "sinfonía de colores", "en un mundo donde...", "déjate cautivar", "fusión mágica de lo ancestral y lo contemporáneo" ni adjetivos inflados.',
@@ -438,6 +448,30 @@ export async function runShirleyAgent({
     content: text,
   })
 
+  // 1.5. Persistencia de media entre turnos conversacionales:
+  // Si Shirley envió una foto en el turno anterior y en este turno responde con texto
+  // indicando el precio/categoría/destino, recuperamos el mediaId reciente (últimos 30 min).
+  let activeMediaId = mediaId
+  if (!activeMediaId) {
+    try {
+      const thirtyMinsAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString()
+      const recentMedia = await payload.find({
+        collection: 'media',
+        limit: 1,
+        sort: '-createdAt',
+        where: {
+          createdAt: { greater_than_equal: thirtyMinsAgo },
+        },
+        overrideAccess: true,
+      })
+      if (recentMedia.docs.length > 0) {
+        activeMediaId = recentMedia.docs[0].id
+      }
+    } catch (err) {
+      payload.logger.warn({ msg: '[shirley-agent] Error buscando media reciente', err })
+    }
+  }
+
   // 2. Armar el prompt con historial como preámbulo (el SDK maneja su propia
   // memoria de turnos dentro de la consulta; el historial persistido entra
   // como contexto de solo lectura, acotado para no contaminar todos los
@@ -446,8 +480,8 @@ export async function runShirleyAgent({
     .map((m) => `${m.role === 'user' ? 'Shirley' : 'Asistente'}: ${typeof m.content === 'string' ? m.content : ''}`)
     .join('\n')
     .slice(-HISTORY_MAX_CHARS)
-  const mediaNote = mediaId
-    ? `\n[Shirley adjuntó una foto ya guardada en Media con id ${mediaId}. La gestión de galería por ahora se hace desde /admin.]`
+  const mediaNote = activeMediaId
+    ? `\n[Foto disponible para asociar: Media id ${activeMediaId}${mediaId ? ' (recién enviada por Shirley en este mensaje)' : ' (enviada por Shirley en el mensaje anterior)'}. Puedes usar este mediaId en crearProductoDraft (se retirará el fondo con IA automáticamente para dejarlo blanco de estudio) o en agregarFotoGaleria (conservará su fondo natural).]`
     : ''
   const fullPrompt = `${historyPreamble ? `Conversación previa:\n${historyPreamble}\n\n` : ''}Mensaje actual de Shirley: ${cleanPrompt}${mediaNote}`
 
@@ -456,7 +490,7 @@ export async function runShirleyAgent({
   // 3. Loop agéntico REAL vía Claude Agent SDK. El SDK hace spawn del CLI con
   // ANTHROPIC_BASE_URL apuntando a LiteLLM :4000, que traduce a Groq free.
   // tools: [] desactiva los built-ins (Bash/Read/Edit) — solo nuestras MCP.
-  setMcpContext({ payload, chatId, ...(mediaId ? { mediaId } : {}) })
+  setMcpContext({ payload, chatId, ...(activeMediaId ? { mediaId: activeMediaId } : {}) })
   const toolsInvoked: string[] = []
   let totalInputTokens = 0
   let totalOutputTokens = 0
@@ -473,7 +507,7 @@ export async function runShirleyAgent({
         apiKey,
         model: liteMode ? 'nenufar-bot-20b' : model,
         payload,
-        mediaId,
+        mediaId: activeMediaId,
         maxTurns: effectiveMaxTurns,
         timeoutMs: TIMEOUT_MS,
         toolsInvoked,
@@ -602,7 +636,7 @@ export async function runShirleyAgent({
           apiKey,
           model: liteMode ? 'nenufar-bot-20b' : model,
           payload,
-          mediaId,
+          mediaId: activeMediaId,
           maxTurns: effectiveMaxTurns,
           timeoutMs: TIMEOUT_MS,
           toolsInvoked,

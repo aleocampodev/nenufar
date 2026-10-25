@@ -100,7 +100,7 @@ describe('runShirleyAgent (Claude Agent SDK via LiteLLM)', () => {
     const mcpNames = server.tools.map((t) => t.name).sort()
     const regNames = reg.SHIRLEY_TOOL_DEFINITIONS.map((t) => t.name).sort()
     expect(mcpNames).toEqual(regNames)
-    expect(mcpNames).toHaveLength(23)
+    expect(mcpNames).toHaveLength(24)
     expect([...mcp.MCP_DESTRUCTIVE_TOOLS].sort()).toEqual([...reg.destructiveToolNames()].sort())
     const inventory = reg.toolInventoryPrompt()
     for (const name of regNames) {

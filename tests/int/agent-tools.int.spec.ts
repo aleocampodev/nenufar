@@ -34,6 +34,7 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
         'destacarProducto',
         'crearCategoria',
         'listarCategorias',
+        'analizarCatalogoYGaleria',
         'asignarCategoriaProducto',
         'pedidosPendientes',
         'confirmarPedido',
@@ -234,6 +235,49 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
       expect(res).toContain('Categorías en el catálogo (2)')
       expect(res).toContain('• Aretes (6 joyas)')
       expect(res).toContain('• Collares (4 joyas)')
+    })
+
+    it('analizarCatalogoYGaleria: analiza categorías, joyas sin foto y secciones de galería', async () => {
+      mockPayload.find
+        // 1. categories
+        .mockResolvedValueOnce({
+          docs: [
+            { id: 1, title: 'Aretes' },
+            { id: 2, title: 'Collares' },
+          ],
+        } as any)
+        // 2. all products
+        .mockResolvedValueOnce({
+          totalDocs: 2,
+          docs: [
+            { id: 10, title: 'Aretes Flor', _status: 'published', categories: [1], images: [{ image: 1 }] },
+            { id: 11, title: 'Collar Loto', _status: 'draft', categories: [2], images: [] },
+          ],
+        } as any)
+        // 3. home page layout
+        .mockResolvedValueOnce({
+          docs: [
+            {
+              id: 99,
+              layout: [
+                {
+                  blockType: 'gallery',
+                  tabs: [
+                    { tabTitle: 'Nuestras Clientas', images: [{ title: 'Foto 1' }] },
+                    { tabTitle: 'Ferias en Cartagena', images: [] },
+                  ],
+                },
+              ],
+            },
+          ],
+        } as any)
+
+      const res = await executeShirleyTool('analizarCatalogoYGaleria', {}, mockPayload as any)
+      expect(res).toContain('Análisis de Estado: Catálogo y Galería Nénufar')
+      expect(res).toContain('Catálogo (/shop)')
+      expect(res).toContain('Galería (/galeria)')
+      expect(res).toContain('Joyas sin foto')
+      expect(res).toContain('Recomendaciones para hoy')
     })
 
     it('asignarCategoriaProducto: vincula categoría al producto', async () => {
