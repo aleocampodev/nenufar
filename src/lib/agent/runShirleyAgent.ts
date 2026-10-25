@@ -8,6 +8,7 @@ import {
   takePendingConfirmation,
 } from './nenufarMcp'
 import { SHIRLEY_TOOL_DEFINITIONS } from './toolRegistry'
+import { runDirectGatewayAgent } from './directGatewayAgent'
 
 export interface RunShirleyAgentArgs {
   /** Mensaje de texto de Shirley. */
@@ -463,61 +464,80 @@ export async function runShirleyAgent({
   let sdkError = ''
 
   try {
-    const q = query({
-      prompt: fullPrompt,
-      options: {
+    if (process.env.VERCEL) {
+      console.log(`⚡ [direct-agent] Vercel environment detected; querying gateway directly over HTTP`)
+      const res = await runDirectGatewayAgent({
+        prompt: fullPrompt,
         systemPrompt: system,
+        baseUrl,
+        apiKey,
         model: liteMode ? 'nenufar-bot-20b' : model,
+        payload,
+        mediaId,
         maxTurns: effectiveMaxTurns,
-        mcpServers: { 'nenufar-tienda': nenufarMcpServer },
-        allowedTools: ['mcp__nenufar-tienda__*'],
-        tools: [],
-        permissionMode: 'bypassPermissions',
-        allowDangerouslySkipPermissions: true,
-        cwd: '/tmp',
-        env: {
-          ...process.env as Record<string, string>,
-          ANTHROPIC_BASE_URL: baseUrl,
-          ANTHROPIC_AUTH_TOKEN: apiKey,
+        timeoutMs: TIMEOUT_MS,
+        toolsInvoked,
+      })
+      finalReply = res.reply
+      totalInputTokens = res.inputTokens
+      totalOutputTokens = res.outputTokens
+    } else {
+      const q = query({
+        prompt: fullPrompt,
+        options: {
+          systemPrompt: system,
+          model: liteMode ? 'nenufar-bot-20b' : model,
+          maxTurns: effectiveMaxTurns,
+          mcpServers: { 'nenufar-tienda': nenufarMcpServer },
+          allowedTools: ['mcp__nenufar-tienda__*'],
+          tools: [],
+          permissionMode: 'bypassPermissions',
+          allowDangerouslySkipPermissions: true,
+          cwd: '/tmp',
+          env: {
+            ...process.env as Record<string, string>,
+            ANTHROPIC_BASE_URL: baseUrl,
+            ANTHROPIC_AUTH_TOKEN: apiKey,
+          },
         },
-      },
-    })
+      })
 
-    const collect = (async () => {
-      for await (const msg of q) {
-        if (msg.type === 'assistant') {
-          const blocks = (msg.message.content ?? []) as Array<Record<string, any>>
-          for (const block of blocks) {
-            if (block?.type === 'text' && typeof block.text === 'string' && block.text.trim()) {
-              finalReply = block.text.trim()
+      const collect = (async () => {
+        for await (const msg of q) {
+          if (msg.type === 'assistant') {
+            const blocks = (msg.message.content ?? []) as Array<Record<string, any>>
+            for (const block of blocks) {
+              if (block?.type === 'text' && typeof block.text === 'string' && block.text.trim()) {
+                finalReply = block.text.trim()
+              }
+              if (block?.type === 'tool_use' && typeof block.name === 'string') {
+                if (!toolsInvoked.includes(block.name)) toolsInvoked.push(block.name)
+              }
             }
-            if (block?.type === 'tool_use' && typeof block.name === 'string') {
-              if (!toolsInvoked.includes(block.name)) toolsInvoked.push(block.name)
+          } else if (msg.type === 'result') {
+            if (msg.subtype === 'success') {
+              if (typeof msg.result === 'string' && msg.result.trim()) {
+                finalReply = msg.result.trim()
+              }
+              const usage = msg.usage as any
+              totalInputTokens += Number(usage?.input_tokens ?? 0)
+              totalOutputTokens += Number(usage?.output_tokens ?? 0)
+            } else {
+              sdkError = (msg as any).errors?.join('; ') ?? msg.subtype
             }
-          }
-        } else if (msg.type === 'result') {
-          if (msg.subtype === 'success') {
-            if (typeof msg.result === 'string' && msg.result.trim()) {
-              finalReply = msg.result.trim()
-            }
-            const usage = msg.usage as any
-            totalInputTokens += Number(usage?.input_tokens ?? 0)
-            totalOutputTokens += Number(usage?.output_tokens ?? 0)
-          } else {
-            sdkError = (msg as any).errors?.join('; ') ?? msg.subtype
           }
         }
-      }
-      return 'done' as const
-    })()
+        return 'done' as const
+      })()
 
-    const outcome = await Promise.race([
-      collect,
-      sleep(TIMEOUT_MS).then(() => 'timeout' as const),
-    ])
-    if (outcome === 'timeout') {
-      await q.interrupt().catch(() => undefined)
-      throw new Error('TimeoutError')
+      const outcome = await Promise.race([
+        collect,
+        sleep(TIMEOUT_MS).then(() => 'timeout' as const),
+      ])
+      if (outcome === 'timeout') {
+        await q.interrupt().catch(() => undefined)
+        throw new Error('TimeoutError')
+      }
     }
 
     consecutiveGatewayFailures = 0
@@ -563,6 +583,61 @@ export async function runShirleyAgent({
     return finalReply
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err)
+
+    // Si falló por falta del binario nativo del CLI en el entorno serverless, rescatar con llamada directa
+    if (
+      errorMsg.includes('Native CLI binary') ||
+      errorMsg.includes('pathToClaudeCodeExecutable') ||
+      errorMsg.includes('spawn')
+    ) {
+      try {
+        payload.logger.warn({
+          msg: '[shirley-agent] Rescatando con direct gateway agent por falta de binario CLI',
+          error: errorMsg,
+        })
+        const res = await runDirectGatewayAgent({
+          prompt: fullPrompt,
+          systemPrompt: system,
+          baseUrl,
+          apiKey,
+          model: liteMode ? 'nenufar-bot-20b' : model,
+          payload,
+          mediaId,
+          maxTurns: effectiveMaxTurns,
+          timeoutMs: TIMEOUT_MS,
+          toolsInvoked,
+        })
+        if (res.reply) {
+          consecutiveGatewayFailures = 0
+          void persistMessage(payload, {
+            chatId,
+            role: 'assistant',
+            content: res.reply,
+            toolName: toolsInvoked.join(', ') || undefined,
+          })
+          void recordTrace(payload, {
+            chatId,
+            query: text,
+            responseSummary: res.reply,
+            toolsUsed: toolsInvoked.join(', ') || 'ninguna',
+            inputTokens: res.inputTokens,
+            outputTokens: res.outputTokens,
+            totalTokens: res.inputTokens + res.outputTokens,
+            cost: '$0 USD (Groq Free Tier)',
+            executionTimeMs: Date.now() - startTime,
+            status: 'success',
+            model,
+          })
+          return res.reply
+        }
+      } catch (fallbackErr) {
+        payload.logger.error({
+          msg: '[shirley-agent] Error en fallback de direct gateway agent',
+          err: fallbackErr,
+        })
+      }
+    }
+
     consecutiveGatewayFailures++
     if (consecutiveGatewayFailures >= CIRCUIT_FAIL_THRESHOLD) {
       circuitOpenUntil = Date.now() + CIRCUIT_BREAKER_MS
