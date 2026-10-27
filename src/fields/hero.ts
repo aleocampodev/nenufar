@@ -23,15 +23,15 @@ export const hero: Field = {
       defaultValue: 'slider',
       label: '¿Qué mostrar arriba?',
       admin: {
-        description: 'Elige "Hero Principal Nénufar" para la página de Inicio.',
+        description: 'Elige "Hero Principal Nenúfar" para la página de Inicio.',
       },
       options: [
         {
-          label: '✅ Hero Principal Nénufar (Foto de palenquera, Redes Sociales y Titular) — (Inicio)',
+          label: '✅ Hero Principal Nenúfar (Foto de palenquera, Redes Sociales y Titular) — (Inicio)',
           value: 'hero',
         },
         {
-          label: '✅ Hero Principal Nénufar (Legado)',
+          label: '✅ Hero Principal Nenúfar (Legado)',
           value: 'slider',
         },
         {
@@ -139,7 +139,7 @@ export const hero: Field = {
           name: 'whatsappUrl',
           type: 'text',
           label: 'URL de WhatsApp',
-          defaultValue: 'https://wa.me/?text=Hola%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20N%C3%A9nufar',
+          defaultValue: 'https://wa.me/?text=Hola%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20Nen%C3%BAfar',
         },
         {
           name: 'telegramUrl',

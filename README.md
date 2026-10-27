@@ -1,4 +1,4 @@
-# Nénufar — Joyería Artesanal de Colombia
+# Nenúfar — Joyería Artesanal de Colombia
 
 <div align="center">
 
@@ -17,9 +17,9 @@
 
 ---
 
-## Qué es Nénufar
+## Qué es Nenúfar
 
-Nénufar es la tienda online de Shirley, joyera artesanal de Cartagena. La plataforma le permite mostrar su catálogo de piezas únicas y recibir pedidos estructurados en Telegram — sin pasarela de pago, sin comisiones, sin intermediarios.
+Nenúfar es la tienda online de Shirley, joyera artesanal de Cartagena. La plataforma le permite mostrar su catálogo de piezas únicas y recibir pedidos estructurados en Telegram — sin pasarela de pago, sin comisiones, sin intermediarios.
 
 El flujo es intencionalmente simple: la compradora explora el catálogo, elige su pieza, agrega notas de personalización (talla, grabado, instrucciones especiales), y llena sus datos de contacto. Shirley recibe el pedido en Telegram y cierra la venta por WhatsApp, tal como siempre lo ha hecho. La plataforma no reemplaza su forma de trabajar: la amplifica.
 
@@ -407,6 +407,6 @@ Al subir una foto al admin, Payload genera automáticamente variantes WebP (cali
 
 <div align="center">
 
-Privado — © 2026 Nénufar · Hecho con cariño para Shirley 🌸
+Privado — © 2026 Nenúfar · Hecho con cariño para Shirley 🌸
 
 </div>

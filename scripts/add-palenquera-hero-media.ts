@@ -8,7 +8,7 @@ import { getPayload } from 'payload'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const FILE = path.resolve(__dirname, '../public/palenquera-hdr-sin-fondo.svg')
-const ALT = 'Mujer palenquera luciendo joyería artesanal de autor en micro-mostacilla Nénufar'
+const ALT = 'Mujer palenquera luciendo joyería artesanal de autor en micro-mostacilla Nenúfar'
 
 async function main() {
   const payload = await getPayload({ config })

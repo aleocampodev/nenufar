@@ -27,7 +27,7 @@ flowchart TD
         A["📱 Shirley"] -->|"1. Mensaje con contexto previo"| B["POST /telegram/webhook"]
     end
 
-    subgraph Backend Nénufar [Next.js App Router + Payload CMS]
+    subgraph Backend Nenúfar [Next.js App Router + Payload CMS]
         B -->|"2. Autentica y Carga Historial"| C["runShirleyAgent.ts"]
         C <-->|"3. Lectura/Escritura de Mensajes"| D[("🐘 Supabase PostgreSQL\n(Colección AgentMessages)")]
         C <-->|"5. Ejecuta Tools en Local API"| E[("📦 Base de Datos Tienda\n(Products, Media, Pages)")]

@@ -1,7 +1,7 @@
 /**
  * Telegram Bot API client — server-only.
  *
- * Nénufar v3.1: this module is the ONLY place that knows about Telegram.
+ * Nenúfar v3.1: this module is the ONLY place that knows about Telegram.
  * The buyer never sees Telegram — the server-side order action calls this
  * module after validating consent + idempotency. Constitution §2.4.
  *

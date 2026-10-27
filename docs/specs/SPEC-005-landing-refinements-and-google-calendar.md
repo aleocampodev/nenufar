@@ -19,7 +19,7 @@
 
 ## 1. System Overview
 
-This specification details the frontend refinement and external calendar synchronization delivered for Nénufar:
+This specification details the frontend refinement and external calendar synchronization delivered for Nenúfar:
 1. **Slider Hero Prismara Redesign:** Luxury two-column editorial slider with Ken Burns effect, arched roman frame, and category reveals.
 2. **Direct WhatsApp Closing:** Removal of redundant `/contacto` page; routing "Personalizar mi Joya" directly to Shirley's WhatsApp with a pre-filled message.
 3. **Google Calendar Synchronization:** Automated, zero-cost ($0/month) bidirectional iCal synchronization between Shirley's personal Google Calendar and the storefront's "Talleres & Ferias" interactive calendar.
@@ -37,7 +37,7 @@ This specification details the frontend refinement and external calendar synchro
                                        │ Public / Secret iCal Feed (.ics)
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ 2. Nénufar Backend (Next.js Server Components & /api/calendar/sync)         │
+│ 2. Nenúfar Backend (Next.js Server Components & /api/calendar/sync)         │
 │    - RFC 5545 iCal Parser (src/lib/google-calendar.ts)                      │
 │    - 5-Minute Cache Revalidation (next: { revalidate: 300 })                │
 │    - Keyword Type Classification (taller / feria / pop-up)                  │

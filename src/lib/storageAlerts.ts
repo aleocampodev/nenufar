@@ -138,7 +138,7 @@ export function formatStorageReport(stats: MediaStorageStats): string {
       : '   No hay archivos suficientes para listar.'
 
   return [
-    `☁️ <b>Almacenamiento de Fotos Nénufar (Supabase $0/mes)</b>`,
+    `☁️ <b>Almacenamiento de Fotos Nenúfar (Supabase $0/mes)</b>`,
     `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
     `${statusEmoji} <b>Estado:</b> ${statusNote}`,
     `📊 <b>Uso:</b> ${stats.usedMB} MB de ${stats.limitMB} MB (${stats.percentUsed}% ocupado)`,
@@ -186,7 +186,7 @@ export async function checkAndSendStorageAlert(
 
     const isDanger = stats.percentUsed >= 85
     const alertMessage = [
-      isDanger ? `🚨 <b>¡ALERTA DE ALMACENAMIENTO NÉNUFAR!</b> 🚨` : `⚠️ <b>AVISO DE ALMACENAMIENTO NÉNUFAR</b>`,
+      isDanger ? `🚨 <b>¡ALERTA DE ALMACENAMIENTO NENÚFAR!</b> 🚨` : `⚠️ <b>AVISO DE ALMACENAMIENTO NENÚFAR</b>`,
       `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
       isDanger
         ? `Shirley, el almacenamiento de fotos ha entrado en <b>ZONA ROJA</b>:`

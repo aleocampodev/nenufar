@@ -17,7 +17,7 @@ async function main() {
   const verbose = args.includes("--verbose")
 
   console.log("\n🌸 ========================================================")
-  console.log("🌸 NÉNUFAR — SUITE DE VALIDACIÓN Y EVALS PARA SKILLS (.agents)")
+  console.log("🌸 NENÚFAR — SUITE DE VALIDACIÓN Y EVALS PARA SKILLS (.agents)")
   console.log("🌸 ========================================================\n")
 
   if (skillFilter) {
@@ -102,7 +102,7 @@ async function main() {
 
   const globalAvg = overallEvals > 0 ? ((totalScoreSum / overallEvals) * 100).toFixed(1) : "100"
   console.log(`\n🎉 Resultado global: ${overallPassed}/${overallEvals} evals aprobadas (Precisión media: ${globalAvg}%)`)
-  console.log("✨ Todas las 50 skills están verificadas e integradas correctamente en Nénufar.\n")
+  console.log("✨ Todas las 50 skills están verificadas e integradas correctamente en Nenúfar.\n")
 }
 
 main().catch((err) => {

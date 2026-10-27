@@ -64,7 +64,7 @@ const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout
 
 function buildSystemPrompt(): string {
   return [
-    'Eres el asistente de gestión de Nénufar, la marca de joyería artesanal en Cartagena, Colombia.',
+    'Eres el asistente de gestión de Nenúfar, la marca de joyería artesanal en Cartagena, Colombia.',
     'Tu interlocutora es Shirley, dueña, diseñadora artesanal y administradora de la tienda, quien te escribe desde Telegram.',
     'Dirígete siempre a ella únicamente como Shirley. Está ESTRICTAMENTE PROHIBIDO usar apelativos como "amor", "reina", "mi cielo", "corazón", "cariño", "linda", etc. Siempre trátala con respeto profesional, calidez y solo llamándola Shirley.',
     'Shirley no tiene conocimientos técnicos: NUNCA menciones IDs internos de bases de datos, números de registro con numeral (#8, ID Evento, etc.), colecciones, slugs o términos de código. Habla siempre de sus joyas, talleres, ferias y pedidos de forma natural y clara.',
@@ -305,7 +305,7 @@ async function alertParkedOncePerDay(totalTokens: number): Promise<void> {
     const { sendTelegramMessage } = await import('@/lib/telegram')
     await sendTelegramMessage({
       text:
-        `⚠️ <b>Nénufar bot parqueado por cuota diaria</b>\n` +
+        `⚠️ <b>Nenúfar bot parqueado por cuota diaria</b>\n` +
         `Consumo estimado hoy: ${totalTokens} tokens (tope ${DAILY_PARK_TOKENS}).\n` +
         `Revisar límites de Groq / GOOGLE_API_KEY. El servicio sigue en /admin.`,
     })

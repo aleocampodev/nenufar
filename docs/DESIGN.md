@@ -1,8 +1,8 @@
-# Nénufar: Systems Design
+# Nenúfar: Systems Design
 ### Zero-cost artisan commerce, human-closed sales, and resilient agent operations
 **Architecture** · `nenufar.co` · **Alejandro Ocampo & Shirley** · *For the operator, engineers, and maintainers*
 
-> Nénufar replaces expensive payment gateways and brittle SaaS subscriptions with an embedded monolith and a Telegram-driven human sales closing flow. Customers browse and build carts on the web; Shirley closes payments, sizing, and shipping directly on WhatsApp. The store operates under a strict $0/mo fixed cost invariant, protected by in-process seams, SHA-256 idempotency, and an autonomous operations agent constrained by a 190k daily token circuit breaker.
+> Nenúfar replaces expensive payment gateways and brittle SaaS subscriptions with an embedded monolith and a Telegram-driven human sales closing flow. Customers browse and build carts on the web; Shirley closes payments, sizing, and shipping directly on WhatsApp. The store operates under a strict $0/mo fixed cost invariant, protected by in-process seams, SHA-256 idempotency, and an autonomous operations agent constrained by a 190k daily token circuit breaker.
 
 ---
 
@@ -68,7 +68,7 @@ Concurrent checkout on last inventory unit · Rapid double-tap audio/text from S
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                          NÉNUFAR EMBEDDED MONOLITH                          │
+│                          NENÚFAR EMBEDDED MONOLITH                          │
 │                                                                             │
 │   CUSTOMER LOOP (Deterministic · Zero AI)       SHIRLEY LOOP (Agentic)      │
 │   ┌─────────────────────────────────────┐       ┌────────────────────────┐  │

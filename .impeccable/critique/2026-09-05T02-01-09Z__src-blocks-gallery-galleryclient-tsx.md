@@ -8,7 +8,7 @@ p1_count: 1
 timestamp: 2026-09-05T02-01-09Z
 slug: src-blocks-gallery-galleryclient-tsx
 ---
-# Design Critique: Nénufar Gallery Block
+# Design Critique: Nenúfar Gallery Block
 **Target:** `src/blocks/Gallery/GalleryClient.tsx` & `src/blocks/Gallery/Component.tsx`  
 **Surface Mode:** Experience (Atelier Showcase & Visual Lookbook)  
 **Method:** dual-agent (A: 9b11c553-c3d8-4663-8a8b-76ac686c1c08 · B: 03ebcae4-480d-440c-ad20-43ae0da3d02f)
@@ -20,7 +20,7 @@ slug: src-blocks-gallery-galleryclient-tsx
 | 1 | Visibility of System Status | 2/4 | Tab activo claro (`bg-brand`), pero sin estados blur-up al cargar ni sombras de desbordamiento en scroll horizontal móvil. |
 | 2 | Match System / Real World | 2/4 | Vocabulario y layout administrativo (`CATEGORÍAS`, `Pág. 1 de 5`, `font-mono`) en lugar de curaduría artesanal cartagenera. |
 | 3 | User Control and Freedom | 3/4 | Modal con tecla Esc y cierre por fondo, pero sin sincronización de URL o hash para botón Atrás del navegador. |
-| 4 | Consistency and Standards | 2/4 | Mezcla de radios (`rounded-full`, `rounded-2xl`, `rounded-3xl`) y uso de `font-mono` ajeno a los tokens tipográficos de Nénufar. |
+| 4 | Consistency and Standards | 2/4 | Mezcla de radios (`rounded-full`, `rounded-2xl`, `rounded-3xl`) y uso de `font-mono` ajeno a los tokens tipográficos de Nenúfar. |
 | 5 | Error Prevention | 3/4 | Fallback seguro implementado (`DEFAULT_GALLERY_TABS`); imágenes con alts en español, aunque sin placeholder visual decorativo en fallo de red. |
 | 6 | Recognition Rather Than Recall | 1/4 | **Crítico:** Títulos ocultos tras `:hover` de escritorio (`opacity-0 group-hover:opacity-100`). En móviles se percibe una cuadrícula muda. |
 | 7 | Flexibility and Efficiency | 2/4 | Flechas de teclado soportadas en escritorio, pero el modal carece totalmente de gestos táctiles swipe en móviles. |

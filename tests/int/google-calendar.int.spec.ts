@@ -42,7 +42,7 @@ PRODID:-//Google Inc//Google Calendar 70.9054//EN
 VERSION:2.0
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Talleres Shirley - Nénufar
+X-WR-CALNAME:Talleres Shirley - Nenúfar
 X-WR-TIMEZONE:America/Bogota
 BEGIN:VEVENT
 DTSTART:20260915T150000Z
@@ -59,7 +59,7 @@ DTSTART;TZID=America/Bogota:20260922T100000
 DTEND;TZID=America/Bogota:20260922T130000
 UID:event-2@google.com
 DESCRIPTION:Aprende a tejer micro-mostacilla con Shirley.
-LOCATION:Taller Nénufar\\, Getsemaní\\, Cartagena
+LOCATION:Taller Nenúfar\\, Getsemaní\\, Cartagena
 SUMMARY:Taller Vivencial de Tejido Emberá
 STATUS:CONFIRMED
 END:VEVENT
@@ -89,7 +89,7 @@ END:VCALENDAR`
     expect(events[1].id).toBe('event-2@google.com')
     expect(events[1].title).toBe('Taller Vivencial de Tejido Emberá')
     expect(events[1].date).toBe('2026-09-22T10:00:00-05:00')
-    expect(events[1].location).toBe('Taller Nénufar, Getsemaní, Cartagena')
+    expect(events[1].location).toBe('Taller Nenúfar, Getsemaní, Cartagena')
     expect(events[1].type).toBe('taller')
   })
 

@@ -6,7 +6,7 @@
 
 ## 1. Contexto del proyecto (lo mínimo indispensable)
 
-**Nénufar** (`/home/ale/Work/nenufar`) — tienda de joyería artesanal colombiana (Shirley, Cartagena).
+**Nenúfar** (`/home/ale/Work/nenufar`) — tienda de joyería artesanal colombiana (Shirley, Cartagena).
 Stack: **Next.js 15 App Router + Payload CMS v3 + PostgreSQL + TailwindCSS**, basado en `@payloadcms/plugin-ecommerce`. Sin pasarela de pago (ADR-001): formulario web → Order en Payload → notificación Telegram → cierre manual por WhatsApp.
 
 **El bot de gestión (v3.2)** es SOLO de Shirley: ella le escribe por Telegram para ver pedidos pendientes, confirmar pagos, actualizar stock. Las compradoras NUNCA le escriben al bot — su recorrido es 100% web.

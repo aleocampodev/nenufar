@@ -1,4 +1,4 @@
-# Nénufar CI — integration tests on every push and pull request.
+# Nenúfar CI — integration tests on every push and pull request.
 #
 # Spins up throwaway PostgreSQL, applies Payload migrations (this also
 # validates that src/migrations/* stay appliable), then runs the Vitest

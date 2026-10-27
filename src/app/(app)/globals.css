@@ -52,7 +52,7 @@
   --font-serif: var(--font-playfair);
 
   /* ══════════════════════════════════════════════════════════════
-     NÉNUFAR SYSTEM DESIGN — UTILITY CLASSES TOKENS
+     NENÚFAR SYSTEM DESIGN — UTILITY CLASSES TOKENS
      ══════════════════════════════════════════════════════════════ */
   --color-brand-primary: var(--brand-primary);
   --color-brand-secondary: var(--brand-secondary);
@@ -106,7 +106,7 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
-     NÉNUFAR SYSTEM DESIGN — UTILITY CLASSES
+     NENÚFAR SYSTEM DESIGN — UTILITY CLASSES
      ══════════════════════════════════════════════════════════════ */
   .bg-primary-magenta { background-color: #E91E8C; }
   .text-primary-magenta { color: #E91E8C; }
@@ -147,7 +147,7 @@
 
 :root {
   /* ══════════════════════════════════════════════════════════════
-     NÉNUFAR SYSTEM DESIGN — PALETA OFICIAL DE 5 COLORES
+     NENÚFAR SYSTEM DESIGN — PALETA OFICIAL DE 5 COLORES
      ══════════════════════════════════════════════════════════════
      1. Primario – Magenta vibrante:   #E91E8C
         Botones principales, CTAs, elementos de marca
@@ -156,7 +156,7 @@
      3. Acento – Rosa/fucsia claro:    #FF4FA3
         Hover states, badges, elementos interactivos secundarios
      4. Neutro oscuro – Índigo negro:  #1A0E2E
-        Texto principal, títulos importantes (logo "Nénufar")
+        Texto principal, títulos importantes (logo "Nenúfar")
      5. Neutro claro – Off-white:      #FAF8FC / #FFFFFF
         Fondos, espacios en blanco, tarjetas
      ══════════════════════════════════════════════════════════════ */

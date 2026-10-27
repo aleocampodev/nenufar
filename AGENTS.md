@@ -1,4 +1,4 @@
-# Nénufar — Contexto para agentes
+# Nenúfar — Contexto para agentes
 
 > 🏛️ **CONSTITUCIÓN Y REGLAS CANÓNICAS:** Consulta [`CONSTITUTION.md`](./CONSTITUTION.md) para los 7 Artículos Fundamentales que rigen todo el desarrollo (Git, política $0/mes, seguridad, arquitectura y estándares).
 

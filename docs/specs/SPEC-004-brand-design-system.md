@@ -15,7 +15,7 @@
 
 ## 1. Executive Summary
 
-Nénufar is a luxury artisanal jewelry brand created in Cartagena de Indias by artisan Shirley. The digital experience reflects high-end Caribbean editorial aesthetics inspired by the Krafti template: warm pastel foundations, refined serif typography, high-contrast deep violet footer, and the signature magenta (`#E91E8C`, secondary `#3B032F`) brand anchor.
+Nenúfar is a luxury artisanal jewelry brand created in Cartagena de Indias by artisan Shirley. The digital experience reflects high-end Caribbean editorial aesthetics inspired by the Krafti template: warm pastel foundations, refined serif typography, high-contrast deep violet footer, and the signature magenta (`#E91E8C`, secondary `#3B032F`) brand anchor.
 
 ---
 
@@ -23,7 +23,7 @@ Nénufar is a luxury artisanal jewelry brand created in Cartagena de Indias by a
 
 ```mermaid
 graph TD
-    A[Nénufar Design System] --> B[1. Brand Magenta #E91E8C / Deep Violet #3B032F]
+    A[Nenúfar Design System] --> B[1. Brand Magenta #E91E8C / Deep Violet #3B032F]
     A --> C[2. Surfaces: Pure White #FFFFFF / Warm Cream #FAF8F5 / Krafti Pastels]
     A --> D[3. Deep Violet Footer #3B032F]
     A --> E[4. Inventory Alert Red #DC2626]
@@ -70,7 +70,7 @@ graph TD
 
 1. **NO Yellow or Gold Text:** Text in `#FACC15`, `amber-200`, `amber-400`, or yellow shades is prohibited. Column headers on dark backgrounds must be pure crisp white (`text-white font-medium`).
 2. **NO "COP" Text in UI:** Prices must always be formatted via `Intl.NumberFormat('es-CO')` rendering `$ 45.000` without any literal "COP" suffix.
-3. **NO Payment Gateways:** Nénufar operates with zero payment gateway fees. Checkout creates an order and forwards buyer details to Shirley's Telegram.
+3. **NO Payment Gateways:** Nenúfar operates with zero payment gateway fees. Checkout creates an order and forwards buyer details to Shirley's Telegram.
 
 ---
 

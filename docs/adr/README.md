@@ -1,6 +1,6 @@
-# Architecture Decision Records (ADRs) — Nénufar
+# Architecture Decision Records (ADRs) — Nenúfar
 
-This directory documents the foundational architectural decisions made for the Nénufar project following the [MADR (Markdown Any Decision Records)](https://adr.github.io/madr/) format.
+This directory documents the foundational architectural decisions made for the Nenúfar project following the [MADR (Markdown Any Decision Records)](https://adr.github.io/madr/) format.
 
 ---
 

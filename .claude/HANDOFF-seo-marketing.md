@@ -1,4 +1,4 @@
-# HANDOFF — SEO técnico + Marketing para ventas (Nénufar)
+# HANDOFF — SEO técnico + Marketing para ventas (Nenúfar)
 
 **Fecha:** 2026-08-15
 **Rama:** main
@@ -9,7 +9,7 @@
 
 ## 1. Contexto del negocio (léelo antes de tocar nada)
 
-- Nénufar = joyería artesanal de Shirley (Cartagena). Payload CMS v3.86 + Next 16 + Postgres.
+- Nenúfar = joyería artesanal de Shirley (Cartagena). Payload CMS v3.86 + Next 16 + Postgres.
 - **Sin pasarela de pago**: comprar = llenar formulario → pedido va a Telegram → Shirley cierra manual.
 - **Modelo de canales (clave para marketing):**
   - **Telegram** = canal de ADMIN (Shirley crea blog + eventos, y recibe pedidos). Gratis. NO es canal de venta.
@@ -28,8 +28,8 @@
 | `src/app/(app)/layout.tsx` | Activado `metadata` (estaba comentado): `metadataBase`, title template, OG/Twitter global + JSON-LD `Organization` con `sameAs` a IG/FB | ✅ |
 | `src/app/(app)/sitemap.ts` | **NUEVO** — sitemap dinámico: rutas estáticas + productos y posts publicados | ✅ |
 | `src/app/(app)/robots.ts` | Reescrito: usa `getServerSideURL()` (consistente), bloquea `/admin`, `/api`, `/pedidos`, `/find-order`, cuentas | ✅ |
-| `src/plugins/index.ts` | `generateTitle` SEO: "Nénufar Joyería Artesanal" (antes "Payload Ecommerce Template") | ✅ |
-| `src/utilities/mergeOpenGraph.ts` | Defaults de marca Nénufar (antes "Payload Website Template" + imagen de payloadcms.com) | ✅ |
+| `src/plugins/index.ts` | `generateTitle` SEO: "Nenúfar Joyería Artesanal" (antes "Payload Ecommerce Template") | ✅ |
+| `src/utilities/mergeOpenGraph.ts` | Defaults de marca Nenúfar (antes "Payload Website Template" + imagen de payloadcms.com) | ✅ |
 
 **Patrón reutilizable:** helper `toAbsoluteUrl(url)` (duplicado en product y blog) — Google exige URLs absolutas en JSON-LD; prefija dominio solo si la URL es relativa. Candidato a extraer a `src/utilities/` si se toca de nuevo.
 

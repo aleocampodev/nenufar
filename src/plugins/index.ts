@@ -6,7 +6,7 @@ import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { ecommercePlugin } from '@payloadcms/plugin-ecommerce'
 
-// Nénufar v3.1: Stripe removed — orders go to Telegram invisibly (constitution §2.1)
+// Nenúfar v3.1: Stripe removed — orders go to Telegram invisibly (constitution §2.1)
 // import { stripeAdapter } from '@payloadcms/plugin-ecommerce/payments/stripe'
 
 import { Page, Product } from '@/payload-types'

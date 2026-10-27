@@ -1,7 +1,7 @@
 {
   "name": "nenufar",
   "version": "3.1.0",
-  "description": "Nénufar — handmade jewelry storefront with cart → Telegram notification. Payload ecommerce template (Stripe swapped for Telegram).",
+  "description": "Nenúfar — handmade jewelry storefront with cart → Telegram notification. Payload ecommerce template (Stripe swapped for Telegram).",
   "license": "MIT",
   "type": "module",
   "scripts": {

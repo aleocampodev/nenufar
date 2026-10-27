@@ -1,7 +1,7 @@
 'use server'
 
 /**
- * /pedidos/enviar server action — Nénufar v3.1 Fase 4.
+ * /pedidos/enviar server action — Nenúfar v3.1 Fase 4.
  *
  * Buyer submits name+contact+consent → this action:
  *   1. Validates consent (Ley 1581)

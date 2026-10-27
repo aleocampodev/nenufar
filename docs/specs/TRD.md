@@ -1,5 +1,5 @@
 # TSD — Technical Specification Document
-**Project:** Nénufar — Handcrafted Jewelry Store
+**Project:** Nenúfar — Handcrafted Jewelry Store
 **Version:** 1.0
 **Date:** August 2026
 **Audience:** Developers, QA, DevOps
@@ -37,7 +37,7 @@
 ### Brand Colors (CSS tokens)
 
 ```css
---brand-primary:  #E91E8C                 /* Magenta Nénufar (primary) */
+--brand-primary:  #E91E8C                 /* Magenta Nenúfar (primary) */
 --brand-secondary: #3B032F                /* Deep violet (footer, dark tile) */
 --brand-accent:   #FF4FA3                 /* Light pink (hover states, badges) */
 --brand-dark:     #1A0E2E                 /* Indigo black (main text) */

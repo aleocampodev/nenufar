@@ -14,7 +14,7 @@ Headless CMS architectures frequently decouple the frontend (e.g., Next.js on Ve
 * Managing CORS, complex authentication tokens, and webhook synchronization.
 * Increased hosting costs and deployment synchronization friction.
 
-Payload CMS v3 runs natively as Next.js App Router route handlers (`/api/graphql`, `/api/[...slug]`) within the exact same Node.js runtime process. How should Nénufar query and mutate data across Storefront, Admin panel, and Telegram bot?
+Payload CMS v3 runs natively as Next.js App Router route handlers (`/api/graphql`, `/api/[...slug]`) within the exact same Node.js runtime process. How should Nenúfar query and mutate data across Storefront, Admin panel, and Telegram bot?
 
 ---
 

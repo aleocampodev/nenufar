@@ -113,7 +113,7 @@ export const UpcomingEventsBlock: React.FC<UpcomingEventsBlockProps> = async ({
         id: "ev-2",
         title: "Taller Vivencial de Tejido Emberá",
         date: "2026-08-22T10:00:00.000Z",
-        location: "Taller Nénufar, Getsemaní, Cartagena",
+        location: "Taller Nenúfar, Getsemaní, Cartagena",
         type: "taller",
         description:
           "Experiencia íntima de 3 horas donde Shirley guía a cada participante paso a paso en el hilado y la geometría sagrada. Incluye micro-mostacillas checas, aguja técnica, café de origen y tu propia pieza terminada.",

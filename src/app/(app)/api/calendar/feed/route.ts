@@ -201,7 +201,7 @@ export async function GET() {
     'VERSION:2.0',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-    'X-WR-CALNAME:Nénufar — Ferias y Talleres',
+    'X-WR-CALNAME:Nenúfar — Ferias y Talleres',
     'X-WR-TIMEZONE:America/Bogota',
     ...vevents,
     'END:VCALENDAR',

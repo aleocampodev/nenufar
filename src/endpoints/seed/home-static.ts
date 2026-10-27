@@ -75,7 +75,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
         instagramUrl: 'https://www.instagram.com/nenufar.co/',
         facebookUrl: 'https://www.facebook.com/nenufar.co',
         whatsappUrl:
-          'https://wa.me/?text=Hola%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20N%C3%A9nufar',
+          'https://wa.me/?text=Hola%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20Nen%C3%BAfar',
         telegramUrl: 'https://t.me/',
       },
       // Slider slides - Krafti 3 editorial slides with high-res jewelry photography
@@ -92,7 +92,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
           imagePosition: 'center',
           image: {
             url: '/landing-modify-traced.svg',
-            alt: 'Mujer palenquera luciendo joyería en mostacilla Nénufar',
+            alt: 'Mujer palenquera luciendo joyería en mostacilla Nenúfar',
           } as any,
         },
         {
@@ -106,7 +106,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
           imagePosition: 'top',
           image: {
             url: '/media/talleres-comunidad.jpeg',
-            alt: 'Talleres que Tejen Comunidad - Shirley Nénufar',
+            alt: 'Talleres que Tejen Comunidad - Shirley Nenúfar',
           } as any,
         },
         {
@@ -129,7 +129,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
       {
         blockType: 'nenufarStory',
         tagline: 'Hecho a mano en Cartagena',
-        heading: 'Nénufar — Manos que tejen historias',
+        heading: 'Nenúfar — Manos que tejen historias',
         image: {
           url: '/media/shirley-creadora.jpeg',
           alt: 'Shirley tejiendo joyería en mostacilla en su taller',
@@ -149,7 +149,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
                     format: 0,
                     mode: 'normal',
                     style: '',
-                    text: 'Nénufar nace en Cartagena de Indias de las manos de Shirley, artesana que teje mostacilla con la paciencia y el color del Caribe. Cada collar ceremonial, okama y otapa es una historia tejida a mano, con hilos de alta resistencia y micro-mostacilla checa calibrada que garantiza brillo y duración.',
+                    text: 'Nenúfar nace en Cartagena de Indias de las manos de Shirley, artesana que teje mostacilla con la paciencia y el color del Caribe. Cada collar ceremonial, okama y otapa es una historia tejida a mano, con hilos de alta resistencia y micro-mostacilla checa calibrada que garantiza brillo y duración.',
                     version: 1,
                   },
                 ],
@@ -319,7 +319,7 @@ export const homeStaticData: () => RequiredDataFromCollectionSlug<'pages'> = () 
     ],
     meta: {
       description: 'Joyería artesanal colombiana hecha a mano en Cartagena. Cada pieza cuenta una historia.',
-      title: 'Nénufar — Joyería Artesanal Colombiana',
+      title: 'Nenúfar — Joyería Artesanal Colombiana',
     },
     title: 'Inicio',
   }

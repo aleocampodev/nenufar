@@ -1,4 +1,4 @@
-# Premortem — Nénufar (nenufar.co)
+# Premortem — Nenúfar (nenufar.co)
 
 **Fecha:** 2026-08-22 · **Método:** Gary Klein / retrospectiva prospectiva · 7 agentes de análisis en paralelo
 
@@ -14,7 +14,7 @@
 
 ## Encuadre
 
-*Han pasado 6 meses. Nénufar ha fallado. Está hecho.*
+*Han pasado 6 meses. Nenúfar ha fallado. Está hecho.*
 
 ## Premortem en bruto — 7 razones de fallo
 
@@ -23,7 +23,7 @@
 3. Shirley no puede operar el sistema sin Ale: la tienda se ve muerta y Ale se vuelve operador.
 4. Cero demanda: se construyó la tienda antes que la audiencia.
 5. La infraestructura $0/mes se cae exactamente en el peor momento (temporadas).
-6. Dependencia del fundador + pivotes perpetuos: Nénufar nunca se lanza.
+6. Dependencia del fundador + pivotes perpetuos: Nenúfar nunca se lanza.
 7. Confianza y compliance: marca desconocida cobrando por transferencia; un incidente destruye la marca.
 
 ---
@@ -123,7 +123,7 @@ Que "gratis e ilimitado" significa confiable: que Oracle no reclamaría *su* ins
 ## Fallo 6 — Nunca se lanza: pivotes y dependencia del fundador
 
 ### La historia del fallo
-En mayo de 2026 Shirley tenía joyas y clientes potenciales; Ale tenía un monorepo Next.js+Payload llamado Agento. La primera decisión fatal no fue técnica sino de encuadre: el proyecto se trató como un ejercicio de arquitectura, no como una tienda que debía cobrar. V2 murió cuando apareció la promesa de Shopify Hydrogen (v3.0) — "menos código propio" sonó racional. Hydrogen murió en semanas y la reversión a Payload (v3.1) trajo el momento más revelador del proyecto: el servidor tardaba 5-120 segundos por request y los tests Playwright expiraban. Ese era el punto para preguntar "¿estoy construyendo lo correcto?". En cambio, la respuesta fue otro pivote: v3.2, un bot con orquestador propio sobre Groq, luego un plan de migración al Claude Agent SDK vía LiteLLM, y finalmente la política #253 que descartó APIs pagas y el SDK — dejando AGENTS.md afirmando que una migración "en curso" ya estaba muerta. Nadie cerró el ciclo. Mientras tanto, el nav perdía blog, eventos y contacto; eventos volvía como bloque de landing; la colección Events quedaba oculta por error sin revertir. Cada uno de esos micro-cambios consumía las mismas horas escasas que separaban a Nénufar de producción. A los 13 meses: BRD, PRD, SDD, TRD, tres ADRs, specs y diagramas HTML — cero pesos ganados, cero deploys a Netlify completados, todo en localhost:3002. El fallo no fue un colapso; fue una acumulación de decisiones localmente racionales, cada una documentada, ninguna desplegada.
+En mayo de 2026 Shirley tenía joyas y clientes potenciales; Ale tenía un monorepo Next.js+Payload llamado Agento. La primera decisión fatal no fue técnica sino de encuadre: el proyecto se trató como un ejercicio de arquitectura, no como una tienda que debía cobrar. V2 murió cuando apareció la promesa de Shopify Hydrogen (v3.0) — "menos código propio" sonó racional. Hydrogen murió en semanas y la reversión a Payload (v3.1) trajo el momento más revelador del proyecto: el servidor tardaba 5-120 segundos por request y los tests Playwright expiraban. Ese era el punto para preguntar "¿estoy construyendo lo correcto?". En cambio, la respuesta fue otro pivote: v3.2, un bot con orquestador propio sobre Groq, luego un plan de migración al Claude Agent SDK vía LiteLLM, y finalmente la política #253 que descartó APIs pagas y el SDK — dejando AGENTS.md afirmando que una migración "en curso" ya estaba muerta. Nadie cerró el ciclo. Mientras tanto, el nav perdía blog, eventos y contacto; eventos volvía como bloque de landing; la colección Events quedaba oculta por error sin revertir. Cada uno de esos micro-cambios consumía las mismas horas escasas que separaban a Nenúfar de producción. A los 13 meses: BRD, PRD, SDD, TRD, tres ADRs, specs y diagramas HTML — cero pesos ganados, cero deploys a Netlify completados, todo en localhost:3002. El fallo no fue un colapso; fue una acumulación de decisiones localmente racionales, cada una documentada, ninguna desplegada.
 
 ### Supuesto subyacente
 Que Ale siempre tendrá tiempo libre y motivación suficiente para terminar él solo el deploy.
@@ -139,7 +139,7 @@ Que Ale siempre tendrá tiempo libre y motivación suficiente para terminar él 
 ### La historia del fallo
 A las tres semanas del lanzamiento, Shirley revisó el panel del formulario: 47 visitas al checkout, 9 formularios enviados, 3 transferencias recibidas. El 80% de las abandonadoras escribieron lo mismo por WhatsApp antes de desaparecer: *"¿no hay otra forma de pagar?"*. Ella respondía con paciencia que Nequi era seguro, pero el mensaje ya estaba en el mercado: capturas de la conversación circularon en un grupo de Facebook de Cartagena con el título "cuidado con esta tienda".
 
-La compradora número 12 —Daniela, primera compra, aretes de $89.000 COP— envió su formulario con nombre completo, celular y dirección de su casa. Nunca firmó nada más: no había política de datos visible, solo el checkbox. Su transferencia se cruzó con un fin de semana largo; Shirley, gestionando pedidos sola desde el celular, no registró el envío. El paquete quedó dos semanas en una oficina de Servientrega sin reclamo. Cuando Daniela preguntó, la respuesta llegó tarde y defensiva. Publicó la historia en sus stories: *"Llevan 15 días con mi plata y mi paquete aparece perdido"*. Sus seguidoras —el público exacto de Nénufar— compartieron.
+La compradora número 12 —Daniela, primera compra, aretes de $89.000 COP— envió su formulario con nombre completo, celular y dirección de su casa. Nunca firmó nada más: no había política de datos visible, solo el checkbox. Su transferencia se cruzó con un fin de semana largo; Shirley, gestionando pedidos sola desde el celular, no registró el envío. El paquete quedó dos semanas en una oficina de Servientrega sin reclamo. Cuando Daniela preguntó, la respuesta llegó tarde y defensiva. Publicó la historia en sus stories: *"Llevan 15 días con mi plata y mi paquete aparece perdido"*. Sus seguidoras —el público exacto de Nenúfar— compartieron.
 
 En un mes, tres stories virales y un hilo en X local hicieron más ruido que todo el marketing de Shirley en seis meses. Una marca sin reviews, sin garantías visibles y sin devoluciones definidas no tenía nada que oponer a la evidencia. Las ventas cayeron a cero; las consultas pasaron a ser preguntas sobre "lo del escándalo". Los datos de 31 compradoras quedaron en una hoja de cálculo sin respaldo, sin responsable declarado, esperando el siguiente incidente: una filtración.
 
@@ -183,4 +183,4 @@ Que las desconocidas confiarían su dinero —primero, y sus datos después—a 
 
 ---
 
-*Generado por premortem skill · 2026-08-22 13:26 · Sujeto: plan de lanzamiento de Nénufar (nenufar.co)*
+*Generado por premortem skill · 2026-08-22 13:26 · Sujeto: plan de lanzamiento de Nenúfar (nenufar.co)*

@@ -1,5 +1,5 @@
 # Skills Catalog — Shirley's Management Bot
-**Project:** Nénufar — Handcrafted Jewelry Store
+**Project:** Nenúfar — Handcrafted Jewelry Store
 **Status:** Planning — one skill built (`buscarProductos`), the rest proposed
 **Audience:** Developers building the agent skills
 
@@ -110,7 +110,7 @@ not the storefront — buyers never see this.
   by both the Telegram skill and the admin field component — one implementation, two entry points
   (mirrors the RAG "shared service" idea).
 - **Brand voice.** Generation is grounded in `knowledge/brand-essence.md` (via the RAG knowledge
-  in `docs/RAG-MEMORY-design.md`) so captions sound like **Nénufar**, not generic AI. This is a
+  in `docs/RAG-MEMORY-design.md`) so captions sound like **Nenúfar**, not generic AI. This is a
   concrete reason that file exists.
 - **Grounded in real data.** It pulls the product's facts from Payload (material, price in COP),
   so the copy is specific, never vague.

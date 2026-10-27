@@ -273,7 +273,7 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
         } as any)
 
       const res = await executeShirleyTool('analizarCatalogoYGaleria', {}, mockPayload as any)
-      expect(res).toContain('Análisis de Estado: Catálogo y Galería Nénufar')
+      expect(res).toContain('Análisis de Estado: Catálogo y Galería Nenúfar')
       expect(res).toContain('Catálogo (/shop)')
       expect(res).toContain('Galería (/galeria)')
       expect(res).toContain('Joyas sin foto')
@@ -597,7 +597,7 @@ describe('Shirley Agent Tools - Cobertura Total de Skills', () => {
         } as any)
 
       const res = await executeShirleyTool('consultarAlmacenamientoFotos', { limiteFotos: 2 }, mockPayload as any)
-      expect(res).toContain('Almacenamiento de Fotos Nénufar')
+      expect(res).toContain('Almacenamiento de Fotos Nenúfar')
       expect(res).toContain('Supabase $0/mes')
       expect(res).toContain('heavy1.jpg')
     })
