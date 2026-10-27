@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Boot the Nénufar local stack in one command.
+# Boot the Nenúfar local stack in one command.
 #
 # Starts Postgres, waits until it accepts connections, applies pending
 # migrations and then hands over to `pnpm dev` (:3002 — CONSTITUTION Art. IV).

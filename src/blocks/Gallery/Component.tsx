@@ -63,7 +63,7 @@ const FERIAS_IMAGES: GalleryImageItem[] = [
     id: 'feria-1',
     title: 'Muestra en Feria de Diseño',
     src: toPublicUrl('landing-1-800x1000.webp'),
-    alt: 'Puesto de Nénufar en feria de diseño de Cartagena',
+    alt: 'Puesto de Nenúfar en feria de diseño de Cartagena',
     isFeatured: true,
   },
   {
@@ -171,7 +171,7 @@ const ALL_IMAGES: GalleryImageItem[] = [
 const DEFAULT_GALLERY_TABS: GalleryTabItem[] = [
   {
     tabTitle: 'Todas las Fotos',
-    tabSubtitle: 'Colección visual completa de Nénufar',
+    tabSubtitle: 'Colección visual completa de Nenúfar',
     images: ALL_IMAGES,
   },
   {

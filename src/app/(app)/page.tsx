@@ -99,6 +99,8 @@ export default async function HomePage() {
 
   return (
     <article className={isHero ? 'pb-16' : 'pt-8 pb-16'}>
+      {/* H1 Semántico accesible para SEO / Motores de búsqueda */}
+      <h1 className="sr-only">Nenúfar — Joyería Artesanal en Mostacilla | Hecho a Mano en Cartagena</h1>
       <RenderHero {...hero} />
       <RenderBlocks blocks={filteredBlocks} />
     </article>

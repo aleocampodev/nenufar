@@ -1,4 +1,4 @@
-# Nénufar — Claude Code Context
+# Nenúfar — Claude Code Context
 
 > 🏛️ **CANONICAL GOVERNANCE & CONSTITUTION:** See [`CONSTITUTION.md`](./CONSTITUTION.md) for the supreme 7 Articles governing architecture, Git guardrails, $0/mo cost policy, and quality standards.
 
@@ -96,7 +96,7 @@ To seed test data: go to `/admin` → "Seed database" on the dashboard.
 
 ## Brand color
 
-Nénufar magenta (`#E91E8C`, primary; `#3B032F` secondary) is formalized as a CSS token:
+Nenúfar magenta (`#E91E8C`, primary; `#3B032F` secondary) is formalized as a CSS token:
 - `bg-brand` / `text-brand` / `hover:bg-brand-dark`
 - Defined in `globals.css` as `--brand: var(--brand-primary)`
 

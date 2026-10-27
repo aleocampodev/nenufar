@@ -1,13 +1,13 @@
 ---
 name: landing-content-manager
-description: When the user wants to update, add, edit, list, or remove events, workshops, fairs (ferias y talleres) or gallery photos (clientas, ferias en Cartagena, talleres de tejido, el taller & Shirley) on the Nénufar Landing Page. Also use when the user mentions "actualizar ferias", "agregar feria", "nuevo taller", "actualizar galeria", "agregar fotos a la galeria", "fotos de clientas", or "modificar landing". STRICT GUARDRAIL: Operates EXCLUSIVELY on the Landing Page. Prohibits modifying the jewelry catalog (/shop), products, inventory, prices, orders, or carts.
+description: When the user wants to update, add, edit, list, or remove events, workshops, fairs (ferias y talleres) or gallery photos (clientas, ferias en Cartagena, talleres de tejido, el taller & Shirley) on the Nenúfar Landing Page. Also use when the user mentions "actualizar ferias", "agregar feria", "nuevo taller", "actualizar galeria", "agregar fotos a la galeria", "fotos de clientas", or "modificar landing". STRICT GUARDRAIL: Operates EXCLUSIVELY on the Landing Page. Prohibits modifying the jewelry catalog (/shop), products, inventory, prices, orders, or carts.
 metadata:
   version: 1.0.0
 ---
 
 # Landing Content Manager (Ferias, Eventos & Galería)
 
-Esta skill define la gestión técnica y operativa de los contenidos dinámicos de la **Landing Page de Nénufar** (Cartagena de Indias).
+Esta skill define la gestión técnica y operativa de los contenidos dinámicos de la **Landing Page de Nenúfar** (Cartagena de Indias).
 
 ## 🛑 Guardrails Inviolables (Reglas de Alcance)
 

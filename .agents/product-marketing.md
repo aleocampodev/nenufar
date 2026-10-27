@@ -5,7 +5,7 @@
 
 ## Product Overview
 **One-liner:** Joyería y piezas artesanales hechas 100% a mano por Shirley en Cartagena, Colombia, con diseños únicos, llenos de identidad caribeña y creados bajo pedido.
-**What it does:** Nénufar ofrece piezas de joyería artesanal (aretes, collares, anillos), accesorios en mezclilla/textil y piezas personalizadas por encargo, elaboradas con técnicas tradicionales y amor en Cartagena. La tienda online permite explorar el catálogo, armar el carrito y enviar el pedido directamente para coordinar el pago y envío personalizado.
+**What it does:** Nenúfar ofrece piezas de joyería artesanal (aretes, collares, anillos), accesorios en mezclilla/textil y piezas personalizadas por encargo, elaboradas con técnicas tradicionales y amor en Cartagena. La tienda online permite explorar el catálogo, armar el carrito y enviar el pedido directamente para coordinar el pago y envío personalizado.
 **Product category:** Joyería artesanal, moda sostenible y accesorios hechos a mano en Colombia / Cartagena.
 **Product type:** E-commerce artesanal directo al consumidor (D2C) con modelo por encargo y atención personalizada.
 **Business model:** Venta directa con catálogo online + personalización por encargo. Precios en pesos colombianos ($ COP) sin decimales. Pago y envío coordinados de forma directa y humana.
@@ -98,7 +98,7 @@
   - Origen real: confección pausada por Shirley en su taller de Getsemaní, Cartagena.
 
 ## Conversion Copywriting Framework (Marketing & Ventas de Alta Conversión)
-El objetivo de todo copy comercial de Nénufar es **vender piezas y cerrar pedidos** sin caer en humo ni clichés:
+El objetivo de todo copy comercial de Nenúfar es **vender piezas y cerrar pedidos** sin caer en humo ni clichés:
 1. **El Gancho (Scroll-stopper / Hook de Deseo):** Resuelve un dolor real (aretes llamativos que no jalan la oreja ni cansan después de 2 horas; accesorios que transforman un conjunto básico).
 2. **Transformación & Valor:** Demostrar por qué vale cada peso: horas de enfilado manual paciente, diseño irrepetible que atrae miradas y cumplidos sin esfuerzo.
 3. **Desactivación Preventiva de Objeciones:**
@@ -125,7 +125,7 @@ El objetivo de todo copy comercial de Nénufar es **vender piezas y cerrar pedid
 | Confianza y calidez | Shirley coordina y cuida cada entrega personalmente |
 
 ## Goals
-**Business goal:** Posicionar a Nénufar como la marca referente de joyería y piezas artesanales de Cartagena en Colombia, impulsando las ventas del catálogo online.
+**Business goal:** Posicionar a Nenúfar como la marca referente de joyería y piezas artesanales de Cartagena en Colombia, impulsando las ventas del catálogo online.
 **Conversion action:** Completar y enviar el formulario de pedido en `/pedidos/enviar` desde la tienda `/shop` o `/products/[slug]`.
 
 ## Changelog

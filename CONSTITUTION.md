@@ -1,4 +1,4 @@
-# 🏛️ The Engineering Constitution of Nénufar
+# 🏛️ The Engineering Constitution of Nenúfar
 
 **Canonical Source of Truth & Governance Standard**  
 *Version:* 1.0.0  
@@ -9,13 +9,13 @@
 
 ## Preamble
 
-We, the engineers, maintainers, and autonomous AI agents contributing to **Nénufar**, establish this Constitution as the supreme operational and technical standard for the codebase. Every line of code, pull request, architecture proposal, and agent execution must strictly comply with the articles set forth herein.
+We, the engineers, maintainers, and autonomous AI agents contributing to **Nenúfar**, establish this Constitution as the supreme operational and technical standard for the codebase. Every line of code, pull request, architecture proposal, and agent execution must strictly comply with the articles set forth herein.
 
 ---
 
 ## Article I — Business Model & Operating Philosophy
 
-1. **Brand Identity & Origin:** Nénufar is an artisan handcrafted jewelry atelier founded by Shirley in Cartagena de Indias, Colombia.
+1. **Brand Identity & Origin:** Nenúfar is an artisan handcrafted jewelry atelier founded by Shirley in Cartagena de Indias, Colombia.
 2. **Physical-Digital Synergy:** The web storefront (`nenufar.co`) serves as an interactive showcase, catalog, and post-fair re-order mechanism for clients who meet Shirley in person at artisan fairs and pop-ups.
 3. **The Zero-Stripe Human Closing Model (ADR-001):** 
    - No automated credit card payment gateway is integrated.

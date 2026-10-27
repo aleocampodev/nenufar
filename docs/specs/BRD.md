@@ -1,5 +1,5 @@
 # BRD — Business Requirement Document
-**Proyecto:** Nénufar — Joyería Artesanal
+**Proyecto:** Nenúfar — Joyería Artesanal
 **Versión:** 3.2 (Payload CMS + Next.js + Bot multiagente)
 **Fecha:** Agosto 2026
 **Supersede:** v3.0 (Shopify headless — archivado en `docs/archive/v3.0/BRD.md`)
@@ -8,11 +8,11 @@
 
 ## 1. Executive Summary
 
-**Nénufar** es una operación de joyería artesanal en Cartagena, Colombia, dirigida por su dueña Shirley. Ella diseña y fabrica piezas de alto valor (esmeraldas, oro, plata) y las vende principalmente por WhatsApp e Instagram. No tiene local físico ni empleados — su teléfono es su oficina.
+**Nenúfar** es una operación de joyería artesanal en Cartagena, Colombia, dirigida por su dueña Shirley. Ella diseña y fabrica piezas de alto valor (esmeraldas, oro, plata) y las vende principalmente por WhatsApp e Instagram. No tiene local físico ni empleados — su teléfono es su oficina.
 
 El problema central: los compradores no pueden armar un pedido solos. Le escriben por chat, ella responde, intenta recordar quién quería qué, y los pedidos se pierden en el historial de conversaciones. No tiene catálogo en la web ni registro estructurado de lo que le piden.
 
-**Nénufar v3.1** le da una **tienda profesional** (catálogo + blog + cuenta de usuario) donde los compradores exploran su trabajo y **arman su pedido solos**. Al hacer clic en "Confirmar pedido", el pedido llega como **un mensaje estructurado al canal de Telegram** que Shirley lee desde su teléfono. Ella coordina pago y envío por WhatsApp — como siempre lo ha hecho, pero sin ser el cuello de botella del proceso.
+**Nenúfar v3.1** le da una **tienda profesional** (catálogo + blog + cuenta de usuario) donde los compradores exploran su trabajo y **arman su pedido solos**. Al hacer clic en "Confirmar pedido", el pedido llega como **un mensaje estructurado al canal de Telegram** que Shirley lee desde su teléfono. Ella coordina pago y envío por WhatsApp — como siempre lo ha hecho, pero sin ser el cuello de botella del proceso.
 
 **No hay checkout online ni pasarela de pago.** El catálogo y el blog se administran desde el **admin de Payload CMS** que Shirley maneja desde el navegador. El sistema vive en un servidor propio (self-hosted) sin costos de plataforma recurrentes como Shopify.
 
@@ -24,7 +24,7 @@ El problema central: los compradores no pueden armar un pedido solos. Le escribe
 
 | # | Objetivo | Descripción |
 |---|----------|-------------|
-| 1 | Presencia web profesional | Nénufar tiene una URL propia, SEO, y una cara pública que genera confianza antes de la primera conversación. |
+| 1 | Presencia web profesional | Nenúfar tiene una URL propia, SEO, y una cara pública que genera confianza antes de la primera conversación. |
 | 2 | Catálogo autogestionable | Shirley sube fotos, agrega productos y precios desde su celular sin necesitar un desarrollador. |
 | 3 | Pedidos estructurados | Cada pedido llega a Telegram con todos los datos en orden: qué, cuánto, quién, cómo contactar. |
 | 4 | Eliminar el cuello de botella de intake | El comprador arma el pedido solo — Shirley solo recibe y cierra. |
@@ -86,7 +86,7 @@ El bot multiagente es la **herramienta de gestión conversacional de Shirley**: 
 | Rol | Descripción | Interés principal |
 |-----|-------------|-------------------|
 | Shirley (dueña-operadora) | Soloprenuer. Diseña, fabrica, vende, empaca y envía. Opera todo desde su celular. Gestiona catálogo en el admin **o por el bot de Telegram**; recibe pedidos en Telegram; cierra en WhatsApp. | Presencia web profesional, recibir pedidos ordenados, gestionar sin depender del navegador. |
-| Comprador final (B2C) | Turista, persona buscando regalo, o cliente habitual. Descubre Nénufar en la web o Instagram, explora el catálogo, arma y envía su pedido **desde la web**, dejando su WhatsApp para contacto. | Ver fotos reales con precios en COP, sentir confianza, armar un pedido sin hablar con nadie primero. |
+| Comprador final (B2C) | Turista, persona buscando regalo, o cliente habitual. Descubre Nenúfar en la web o Instagram, explora el catálogo, arma y envía su pedido **desde la web**, dejando su WhatsApp para contacto. | Ver fotos reales con precios en COP, sentir confianza, armar un pedido sin hablar con nadie primero. |
 | Equipo de producto | Diseño y evolución del MVP. | Validar que Payload + Telegram es suficiente para que Shirley pase de "memoria + WhatsApp" a un intake estructurado. |
 
 ---
@@ -142,4 +142,4 @@ La hipótesis agéntica (un asistente que reemplaza a Shirley en el cierre de ve
 - **Cuenta de usuario:** agregada (pedidos, direcciones, perfil).
 - **Registro de pedidos:** los pedidos ahora quedan en Payload (colección `Orders`) además de llegar a Telegram.
 - **Imágenes:** conversión automática a WebP (calidad 92, 4 tamaños) via Sharp integrado en Payload.
-- **Color de marca:** magenta Nénufar (`#E91E8C`, primario; `#3B032F` secundario) formalizado como token CSS (`--brand`).
+- **Color de marca:** magenta Nenúfar (`#E91E8C`, primario; `#3B032F` secundario) formalizado como token CSS (`--brand`).

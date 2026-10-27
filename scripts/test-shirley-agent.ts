@@ -16,7 +16,7 @@ async function main() {
   const customQuery = process.argv.slice(2).join(' ').trim()
 
   console.log('\n🌸 ======================================================')
-  console.log('🌸 NÉNUFAR — TEST HARNESS DEL AGENTE DE SHIRLEY (TELEGRAM)')
+  console.log('🌸 NENÚFAR — TEST HARNESS DEL AGENTE DE SHIRLEY (TELEGRAM)')
   console.log('🌸 Claude Agent SDK + LiteLLM + Groq Free ($0/mes)')
   console.log('🌸 ======================================================\n')
 

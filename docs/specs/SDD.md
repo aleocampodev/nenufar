@@ -1,6 +1,6 @@
 # SDD — Software Design Document
 
-**Project:** Nénufar — Handcrafted Jewelry Store  
+**Project:** Nenúfar — Handcrafted Jewelry Store  
 **Version:** 3.3  
 **Status:** Canonical & Active  
 **Related ADRs:** [ADR-001](../adr/ADR-001-no-payment-gateway-human-closing.md), [ADR-002](../adr/ADR-002-claude-agent-sdk-litellm-groq.md), [ADR-003](../adr/ADR-003-payload-embedded-monolith-local-api.md)
@@ -9,7 +9,7 @@
 
 ## 1. High-Level System Architecture
 
-Nénufar is a **monolithic full-stack application** running Next.js 15 App Router and Payload CMS v3 within the same Node.js runtime process. All persistent data lives in PostgreSQL 16 managed via Drizzle ORM, with zero internal network latency.
+Nenúfar is a **monolithic full-stack application** running Next.js 15 App Router and Payload CMS v3 within the same Node.js runtime process. All persistent data lives in PostgreSQL 16 managed via Drizzle ORM, with zero internal network latency.
 
 AI capabilities are powered by the **Claude Agent SDK** connected through a local **LiteLLM Universal Gateway** (`:4000`) to **Groq Cloud (Llama 3.3 70B)** with automated fallback to **Google Gemini 2.0 Flash** at **$0 per-token cost**.
 

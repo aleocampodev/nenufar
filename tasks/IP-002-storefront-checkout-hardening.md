@@ -15,7 +15,7 @@
 
 ## 1. Executive Summary and Objective
 
-Harden the checkout and order submission pipeline in Nénufar. Enforce strict SHA256 idempotency hashing (5-minute window), real-time stock verification against Payload Local API before order creation, robust Colombian WhatsApp contact validation, and resilient error recovery.
+Harden the checkout and order submission pipeline in Nenúfar. Enforce strict SHA256 idempotency hashing (5-minute window), real-time stock verification against Payload Local API before order creation, robust Colombian WhatsApp contact validation, and resilient error recovery.
 
 ### Hard Constraints (Constitution):
 1. **Article I / ADR-001:** Zero-Stripe model. Form submissions create an `Order` record with status `processing` and send notifications to Shirley's Telegram channel for human closing on WhatsApp.

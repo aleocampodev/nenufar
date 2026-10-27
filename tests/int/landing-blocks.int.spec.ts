@@ -8,7 +8,7 @@ describe('Landing & Modular Blocks Subsystem (IP-003 / SPEC-003)', () => {
     expect(home.slug).toBe('home')
     expect(home._status).toBe('published')
     expect(home.title).toBe('Inicio')
-    expect(home.meta?.title).toContain('Nénufar')
+    expect(home.meta?.title).toContain('Nenúfar')
     expect(home.hero?.links?.[0]?.link?.url).toBe('/shop')
   })
 

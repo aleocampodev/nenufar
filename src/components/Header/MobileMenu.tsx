@@ -206,7 +206,7 @@ export function MobileMenu({ categories = [] }: Props) {
           {/* Contacto directo con Shirley (Zero-Stripe, cierre humano por WhatsApp) */}
           <div className="mt-4 pt-3 border-t border-white/10">
             <a
-              href="https://wa.me/?text=Hola%20Shirley%2C%20quisiera%20consultar%20sobre%20tus%20joyas%20artesanales%20en%20N%C3%A9nufar"
+              href="https://wa.me/?text=Hola%20Shirley%2C%20quisiera%20consultar%20sobre%20tus%20joyas%20artesanales%20en%20Nen%C3%BAfar"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-full bg-[#E91E8C] hover:bg-[#AD1457] text-white text-xs uppercase tracking-wider font-bold transition-all shadow-md active:scale-95 cursor-pointer"

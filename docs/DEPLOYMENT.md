@@ -1,4 +1,4 @@
-# Production Deployment Guide — Nénufar
+# Production Deployment Guide — Nenúfar
 
 > **Architecture:** Embedded Monolith (Payload CMS v3 + Next.js App Router + PostgreSQL + LiteLLM/Groq)  
 > **Storefront & API Host:** Vercel (Next.js Serverless & Edge Cache)  
@@ -9,7 +9,7 @@
 
 ## 1. Overview & Cloud Topology
 
-Nénufar operates with zero monthly cloud expenses:
+Nenúfar operates with zero monthly cloud expenses:
 
 | Component | Technology | Hosting Platform | Cost |
 | :--- | :--- | :--- | :--- |

@@ -10,7 +10,7 @@ export const InitTheme: React.FC = () => {
       dangerouslySetInnerHTML={{
         __html: `
   (function () {
-    // Nénufar editorial brand palette: warm cream (#FAF8F5) and pure white (#FFFFFF).
+    // Nenúfar editorial brand palette: warm cream (#FAF8F5) and pure white (#FFFFFF).
     var themeToSet = '${defaultTheme}';
     document.documentElement.setAttribute('data-theme', themeToSet);
   })();

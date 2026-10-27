@@ -1,4 +1,4 @@
-# Glossary — Nénufar
+# Glossary — Nenúfar
 
 > To understand Shirley's bot, Tool Calling, and the migration to the Claude Agent SDK. Shared language for the whole team (technical and non-technical).
 
@@ -10,7 +10,7 @@
 An AI model that predicts text. Examples: `GPT-4o` (OpenAI), `Claude 3.5 Sonnet` (Anthropic), `Llama 3.3 70B` (Meta). It has no access to your database on its own — it only generates words.
 
 ### Groq
-A company that **rents ultra-fast servers** to run open-source models (like Meta's `Llama 3.3`). It doesn't build the model, it just makes it run very fast. Nénufar uses Groq because it has a **free tier**: you get a `GROQ_API_KEY` at `console.groq.com` and can use `llama-3.3-70b-versatile` for free (with limits ~30 req/min, ~14k req/day). Enough for Shirley's bot (tens of messages per day).
+A company that **rents ultra-fast servers** to run open-source models (like Meta's `Llama 3.3`). It doesn't build the model, it just makes it run very fast. Nenúfar uses Groq because it has a **free tier**: you get a `GROQ_API_KEY` at `console.groq.com` and can use `llama-3.3-70b-versatile` for free (with limits ~30 req/min, ~14k req/day). Enough for Shirley's bot (tens of messages per day).
 
 ### OpenAI API vs Anthropic API
 Not companies — **plug formats** (like USB-C vs Lightning).
@@ -54,12 +54,12 @@ With Tool Calling:
 6. LLM generates the final answer: "Done Shirley, Luna necklace is now at 3 💜"
 ```
 
-In Nénufar the `skills` (`src/lib/agents/skills/*.ts`) are those tools. `runtime.ts` runs the loop (max 4 rounds): LLM → tool → result → LLM → answer.
+In Nenúfar the `skills` (`src/lib/agents/skills/*.ts`) are those tools. `runtime.ts` runs the loop (max 4 rounds): LLM → tool → result → LLM → answer.
 
 **Why it matters:** without Tool Calling the bot is a chatbot that hallucinates. With Tool Calling it is an **agent** that reads/writes your PostgreSQL via `payload.find()` / `payload.update()`.
 
 ### System Prompt
-Hidden instructions you give the LLM before the conversation. E.g. in Nénufar: *"You are Shirley's assistant, owner of Nénufar. Only you can confirm orders and change stock. Reply in warm, brief Colombian Spanish."*
+Hidden instructions you give the LLM before the conversation. E.g. in Nenúfar: *"You are Shirley's assistant, owner of Nenúfar. Only you can confirm orders and change stock. Reply in warm, brief Colombian Spanish."*
 
 ### Tool / Skill / Agent
 - **Tool**: a single function (e.g. `buscarProducto`).
@@ -132,7 +132,7 @@ LiteLLM supports 100+ providers. It's the universal adapter for LLMs.
 
 ## 4. Claude Agent SDK
 
-Anthropic's official framework for building agents. Gives you for free: Tool Calling loop, sub-agents, hooks, memory, MCP (Model Context Protocol), error handling. In Nénufar it replaces the hand-rolled code:
+Anthropic's official framework for building agents. Gives you for free: Tool Calling loop, sub-agents, hooks, memory, MCP (Model Context Protocol), error handling. In Nenúfar it replaces the hand-rolled code:
 
 | Before (hand-rolled) | After (SDK) |
 |---|---|
@@ -168,7 +168,7 @@ import { z } from "zod"
 
 export const buscarProducto = tool({
   name: "buscarProducto",
-  description: "Search jewelry by name in the Nénufar catalog",
+  description: "Search jewelry by name in the Nenúfar catalog",
   inputSchema: z.object({ query: z.string() }),
   handler: async ({ query }, { payload }) => {
     return payload.find({ collection: 'products', where: { title: { contains: query } } })
@@ -180,14 +180,14 @@ export const buscarProducto = tool({
 
 ## 5. How to deploy to Production with the Claude Agent SDK?
 
-You have **3 options**. Nénufar recommends **Option A** (cheapest, same as dev).
+You have **3 options**. Nenúfar recommends **Option A** (cheapest, same as dev).
 
-### Option A — Everything on one server (recommended for Nénufar)
+### Option A — Everything on one server (recommended for Nenúfar)
 
 If you deploy on a VPS / Railway / Fly.io / Render with Docker:
 
 ```
-Vercel/Next.js (Nénufar)  ──┐
+Vercel/Next.js (Nenúfar)  ──┐
                             ├──► Same docker-compose.yml
 LiteLLM :4000 ──────────────┘    postgres:5432
 ```
@@ -232,7 +232,7 @@ Webhook: `pnpm tsx scripts/set-telegram-webhook.ts https://your-domain.com/teleg
 
 ### Option B — Vercel (Next.js) + external LiteLLM
 
-If Nénufar is on Vercel (serverless), you cannot run LiteLLM there (Vercel doesn't run sidecars). You need to host LiteLLM separately:
+If Nenúfar is on Vercel (serverless), you cannot run LiteLLM there (Vercel doesn't run sidecars). You need to host LiteLLM separately:
 
 - **LiteLLM Cloud** (hosted by LiteLLM, paid)
 - **Fly.io / Railway cheap instance** for LiteLLM only (~$5/mo)

@@ -120,7 +120,7 @@ export const UpcomingEventsBlock: Block = {
                   title: "Taller Vivencial de Tejido Emberá",
                   type: "taller",
                   date: "2026-09-22T10:00:00.000Z",
-                  location: "Taller Nénufar, Getsemaní, Cartagena",
+                  location: "Taller Nenúfar, Getsemaní, Cartagena",
                   description:
                     "Aprende las puntadas ancestrales de hilado en mostacilla en un encuentro íntimo de 3 horas con Shirley. Incluye kit de materiales.",
                 },

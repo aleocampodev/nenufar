@@ -1,11 +1,11 @@
-# Plan de Blog SEO — Nénufar (taller artesanal)
+# Plan de Blog SEO — Nenúfar (taller artesanal)
 
 > Objetivo: que cuando alguien busque en Google algo relacionado con artesanía, joyería,
-> mezclilla, regalos o talleres, **encuentre a Nénufar** y llegue a una página de producto,
+> mezclilla, regalos o talleres, **encuentre a Nenúfar** y llegue a una página de producto,
 > a un evento (taller) o a un encargo personalizado.
 > Ver contexto de marca en [project-context.md](project-context.md).
 
-**Nénufar NO es solo joyería** → el blog debe cubrir las 4 líneas:
+**Nenúfar NO es solo joyería** → el blog debe cubrir las 4 líneas:
 joyería · mezclilla/textil (blusas) · **piezas por encargo** · **talleres**.
 
 **Regla de oro de cada artículo:**
@@ -33,8 +33,8 @@ joyería · mezclilla/textil (blusas) · **piezas por encargo** · **talleres**.
 - **Keyword principal**: `talleres artesanales Cartagena`
 - **Por qué**: capta búsqueda local (residentes y turistas que quieren aprender/experiencias).
   Los talleres construyen comunidad y clientes recurrentes. **Enlaza a `/eventos`.**
-- **Título SEO**: `Talleres Artesanales en Cartagena con Nénufar`
-- **Meta**: `Aprende a crear tus propias piezas en los talleres artesanales de Nénufar en Cartagena. Cupos limitados, inscríbete.`
+- **Título SEO**: `Talleres Artesanales en Cartagena con Nenúfar`
+- **Meta**: `Aprende a crear tus propias piezas en los talleres artesanales de Nenúfar en Cartagena. Cupos limitados, inscríbete.`
 - **Estructura**: qué se aprende → para quién → cómo inscribirse → CTA a `/eventos`.
 
 ## Artículo 3 — Piezas por encargo / personalizadas (modelo de negocio core)
@@ -42,7 +42,7 @@ joyería · mezclilla/textil (blusas) · **piezas por encargo** · **talleres**.
 - **Keyword principal**: `joyas y accesorios por encargo` (+ `personalizado hecho a mano`)
 - **Por qué**: el negocio es **por encargo** — este artículo convierte a quien quiere algo a su medida.
 - **Título SEO**: `Piezas Artesanales por Encargo: Hechas a tu Medida`
-- **Meta**: `¿Quieres una pieza única? Nénufar crea joyas, blusas y accesorios artesanales por encargo, hechos a mano para ti.`
+- **Meta**: `¿Quieres una pieza única? Nenúfar crea joyas, blusas y accesorios artesanales por encargo, hechos a mano para ti.`
 - **Estructura**: cómo funciona el encargo (paso a paso) → ejemplos → CTA al formulario de pedido/contacto.
 
 ## Artículo 4 — Cómo cuidar tus piezas artesanales (confianza + EEAT)
@@ -57,10 +57,10 @@ joyería · mezclilla/textil (blusas) · **piezas por encargo** · **talleres**.
 
 - **Keyword principal**: `artesanías hechas a mano Cartagena` (+ `joyería artesanal colombiana`)
 - **Por qué**: posiciona la marca y la categoría amplia; el ángulo Cartagena capta **SEO local** (turistas incluidos).
-- **Título SEO**: `Artesanías Hechas a Mano en Cartagena — Nénufar`
-- **Meta**: `Descubre las piezas artesanales de Nénufar: joyas, textil y mezclilla hechas a mano en Cartagena, con la esencia de Colombia.`
+- **Título SEO**: `Artesanías Hechas a Mano en Cartagena — Nenúfar`
+- **Meta**: `Descubre las piezas artesanales de Nenúfar: joyas, textil y mezclilla hechas a mano en Cartagena, con la esencia de Colombia.`
 - **Estructura**: historia de Shirley y su proceso a mano → las líneas del taller → CTA a la tienda.
-- **Nota**: reutilizable como contenido de "Sobre Nénufar".
+- **Nota**: reutilizable como contenido de "Sobre Nenúfar".
 
 ---
 
@@ -85,7 +85,7 @@ joyería · mezclilla/textil (blusas) · **piezas por encargo** · **talleres**.
 
 ## Extra gratis para "que la encuentren" (SEO local)
 
-- **Google Business Profile** (gratis): ficha de Nénufar → aparece en Google Maps y búsquedas locales
+- **Google Business Profile** (gratis): ficha de Nenúfar → aparece en Google Maps y búsquedas locales
   ("artesanías Cartagena", "talleres artesanales Cartagena"). De lo que más impacto local da.
 - **Nombre consistente** en web, IG, FB y Google → refuerza autoridad de marca.
 - Cada artículo y cada evento/taller entra **solo al sitemap** → Google los descubre automáticamente.

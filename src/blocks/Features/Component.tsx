@@ -160,16 +160,16 @@ export const FeaturesBlock: React.FC<Props> = ({
       const media = centerImage as MediaType
       const url = media.url || (media as any).sizes?.card?.url || (media as any).sizes?.thumbnail?.url
       if (url) {
-        return { src: url, alt: media.alt || 'Joyería artesanal Nénufar' }
+        return { src: url, alt: media.alt || 'Joyería artesanal Nenúfar' }
       }
     }
     if (typeof centerImage === 'string' && centerImage.trim().length > 0) {
-      return { src: centerImage, alt: 'Joyería artesanal Nénufar' }
+      return { src: centerImage, alt: 'Joyería artesanal Nenúfar' }
     }
     // Fallback fotográfico real de alta resolución de la tienda
     return {
       src: getSupabasePublicUrl('colombia-aretes-6.jpeg'),
-      alt: 'Joyería artesanal en mostacilla tejida a mano - Nénufar',
+      alt: 'Joyería artesanal en mostacilla tejida a mano - Nenúfar',
     }
   }
 

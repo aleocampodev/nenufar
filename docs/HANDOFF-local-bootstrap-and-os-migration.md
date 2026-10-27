@@ -33,7 +33,7 @@ inactivity**. A paused project does not resolve in DNS, so Payload failed at boo
 Error: cannot connect to Postgres: getaddrinfo ENOTFOUND db.<ref>.supabase.co
 ```
 
-Supabase Free plan pauses any project with no database activity for 7 days. Nénufar
+Supabase Free plan pauses any project with no database activity for 7 days. Nenúfar
 is a shop with almost no traffic, so it never reaches the minimum query threshold.
 Supabase sends a warning email roughly a week before pausing — the pause was not a
 crash or an outage. Restore window: 1 year, via **Resume project** in the dashboard.

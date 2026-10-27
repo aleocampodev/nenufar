@@ -1,4 +1,4 @@
-# Task List (TODO) — Nénufar
+# Task List (TODO) — Nenúfar
 
 General implementation backlog and agent execution checklist.
 

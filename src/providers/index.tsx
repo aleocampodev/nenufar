@@ -1,6 +1,6 @@
 import { AuthProvider } from '@/providers/Auth'
 import { EcommerceProvider } from '@payloadcms/plugin-ecommerce/client/react'
-// Nénufar v3.1: Stripe client removed — checkout terminates in Telegram (server-side, invisible)
+// Nenúfar v3.1: Stripe client removed — checkout terminates in Telegram (server-side, invisible)
 // import { stripeAdapterClient } from '@payloadcms/plugin-ecommerce/payments/stripe'
 import React from 'react'
 
@@ -47,7 +47,7 @@ export const Providers: React.FC<{
                 },
               },
             }}
-            // Nénufar v3.1: no client-side payment methods — Telegram dispatch is server-only
+            // Nenúfar v3.1: no client-side payment methods — Telegram dispatch is server-only
             paymentMethods={[]}
           >
             {children}

@@ -1,4 +1,4 @@
-# Project Context — Nénufar
+# Project Context — Nenúfar
 
 > Contexto que leen las marketing skills (copywriting, visual-content, pinterest-posts, article-content)
 > para generar textos **a la medida** en vez de genéricos. Mantener actualizado.
@@ -42,7 +42,7 @@ Instagram / Facebook  →  página de PRODUCTO  →  /pedidos/enviar  →  Teleg
 
 ### Líneas de negocio (NO es solo joyería)
 
-Nénufar es un **taller artesanal**, no solo una tienda de joyas. El marketing debe cubrir todo:
+Nenúfar es un **taller artesanal**, no solo una tienda de joyas. El marketing debe cubrir todo:
 
 | Línea | Qué es | Dónde se promociona |
 |-------|--------|---------------------|

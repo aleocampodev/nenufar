@@ -61,7 +61,7 @@ export const SliderHeroClient: React.FC<{
   const imageAlt =
     typeof modelImage === 'object' && modelImage && 'alt' in modelImage && modelImage.alt
       ? (modelImage.alt as string)
-      : 'Shirley luciendo joyería artesanal de autor en micro-mostacilla Nénufar'
+      : 'Shirley luciendo joyería artesanal de autor en micro-mostacilla Nenúfar'
 
   const rawBadge = badge || slides?.[0]?.badge || null
   const badgeText =
@@ -76,7 +76,7 @@ export const SliderHeroClient: React.FC<{
   const facebook = socialLinks?.facebookUrl ?? 'https://www.facebook.com/nenufar.co'
   const whatsapp =
     socialLinks?.whatsappUrl ??
-    'https://wa.me/?text=Hola%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20N%C3%A9nufar'
+    'https://wa.me/?text=Hola%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20Nen%C3%BAfar'
   const telegram = socialLinks?.telegramUrl ?? 'https://t.me/'
   const hasSocial = Boolean(instagram || facebook || whatsapp || telegram)
 
@@ -361,14 +361,14 @@ export const SliderHeroClient: React.FC<{
                 <div
                   className="inline-flex items-center gap-2 sm:gap-2.5 text-neutral-700 bg-[#F4ECE3] backdrop-blur-md px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full border border-[#C8AF95] shadow-xs shrink-0"
                   role="navigation"
-                  aria-label="Redes sociales de Nénufar"
+                  aria-label="Redes sociales de Nenúfar"
                 >
                   {instagram && (
                     <a
                       href={instagram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label="Instagram de Nénufar"
+                      aria-label="Instagram de Nenúfar"
                       className="p-1 text-neutral-600 hover:text-[#E4405F] transition-all duration-200 hover:scale-115 cursor-pointer"
                     >
                       <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -383,7 +383,7 @@ export const SliderHeroClient: React.FC<{
                       href={facebook}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label="Facebook de Nénufar"
+                      aria-label="Facebook de Nenúfar"
                       className="p-1 text-neutral-600 hover:text-[#1877F2] transition-all duration-200 hover:scale-115 cursor-pointer"
                     >
                       <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
@@ -396,7 +396,7 @@ export const SliderHeroClient: React.FC<{
                       href={whatsapp}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label="WhatsApp de Nénufar"
+                      aria-label="WhatsApp de Nenúfar"
                       className="p-1 text-neutral-600 hover:text-[#25D366] transition-all duration-200 hover:scale-115 cursor-pointer"
                     >
                       <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
@@ -409,7 +409,7 @@ export const SliderHeroClient: React.FC<{
                       href={telegram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label="Telegram de Nénufar"
+                      aria-label="Telegram de Nenúfar"
                       className="p-1 text-neutral-600 hover:text-[#229ED9] transition-all duration-200 hover:scale-115 cursor-pointer"
                     >
                       <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">

@@ -13,7 +13,7 @@ export function getCurrentCopyrightYear(): string {
 
 export async function Footer() {
   const copyrightDate = getCurrentCopyrightYear()
-  const copyrightName = COMPANY_NAME || SITE_NAME || 'Nénufar'
+  const copyrightName = COMPANY_NAME || SITE_NAME || 'Nenúfar'
 
   let categories: { id: number | string; title: string; slug: string }[] = []
   try {
@@ -136,7 +136,7 @@ export async function Footer() {
                   href="https://www.instagram.com/nenufar.co/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Instagram de Nénufar"
+                  aria-label="Instagram de Nenúfar"
                   className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#E4405F] flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -149,7 +149,7 @@ export async function Footer() {
                   href="https://www.facebook.com/nenufar.co"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Facebook de Nénufar"
+                  aria-label="Facebook de Nenúfar"
                   className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#1877F2] flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -157,10 +157,10 @@ export async function Footer() {
                   </svg>
                 </a>
                 <a
-                  href="https://wa.me/?text=Hola%20Shirley%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20N%C3%A9nufar"
+                  href="https://wa.me/?text=Hola%20Shirley%2C%20quisiera%20consultar%20sobre%20las%20joyas%20artesanales%20de%20Nen%C3%BAfar"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="WhatsApp de Nénufar"
+                  aria-label="WhatsApp de Nenúfar"
                   className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#25D366] flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -171,7 +171,7 @@ export async function Footer() {
                   href="https://t.me/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Telegram de Nénufar"
+                  aria-label="Telegram de Nenúfar"
                   className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#229ED9] flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">

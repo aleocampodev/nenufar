@@ -46,7 +46,7 @@ async function main() {
         imagePosition: 'center',
         image: firstSlideImg || {
           url: '/landing-modify-traced.svg',
-          alt: 'Mujer palenquera luciendo joyería en micro-mostacilla Nénufar',
+          alt: 'Mujer palenquera luciendo joyería en micro-mostacilla Nenúfar',
         },
       },
     ],

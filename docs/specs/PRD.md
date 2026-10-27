@@ -1,5 +1,5 @@
 # PRD — Product Requirement Document
-**Proyecto:** Nénufar — Joyería Artesanal
+**Proyecto:** Nenúfar — Joyería Artesanal
 **Versión:** 3.2 (Payload CMS + Next.js + Bot multiagente)
 **Fecha:** Agosto 2026
 **Supersede:** v3.0 (Shopify headless — archivado en `docs/archive/v3.0/PRD.md`)
@@ -10,7 +10,7 @@
 
 ## 1. Overview
 
-**Nénufar.co** es la tienda profesional de Shirley. Los compradores exploran el catálogo y el blog, arman y personalizan un pedido, y al enviarlo Shirley recibe una notificación estructurada en Telegram. No hay pago online. Shirley cierra la venta por WhatsApp como siempre lo ha hecho, pero el comprador ya hizo todo el trabajo de intake.
+**Nenúfar.co** es la tienda profesional de Shirley. Los compradores exploran el catálogo y el blog, arman y personalizan un pedido, y al enviarlo Shirley recibe una notificación estructurada en Telegram. No hay pago online. Shirley cierra la venta por WhatsApp como siempre lo ha hecho, pero el comprador ya hizo todo el trabajo de intake.
 
 ### Rutas del sitio
 
@@ -156,7 +156,7 @@ El bot es **exclusivamente de Shirley** (autenticado por `chat_id`). Le permite 
 | Privacidad | Ley 1581 de 2012 — consentimiento explícito + minimización de datos + aviso público. |
 | Idempotencia | El formulario de pedido deduplica por `cartId` en una ventana de 10 minutos. |
 | Disponibilidad | Sitio autopropelido; el formulario de pedido es un server action de Next.js. |
-| Color de marca | Magenta Nénufar `#E91E8C` (secundario `#3B032F`) = token `bg-brand` / `text-brand` en todo el sitio. |
+| Color de marca | Magenta Nenúfar `#E91E8C` (secundario `#3B032F`) = token `bg-brand` / `text-brand` en todo el sitio. |
 | Fuentes | Playfair Display (serif, títulos) + Inter (sans, cuerpo) + Geist Mono (precios). |
 
 ---
@@ -177,7 +177,7 @@ Home (hero + productos destacados)
 ### Mensaje que llega a Telegram
 
 ```
-🔔 Nuevo pedido — Nénufar
+🔔 Nuevo pedido — Nenúfar
 ━━━━━━━━━━━━━━━━━━━━━━━
 🎫 Pedido: #42
 📅 14 de agosto de 2026 — 3:15 PM (Bogotá)

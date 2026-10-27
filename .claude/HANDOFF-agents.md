@@ -11,7 +11,7 @@
 
 ## Business context
 
-**Nénufar** is a one-person artisan jewelry store: Shirley (Cartagena, Colombia). She designs,
+**Nenúfar** is a one-person artisan jewelry store: Shirley (Cartagena, Colombia). She designs,
 makes, sells, packs, and ships. Her phone is her office.
 
 **Golden rule:** the bot is **Shirley's own management tool** — it does not serve buyers.

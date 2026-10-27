@@ -4,7 +4,7 @@
  * Constitution §2.7: "the cart IS the order". This module reflects that cart
  * faithfully into a single HTML message for the Telegram channel.
  *
- * Nénufar v3.1 — Fase 4 baseline. Personalization (cart line attributes + cart
+ * Nenúfar v3.1 — Fase 4 baseline. Personalization (cart line attributes + cart
  * note) is Fase 5; COP currency swap is Fase 7. For now we format what the
  * template's plugin-ecommerce Cart actually exposes.
  */

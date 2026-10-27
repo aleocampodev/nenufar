@@ -492,7 +492,7 @@ export interface Page {
    */
   hero: {
     /**
-     * Elige "Hero Principal Nénufar" para la página de Inicio.
+     * Elige "Hero Principal Nenúfar" para la página de Inicio.
      */
     type: 'hero' | 'slider' | 'lowImpact' | 'mediumImpact' | 'highImpact' | 'none';
     /**

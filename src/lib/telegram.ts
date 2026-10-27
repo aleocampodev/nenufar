@@ -1,7 +1,7 @@
 /**
  * Telegram Bot API client — server-only.
  *
- * Nénufar v3.1: this module is the ONLY place that knows about Telegram.
+ * Nenúfar v3.1: this module is the ONLY place that knows about Telegram.
  * The buyer never sees Telegram — the server-side order action calls this
  * module after validating consent + idempotency. Constitution §2.4.
  *
@@ -21,6 +21,57 @@ export interface SendTelegramMessageResult {
 }
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org'
+
+/**
+ * Sanitiza y adapta texto enriquecido para Telegram en modo HTML.
+ * - Convierte markdown asteriscos (**negrita** / *cursiva*) a tags HTML <b> y <i>.
+ * - Convierte encabezados Markdown (# Titulo) a negritas limpias.
+ * - Escapa caracteres reservados (<, >, &) que NO pertenezcan a tags válidos de Telegram.
+ * - Elimina asteriscos residuales sueltos para que la pantalla de Shirley quede 100% limpia.
+ */
+export function formatTelegramHtml(text: string): string {
+  if (!text) return ''
+
+  let processed = text
+
+  // 1. Convertir encabezados Markdown: '### Titulo' -> '<b>Titulo</b>'
+  processed = processed.replace(/^#{1,6}\s+(.+)$/gm, '<b>$1</b>')
+
+  // 2. Extraer y proteger etiquetas HTML válidas de Telegram
+  const validTags = 'b|strong|i|em|u|ins|s|strike|del|tg-spoiler|tg-emoji|code|pre|blockquote|a'
+  const tagRegex = new RegExp(`(<(?:\\/(?:${validTags})|(?:${validTags})(?:\\s+[^>]*)?)>)`, 'gi')
+  const tagPlaceholders: string[] = []
+
+  processed = processed.replace(tagRegex, (match) => {
+    const placeholder = `___TG_TAG_${tagPlaceholders.length}___`
+    tagPlaceholders.push(match)
+    return placeholder
+  })
+
+  // 3. Escapar caracteres HTML reservados (<, >, &) fuera de tags válidos
+  processed = processed
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+
+  // 4. Convertir Markdown común a tags HTML de Telegram
+  // **negrita** -> <b>negrita</b>
+  processed = processed.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
+  // *cursiva* -> <i>cursiva</i> (solo si no es parte de asterisco suelto)
+  processed = processed.replace(/(^|[^\*])\*([^\*\n]+)\*([^\*]|$)/g, '$1<i>$2</i>$3')
+  // `código` -> <code>código</code>
+  processed = processed.replace(/`([^`\n]+)`/g, '<code>$1</code>')
+
+  // 5. Eliminar cualquier asterisco residual que haya quedado suelto (** o *)
+  processed = processed.replace(/\*{2,}/g, '').replace(/\*/g, '')
+
+  // 6. Restaurar las etiquetas HTML originales
+  for (let i = 0; i < tagPlaceholders.length; i++) {
+    processed = processed.replace(`___TG_TAG_${i}___`, tagPlaceholders[i])
+  }
+
+  return processed
+}
 
 /**
  * Splits a long message on newline boundaries so every part fits within
@@ -58,7 +109,7 @@ async function postTelegramText(
   token: string,
   chatId: number | string,
   text: string,
-  parseMode: 'HTML' | 'MarkdownV2',
+  parseMode: 'HTML' | 'MarkdownV2' | undefined,
   disableWebPagePreview: boolean,
 ): Promise<SendTelegramMessageResult> {
   try {
@@ -68,7 +119,7 @@ async function postTelegramText(
       body: JSON.stringify({
         chat_id: chatId,
         text,
-        parse_mode: parseMode,
+        ...(parseMode ? { parse_mode: parseMode } : {}),
         disable_web_page_preview: disableWebPagePreview,
       }),
       // Don't let Telegram hang us indefinitely
@@ -78,6 +129,29 @@ async function postTelegramText(
     const data: TelegramApiResponse = await response.json()
 
     if (!response.ok || !data.ok) {
+      // Si falló por formato (ej. entidades no reconocidas), reintentar como texto plano para garantizar entrega
+      if (parseMode && data.description?.includes("can't parse entities")) {
+        const plainText = text
+          .replace(/<[^>]*>/g, '')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&amp;/g, '&')
+        const retryRes = await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: plainText,
+            disable_web_page_preview: disableWebPagePreview,
+          }),
+          signal: AbortSignal.timeout(10_000),
+        })
+        const retryData = (await retryRes.json()) as TelegramApiResponse
+        if (retryData.ok) {
+          return { ok: true, messageId: retryData.result?.message_id }
+        }
+      }
+
       return {
         ok: false,
         error: data.description || `Telegram API returned HTTP ${response.status}`,
@@ -111,7 +185,8 @@ export async function sendTelegramMessage({
     return { ok: false, error: 'TELEGRAM_CHANNEL_ID is not configured' }
   }
 
-  const parts = splitTelegramMessage(text, TELEGRAM_MESSAGE_MAX_LENGTH)
+  const formattedText = parseMode === 'HTML' ? formatTelegramHtml(text) : text
+  const parts = splitTelegramMessage(formattedText, TELEGRAM_MESSAGE_MAX_LENGTH)
   let lastMessageId: number | undefined
   for (let i = 0; i < parts.length; i++) {
     const part = parts.length > 1 ? `${parts[i]}\n…(${i + 1}/${parts.length})` : parts[i]
@@ -243,7 +318,8 @@ export async function sendTelegramReply({
     return { ok: false, error: 'No hay token de bot asistente configurado' }
   }
 
-  const parts = splitTelegramMessage(text, TELEGRAM_MESSAGE_MAX_LENGTH)
+  const formattedText = parseMode === 'HTML' ? formatTelegramHtml(text) : text
+  const parts = splitTelegramMessage(formattedText, TELEGRAM_MESSAGE_MAX_LENGTH)
   let lastMessageId: number | undefined
   for (let i = 0; i < parts.length; i++) {
     const part = parts.length > 1 ? `${parts[i]}\n…(${i + 1}/${parts.length})` : parts[i]

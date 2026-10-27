@@ -1,4 +1,4 @@
-# Master Implementation Plan — Nénufar
+# Master Implementation Plan — Nenúfar
 
 Index of Phase 04 (Coding & Implementation) implementation plans.
 

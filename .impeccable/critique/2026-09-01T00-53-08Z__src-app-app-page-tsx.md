@@ -8,7 +8,7 @@ p1_count: 1
 timestamp: 2026-09-01T00-53-08Z
 slug: src-app-app-page-tsx
 ---
-# Perspectiva de Dirección de Arte: Nénufar Landing Page (/)
+# Perspectiva de Dirección de Arte: Nenúfar Landing Page (/)
 
 ## Design Health Score
 
@@ -69,7 +69,7 @@ La landing tiene un flujo narrativo envolvente y refinado: el nuevo **Hero estil
   *Comando sugerido:* `/impeccable audit accessibility and contrast fixes`
 
 - **[P3] Titular SaaS en la sección de características:**  
-  *Problema:* El título *"Por qué elegir Nénufar Joyería"* suena a software B2B corporativo.  
+  *Problema:* El título *"Por qué elegir Nenúfar Joyería"* suena a software B2B corporativo.  
   *Impacto:* Rompe ligeramente la atmósfera poética y artesanal.  
   *Solución:* Reemplazar por *"El Arte de la Paciencia y la Tradición"* o *"El Rigor de Nuestro Oficio"*.  
   *Comando sugerido:* `/impeccable polish features headline tone`

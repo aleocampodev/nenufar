@@ -79,7 +79,7 @@ async function main() {
 
     const tab = getArg('--tab')
     const imageUrl = getArg('--imageUrl')
-    const title = getArg('--title') || 'Momento Nénufar'
+    const title = getArg('--title') || 'Momento Nenúfar'
 
     if (!tab || !imageUrl) {
       console.error('❌ Error: Debes especificar --tab ("clientas" | "ferias" | "talleres" | "taller") y --imageUrl')

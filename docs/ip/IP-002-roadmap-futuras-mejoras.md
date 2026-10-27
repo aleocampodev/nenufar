@@ -1,7 +1,7 @@
-# IP-002: Implementation Proposal — Roadmap Estratégico de Mejoras Futuras para Nénufar
+# IP-002: Implementation Proposal — Roadmap Estratégico de Mejoras Futuras para Nenúfar
 
 * **Identificador:** `IP-002`
-* **Título:** Roadmap de Evolución y Mejoras Continuas para Nénufar Joyería Artesanal
+* **Título:** Roadmap de Evolución y Mejoras Continuas para Nenúfar Joyería Artesanal
 * **Autor:** Equipo de Ingeniería y Diseño UI/UX
 * **Fecha:** 2026-08-26
 * **Estado:** Propuesta Aprobada / En Cola de Implementación
@@ -11,7 +11,7 @@
 
 ## 1. Contexto y Objetivos
 
-Tras la consolidación exitosa de la identidad visual Krafti, el rediseño del catálogo y la eliminación de pasarelas de pago costosas, este documento traza las iniciativas de mayor retorno de inversión para Nénufar en los próximos ciclos de desarrollo, respetando estrictamente los 7 Artículos de la Constitución ($0/mes, performance ultra-rápido y simplicidad operativa para Shirley).
+Tras la consolidación exitosa de la identidad visual Krafti, el rediseño del catálogo y la eliminación de pasarelas de pago costosas, este documento traza las iniciativas de mayor retorno de inversión para Nenúfar en los próximos ciclos de desarrollo, respetando estrictamente los 7 Artículos de la Constitución ($0/mes, performance ultra-rápido y simplicidad operativa para Shirley).
 
 ---
 
@@ -19,7 +19,7 @@ Tras la consolidación exitosa de la identidad visual Krafti, el rediseño del c
 
 ```mermaid
 graph TD
-    A[IP-002: Roadmap Nénufar] --> B[Pilar 1: Experiencia de Catálogo & PDP]
+    A[IP-002: Roadmap Nenúfar] --> B[Pilar 1: Experiencia de Catálogo & PDP]
     A --> C[Pilar 2: Experiencias & Talleres Presenciales]
     A --> D[Pilar 3: Bot de Gestión de Shirley v3.4]
     A --> E[Pilar 4: SEO Local, PWA & Rendimiento]
@@ -87,7 +87,7 @@ graph TD
 ### ⚡ Pilar 4: SEO Local, PWA & Rendimiento
 
 #### 4.1. Progressive Web App (PWA)
-* **Solución:** `manifest.json` y Service Worker ligero para permitir que Shirley y sus clientas frecuentes instalen "Nénufar" directamente en su pantalla de inicio de Android/iOS como una aplicación nativa.
+* **Solución:** `manifest.json` y Service Worker ligero para permitir que Shirley y sus clientas frecuentes instalen "Nenúfar" directamente en su pantalla de inicio de Android/iOS como una aplicación nativa.
 
 #### 4.2. SEO Local Estructurado (Schema.org)
 * **Solución:** Incorporación de metadatos `LocalBusiness`, `JewelryStore` y `Event` en Next.js para posicionar en Google en búsquedas de turistas: *"joyería artesanal Cartagena"*, *"talleres de tejido Cartagena"*, *"comprar filigrana Cartagena"*.

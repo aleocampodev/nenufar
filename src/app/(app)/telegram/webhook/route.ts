@@ -265,7 +265,7 @@ export async function POST(request: Request): Promise<Response> {
           const mediaDoc = await payload.create({
             collection: 'media',
             data: {
-              alt: text || 'Video del taller artesanal Nénufar',
+              alt: text || 'Video del taller artesanal Nenúfar',
             },
             file: {
               data: buffer,
@@ -306,7 +306,7 @@ export async function POST(request: Request): Promise<Response> {
           const mediaDoc = await payload.create({
             collection: 'media',
             data: {
-              alt: text || 'Joya Nénufar',
+              alt: text || 'Joya Nenúfar',
             },
             file: {
               data: buffer,

@@ -401,7 +401,7 @@ export async function executeShirleyTool(
         const galLines = galleryBreakdown.map((g) => `  - ${g.title}: ${g.count} foto(s)${g.empty ? ' ⚠️ (Sin fotos)' : ''}`)
 
         return [
-          `📊 Análisis de Estado: Catálogo y Galería Nénufar:`,
+          `📊 Análisis de Estado: Catálogo y Galería Nenúfar:`,
           `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
           `💎 Catálogo (/shop):`,
           `• Total joyas: ${allProducts.totalDocs} (${published.length} publicadas, ${drafts.length} borradores)`,
@@ -623,7 +623,7 @@ export async function executeShirleyTool(
           sections.push(`📌 ${tabTitle} (${images.length} fotos):\n${imgList}`)
         }
 
-        return `Galería Nénufar (/galeria):\n\n${sections.join('\n\n')}`
+        return `Galería Nenúfar (/galeria):\n\n${sections.join('\n\n')}`
       }
 
       case 'eliminarFotoGaleria': {
@@ -843,7 +843,7 @@ export async function executeShirleyTool(
         if (slug) {
           product = await findProductBySlug(payload, slug)
         }
-        const titulo = product?.title || nombrePieza || 'Joya de Autor Nénufar'
+        const titulo = product?.title || nombrePieza || 'Joya de Autor Nenúfar'
         const precio = product ? formatCOP(product.priceInCOP) : ''
         const tecnica = materialesOTecnica || 'micro-mostacilla checa calibrada e hilo técnico resistente a la humedad'
         const estilo = ocasionOEstilo || 'impacto visual protagónico pero ultra liviano, cómodo para usar de la mañana a la noche'

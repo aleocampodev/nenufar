@@ -1,6 +1,6 @@
-# Specifications & System Documentation — Nénufar
+# Specifications & System Documentation — Nenúfar
 
-This directory contains the canonical specifications, requirements, and design documents for Nénufar, structured according to the 7-phase SDLC.
+This directory contains the canonical specifications, requirements, and design documents for Nenúfar, structured according to the 7-phase SDLC.
 
 ---
 

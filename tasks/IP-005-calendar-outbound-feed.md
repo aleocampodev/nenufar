@@ -57,7 +57,7 @@ Reverse the calendar sync direction. Previously the storefront **pulled** events
 
 #### Task 3.1: Shirley subscribes once (production URL required)
 1. Google Calendar (desktop) → Other calendars → **+** → **From URL**.
-2. Paste `https://<production-domain>/api/calendar/feed` → Add calendar ("Nénufar — Ferias y Talleres").
+2. Paste `https://<production-domain>/api/calendar/feed` → Add calendar ("Nenúfar — Ferias y Talleres").
 3. Expect first sync + refresh lag of a few hours (Google-side polling, not controllable).
 
 ---

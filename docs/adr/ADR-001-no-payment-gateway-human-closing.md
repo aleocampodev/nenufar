@@ -9,7 +9,7 @@
 
 ## 1. Context and Problem Statement
 
-Nénufar is an artisan handcrafted jewelry store in Cartagena, Colombia. Traditional e-commerce setups rely on automated payment gateways (e.g., Stripe, Wompi, PayU, MercadoPago) which deduct 3.5%–6% + fixed fees per transaction, require strict bank account registrations, and introduce cart abandonment when Colombian customers encounter unfamiliar gateway checkout modals.
+Nenúfar is an artisan handcrafted jewelry store in Cartagena, Colombia. Traditional e-commerce setups rely on automated payment gateways (e.g., Stripe, Wompi, PayU, MercadoPago) which deduct 3.5%–6% + fixed fees per transaction, require strict bank account registrations, and introduce cart abandonment when Colombian customers encounter unfamiliar gateway checkout modals.
 
 Furthermore, handcrafted jewelry items often involve customization (ring sizing, chain length, gemstone variants, personalized gift notes) that automated gateways fail to handle gracefully.
 
